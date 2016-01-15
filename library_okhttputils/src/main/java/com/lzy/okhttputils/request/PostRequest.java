@@ -1,0 +1,88 @@
+package com.lzy.okhttputils.request;
+
+import com.lzy.okhttputils.model.RequestParams;
+
+import java.io.File;
+import java.util.Map;
+
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+
+/**
+ * ================================================
+ * 作    者：廖子尧
+ * 版    本：1.0
+ * 创建日期：2016/1/12
+ * 描    述：Post请求的实现类，注意需要传入本类的泛型
+ * 修订历史：
+ * ================================================
+ */
+public class PostRequest extends BaseRequest<PostRequest> {
+
+    public static final MediaType MEDIA_TYPE_PLAIN = MediaType.parse("text/plain;charset=utf-8");
+    public static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json;charset=utf-8");
+    public static final MediaType MEDIA_TYPE_STREAM = MediaType.parse("application/octet-stream");
+
+    private String content;
+    private MediaType mediaType;
+
+    public PostRequest(String url) {
+        super(url);
+    }
+
+    /** 注意使用该方法上传字符串会清空实体中其他所有的参数，头信息不清除 */
+    public PostRequest content(String content) {
+        this.content = content;
+        return this;
+    }
+
+    public PostRequest mediaType(MediaType mediaType) {
+        this.mediaType = mediaType;
+        return this;
+    }
+
+    @Override
+    public RequestBody generateRequestBody() {
+        RequestBody requestBody;
+        if (content != null && mediaType != null) {
+            //post上传字符串数据
+            requestBody = RequestBody.create(mediaType, content);
+        } else {
+            if (params.fileParamsMap.isEmpty()) {
+                //表单提交，没有文件
+                FormBody.Builder bodyBuilder = new FormBody.Builder();
+                for (String key : params.urlParamsMap.keySet()) {
+                    bodyBuilder.add(key, params.urlParamsMap.get(key));
+                }
+                requestBody = bodyBuilder.build();
+            } else {
+                //表单提交，有文件
+                MultipartBody.Builder multipartBodybuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+                //拼接键值对
+                if (!params.urlParamsMap.isEmpty()) {
+                    for (String key : params.urlParamsMap.keySet()) {
+                        multipartBodybuilder.addFormDataPart(key, params.urlParamsMap.get(key));
+                    }
+                }
+                //拼接文件
+                for (Map.Entry<String, RequestParams.FileWrapper> entry : params.fileParamsMap.entrySet()) {
+                    String contentType = entry.getValue().contentType;
+                    RequestBody fileBody = RequestBody.create(MediaType.parse(contentType), entry.getValue().file);
+                    multipartBodybuilder.addFormDataPart(entry.getKey(), entry.getValue().fileName, fileBody);
+                }
+                requestBody = multipartBodybuilder.build();
+            }
+        }
+        return requestBody;
+    }
+
+    @Override
+    public Request generateRequest(RequestBody requestBody) {
+        Request.Builder requestBuilder = new Request.Builder();
+        appendHeaders(requestBuilder);
+        return requestBuilder.post(requestBody).url(url).tag(tag).build();
+    }
+}
