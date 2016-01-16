@@ -11,6 +11,10 @@ import android.widget.ListView;
 import com.lzy.okhttpdemo.callback.MyBeanCallBack;
 import com.lzy.okhttpdemo.callback.MyFileCallBack;
 import com.lzy.okhttputils.OkHttpUtils;
+import com.lzy.okhttputils.callback.AbsCallback;
+import com.lzy.okhttputils.model.RequestParams;
+import com.lzy.okhttputils.request.BaseRequest;
+import com.lzy.okhttputils.request.GetRequest;
 import com.lzy.okhttputils.request.PostRequest;
 
 import java.io.File;
@@ -42,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         strings.add("post");
         strings.add("getJson");
         strings.add("postString");
+        strings.add("postJson");
         strings.add("responseJson");
         strings.add("responseJsonArray");
         strings.add("uploadFile");
@@ -93,8 +98,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 .tag(this)//
                 .params("ppppppp", "ppp")//
                 .headers("hhhhhhh", "hhh")//
-                .content("asdfasdfasdfasdfweasd速度阿斯蒂芬阿斯蒂芬阿斯蒂芬奥赛大三asd asdf asd as")//
+                .content("asdfasdfasdfas这是中文这是中文asdfasdfasdf")//
                 .mediaType(PostRequest.MEDIA_TYPE_PLAIN)//
+                .execute(new MyBeanCallBack<String>() {
+                    @Override
+                    public void onResponse(String s) {
+                        System.out.println("onResponse:" + s);
+                    }
+                });
+    }
+
+    private void postJson() {
+        OkHttpUtils.post("http://192.168.1.111:8080/UploadServer/UploadString")//
+                .tag(this)//
+                .params("ppppppp", "ppp")//
+                .headers("hhhhhhh", "hhh")//
+                .postJson("{}")//
                 .execute(new MyBeanCallBack<String>() {
                     @Override
                     public void onResponse(String s) {
@@ -119,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void responseJsonArray() {
         OkHttpUtils.post("http://192.168.1.111:8080/UploadServer/ResponseJsonArray")//
                 .tag(this)//
-                .params("ppppppp", "ppp")//
+                .connTimeOut(2000).writeTimeOut(3000).readTimeOut(4000).params("ppppppp", "ppp")//
                 .headers("hhhhhhh", "hhh")//
                 .execute(new MyBeanCallBack<List<Bean>>() {
                     @Override
@@ -132,9 +151,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void uploadFile() {
         OkHttpUtils.post("http://192.168.1.111:8080/UploadServer/UploadFile")//
                 .tag(this)//
-                .params("file1", new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera/IMG_20151225_155549.jpg"))//
-                .params("file3", new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera/IMG_20160109_010308.jpg"))//
-                .params("file2", new File(Environment.getExternalStorageDirectory() + "/video/splash.avi"))//
+                .headers("aaa", "111").headers("bbb", "222").params("ccc", "333").params("ddd", "444").params("file1", new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera/IMG_20151225_155549.jpg"))//
+                .params("file2", new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera/IMG_20160109_010308.jpg"))//
+                .params("file3", new File(Environment.getExternalStorageDirectory() + "/video/splash.avi"))//
                 .execute(new MyBeanCallBack<String>() {
                     @Override
                     public void onResponse(String s) {

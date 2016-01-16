@@ -11,11 +11,15 @@ import com.lzy.okhttputils.model.RequestParams;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Headers;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -40,7 +44,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
     protected RequestParams params = new RequestParams();
     protected RequestHeaders headers = new RequestHeaders();
 
-    public BaseRequest(String url){
+    public BaseRequest(String url) {
         this.url = url;
     }
 
@@ -104,9 +108,28 @@ public abstract class BaseRequest<R extends BaseRequest> {
         return (R) this;
     }
 
-    public R params(String key, File file, String fileName, String contentType) {
+    public R params(String key, File file, String fileName, MediaType contentType) {
         params.put(key, file, fileName, contentType);
         return (R) this;
+    }
+
+    /** 将传递进来的参数拼接成 url */
+    protected String createUrlFromParams(String url, Map<String, String> params) {
+        try {
+            StringBuilder sb = new StringBuilder();
+            sb.append(url);
+            if (url.indexOf('&') > 0 || url.indexOf('?') > 0) sb.append("&");
+            else sb.append("?");
+            for (Map.Entry<String, String> urlParams : params.entrySet()) {
+                String urlValue = URLEncoder.encode(urlParams.getValue(), "UTF-8");
+                sb.append(urlParams.getKey()).append("=").append(urlValue).append("&");
+            }
+            sb.deleteCharAt(sb.length() - 1);
+            return sb.toString();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return url;
     }
 
     /** 通用的拼接请求头 */
@@ -126,14 +149,14 @@ public abstract class BaseRequest<R extends BaseRequest> {
 
     /** 对请求body进行包装，用于回调上传进度 */
     public RequestBody wrapRequestBody(RequestBody requestBody, final AbsCallback callback) {
-        return new CountingRequestBody(requestBody, new CountingRequestBody.Listener() {
+        return new ProgressRequestBody(requestBody, new ProgressRequestBody.Listener() {
             @Override
-            public void onRequestProgress(final long bytesWritten, final long contentLength) {
+            public void onRequestProgress(final long bytesWritten, final long contentLength, final long networkSpeed) {
                 OkHttpUtils.getInstance().getDelivery().post(new Runnable() {
                     @Override
                     public void run() {
                         if (callback != null)
-                            callback.upProgress(bytesWritten, contentLength, bytesWritten * 1.0f / contentLength);
+                            callback.upProgress(bytesWritten, contentLength, bytesWritten * 1.0f / contentLength, networkSpeed);
                     }
                 });
             }

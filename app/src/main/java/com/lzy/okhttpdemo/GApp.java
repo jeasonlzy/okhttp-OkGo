@@ -44,7 +44,7 @@ public class GApp extends Application {
             OkHttpUtils.getInstance()//
                     .setConnectTimeout(OkHttpUtils.DEFAULT_MILLISECONDS)//
                     .setReadTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS)//
-//                    .setCertificates(getAssets().open("srca.cer"), getAssets().open("zhy_server"))//
+//                    .setCertificates(getAssets().open("srca.cer"), getAssets().open("zhy_server.cer"))//
                     .setCertificates(new Buffer().writeUtf8(CER_12306).inputStream())//
                     .setWriteTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS);
         } catch (Exception e) {

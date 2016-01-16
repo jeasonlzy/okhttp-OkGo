@@ -2,12 +2,15 @@ package com.lzy.okhttputils;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.text.TextUtils;
 
 import com.lzy.okhttputils.cookie.SimpleCookieJar;
 import com.lzy.okhttputils.https.HttpsUtils;
+import com.lzy.okhttputils.request.DeleteRequest;
 import com.lzy.okhttputils.request.GetRequest;
+import com.lzy.okhttputils.request.HeadRequest;
+import com.lzy.okhttputils.request.PatchRequest;
 import com.lzy.okhttputils.request.PostRequest;
+import com.lzy.okhttputils.request.PutRequest;
 
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
@@ -17,6 +20,7 @@ import javax.net.ssl.SSLSession;
 
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
+import okio.Buffer;
 
 /**
  * ================================================
@@ -39,21 +43,13 @@ public class OkHttpUtils {
     private static OkHttpUtils mInstance;                //单例
     private Handler mDelivery;                           //用于在主线程执行的调度器
     private OkHttpClient.Builder okHttpClientBuilder;    //ok请求的客户端
+    private HostnameVerifier hostnameVerifier;
 
     private OkHttpUtils() {
         okHttpClientBuilder = new OkHttpClient.Builder();
         //允许cookie的自动化管理
         okHttpClientBuilder.cookieJar(new SimpleCookieJar());
         mDelivery = new Handler(Looper.getMainLooper());
-        // 此类是用于主机名验证的基接口。 在握手期间，如果 URL 的主机名和服务器的标识主机名不匹配，
-        // 则验证机制可以回调此接口的实现程序来确定是否应该允许此连接。策略可以是基于证书的或依赖于其他验证方案。
-        // 当验证 URL 主机名使用的默认规则失败时使用这些回调。如果主机名是可接受的，则返回 true
-        okHttpClientBuilder.hostnameVerifier(new HostnameVerifier() {
-            @Override
-            public boolean verify(String hostname, SSLSession session) {
-                return true;
-            }
-        });
     }
 
     public static OkHttpUtils getInstance() {
@@ -72,6 +68,8 @@ public class OkHttpUtils {
     }
 
     public OkHttpClient getOkHttpClient() {
+        if (hostnameVerifier == null)
+            okHttpClientBuilder.hostnameVerifier(new DefaultHostnameVerifier());
         return okHttpClientBuilder.build();
     }
 
@@ -85,15 +83,63 @@ public class OkHttpUtils {
         return new PostRequest(url);
     }
 
+    /** put请求 */
+    public static PutRequest put(String url) {
+        return new PutRequest(url);
+    }
+
+    /** head请求 */
+    public static HeadRequest head(String url) {
+        return new HeadRequest(url);
+    }
+
+    /** delete请求 */
+    public static DeleteRequest delete(String url) {
+        return new DeleteRequest(url);
+    }
+
+    /** patch请求 */
+    public static PatchRequest patch(String url) {
+        return new PatchRequest(url);
+    }
+
     /** 调试模式 */
     public static void debug(boolean debug, String tag) {
         L.debug = debug;
         L.tag = tag;
     }
 
+    /**
+     * 此类是用于主机名验证的基接口。 在握手期间，如果 URL 的主机名和服务器的标识主机名不匹配，
+     * 则验证机制可以回调此接口的实现程序来确定是否应该允许此连接。策略可以是基于证书的或依赖于其他验证方案。
+     * 当验证 URL 主机名使用的默认规则失败时使用这些回调。如果主机名是可接受的，则返回 true
+     */
+    private class DefaultHostnameVerifier implements HostnameVerifier {
+        @Override
+        public boolean verify(String hostname, SSLSession session) {
+            return true;
+        }
+    }
+
+    /** https的全局访问规则 */
+    public OkHttpUtils setHostnameVerifier(HostnameVerifier hostnameVerifier) {
+        this.hostnameVerifier = hostnameVerifier;
+        okHttpClientBuilder.hostnameVerifier(hostnameVerifier);
+        return this;
+    }
+
     /** https的全局自签名证书 */
     public OkHttpUtils setCertificates(InputStream... certificates) {
         okHttpClientBuilder.sslSocketFactory(HttpsUtils.getSslSocketFactory(certificates, null, null));
+        return this;
+    }
+
+    /** https的全局自签名证书 */
+    public OkHttpUtils setCertificates(String... certificates) {
+        for (String certificate : certificates) {
+            InputStream inputStream = new Buffer().writeUtf8(certificate).inputStream();
+            setCertificates(inputStream);
+        }
         return this;
     }
 

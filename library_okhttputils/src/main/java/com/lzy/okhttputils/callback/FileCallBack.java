@@ -1,5 +1,7 @@
 package com.lzy.okhttputils.callback;
 
+import android.support.annotation.NonNull;
+
 import com.lzy.okhttputils.OkHttpUtils;
 
 import java.io.File;
@@ -28,7 +30,7 @@ public abstract class FileCallBack extends AbsCallback<File> {
      * @param destFileDir  要保存的目标文件夹
      * @param destFileName 要保存的文件名
      */
-    public FileCallBack(String destFileDir, String destFileName) {
+    public FileCallBack(@NonNull String destFileDir, @NonNull String destFileName) {
         this.destFileDir = destFileDir;
         this.destFileName = destFileName;
     }
@@ -44,6 +46,7 @@ public abstract class FileCallBack extends AbsCallback<File> {
         File file = new File(dir, destFileName);
         if (file.exists()) file.delete();
 
+        long previousTime = System.currentTimeMillis();
         InputStream is = null;
         byte[] buf = new byte[2048];
         FileOutputStream fos = null;
@@ -57,10 +60,15 @@ public abstract class FileCallBack extends AbsCallback<File> {
                 sum += len;
                 fos.write(buf, 0, len);
                 final long finalSum = sum;
+
+                //计算下载速度
+                long totalTime = (System.currentTimeMillis() - previousTime) / 1000;
+                if (totalTime == 0) totalTime += 1;
+                final long networkSpeed = finalSum / totalTime;
                 OkHttpUtils.getInstance().getDelivery().post(new Runnable() {
                     @Override
                     public void run() {
-                        downloadProgress(finalSum, total, finalSum * 1.0f / total);   //进度回调的方法
+                        downloadProgress(finalSum, total, finalSum * 1.0f / total, networkSpeed);   //进度回调的方法
                     }
                 });
             }

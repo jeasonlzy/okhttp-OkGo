@@ -3,7 +3,13 @@ package com.lzy.okhttputils.model;
 import java.io.File;
 import java.net.FileNameMap;
 import java.net.URLConnection;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 /**
  * ================================================
@@ -64,19 +70,24 @@ public class RequestParams {
         put(key, file, fileName, guessMimeType(fileName));
     }
 
-    public void put(String key, File file, String fileName, String contentType) {
+    public void put(String key, File file, String fileName, MediaType contentType) {
         if (key != null) {
             fileParamsMap.put(key, new FileWrapper(file, fileName, contentType));
         }
     }
 
-    private String guessMimeType(String path) {
+    public void clear() {
+        urlParamsMap.clear();
+        fileParamsMap.clear();
+    }
+
+    private MediaType guessMimeType(String path) {
         FileNameMap fileNameMap = URLConnection.getFileNameMap();
         String contentType = fileNameMap.getContentTypeFor(path);
         if (contentType == null) {
             contentType = "application/octet-stream";
         }
-        return contentType;
+        return MediaType.parse(contentType);
     }
 
     /**
@@ -85,12 +96,14 @@ public class RequestParams {
     public static class FileWrapper {
         public File file;
         public String fileName;
-        public String contentType;
+        public MediaType contentType;
+        public long fileSize;
 
-        public FileWrapper(File file, String fileName, String contentType) {
+        public FileWrapper(File file, String fileName, MediaType contentType) {
             this.file = file;
             this.fileName = fileName;
             this.contentType = contentType;
+            this.fileSize = file.length();
         }
 
         public String getFileName() {
@@ -100,5 +113,19 @@ public class RequestParams {
                 return "nofilename";
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        for (ConcurrentHashMap.Entry<String, String> entry : urlParamsMap.entrySet()) {
+            if (result.length() > 0) result.append("&");
+            result.append(entry.getKey()).append("=").append(entry.getValue());
+        }
+        for (ConcurrentHashMap.Entry<String, FileWrapper> entry : fileParamsMap.entrySet()) {
+            if (result.length() > 0) result.append("&");
+            result.append(entry.getKey()).append("=").append(entry.getValue());
+        }
+        return result.toString();
     }
 }

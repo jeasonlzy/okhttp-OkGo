@@ -31,13 +31,13 @@ public abstract class MyBeanCallBack<T> extends BeanCallBack<T> {
     }
 
     @Override
-    public void upProgress(long currentSize, long totalSize, float progress) {
-        System.out.println("upProgress -- " + totalSize + "  " + currentSize + "  " + progress);
+    public void upProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
+        System.out.println("upProgress -- " + totalSize + "  " + currentSize + "  " + progress + "  " + networkSpeed);
     }
 
     @Override
-    public void downloadProgress(long currentSize, long totalSize, float progress) {
-        System.out.println("downloadProgress -- " + totalSize + "  " + currentSize + "  " + progress);
+    public void downloadProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
+        System.out.println("downloadProgress -- " + totalSize + "  " + currentSize + "  " + progress + "  " + networkSpeed);
     }
 
     @Override
