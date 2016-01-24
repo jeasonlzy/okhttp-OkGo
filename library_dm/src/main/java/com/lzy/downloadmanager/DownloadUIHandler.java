@@ -8,7 +8,15 @@ import com.lzy.okhttputils.L;
 import java.util.List;
 import java.util.Map;
 
-/** 下载UI回调Handler */
+/**
+ * ================================================
+ * 作    者：廖子尧
+ * 版    本：1.0
+ * 创建日期：2016/1/19
+ * 描    述：用于在主线程回调下载UI
+ * 修订历史：
+ * ================================================
+ */
 public class DownloadUIHandler extends Handler {
 
     private DownloadListener mGlobalDownloadListener;

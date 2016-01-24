@@ -19,11 +19,13 @@ import com.lzy.downloadmanager.DownloadListener;
 import com.lzy.downloadmanager.DownloadManager;
 import com.lzy.okhttpdemo.Bean.ApkInfo;
 import com.lzy.okhttpdemo.R;
+import com.lzy.okhttpdemo.utils.ApkUtils;
 import com.lzy.okhttpdemo.utils.AppCacheUtils;
 
+import java.io.File;
 import java.util.List;
 
-public class DownloadManagerActivity extends AppCompatActivity {
+public class DownloadManagerActivity extends AppCompatActivity implements View.OnClickListener {
 
     private List<DownloadInfo> allTask;
     private MyAdapter adapter;
@@ -37,14 +39,30 @@ public class DownloadManagerActivity extends AppCompatActivity {
         ListView listView = (ListView) findViewById(R.id.listView);
         adapter = new MyAdapter();
         listView.setAdapter(adapter);
+    }
 
-        findViewById(R.id.removeAll).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.notifyDataSetChanged();
+    }
+
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.removeAll:
                 DownloadManager.getInstance(DownloadManagerActivity.this).removeAllTask();
-                adapter.notifyDataSetChanged();
-            }
-        });
+                adapter.notifyDataSetChanged();  //移除的时候需要调用
+                break;
+            case R.id.pauseAll:
+                DownloadManager.getInstance(DownloadManagerActivity.this).pauseAllTask();
+                break;
+            case R.id.stopAll:
+                DownloadManager.getInstance(DownloadManagerActivity.this).stopAllTask();
+                break;
+            case R.id.startAll:
+                DownloadManager.getInstance(DownloadManagerActivity.this).startAllTask();
+                break;
+        }
     }
 
     private class MyAdapter extends BaseAdapter {
@@ -132,46 +150,33 @@ public class DownloadManagerActivity extends AppCompatActivity {
             String downloadLength = Formatter.formatFileSize(DownloadManagerActivity.this, downloadInfo.getDownloadLength());
             String totalLength = Formatter.formatFileSize(DownloadManagerActivity.this, downloadInfo.getTotalLength());
             downloadSize.setText(downloadLength + "/" + totalLength);
-            if (downloadInfo.getState() == DownloadManager.PAUSE) {
+            if (downloadInfo.getState() == DownloadManager.NONE) {
+                netSpeed.setText("停止");
+                download.setText("下载");
+            } else if (downloadInfo.getState() == DownloadManager.PAUSE) {
                 netSpeed.setText("暂停中");
+                download.setText("继续");
             } else if (downloadInfo.getState() == DownloadManager.ERROR) {
                 netSpeed.setText("下载出错");
+                download.setText("出错");
             } else if (downloadInfo.getState() == DownloadManager.WAITING) {
                 netSpeed.setText("等待中");
+                download.setText("等待");
             } else if (downloadInfo.getState() == DownloadManager.FINISH) {
+                if (ApkUtils.isAvailable(DownloadManagerActivity.this, new File(downloadInfo.getTargetPath()))) {
+                    download.setText("卸载");
+                } else {
+                    download.setText("安装");
+                }
                 netSpeed.setText("下载完成");
             } else if (downloadInfo.getState() == DownloadManager.DOWNLOADING) {
                 String networkSpeed = Formatter.formatFileSize(DownloadManagerActivity.this, downloadInfo.getNetworkSpeed());
                 netSpeed.setText(networkSpeed + "/s");
+                download.setText("暂停");
             }
             tvProgress.setText((Math.round(downloadInfo.getProgress() * 10000) * 1.0f / 100) + "%");
             pbProgress.setMax((int) downloadInfo.getTotalLength());
             pbProgress.setProgress((int) downloadInfo.getDownloadLength());
-            refreshButton(download, downloadInfo);
-        }
-
-        public Button refreshButton(Button download, DownloadInfo downloadInfo) {
-            switch (downloadInfo.getState()) {
-                case DownloadManager.NONE:
-                    download.setText("下载");
-                    break;
-                case DownloadManager.DOWNLOADING:
-                    download.setText("暂停");
-                    break;
-                case DownloadManager.PAUSE:
-                    download.setText("继续");
-                    break;
-                case DownloadManager.WAITING:
-                    download.setText("等待");
-                    break;
-                case DownloadManager.ERROR:
-                    download.setText("出错");
-                    break;
-                case DownloadManager.FINISH:
-                    download.setText("安装");
-                    break;
-            }
-            return download;
         }
 
         @Override
@@ -184,14 +189,17 @@ public class DownloadManagerActivity extends AppCompatActivity {
                         DownloadManager.getInstance(DownloadManagerActivity.this).addTask(downloadInfo.getUrl());
                         break;
                     case DownloadManager.DOWNLOADING:
-                        DownloadManager.getInstance(DownloadManagerActivity.this).pause(downloadInfo.getUrl());
+                        DownloadManager.getInstance(DownloadManagerActivity.this).pauseTask(downloadInfo.getUrl());
                         break;
                     case DownloadManager.FINISH:
-                        DownloadManager.getInstance(DownloadManagerActivity.this).restartTask(downloadInfo.getUrl());
+                        if (ApkUtils.isAvailable(DownloadManagerActivity.this, new File(downloadInfo.getTargetPath()))) {
+                            ApkUtils.uninstall(DownloadManagerActivity.this, ApkUtils.getPackageName(DownloadManagerActivity.this, downloadInfo.getTargetPath()));
+                        } else {
+                            ApkUtils.install(DownloadManagerActivity.this, new File(downloadInfo.getTargetPath()));
+                        }
                         break;
                 }
                 refresh();
-//                refreshButton(download, downloadInfo);
             } else if (v.getId() == remove.getId()) {
                 DownloadManager.getInstance(DownloadManagerActivity.this).removeTask(downloadInfo.getUrl());
                 adapter.notifyDataSetChanged();

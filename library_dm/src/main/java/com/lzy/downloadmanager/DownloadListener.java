@@ -1,5 +1,14 @@
 package com.lzy.downloadmanager;
 
+/**
+ * ================================================
+ * 作    者：廖子尧
+ * 版    本：1.0
+ * 创建日期：2016/1/19
+ * 描    述：全局的下载监听
+ * 修订历史：
+ * ================================================
+ */
 public abstract class DownloadListener {
 
     private Object userTag;

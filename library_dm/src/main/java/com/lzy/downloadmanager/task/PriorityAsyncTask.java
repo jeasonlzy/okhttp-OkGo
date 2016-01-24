@@ -1,10 +1,9 @@
-package com.lzy.library_xutilsdm;
+package com.lzy.downloadmanager.task;
 
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-
-import com.lzy.library_xutilsdm.utils.LogUtils;
+import android.util.Log;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
@@ -19,28 +18,28 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * ================================================
  * 作    者：廖子尧
  * 版    本：1.0
- * 创建日期：2016/1/23
- * 描    述：
+ * 创建日期：2016/1/19
+ * 描    述：完全按照AsyncTask的思路，主要是为了默认创建 PriorityRunnable 对象，和 getRunnable() 方法
  * 修订历史：
  * ================================================
  */
-public abstract class PriorityAsyncTask<Params, Progress, Result> implements TaskHandler {
+public abstract class PriorityAsyncTask<Params, Progress, Result> {
 
+    private static final String LOG_TAG = "AsyncTask";
     private static final int MESSAGE_POST_RESULT = 0x1;
     private static final int MESSAGE_POST_PROGRESS = 0x2;
 
     private static final InternalHandler sHandler = new InternalHandler();
-
-    public static final Executor sDefaultExecutor = new PriorityExecutor();
     private final WorkerRunnable<Params, Result> mWorker;
     private final FutureTask<Result> mFuture;
-
     private volatile boolean mExecuteInvoked = false;
-
     private final AtomicBoolean mCancelled = new AtomicBoolean();
     private final AtomicBoolean mTaskInvoked = new AtomicBoolean();
 
+    //默认的线程池使用外界的
+    public static final Executor sDefaultExecutor = new PriorityThreadPool().getExecutor();
     private Priority priority;
+    private PriorityRunnable runnableTask;
 
     public Priority getPriority() {
         return priority;
@@ -48,6 +47,11 @@ public abstract class PriorityAsyncTask<Params, Progress, Result> implements Tas
 
     public void setPriority(Priority priority) {
         this.priority = priority;
+    }
+
+    //返回需要的任务对象
+    public Runnable getRunnable() {
+        return runnableTask;
     }
 
     /**
@@ -70,7 +74,7 @@ public abstract class PriorityAsyncTask<Params, Progress, Result> implements Tas
                 try {
                     postResultIfNotInvoked(get());
                 } catch (InterruptedException e) {
-                    LogUtils.d(e.getMessage());
+                    Log.w(LOG_TAG, e.getMessage());
                 } catch (ExecutionException e) {
                     throw new RuntimeException("An error occured while executing doInBackground()", e.getCause());
                 } catch (CancellationException e) {
@@ -186,7 +190,6 @@ public abstract class PriorityAsyncTask<Params, Progress, Result> implements Tas
      * @return <tt>true</tt> if task was cancelled before it completed
      * @see #cancel(boolean)
      */
-    @Override
     public final boolean isCancelled() {
         return mCancelled.get();
     }
@@ -206,48 +209,15 @@ public abstract class PriorityAsyncTask<Params, Progress, Result> implements Tas
         return mFuture.cancel(mayInterruptIfRunning);
     }
 
-    @Override
-    public boolean supportPause() {
-        return false;
-    }
-
-    @Override
-    public boolean supportResume() {
-        return false;
-    }
-
-    @Override
-    public boolean supportCancel() {
-        return true;
-    }
-
-    @Override
-    public void pause() {
-    }
-
-    @Override
-    public void resume() {
-    }
-
-    @Override
-    public void cancel() {
-        this.cancel(true);
-    }
-
-    @Override
-    public boolean isPaused() {
-        return false;
-    }
-
     /**
      * Waits if necessary for the computation to complete, and then
      * retrieves its result.
      *
      * @return The computed result.
-     * @throws java.util.concurrent.CancellationException If the computation was cancelled.
-     * @throws java.util.concurrent.ExecutionException    If the computation threw an exception.
-     * @throws InterruptedException                       If the current thread was interrupted
-     *                                                    while waiting.
+     * @throws CancellationException If the computation was cancelled.
+     * @throws ExecutionException    If the computation threw an exception.
+     * @throws InterruptedException  If the current thread was interrupted
+     *                               while waiting.
      */
     public final Result get() throws InterruptedException, ExecutionException {
         return mFuture.get();
@@ -260,11 +230,11 @@ public abstract class PriorityAsyncTask<Params, Progress, Result> implements Tas
      * @param timeout Time to wait before cancelling the operation.
      * @param unit    The time unit for the timeout.
      * @return The computed result.
-     * @throws java.util.concurrent.CancellationException If the computation was cancelled.
-     * @throws java.util.concurrent.ExecutionException    If the computation threw an exception.
-     * @throws InterruptedException                       If the current thread was interrupted
-     *                                                    while waiting.
-     * @throws java.util.concurrent.TimeoutException      If the wait timed out.
+     * @throws CancellationException If the computation was cancelled.
+     * @throws ExecutionException    If the computation threw an exception.
+     * @throws InterruptedException  If the current thread was interrupted
+     *                               while waiting.
+     * @throws TimeoutException      If the wait timed out.
      */
     public final Result get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         return mFuture.get(timeout, unit);
@@ -274,7 +244,7 @@ public abstract class PriorityAsyncTask<Params, Progress, Result> implements Tas
      * @param params The parameters of the task.
      * @return This instance of AsyncTask.
      * @throws IllegalStateException If execute has invoked.
-     * @see #executeOnExecutor(java.util.concurrent.Executor, Object[])
+     * @see #executeOnExecutor(Executor, Object[])
      * @see #execute(Runnable)
      */
     public final PriorityAsyncTask<Params, Progress, Result> execute(Params... params) {
@@ -298,7 +268,8 @@ public abstract class PriorityAsyncTask<Params, Progress, Result> implements Tas
         onPreExecute();
 
         mWorker.mParams = params;
-        exec.execute(new PriorityRunnable(priority, mFuture));
+        runnableTask = new PriorityRunnable(priority, mFuture);
+        exec.execute(runnableTask);
 
         return this;
     }
@@ -309,7 +280,7 @@ public abstract class PriorityAsyncTask<Params, Progress, Result> implements Tas
      * information on the order of execution.
      *
      * @see #execute(Object[])
-     * @see #executeOnExecutor(java.util.concurrent.Executor, Object[])
+     * @see #executeOnExecutor(Executor, Object[])
      */
     public static void execute(Runnable runnable) {
         execute(runnable, Priority.DEFAULT);
@@ -321,7 +292,7 @@ public abstract class PriorityAsyncTask<Params, Progress, Result> implements Tas
      * information on the order of execution.
      *
      * @see #execute(Object[])
-     * @see #executeOnExecutor(java.util.concurrent.Executor, Object[])
+     * @see #executeOnExecutor(Executor, Object[])
      */
     public static void execute(Runnable runnable, Priority priority) {
         sDefaultExecutor.execute(new PriorityRunnable(priority, runnable));

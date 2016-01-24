@@ -5,11 +5,43 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/removeAll"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="删除所有任务"/>
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/removeAll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onClick"
+            android:text="删除所有"/>
+
+        <Button
+            android:id="@+id/pauseAll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onClick"
+            android:text="暂停所有"/>
+
+        <Button
+            android:id="@+id/stopAll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onClick"
+            android:text="停止所有"/>
+
+        <Button
+            android:id="@+id/startAll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onClick"
+            android:text="开始所有"/>
+    </LinearLayout>
 
     <ListView
         android:id="@+id/listView"

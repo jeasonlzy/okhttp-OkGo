@@ -16,8 +16,9 @@ import com.lzy.downloadmanager.DownloadListener;
 import com.lzy.downloadmanager.DownloadManager;
 import com.lzy.okhttpdemo.Bean.ApkInfo;
 import com.lzy.okhttpdemo.R;
+import com.lzy.okhttpdemo.utils.ApkUtils;
 
-import java.util.ArrayList;
+import java.io.File;
 
 public class DesActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -64,6 +65,12 @@ public class DesActivity extends AppCompatActivity implements View.OnClickListen
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (downloadInfo != null) refreshUi(downloadInfo);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (downloadInfo != null) downloadInfo.removeListener(listener);
@@ -76,8 +83,6 @@ public class DesActivity extends AppCompatActivity implements View.OnClickListen
         if (v.getId() == download.getId()) {
             if (downloadInfo == null) {
                 DownloadManager.getInstance(this).addTask(apk.getUrl(), listener);
-                downloadInfo = DownloadManager.getInstance(this).getTaskByUrl(apk.getUrl());
-                refreshButton(download, downloadInfo);
                 return;
             }
             switch (downloadInfo.getState()) {
@@ -87,13 +92,16 @@ public class DesActivity extends AppCompatActivity implements View.OnClickListen
                     DownloadManager.getInstance(this).addTask(downloadInfo.getUrl());
                     break;
                 case DownloadManager.DOWNLOADING:
-                    DownloadManager.getInstance(this).pause(downloadInfo.getUrl());
+                    DownloadManager.getInstance(this).pauseTask(downloadInfo.getUrl());
                     break;
                 case DownloadManager.FINISH:
-                    DownloadManager.getInstance(this).restartTask(downloadInfo.getUrl());
+                    if (ApkUtils.isAvailable(this, new File(downloadInfo.getTargetPath()))) {
+                        ApkUtils.uninstall(this, ApkUtils.getPackageName(this, downloadInfo.getTargetPath()));
+                    } else {
+                        ApkUtils.install(this, new File(downloadInfo.getTargetPath()));
+                    }
                     break;
             }
-            refreshButton(download, downloadInfo);
         } else if (v.getId() == remove.getId()) {
             if (downloadInfo == null) {
                 Toast.makeText(this, "请先下载任务", Toast.LENGTH_SHORT).show();
@@ -144,10 +152,6 @@ public class DesActivity extends AppCompatActivity implements View.OnClickListen
         tvProgress.setText((Math.round(downloadInfo.getProgress() * 10000) * 1.0f / 100) + "%");
         pbProgress.setMax((int) downloadInfo.getTotalLength());
         pbProgress.setProgress((int) downloadInfo.getDownloadLength());
-        refreshButton(download, downloadInfo);
-    }
-
-    public Button refreshButton(Button download, DownloadInfo downloadInfo) {
         switch (downloadInfo.getState()) {
             case DownloadManager.NONE:
                 download.setText("下载");
@@ -165,9 +169,12 @@ public class DesActivity extends AppCompatActivity implements View.OnClickListen
                 download.setText("出错");
                 break;
             case DownloadManager.FINISH:
-                download.setText("安装");
+                if (ApkUtils.isAvailable(DesActivity.this, new File(downloadInfo.getTargetPath()))) {
+                    download.setText("卸载");
+                } else {
+                    download.setText("安装");
+                }
                 break;
         }
-        return download;
     }
 }

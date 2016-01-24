@@ -6,7 +6,15 @@ import com.j256.ormlite.table.DatabaseTable;
 import java.util.ArrayList;
 import java.util.List;
 
-/** 文件下载数据模型 */
+/**
+ * ================================================
+ * 作    者：廖子尧
+ * 版    本：1.0
+ * 创建日期：2016/1/19
+ * 描    述：文件的下载任务Bean
+ * 修订历史：
+ * ================================================
+ */
 @DatabaseTable(tableName = "DownloadInfo")
 public class DownloadInfo implements Comparable<DownloadInfo> {
 

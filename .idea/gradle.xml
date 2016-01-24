@@ -12,7 +12,6 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/library_dm" />
             <option value="$PROJECT_DIR$/library_okhttputils" />
-            <option value="$PROJECT_DIR$/library_xutilsdm" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -1,5 +1,6 @@
 package com.lzy.okhttputils.callback;
 
+import android.os.Environment;
 import android.support.annotation.NonNull;
 
 import com.lzy.okhttputils.OkHttpUtils;
@@ -21,10 +22,17 @@ import okhttp3.Response;
  * ================================================
  */
 public abstract class FileCallBack extends AbsCallback<File> {
+
+    public static final String DM_TARGET_FOLDER = File.separator + "download" + File.separator; //下载目标文件夹
+
     /** 目标文件存储的文件夹路径 */
     private String destFileDir;
     /** 目标文件存储的文件名 */
     private String destFileName;
+
+    public FileCallBack(String destFileName) {
+        this(Environment.getExternalStorageDirectory() + DM_TARGET_FOLDER, destFileName);
+    }
 
     /**
      * @param destFileDir  要保存的目标文件夹
@@ -87,4 +95,17 @@ public abstract class FileCallBack extends AbsCallback<File> {
             }
         }
     }
+
+    /** 通过 ‘？’ 和 ‘/’ 判断文件名 */
+    private String getUrlFileName(String url) {
+        int index = url.lastIndexOf('?');
+        String filename;
+        if (index > 1) {
+            filename = url.substring(url.lastIndexOf('/') + 1, index);
+        } else {
+            filename = url.substring(url.lastIndexOf('/') + 1);
+        }
+        return filename;
+    }
+
 }

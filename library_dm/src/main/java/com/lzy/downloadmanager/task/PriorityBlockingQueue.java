@@ -1,10 +1,4 @@
-/*
- * Written by Doug Lea with assistance from members of JCP JSR-166
- * Expert Group and released to the public domain, as explained at
- * http://creativecommons.org/publicdomain/zero/1.0/
- */
-
-package com.lzy.library_xutilsdm;
+package com.lzy.downloadmanager.task;
 
 import java.util.AbstractQueue;
 import java.util.Collection;
@@ -16,7 +10,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class PriorityObjectBlockingQueue<E> extends AbstractQueue<E> implements BlockingQueue<E>, java.io.Serializable {
+/**
+ * ================================================
+ * 作    者：廖子尧
+ * 版    本：1.0
+ * 创建日期：2016/1/19
+ * 描    述：带有优先级的阻塞队列
+ * 修订历史：
+ * ================================================
+ */
+public class PriorityBlockingQueue<E> extends AbstractQueue<E> implements BlockingQueue<E>, java.io.Serializable {
     private static final long serialVersionUID = -6903933977591709194L;
 
     /**
@@ -149,17 +152,17 @@ public class PriorityObjectBlockingQueue<E> extends AbstractQueue<E> implements 
         putLock.unlock();
     }
 
-    public PriorityObjectBlockingQueue() {
+    public PriorityBlockingQueue() {
         this(Integer.MAX_VALUE);
     }
 
-    public PriorityObjectBlockingQueue(int capacity) {
+    public PriorityBlockingQueue(int capacity) {
         if (capacity <= 0) throw new IllegalArgumentException();
         this.capacity = capacity;
         last = head = new Node<E>(null);
     }
 
-    public PriorityObjectBlockingQueue(Collection<? extends E> c) {
+    public PriorityBlockingQueue(Collection<? extends E> c) {
         this(Integer.MAX_VALUE);
         final ReentrantLock putLock = this.putLock;
         putLock.lock(); // Never contended, but necessary for visibility
@@ -593,4 +596,5 @@ public class PriorityObjectBlockingQueue<E> extends AbstractQueue<E> implements 
             }
         }
     }
+
 }

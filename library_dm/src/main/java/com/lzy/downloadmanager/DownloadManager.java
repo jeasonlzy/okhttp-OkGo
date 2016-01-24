@@ -5,6 +5,8 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import com.lzy.downloadmanager.task.ExecutorWithListener;
+import com.lzy.downloadmanager.task.PriorityThreadPool;
 import com.lzy.okhttputils.L;
 
 import java.io.File;
@@ -18,7 +20,7 @@ import java.util.ListIterator;
  * 作    者：廖子尧
  * 版    本：1.0
  * 创建日期：2016/1/19
- * 描    述：下载管理类
+ * 描    述：全局的下载管理类
  * 修订历史：
  * ================================================
  */
@@ -40,7 +42,7 @@ public class DownloadManager {
     private DownloadInfoDao mDownloadDao;           //数据库操作类
     private Context mContext;                       //上下文
     private static DownloadManager mInstance;       //使用单例模式
-    private DownloadThreadPool threadPool;
+    private PriorityThreadPool threadPool;          //下载的线程池
 
     public static DownloadManager getInstance(Context context) {
         if (null == mInstance) {
@@ -57,7 +59,7 @@ public class DownloadManager {
         mContext = context;
         mDownloadInfoList = Collections.synchronizedList(new ArrayList<DownloadInfo>());
         mDownloadUIHandler = new DownloadUIHandler();
-        threadPool = new DownloadThreadPool();
+        threadPool = new PriorityThreadPool();
         //初始化目标Download保存目录
         String folder = Environment.getExternalStorageDirectory() + DM_TARGET_FOLDER;
         if (!new File(folder).exists()) {
@@ -66,6 +68,14 @@ public class DownloadManager {
         mTargetFolder = folder;
         mDownloadDao = new DownloadInfoDao(context);    //构建下载Download的操作类
         mDownloadInfoList = mDownloadDao.queryForAll(); //获取所有任务
+        for (DownloadInfo info : mDownloadInfoList) {
+            //校验数据的有效性，防止下载过程中退出，第二次进入的时候，由于状态没有更新导致的状态错误
+            if (info.getState() == WAITING || info.getState() == DOWNLOADING || info.getState() == PAUSE) {
+                info.setState(NONE);
+                info.setNetworkSpeed(0);
+                mDownloadDao.update(info);
+            }
+        }
     }
 
     /** 设置下载目标目录 */
@@ -77,9 +87,8 @@ public class DownloadManager {
         this.mTargetFolder = targetFolder;
     }
 
-    /** 必须在首次执行前设置，否者无效 ,范围1-5之间 */
-    public void setCorePoolSize(int corePoolSize) {
-        threadPool.setCorePoolSize(corePoolSize);
+    public PriorityThreadPool getThreadPool() {
+        return threadPool;
     }
 
     public DownloadUIHandler getHandler() {
@@ -91,8 +100,10 @@ public class DownloadManager {
     }
 
     public DownloadInfo getTaskByUrl(@NonNull String url) {
-        for (DownloadInfo info : mDownloadInfoList) {
-            if (url.equals(info.getUrl())) return info;
+        for (DownloadInfo downloadInfo : mDownloadInfoList) {
+            if (url.equals(downloadInfo.getUrl())) {
+                return downloadInfo;
+            }
         }
         return null;
     }
@@ -141,79 +152,71 @@ public class DownloadManager {
             mDownloadDao.create(downloadInfo);
             mDownloadInfoList.add(downloadInfo);
         }
+        //无状态，暂停，错误才允许开始下载
         if (downloadInfo.getState() == DownloadManager.NONE //
                 || downloadInfo.getState() == DownloadManager.PAUSE//
                 || downloadInfo.getState() == DownloadManager.ERROR) {
-            downloadInfo.setState(DownloadManager.WAITING);  //先让状态变为等待
-            L.e("addTask  " + downloadInfo.getState());
+            //构造即开始执行
             DownloadTask downloadTask = new DownloadTask(downloadInfo, mContext, isRestart, listener);
             downloadInfo.setTask(downloadTask);
-            threadPool.execute(downloadTask);//将下载任务交给线程池管理
-            //通知监听添加任务
-            List<DownloadListener> listeners = downloadInfo.getListeners();
-            for (DownloadListener l : listeners) {
-                l.onAdd(downloadInfo);
-            }
         } else {
             L.d("任务正在下载或等待中 url:" + url);
         }
     }
 
+    /** 开始所有任务的方法 */
+    public void startAllTask() {
+        for (DownloadInfo downloadInfo : mDownloadInfoList) {
+            addTask(downloadInfo.getUrl());
+        }
+    }
+
     /** 暂停的方法 */
-    public void pause(String url) {
-        L.e("pause");
-        //将状态更改为暂停,已经下载完成的不允许暂停，可以重新下载
-        final DownloadInfo downloadInfo = getTaskByUrl(url);
-        if (downloadInfo != null && downloadInfo.getState() != DownloadManager.FINISH) {
-            downloadInfo.setState(PAUSE);
-            //将暂停的task移除线程池，为其他任务留出资源.
-            //其实不用移除，当任务结束后，自动会被清除掉
-            threadPool.getExecutor().setOnTaskEndListener(new EndThreadPoolExecutor.OnTaskEndListener() {
-                @Override
-                public void onTaskEnd(Runnable r) {
-                    if (r == downloadInfo.getTask()) {
-                        threadPool.remove(downloadInfo.getTask());
-                    }
-                }
-            });
-            L.e("pause " + downloadInfo.getState());
+    public void pauseTask(String url) {
+        DownloadInfo downloadInfo = getTaskByUrl(url);
+        if (downloadInfo == null) return;
+        int state = downloadInfo.getState();
+        //等待和下载中才允许暂停
+        if ((state == DOWNLOADING || state == WAITING) && downloadInfo.getTask() != null) {
+            downloadInfo.getTask().pause();
         }
     }
 
-    /** 暂停全部任务 */
-    public void pauseAll() {
+    /** 暂停全部任务,先暂停没有下载的，再暂停下载中的 */
+    public void pauseAllTask() {
         for (DownloadInfo info : mDownloadInfoList) {
-            pause(info.getUrl());
+            if (info.getState() != DOWNLOADING) pauseTask(info.getUrl());
+        }
+        for (DownloadInfo info : mDownloadInfoList) {
+            if (info.getState() == DOWNLOADING) pauseTask(info.getUrl());
         }
     }
 
-    /** 重新下载 */
-    public void restartTask(final String url) {
-        L.e("restartTask");
-        final DownloadInfo downloadInfo = getTaskByUrl(url);
-        if (downloadInfo == null) {
-            L.d("还有没有下载过，请先下载 url:" + url);
-            return;
+    /** 停止的方法 */
+    public void stopTask(final String url) {
+        DownloadInfo downloadInfo = getTaskByUrl(url);
+        if (downloadInfo == null) return;
+        //无状态和完成状态，不允许停止
+        if ((downloadInfo.getState() != NONE && downloadInfo.getState() != FINISH) && downloadInfo.getTask() != null) {
+            downloadInfo.getTask().stop();
         }
-        pause(url);  //先暂停，等任务结束后再开始下载
-        threadPool.getExecutor().setOnTaskEndListener(new EndThreadPoolExecutor.OnTaskEndListener() {
-            @Override
-            public void onTaskEnd(Runnable r) {
-                if (r == downloadInfo.getTask()) {
-                    addTask(url, null, true); //此时监听给空，表示会使用之前的监听，true表示重新下载，会删除临时文件
-                }
-            }
-        });
+    }
+
+    /** 停止全部任务,先停止没有下载的，再停止下载中的 */
+    public void stopAllTask() {
+        for (DownloadInfo info : mDownloadInfoList) {
+            if (info.getState() != DOWNLOADING) stopTask(info.getUrl());
+        }
+        for (DownloadInfo info : mDownloadInfoList) {
+            if (info.getState() == DOWNLOADING) stopTask(info.getUrl());
+        }
     }
 
     /** 删除一个任务 */
-    public void removeTask(String url) {
-        DownloadInfo downloadInfo = getTaskByUrl(url);
-        if (downloadInfo == null) {
-            L.d("还有没有下载过，请先下载 url:" + url);
-            return;
-        }
-        pause(url);            //暂停任务
+    public void removeTask(final String url) {
+        final DownloadInfo downloadInfo = getTaskByUrl(url);
+        if (downloadInfo == null) return;
+        pauseTask(url);        //暂停任务
         removeTaskByUrl(url);  //移除任务
         deleteFile(downloadInfo.getTargetPath()); //删除文件
         mDownloadDao.delete(url); //清除数据库
@@ -228,6 +231,39 @@ public class DownloadManager {
         }
         for (String url : urls) {
             removeTask(url);
+        }
+    }
+
+    /** 重新下载 */
+    public void restartTask(final String url) {
+        final DownloadInfo downloadInfo = getTaskByUrl(url);
+        if (downloadInfo == null) return;
+        if (downloadInfo.getState() == DOWNLOADING) {
+            //如果正在下载中，先暂停，等任务结束后再添加到队列开始下载
+            pauseTask(url);
+            threadPool.getExecutor().addOnTaskEndListener(new ExecutorWithListener.OnTaskEndListener() {
+                @Override
+                public void onTaskEnd(Runnable r) {
+                    if (r == downloadInfo.getTask().getRunnable()) {
+                        //因为该监听是全局监听，每次任务被移除都会回调，所以以下方法执行一次后，必须移除，否者会反复调用
+                        threadPool.getExecutor().removeOnTaskEndListener(this);
+                        addTask(url, null, true); //此时监听给空，表示会使用之前的监听，true表示重新下载，会删除临时文件
+                    }
+                }
+            });
+        } else if (downloadInfo.getState() != NONE) {
+            pauseTask(url);
+            startTask(url);
+        }
+    }
+
+    /** 重新开始下载任务 */
+    private void startTask(@NonNull String url) {
+        DownloadInfo downloadInfo = getTaskByUrl(url);
+        if (downloadInfo == null) return;
+        if (downloadInfo.getState() != NONE && downloadInfo.getState() != DOWNLOADING) {
+            DownloadTask downloadTask = new DownloadTask(downloadInfo, mContext, true, null);
+            downloadInfo.setTask(downloadTask);
         }
     }
 

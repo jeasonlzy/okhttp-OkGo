@@ -7,6 +7,15 @@ import com.j256.ormlite.dao.Dao;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * ================================================
+ * 作    者：廖子尧
+ * 版    本：1.0
+ * 创建日期：2016/1/19
+ * 描    述：下载数据库的操作类
+ * 修订历史：
+ * ================================================
+ */
 public class DownloadInfoDao {
 
     private Dao<DownloadInfo, Integer> dao;

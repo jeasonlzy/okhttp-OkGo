@@ -1,9 +1,11 @@
 package com.lzy.downloadmanager;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Message;
 import android.text.TextUtils;
 
+import com.lzy.downloadmanager.task.PriorityAsyncTask;
 import com.lzy.okhttputils.L;
 import com.lzy.okhttputils.OkHttpUtils;
 
@@ -22,20 +24,21 @@ import okhttp3.Response;
  * 作    者：廖子尧
  * 版    本：1.0
  * 创建日期：2016/1/19
- * 描    述：
+ * 描    述：文件的下载任务类
  * 修订历史：
  * ================================================
  */
-public class DownloadTask implements Runnable {
+public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, DownloadInfo> {
 
-    private static final int BUFFER_SIZE = 1024 * 8;
+    private static final int BUFFER_SIZE = 1024 * 8; //读写缓存大小
 
-    private DownloadInfoDao downloadDao;
-    private DownloadUIHandler mDownloadUIHandler;
-    private DownloadInfo mDownloadInfo;
-    private long mPreviousTime;
-    private boolean isRestartTask;
-    private List<DownloadListener> listeners;
+    private DownloadInfoDao downloadDao;             //数据库操作类
+    private DownloadUIHandler mDownloadUIHandler;    //下载UI回调
+    private DownloadInfo mDownloadInfo;              //当前任务的信息
+    private long mPreviousTime;                      //上次更新的时间，用于计算下载速度
+    private boolean isRestartTask;                   //是否重新下载的标识位
+    private List<DownloadListener> listeners;        //当前任务的监听
+    private boolean isPause;                         //当前任务是暂停还是停止， true 暂停， false 停止
 
     public DownloadTask(DownloadInfo downloadInfo, Context context, boolean isRestart, DownloadListener listener) {
         listeners = downloadInfo.getListeners();
@@ -44,12 +47,72 @@ public class DownloadTask implements Runnable {
         isRestartTask = isRestart;
         mDownloadUIHandler = DownloadManager.getInstance(context).getHandler();
         downloadDao = new DownloadInfoDao(context);
+        //将当前任务在定义的线程池中执行
+        executeOnExecutor(DownloadManager.getInstance(context).getThreadPool().getExecutor());
     }
 
+    /** 暂停的方法 */
+    public void pause() {
+        if (mDownloadInfo.getState() == DownloadManager.WAITING) {
+            //如果是等待状态的,因为该状态取消不会回调任何方法，需要手动触发
+            mDownloadInfo.setNetworkSpeed(0);
+            mDownloadInfo.setState(DownloadManager.PAUSE);
+            postMessage(null, null);
+        } else {
+            isPause = true;
+        }
+        super.cancel(false);
+    }
+
+    /** 停止的方法 */
+    public void stop() {
+        if (mDownloadInfo.getState() == DownloadManager.PAUSE || //
+                mDownloadInfo.getState() == DownloadManager.ERROR ||//
+                mDownloadInfo.getState() == DownloadManager.WAITING) {
+            //如果状态是暂停或错误的,停止不会回调任何方法，需要手动触发
+            mDownloadInfo.setNetworkSpeed(0);
+            mDownloadInfo.setState(DownloadManager.NONE);
+            postMessage(null, null);
+        } else {
+            isPause = false;
+        }
+        super.cancel(false);
+    }
+
+    /** 每个任务进队列的时候，都会执行该方法 */
     @Override
-    public void run() {
-        L.e("run");
-        //一旦run方法执行，意味着开始下载了
+    protected void onPreExecute() {
+        L.e("onPreExecute:" + mDownloadInfo.getFileName());
+
+        //添加成功的回调
+        for (DownloadListener l : listeners) {
+            l.onAdd(mDownloadInfo);
+        }
+
+        //如果是重新下载，需要删除临时文件
+        if (isRestartTask) {
+            deleteFile(mDownloadInfo.getTargetPath());
+            mDownloadInfo.setProgress(0);
+            mDownloadInfo.setDownloadLength(0);
+            mDownloadInfo.setTotalLength(0);
+            isRestartTask = false;
+        }
+
+        mDownloadInfo.setNetworkSpeed(0);
+        mDownloadInfo.setState(DownloadManager.WAITING);
+        postMessage(null, null);
+    }
+
+    /** 如果调用了Cancel，就不会执行该方法，所以任务结束的回调不放在这里面 */
+    @Override
+    protected void onPostExecute(DownloadInfo downloadInfo) {
+    }
+
+    /** 一旦该方法执行，意味着开始下载了 */
+    @Override
+    protected DownloadInfo doInBackground(Void... params) {
+        if (isCancelled()) return mDownloadInfo;
+        L.e("doInBackground:" + mDownloadInfo.getFileName());
         mPreviousTime = System.currentTimeMillis();
         mDownloadInfo.setNetworkSpeed(0);
         mDownloadInfo.setState(DownloadManager.DOWNLOADING);
@@ -67,13 +130,6 @@ public class DownloadTask implements Runnable {
             mDownloadInfo.setTargetPath(file.getAbsolutePath());
         }
 
-        //如果是重新下载，需要删除临时文件
-        if (isRestartTask) {
-            deleteFile(mDownloadInfo.getTargetPath());
-            mDownloadInfo.setProgress(0);
-            mDownloadInfo.setDownloadLength(0);
-            mDownloadInfo.setTotalLength(0);
-        }
         //检查手机上文件的有效性
         File file = new File(mDownloadInfo.getTargetPath());
         long startPos;
@@ -81,7 +137,7 @@ public class DownloadTask implements Runnable {
             mDownloadInfo.setNetworkSpeed(0);
             mDownloadInfo.setState(DownloadManager.ERROR);
             postMessage("断点文件异常，需要删除后重新下载", null);
-            return;
+            return mDownloadInfo;
         } else {
             //断点下载的情况
             startPos = mDownloadInfo.getDownloadLength();
@@ -91,14 +147,14 @@ public class DownloadTask implements Runnable {
             mDownloadInfo.setNetworkSpeed(0);
             mDownloadInfo.setState(DownloadManager.ERROR);
             postMessage("断点文件异常，需要删除后重新下载", null);
-            return;
+            return mDownloadInfo;
         }
         if (startPos == mDownloadInfo.getTotalLength() && startPos > 0) {
             mDownloadInfo.setProgress(1.0f);
             mDownloadInfo.setNetworkSpeed(0);
             mDownloadInfo.setState(DownloadManager.FINISH);
             postMessage(null, null);
-            return;
+            return mDownloadInfo;
         }
         //设置断点写文件
         ProgressRandomAccessFile randomAccessFile;
@@ -109,7 +165,7 @@ public class DownloadTask implements Runnable {
             mDownloadInfo.setNetworkSpeed(0);
             mDownloadInfo.setState(DownloadManager.ERROR);
             postMessage("没有找到已存在的断点文件", e);
-            return;
+            return mDownloadInfo;
         }
         L.e("startPos:" + startPos + "  path:" + mDownloadInfo.getTargetPath());
 
@@ -122,7 +178,7 @@ public class DownloadTask implements Runnable {
             mDownloadInfo.setNetworkSpeed(0);
             mDownloadInfo.setState(DownloadManager.ERROR);
             postMessage("网络异常", e);
-            return;
+            return mDownloadInfo;
         }
         //获取流对象，准备进行读写文件
         long totalLength = response.body().contentLength();
@@ -138,24 +194,26 @@ public class DownloadTask implements Runnable {
             mDownloadInfo.setNetworkSpeed(0);
             mDownloadInfo.setState(DownloadManager.ERROR);
             postMessage("文件读写异常", e);
-            return;
+            return mDownloadInfo;
         }
 
         //循环结束走到这里，a.下载完成     b.暂停      c.判断是否下载出错
-        if (file.length() == mDownloadInfo.getTotalLength() && mDownloadInfo.getState() == DownloadManager.DOWNLOADING) {
-            mDownloadInfo.setNetworkSpeed(0);
-            mDownloadInfo.setState(DownloadManager.FINISH); //下载完成
-            postMessage(null, null);
-        } else if (mDownloadInfo.getState() == DownloadManager.PAUSE) {
+        if (isCancelled()) {
             L.e("state: 暂停" + mDownloadInfo.getState());
             mDownloadInfo.setNetworkSpeed(0);
+            if (isPause) mDownloadInfo.setState(DownloadManager.PAUSE); //暂停
+            else mDownloadInfo.setState(DownloadManager.NONE);          //停止
+            postMessage(null, null);
+        } else if (file.length() == mDownloadInfo.getTotalLength() && mDownloadInfo.getState() == DownloadManager.DOWNLOADING) {
+            mDownloadInfo.setNetworkSpeed(0);
+            mDownloadInfo.setState(DownloadManager.FINISH); //下载完成
             postMessage(null, null);
         } else if (file.length() != mDownloadInfo.getDownloadLength()) {
             mDownloadInfo.setNetworkSpeed(0);
             mDownloadInfo.setState(DownloadManager.ERROR); //由于不明原因，文件保存有误
             postMessage("未知原因", null);
         }
-        L.e("state:" + mDownloadInfo.getState());
+        return mDownloadInfo;
     }
 
     private void postMessage(String errorMsg, Exception e) {
@@ -196,7 +254,7 @@ public class DownloadTask implements Runnable {
     }
 
     /** 执行文件下载 */
-    public int download(InputStream input, RandomAccessFile out) throws IOException {
+    private int download(InputStream input, RandomAccessFile out) throws IOException {
         if (input == null || out == null) return -1;
 
         byte[] buffer = new byte[BUFFER_SIZE];
@@ -205,7 +263,7 @@ public class DownloadTask implements Runnable {
         int len;
         try {
             out.seek(out.length());
-            while ((len = in.read(buffer, 0, BUFFER_SIZE)) != -1 && mDownloadInfo.getState() == DownloadManager.DOWNLOADING) {
+            while ((len = in.read(buffer, 0, BUFFER_SIZE)) != -1 && !isCancelled()) {
                 out.write(buffer, 0, len);
                 downloadSize += len;
             }
@@ -258,7 +316,7 @@ public class DownloadTask implements Runnable {
             //每200毫秒刷新一次数据
             if (curTime - lastRefreshUiTime >= 200 || progress == 1.0f) {
                 postMessage(null, null);
-                L.e(mDownloadInfo.getDownloadLength() + " " + mDownloadInfo.getTotalLength() + " " + mDownloadInfo.getProgress());
+//                L.e(mDownloadInfo.getDownloadLength() + " " + mDownloadInfo.getTotalLength() + " " + mDownloadInfo.getProgress());
                 lastRefreshUiTime = System.currentTimeMillis();
             }
         }

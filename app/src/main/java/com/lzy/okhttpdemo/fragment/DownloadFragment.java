@@ -28,6 +28,7 @@ import java.util.ArrayList;
 public class DownloadFragment extends Fragment {
 
     private ArrayList<ApkInfo> apks;
+    private MyAdapter adapter;
 
     @Nullable
     @Override
@@ -35,7 +36,8 @@ public class DownloadFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_download, container, false);
         initData();
         ListView listView = (ListView) view.findViewById(R.id.listView);
-        listView.setAdapter(new MyAdapter());
+        adapter = new MyAdapter();
+        listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -51,6 +53,24 @@ public class DownloadFragment extends Fragment {
             }
         });
         return view;
+    }
+
+    /**
+     * 当前 Fragment 显示的时候回调
+     */
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) adapter.notifyDataSetChanged();
+    }
+
+    /**
+     * 当前Activity显示的回调
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        adapter.notifyDataSetChanged();
     }
 
     private class MyAdapter extends BaseAdapter {
@@ -77,7 +97,14 @@ public class DownloadFragment extends Fragment {
             final ApkInfo apk = getItem(position);
             TextView name = (TextView) convertView.findViewById(R.id.name);
             ImageView icon = (ImageView) convertView.findViewById(R.id.icon);
-            Button download = (Button) convertView.findViewById(R.id.download);
+            final Button download = (Button) convertView.findViewById(R.id.download);
+            if (DownloadManager.getInstance(getContext()).getTaskByUrl(apk.getUrl()) != null) {
+                download.setText("已在队列");
+                download.setEnabled(false);
+            } else {
+                download.setText("下载");
+                download.setEnabled(true);
+            }
             name.setText(apk.getName());
             Glide.with(getContext()).load(apk.getIconUrl()).error(R.mipmap.ic_launcher).into(icon);
             download.setOnClickListener(new View.OnClickListener() {
@@ -88,6 +115,8 @@ public class DownloadFragment extends Fragment {
                     } else {
                         DownloadManager.getInstance(getContext()).addTask(apk.getUrl(), null);
                         AppCacheUtils.getInstance(getContext()).put(apk.getUrl(), apk);
+                        download.setText("已在队列");
+                        download.setEnabled(false);
                     }
                 }
             });
