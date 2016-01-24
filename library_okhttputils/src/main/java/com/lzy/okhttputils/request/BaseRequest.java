@@ -46,6 +46,13 @@ public abstract class BaseRequest<R extends BaseRequest> {
 
     public BaseRequest(String url) {
         this.url = url;
+        //添加公共请求参数
+        if (OkHttpUtils.getInstance().getCommonParams() != null) {
+            params.put(OkHttpUtils.getInstance().getCommonParams());
+        }
+        if (OkHttpUtils.getInstance().getCommonHeader() != null) {
+            headers.put(OkHttpUtils.getInstance().getCommonHeader());
+        }
     }
 
     public R url(@NonNull String url) {
@@ -184,16 +191,11 @@ public abstract class BaseRequest<R extends BaseRequest> {
     }
 
     /** 阻塞方法，同步请求执行 */
-    public Response execute() {
-        try {
-            RequestBody requestBody = generateRequestBody();
-            final Request request = generateRequest(wrapRequestBody(requestBody, null));
-            Call call = generateCall(request);
-            return call.execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public Response execute() throws IOException {
+        RequestBody requestBody = generateRequestBody();
+        final Request request = generateRequest(wrapRequestBody(requestBody, null));
+        Call call = generateCall(request);
+        return call.execute();
     }
 
     /** 非阻塞方法，异步请求，但是回调在子线程中执行 */

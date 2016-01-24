@@ -36,7 +36,7 @@ public class GApp extends Application {
     public void onCreate() {
         super.onCreate();
 
-        System.setProperty("http.proxyHost", "192.168.1.111");
+        System.setProperty("http.proxyHost", "192.168.1.101");
         System.setProperty("http.proxyPort", "8888");
 
         OkHttpUtils.debug(true, "MyOkHttp");

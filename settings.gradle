@@ -1,1 +1,1 @@
-include ':app', ':library_okhttputils'
+include ':app', ':library_okhttputils', ':library_dm', ':library_xutilsdm'

@@ -1,20 +1,21 @@
-package com.lzy.okhttpdemo;
+package com.lzy.okhttpdemo.fragment;
 
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.lzy.okhttpdemo.Bean.Bean;
+import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.callback.MyBeanCallBack;
 import com.lzy.okhttpdemo.callback.MyFileCallBack;
 import com.lzy.okhttputils.OkHttpUtils;
-import com.lzy.okhttputils.callback.AbsCallback;
-import com.lzy.okhttputils.model.RequestParams;
-import com.lzy.okhttputils.request.BaseRequest;
-import com.lzy.okhttputils.request.GetRequest;
 import com.lzy.okhttputils.request.PostRequest;
 
 import java.io.File;
@@ -32,15 +33,14 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class NormalFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private ArrayList<String> strings;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_normal, container, false);
         strings = new ArrayList<>();
         strings.add("get");
         strings.add("post");
@@ -52,20 +52,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         strings.add("uploadFile");
         strings.add("downloadFile");
 
-        ListView listView = (ListView) findViewById(R.id.listView);
-        listView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, strings));
+        ListView listView = (ListView) view.findViewById(R.id.listView);
+        listView.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, strings));
         listView.setOnItemClickListener(this);
-    }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        OkHttpUtils.getInstance().cancelTag(this);
+        return view;
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Class<? extends MainActivity> clazz = this.getClass();
+        Class<? extends NormalFragment> clazz = this.getClass();
         Method[] methods = clazz.getDeclaredMethods();
         for (Method method : methods) {
             if (method.getName().equals(strings.get(position))) {

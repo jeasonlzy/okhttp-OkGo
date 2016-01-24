@@ -1,4 +1,4 @@
-package com.lzy.okhttpdemo;
+package com.lzy.okhttpdemo.Bean;
 
 /**
  * ================================================

@@ -4,7 +4,9 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/OkHttpDemo.iml" filepath="$PROJECT_DIR$/OkHttpDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library_dm/library_dm.iml" filepath="$PROJECT_DIR$/library_dm/library_dm.iml" />
       <module fileurl="file://$PROJECT_DIR$/library_okhttputils/library_okhttputils.iml" filepath="$PROJECT_DIR$/library_okhttputils/library_okhttputils.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library_xutilsdm/library_xutilsdm.iml" filepath="$PROJECT_DIR$/library_xutilsdm/library_xutilsdm.iml" />
     </modules>
   </component>
 </project>

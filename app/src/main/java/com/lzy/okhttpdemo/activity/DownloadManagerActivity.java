@@ -1,0 +1,224 @@
+package com.lzy.okhttpdemo.activity;
+
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.text.format.Formatter;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.lzy.downloadmanager.DownloadInfo;
+import com.lzy.downloadmanager.DownloadListener;
+import com.lzy.downloadmanager.DownloadManager;
+import com.lzy.okhttpdemo.Bean.ApkInfo;
+import com.lzy.okhttpdemo.R;
+import com.lzy.okhttpdemo.utils.AppCacheUtils;
+
+import java.util.List;
+
+public class DownloadManagerActivity extends AppCompatActivity {
+
+    private List<DownloadInfo> allTask;
+    private MyAdapter adapter;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_dm);
+
+        allTask = DownloadManager.getInstance(this).getAllTask();
+        ListView listView = (ListView) findViewById(R.id.listView);
+        adapter = new MyAdapter();
+        listView.setAdapter(adapter);
+
+        findViewById(R.id.removeAll).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DownloadManager.getInstance(DownloadManagerActivity.this).removeAllTask();
+                adapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    private class MyAdapter extends BaseAdapter {
+        @Override
+        public int getCount() {
+            return allTask.size();
+        }
+
+        @Override
+        public DownloadInfo getItem(int position) {
+            return allTask.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            DownloadInfo downloadInfo = getItem(position);
+            ViewHolder holder;
+            if (convertView == null) {
+                convertView = View.inflate(DownloadManagerActivity.this, R.layout.item_dm, null);
+                //这里表示数据绑定条目
+                holder = new ViewHolder(convertView, downloadInfo);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+            holder.refresh(downloadInfo);
+
+            //对于非进度更新的ui放在这里，对于实时更新的进度ui，放在holder中
+            ApkInfo apk = (ApkInfo) AppCacheUtils.getInstance(DownloadManagerActivity.this).getObject(downloadInfo.getUrl());
+            if (apk != null) {
+                Glide.with(DownloadManagerActivity.this).load(apk.getIconUrl()).error(R.mipmap.ic_launcher).into(holder.icon);
+                holder.name.setText(apk.getName());
+            } else {
+                holder.name.setText(downloadInfo.getFileName());
+            }
+            holder.download.setOnClickListener(holder);
+            holder.remove.setOnClickListener(holder);
+            holder.restart.setOnClickListener(holder);
+
+            DownloadListener downloadListener = new MyDownloadListener();
+            downloadListener.setUserTag(holder);
+            downloadInfo.addListener(downloadListener);
+            return convertView;
+        }
+    }
+
+    private class ViewHolder implements View.OnClickListener {
+        private DownloadInfo downloadInfo;
+        private ImageView icon;
+        private TextView name;
+        private TextView downloadSize;
+        private TextView tvProgress;
+        private TextView netSpeed;
+        private ProgressBar pbProgress;
+        private Button download;
+        private Button remove;
+        private Button restart;
+
+        public ViewHolder(View convertView, DownloadInfo downloadInfo) {
+            this.downloadInfo = downloadInfo;
+            icon = (ImageView) convertView.findViewById(R.id.icon);
+            name = (TextView) convertView.findViewById(R.id.name);
+            downloadSize = (TextView) convertView.findViewById(R.id.downloadSize);
+            tvProgress = (TextView) convertView.findViewById(R.id.tvProgress);
+            netSpeed = (TextView) convertView.findViewById(R.id.netSpeed);
+            pbProgress = (ProgressBar) convertView.findViewById(R.id.pbProgress);
+            download = (Button) convertView.findViewById(R.id.start);
+            remove = (Button) convertView.findViewById(R.id.remove);
+            restart = (Button) convertView.findViewById(R.id.restart);
+        }
+
+        public void refresh(DownloadInfo downloadInfo) {
+            this.downloadInfo = downloadInfo;
+            refresh();
+        }
+
+        //对于实时更新的进度ui，放在这里，例如进度的显示，而图片加载等，不要放在这，会不停的重复回调
+        //也会导致内存泄漏
+        private void refresh() {
+            String downloadLength = Formatter.formatFileSize(DownloadManagerActivity.this, downloadInfo.getDownloadLength());
+            String totalLength = Formatter.formatFileSize(DownloadManagerActivity.this, downloadInfo.getTotalLength());
+            downloadSize.setText(downloadLength + "/" + totalLength);
+            if (downloadInfo.getState() == DownloadManager.PAUSE) {
+                netSpeed.setText("暂停中");
+            } else if (downloadInfo.getState() == DownloadManager.ERROR) {
+                netSpeed.setText("下载出错");
+            } else if (downloadInfo.getState() == DownloadManager.WAITING) {
+                netSpeed.setText("等待中");
+            } else if (downloadInfo.getState() == DownloadManager.FINISH) {
+                netSpeed.setText("下载完成");
+            } else if (downloadInfo.getState() == DownloadManager.DOWNLOADING) {
+                String networkSpeed = Formatter.formatFileSize(DownloadManagerActivity.this, downloadInfo.getNetworkSpeed());
+                netSpeed.setText(networkSpeed + "/s");
+            }
+            tvProgress.setText((Math.round(downloadInfo.getProgress() * 10000) * 1.0f / 100) + "%");
+            pbProgress.setMax((int) downloadInfo.getTotalLength());
+            pbProgress.setProgress((int) downloadInfo.getDownloadLength());
+            refreshButton(download, downloadInfo);
+        }
+
+        public Button refreshButton(Button download, DownloadInfo downloadInfo) {
+            switch (downloadInfo.getState()) {
+                case DownloadManager.NONE:
+                    download.setText("下载");
+                    break;
+                case DownloadManager.DOWNLOADING:
+                    download.setText("暂停");
+                    break;
+                case DownloadManager.PAUSE:
+                    download.setText("继续");
+                    break;
+                case DownloadManager.WAITING:
+                    download.setText("等待");
+                    break;
+                case DownloadManager.ERROR:
+                    download.setText("出错");
+                    break;
+                case DownloadManager.FINISH:
+                    download.setText("安装");
+                    break;
+            }
+            return download;
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (v.getId() == download.getId()) {
+                switch (downloadInfo.getState()) {
+                    case DownloadManager.PAUSE:
+                    case DownloadManager.NONE:
+                    case DownloadManager.ERROR:
+                        DownloadManager.getInstance(DownloadManagerActivity.this).addTask(downloadInfo.getUrl());
+                        break;
+                    case DownloadManager.DOWNLOADING:
+                        DownloadManager.getInstance(DownloadManagerActivity.this).pause(downloadInfo.getUrl());
+                        break;
+                    case DownloadManager.FINISH:
+                        DownloadManager.getInstance(DownloadManagerActivity.this).restartTask(downloadInfo.getUrl());
+                        break;
+                }
+                refresh();
+//                refreshButton(download, downloadInfo);
+            } else if (v.getId() == remove.getId()) {
+                DownloadManager.getInstance(DownloadManagerActivity.this).removeTask(downloadInfo.getUrl());
+                adapter.notifyDataSetChanged();
+            } else if (v.getId() == restart.getId()) {
+                DownloadManager.getInstance(DownloadManagerActivity.this).restartTask(downloadInfo.getUrl());
+            }
+        }
+    }
+
+    private class MyDownloadListener extends DownloadListener {
+
+        @Override
+        public void onProgress(DownloadInfo downloadInfo) {
+            if (getUserTag() == null) return;
+            ViewHolder holder = (ViewHolder) getUserTag();
+            holder.refresh();  //这里不能使用传递进来的 DownloadInfo，否者会出现条目错乱的问题
+        }
+
+        @Override
+        public void onFinish(DownloadInfo downloadInfo) {
+            Toast.makeText(DownloadManagerActivity.this, "下载完成:" + downloadInfo.getTargetPath(), Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onError(DownloadInfo downloadInfo, String errorMsg, Exception e) {
+            if (errorMsg != null)
+                Toast.makeText(DownloadManagerActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
+        }
+    }
+}

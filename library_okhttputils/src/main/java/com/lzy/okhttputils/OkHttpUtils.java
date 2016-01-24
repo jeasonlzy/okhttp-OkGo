@@ -5,6 +5,8 @@ import android.os.Looper;
 
 import com.lzy.okhttputils.cookie.SimpleCookieJar;
 import com.lzy.okhttputils.https.HttpsUtils;
+import com.lzy.okhttputils.model.RequestHeaders;
+import com.lzy.okhttputils.model.RequestParams;
 import com.lzy.okhttputils.request.DeleteRequest;
 import com.lzy.okhttputils.request.GetRequest;
 import com.lzy.okhttputils.request.HeadRequest;
@@ -13,6 +15,7 @@ import com.lzy.okhttputils.request.PostRequest;
 import com.lzy.okhttputils.request.PutRequest;
 
 import java.io.InputStream;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
@@ -43,6 +46,8 @@ public class OkHttpUtils {
     private static OkHttpUtils mInstance;                //单例
     private Handler mDelivery;                           //用于在主线程执行的调度器
     private OkHttpClient.Builder okHttpClientBuilder;    //ok请求的客户端
+    private RequestParams mCommonParams;                 //全局公共请求参数
+    private RequestHeaders mCommonHeader;                //全局公共请求头
     private HostnameVerifier hostnameVerifier;
 
     private OkHttpUtils() {
@@ -159,6 +164,24 @@ public class OkHttpUtils {
     public OkHttpUtils setConnectTimeout(int connectTimeout) {
         okHttpClientBuilder.connectTimeout(connectTimeout, TimeUnit.MILLISECONDS);
         return this;
+    }
+
+    /** 全局公共请求参数 */
+    public RequestParams getCommonParams() {
+        return mCommonParams;
+    }
+
+    public void setCommonParams(RequestParams commonParams) {
+        this.mCommonParams = commonParams;
+    }
+
+    /** 全局公共请求头 */
+    public RequestHeaders getCommonHeader() {
+        return mCommonHeader;
+    }
+
+    public void setCommonHeader(RequestHeaders commonHeader) {
+        this.mCommonHeader = commonHeader;
     }
 
     /** 根据Tag取消请求 */
