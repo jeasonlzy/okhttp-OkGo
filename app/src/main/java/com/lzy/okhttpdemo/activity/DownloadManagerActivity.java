@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.lzy.downloadmanager.DownloadInfo;
 import com.lzy.downloadmanager.DownloadListener;
 import com.lzy.downloadmanager.DownloadManager;
+import com.lzy.downloadmanager.DownloadService;
 import com.lzy.okhttpdemo.Bean.ApkInfo;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.utils.ApkUtils;
@@ -29,13 +30,15 @@ public class DownloadManagerActivity extends AppCompatActivity implements View.O
 
     private List<DownloadInfo> allTask;
     private MyAdapter adapter;
+    private DownloadManager downloadManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dm);
 
-        allTask = DownloadManager.getInstance(this).getAllTask();
+        downloadManager = DownloadService.getDownloadManager(this);
+        allTask = downloadManager.getAllTask();
         ListView listView = (ListView) findViewById(R.id.listView);
         adapter = new MyAdapter();
         listView.setAdapter(adapter);
@@ -50,17 +53,17 @@ public class DownloadManagerActivity extends AppCompatActivity implements View.O
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.removeAll:
-                DownloadManager.getInstance(DownloadManagerActivity.this).removeAllTask();
+                downloadManager.removeAllTask();
                 adapter.notifyDataSetChanged();  //移除的时候需要调用
                 break;
             case R.id.pauseAll:
-                DownloadManager.getInstance(DownloadManagerActivity.this).pauseAllTask();
+                downloadManager.pauseAllTask();
                 break;
             case R.id.stopAll:
-                DownloadManager.getInstance(DownloadManagerActivity.this).stopAllTask();
+                downloadManager.stopAllTask();
                 break;
             case R.id.startAll:
-                DownloadManager.getInstance(DownloadManagerActivity.this).startAllTask();
+                downloadManager.startAllTask();
                 break;
         }
     }
@@ -186,10 +189,10 @@ public class DownloadManagerActivity extends AppCompatActivity implements View.O
                     case DownloadManager.PAUSE:
                     case DownloadManager.NONE:
                     case DownloadManager.ERROR:
-                        DownloadManager.getInstance(DownloadManagerActivity.this).addTask(downloadInfo.getUrl());
+                        downloadManager.addTask(downloadInfo.getUrl());
                         break;
                     case DownloadManager.DOWNLOADING:
-                        DownloadManager.getInstance(DownloadManagerActivity.this).pauseTask(downloadInfo.getUrl());
+                        downloadManager.pauseTask(downloadInfo.getUrl());
                         break;
                     case DownloadManager.FINISH:
                         if (ApkUtils.isAvailable(DownloadManagerActivity.this, new File(downloadInfo.getTargetPath()))) {
@@ -201,10 +204,10 @@ public class DownloadManagerActivity extends AppCompatActivity implements View.O
                 }
                 refresh();
             } else if (v.getId() == remove.getId()) {
-                DownloadManager.getInstance(DownloadManagerActivity.this).removeTask(downloadInfo.getUrl());
+                downloadManager.removeTask(downloadInfo.getUrl());
                 adapter.notifyDataSetChanged();
             } else if (v.getId() == restart.getId()) {
-                DownloadManager.getInstance(DownloadManagerActivity.this).restartTask(downloadInfo.getUrl());
+                downloadManager.restartTask(downloadInfo.getUrl());
             }
         }
     }

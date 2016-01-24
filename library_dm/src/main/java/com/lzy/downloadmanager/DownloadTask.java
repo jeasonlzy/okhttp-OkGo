@@ -1,7 +1,6 @@
 package com.lzy.downloadmanager;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Message;
 import android.text.TextUtils;
 

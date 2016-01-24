@@ -12,11 +12,13 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.lzy.downloadmanager.DownloadManager;
+import com.lzy.downloadmanager.DownloadService;
 import com.lzy.okhttpdemo.Bean.ApkInfo;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.activity.DesActivity;
@@ -29,12 +31,38 @@ public class DownloadFragment extends Fragment {
 
     private ArrayList<ApkInfo> apks;
     private MyAdapter adapter;
-
+    private DownloadManager downloadManager;
+    
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_download, container, false);
         initData();
+    
+        downloadManager = DownloadService.getDownloadManager(getContext());
+        
+        TextView targetFolder = (TextView) view.findViewById(R.id.targetFolder);
+        targetFolder.setText("下载路径: " + downloadManager.getTargetFolder());
+        final TextView tvCorePoolSize = (TextView) view.findViewById(R.id.tvCorePoolSize);
+        SeekBar sbCorePoolSize = (SeekBar) view.findViewById(R.id.sbCorePoolSize);
+        sbCorePoolSize.setMax(5);
+        sbCorePoolSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                downloadManager.getThreadPool().setCorePoolSize(progress);
+                tvCorePoolSize.setText(String.valueOf(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+        sbCorePoolSize.setProgress(3);
+
         ListView listView = (ListView) view.findViewById(R.id.listView);
         adapter = new MyAdapter();
         listView.setAdapter(adapter);
@@ -98,7 +126,7 @@ public class DownloadFragment extends Fragment {
             TextView name = (TextView) convertView.findViewById(R.id.name);
             ImageView icon = (ImageView) convertView.findViewById(R.id.icon);
             final Button download = (Button) convertView.findViewById(R.id.download);
-            if (DownloadManager.getInstance(getContext()).getTaskByUrl(apk.getUrl()) != null) {
+            if (downloadManager.getTaskByUrl(apk.getUrl()) != null) {
                 download.setText("已在队列");
                 download.setEnabled(false);
             } else {
@@ -110,10 +138,10 @@ public class DownloadFragment extends Fragment {
             download.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (DownloadManager.getInstance(getContext()).getTaskByUrl(apk.getUrl()) != null) {
+                    if (downloadManager.getTaskByUrl(apk.getUrl()) != null) {
                         Toast.makeText(getContext(), "任务已经在下载列表中", Toast.LENGTH_SHORT).show();
                     } else {
-                        DownloadManager.getInstance(getContext()).addTask(apk.getUrl(), null);
+                        downloadManager.addTask(apk.getUrl(), null);
                         AppCacheUtils.getInstance(getContext()).put(apk.getUrl(), apk);
                         download.setText("已在队列");
                         download.setEnabled(false);

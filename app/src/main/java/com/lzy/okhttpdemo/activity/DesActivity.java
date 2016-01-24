@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.lzy.downloadmanager.DownloadInfo;
 import com.lzy.downloadmanager.DownloadListener;
 import com.lzy.downloadmanager.DownloadManager;
+import com.lzy.downloadmanager.DownloadService;
 import com.lzy.okhttpdemo.Bean.ApkInfo;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.utils.ApkUtils;
@@ -32,12 +33,14 @@ public class DesActivity extends AppCompatActivity implements View.OnClickListen
     private MyListener listener;
     private DownloadInfo downloadInfo;
     private ApkInfo apk;
+    private DownloadManager downloadManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_des);
         apk = (ApkInfo) getIntent().getSerializableExtra("apk");
+        downloadManager = DownloadService.getDownloadManager(this);
 
         ImageView icon = (ImageView) findViewById(R.id.icon);
         TextView name = (TextView) findViewById(R.id.name);
@@ -56,7 +59,7 @@ public class DesActivity extends AppCompatActivity implements View.OnClickListen
         restart.setOnClickListener(this);
         listener = new MyListener();
 
-        downloadInfo = DownloadManager.getInstance(this).getTaskByUrl(apk.getUrl());
+        downloadInfo = downloadManager.getTaskByUrl(apk.getUrl());
         if (downloadInfo != null) {
             downloadInfo.addListener(listener);
             //需要第一次手动刷一次，因为任务可能处于下载完成，暂停，等待状态，此时是不会回调进度方法的
@@ -79,20 +82,20 @@ public class DesActivity extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onClick(View v) {
         //每次点击的时候，需要更新当前对象
-        downloadInfo = DownloadManager.getInstance(this).getTaskByUrl(apk.getUrl());
+        downloadInfo = downloadManager.getTaskByUrl(apk.getUrl());
         if (v.getId() == download.getId()) {
             if (downloadInfo == null) {
-                DownloadManager.getInstance(this).addTask(apk.getUrl(), listener);
+                downloadManager.addTask(apk.getUrl(), listener);
                 return;
             }
             switch (downloadInfo.getState()) {
                 case DownloadManager.PAUSE:
                 case DownloadManager.NONE:
                 case DownloadManager.ERROR:
-                    DownloadManager.getInstance(this).addTask(downloadInfo.getUrl());
+                    downloadManager.addTask(downloadInfo.getUrl());
                     break;
                 case DownloadManager.DOWNLOADING:
-                    DownloadManager.getInstance(this).pauseTask(downloadInfo.getUrl());
+                    downloadManager.pauseTask(downloadInfo.getUrl());
                     break;
                 case DownloadManager.FINISH:
                     if (ApkUtils.isAvailable(this, new File(downloadInfo.getTargetPath()))) {
@@ -107,7 +110,7 @@ public class DesActivity extends AppCompatActivity implements View.OnClickListen
                 Toast.makeText(this, "请先下载任务", Toast.LENGTH_SHORT).show();
                 return;
             }
-            DownloadManager.getInstance(this).removeTask(downloadInfo.getUrl());
+            downloadManager.removeTask(downloadInfo.getUrl());
             downloadSize.setText("--M/--M");
             netSpeed.setText("---/s");
             tvProgress.setText("--.--%");
@@ -118,7 +121,7 @@ public class DesActivity extends AppCompatActivity implements View.OnClickListen
                 Toast.makeText(this, "请先下载任务", Toast.LENGTH_SHORT).show();
                 return;
             }
-            DownloadManager.getInstance(this).restartTask(downloadInfo.getUrl());
+            downloadManager.restartTask(downloadInfo.getUrl());
         }
     }
 

@@ -6,6 +6,8 @@
         android:allowBackup="true"
         android:supportsRtl="true">
 
+        <service android:name=".DownloadService"/>
+
     </application>
 
 </manifest>
