@@ -171,8 +171,9 @@ public class OkHttpUtils {
         return mCommonParams;
     }
 
-    public void setCommonParams(RequestParams commonParams) {
-        this.mCommonParams = commonParams;
+    public void addCommonParams(RequestParams commonParams) {
+        if (mCommonParams == null) mCommonParams = new RequestParams();
+        mCommonParams.put(mCommonParams);
     }
 
     /** 全局公共请求头 */
@@ -180,8 +181,9 @@ public class OkHttpUtils {
         return mCommonHeader;
     }
 
-    public void setCommonHeader(RequestHeaders commonHeader) {
-        this.mCommonHeader = commonHeader;
+    public void addCommonHeader(RequestHeaders commonHeader) {
+        if (mCommonHeader == null) mCommonHeader = new RequestHeaders();
+        mCommonHeader.put(commonHeader);
     }
 
     /** 根据Tag取消请求 */

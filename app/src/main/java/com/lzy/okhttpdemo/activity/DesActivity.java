@@ -61,7 +61,8 @@ public class DesActivity extends AppCompatActivity implements View.OnClickListen
 
         downloadInfo = downloadManager.getTaskByUrl(apk.getUrl());
         if (downloadInfo != null) {
-            downloadInfo.addListener(listener);
+            //如果任务存在，把任务的监听换成当前页面需要的监听
+            downloadInfo.setListener(listener);
             //需要第一次手动刷一次，因为任务可能处于下载完成，暂停，等待状态，此时是不会回调进度方法的
             refreshUi(downloadInfo);
         }
@@ -76,7 +77,7 @@ public class DesActivity extends AppCompatActivity implements View.OnClickListen
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (downloadInfo != null) downloadInfo.removeListener(listener);
+        if (downloadInfo != null) downloadInfo.removeListener();
     }
 
     @Override
@@ -92,7 +93,7 @@ public class DesActivity extends AppCompatActivity implements View.OnClickListen
                 case DownloadManager.PAUSE:
                 case DownloadManager.NONE:
                 case DownloadManager.ERROR:
-                    downloadManager.addTask(downloadInfo.getUrl());
+                    downloadManager.addTask(downloadInfo.getUrl(), listener);
                     break;
                 case DownloadManager.DOWNLOADING:
                     downloadManager.pauseTask(downloadInfo.getUrl());

@@ -33,32 +33,35 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="25dp"
             android:layout_marginTop="10dp">
 
             <TextView
                 android:id="@+id/downloadSize"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
                 android:text="--M/--M"
-                android:textSize="10sp"/>
-
-            <TextView
-                android:id="@+id/tvProgress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:text="--.--%"
                 android:textSize="10sp"/>
 
             <TextView
                 android:id="@+id/netSpeed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="10dp"
                 android:text="---K/s"
                 android:textSize="10sp"/>
+
+            <TextView
+                android:id="@+id/tvProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/netSpeed"
+                android:text="--.--%"
+                android:textSize="10sp"/>
+
         </RelativeLayout>
 
         <ProgressBar

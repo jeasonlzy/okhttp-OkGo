@@ -90,8 +90,7 @@ public class DownloadManagerActivity extends AppCompatActivity implements View.O
             ViewHolder holder;
             if (convertView == null) {
                 convertView = View.inflate(DownloadManagerActivity.this, R.layout.item_dm, null);
-                //这里表示数据绑定条目
-                holder = new ViewHolder(convertView, downloadInfo);
+                holder = new ViewHolder(convertView);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
@@ -112,7 +111,7 @@ public class DownloadManagerActivity extends AppCompatActivity implements View.O
 
             DownloadListener downloadListener = new MyDownloadListener();
             downloadListener.setUserTag(holder);
-            downloadInfo.addListener(downloadListener);
+            downloadInfo.setListener(downloadListener);
             return convertView;
         }
     }
@@ -129,8 +128,7 @@ public class DownloadManagerActivity extends AppCompatActivity implements View.O
         private Button remove;
         private Button restart;
 
-        public ViewHolder(View convertView, DownloadInfo downloadInfo) {
-            this.downloadInfo = downloadInfo;
+        public ViewHolder(View convertView) {
             icon = (ImageView) convertView.findViewById(R.id.icon);
             name = (TextView) convertView.findViewById(R.id.name);
             downloadSize = (TextView) convertView.findViewById(R.id.downloadSize);
@@ -189,7 +187,7 @@ public class DownloadManagerActivity extends AppCompatActivity implements View.O
                     case DownloadManager.PAUSE:
                     case DownloadManager.NONE:
                     case DownloadManager.ERROR:
-                        downloadManager.addTask(downloadInfo.getUrl());
+                        downloadManager.addTask(downloadInfo.getUrl(), downloadInfo.getListener());
                         break;
                     case DownloadManager.DOWNLOADING:
                         downloadManager.pauseTask(downloadInfo.getUrl());

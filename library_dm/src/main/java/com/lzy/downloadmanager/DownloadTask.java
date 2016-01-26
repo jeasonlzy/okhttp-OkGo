@@ -36,14 +36,12 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
     private DownloadInfo mDownloadInfo;              //当前任务的信息
     private long mPreviousTime;                      //上次更新的时间，用于计算下载速度
     private boolean isRestartTask;                   //是否重新下载的标识位
-    private List<DownloadListener> listeners;        //当前任务的监听
     private boolean isPause;                         //当前任务是暂停还是停止， true 暂停， false 停止
 
-    public DownloadTask(DownloadInfo downloadInfo, Context context, boolean isRestart, DownloadListener listener) {
-        listeners = downloadInfo.getListeners();
-        if (listener != null) listeners.add(listener);
+    public DownloadTask(DownloadInfo downloadInfo, Context context, boolean isRestart, DownloadListener downloadListener) {
         mDownloadInfo = downloadInfo;
         isRestartTask = isRestart;
+        mDownloadInfo.setListener(downloadListener);
         mDownloadUIHandler = DownloadManager.getInstance(context).getHandler();
         downloadDao = new DownloadInfoDao(context);
         //将当前任务在定义的线程池中执行
@@ -84,9 +82,8 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
         L.e("onPreExecute:" + mDownloadInfo.getFileName());
 
         //添加成功的回调
-        for (DownloadListener l : listeners) {
-            l.onAdd(mDownloadInfo);
-        }
+        DownloadListener listener = mDownloadInfo.getListener();
+        if (listener != null) listener.onAdd(mDownloadInfo);
 
         //如果是重新下载，需要删除临时文件
         if (isRestartTask) {
@@ -218,7 +215,6 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
     private void postMessage(String errorMsg, Exception e) {
         downloadDao.update(mDownloadInfo); //发消息前首先更新数据库
         DownloadUIHandler.MessageBean messageBean = new DownloadUIHandler.MessageBean();
-        messageBean.listeners = listeners;
         messageBean.downloadInfo = mDownloadInfo;
         messageBean.errorMsg = errorMsg;
         messageBean.e = e;

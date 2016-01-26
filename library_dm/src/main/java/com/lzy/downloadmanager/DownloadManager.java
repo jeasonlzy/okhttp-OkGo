@@ -113,21 +113,13 @@ public class DownloadManager {
         while (iterator.hasNext()) {
             DownloadInfo info = iterator.next();
             if (url.equals(info.getUrl())) {
-                //通知监听移除任务
-                List<DownloadListener> listeners = info.getListeners();
-                for (DownloadListener l : listeners) {
-                    l.onRemove(info);
-                }
-                info.removeAllListener();  //清除回调监听
+                DownloadListener listener = info.getListener();
+                if (listener != null) listener.onRemove(info);
+                info.removeListener();     //清除回调监听
                 iterator.remove();         //清除任务
                 break;
             }
         }
-    }
-
-    /** 添加一个下载任务 */
-    public void addTask(@NonNull String url) {
-        addTask(url, null);
     }
 
     /** 添加一个下载任务 */
@@ -167,7 +159,7 @@ public class DownloadManager {
     /** 开始所有任务的方法 */
     public void startAllTask() {
         for (DownloadInfo downloadInfo : mDownloadInfoList) {
-            addTask(downloadInfo.getUrl());
+            addTask(downloadInfo.getUrl(), downloadInfo.getListener());
         }
     }
 
@@ -237,7 +229,6 @@ public class DownloadManager {
     /** 重新下载 */
     public void restartTask(final String url) {
         final DownloadInfo downloadInfo = getTaskByUrl(url);
-        if (downloadInfo == null) return;
         if (downloadInfo.getState() == DOWNLOADING) {
             //如果正在下载中，先暂停，等任务结束后再添加到队列开始下载
             pauseTask(url);
@@ -247,11 +238,11 @@ public class DownloadManager {
                     if (r == downloadInfo.getTask().getRunnable()) {
                         //因为该监听是全局监听，每次任务被移除都会回调，所以以下方法执行一次后，必须移除，否者会反复调用
                         threadPool.getExecutor().removeOnTaskEndListener(this);
-                        addTask(url, null, true); //此时监听给空，表示会使用之前的监听，true表示重新下载，会删除临时文件
+                        addTask(url, downloadInfo.getListener(), true); //此时监听给空，表示会使用之前的监听，true表示重新下载，会删除临时文件
                     }
                 }
             });
-        } else if (downloadInfo.getState() != NONE) {
+        } else {
             pauseTask(url);
             startTask(url);
         }
@@ -261,8 +252,8 @@ public class DownloadManager {
     private void startTask(@NonNull String url) {
         DownloadInfo downloadInfo = getTaskByUrl(url);
         if (downloadInfo == null) return;
-        if (downloadInfo.getState() != NONE && downloadInfo.getState() != DOWNLOADING) {
-            DownloadTask downloadTask = new DownloadTask(downloadInfo, mContext, true, null);
+        if (downloadInfo.getState() != DOWNLOADING) {
+            DownloadTask downloadTask = new DownloadTask(downloadInfo, mContext, true, downloadInfo.getListener());
             downloadInfo.setTask(downloadTask);
         }
     }

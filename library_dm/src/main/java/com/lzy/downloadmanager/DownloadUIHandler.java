@@ -25,20 +25,14 @@ public class DownloadUIHandler extends Handler {
     public void handleMessage(Message msg) {
         MessageBean messageBean = (MessageBean) msg.obj;
         if (messageBean != null) {
-            List<DownloadListener> listeners = messageBean.listeners;
             DownloadInfo info = messageBean.downloadInfo;
             String errorMsg = messageBean.errorMsg;
             Exception e = messageBean.e;
             if (mGlobalDownloadListener != null) {
                 executeListener(mGlobalDownloadListener, info, errorMsg, e);
             }
-            if (listeners.size() > 0) {
-                for (DownloadListener listener : listeners) {
-                    if (listener != null) {
-                        executeListener(listener, info, errorMsg, e);
-                    }
-                }
-            }
+            DownloadListener listener = info.getListener();
+            if (listener != null) executeListener(listener, info, errorMsg, e);
         } else {
             L.e("DownloadUIHandler DownloadInfo null");
         }
@@ -69,7 +63,6 @@ public class DownloadUIHandler extends Handler {
     }
 
     public static class MessageBean {
-        public List<DownloadListener> listeners;
         public DownloadInfo downloadInfo;
         public String errorMsg;
         public Exception e;

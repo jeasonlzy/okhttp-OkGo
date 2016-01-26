@@ -40,11 +40,7 @@ public class DownloadInfo implements Comparable<DownloadInfo> {
     private int state = 0;        //当前状态
 
     private DownloadTask task;                  //执行当前下载的任务
-    private List<DownloadListener> listeners;   //所有对当前下载任务的监听
-
-    public DownloadInfo() {
-        listeners = new ArrayList<>();
-    }
+    private DownloadListener listener;          //当前下载任务的监听
 
     public int getId() {
         return id;
@@ -134,20 +130,16 @@ public class DownloadInfo implements Comparable<DownloadInfo> {
         this.task = task;
     }
 
-    public List<DownloadListener> getListeners() {
-        return listeners;
+    public DownloadListener getListener() {
+        return listener;
     }
 
-    public void addListener(DownloadListener listener) {
-        listeners.add(listener);
+    public void setListener(DownloadListener listener) {
+        this.listener = listener;
     }
 
-    public void removeListener(DownloadListener listener) {
-        listeners.remove(listener);
-    }
-
-    public void removeAllListener() {
-        listeners.clear();
+    public void removeListener() {
+        listener = null;
     }
 
     /** url 相同就认为是同一个任务 */
