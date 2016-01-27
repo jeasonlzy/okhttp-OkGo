@@ -36,6 +36,7 @@ import okhttp3.Response;
 public class NormalFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private ArrayList<String> strings;
+    private String host = "http://192.168.1.108:8080/UploadServer/";
 
     @Nullable
     @Override
@@ -77,7 +78,7 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
     }
 
     private void getJson() {
-        OkHttpUtils.get("http://192.168.1.111:8080/UploadServer/ResponseJson")//
+        OkHttpUtils.get(host + "ResponseJson")//
                 .tag(this)//
                 .params("ppppppp", "ppp")//
                 .headers("hhhhhhh", "hhh")//
@@ -90,7 +91,7 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
     }
 
     private void postString() {
-        OkHttpUtils.post("http://192.168.1.111:8080/UploadServer/UploadString")//
+        OkHttpUtils.post(host + "UploadString")//
                 .tag(this)//
                 .params("ppppppp", "ppp")//
                 .headers("hhhhhhh", "hhh")//
@@ -105,7 +106,7 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
     }
 
     private void postJson() {
-        OkHttpUtils.post("http://192.168.1.111:8080/UploadServer/UploadString")//
+        OkHttpUtils.post(host + "UploadString")//
                 .tag(this)//
                 .params("ppppppp", "ppp")//
                 .headers("hhhhhhh", "hhh")//
@@ -119,7 +120,7 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
     }
 
     private void responseJson() {
-        OkHttpUtils.post("http://192.168.1.111:8080/UploadServer/ResponseJson")//
+        OkHttpUtils.post(host + "ResponseJson")//
                 .tag(this)//
                 .params("ppppppp", "ppp")//
                 .headers("hhhhhhh", "hhh")//
@@ -132,7 +133,7 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
     }
 
     private void responseJsonArray() {
-        OkHttpUtils.post("http://192.168.1.111:8080/UploadServer/ResponseJsonArray")//
+        OkHttpUtils.post(host + "ResponseJsonArray")//
                 .tag(this)//
                 .connTimeOut(2000).writeTimeOut(3000).readTimeOut(4000).params("ppppppp", "ppp")//
                 .headers("hhhhhhh", "hhh")//
@@ -145,11 +146,12 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
     }
 
     private void uploadFile() {
-        OkHttpUtils.post("http://192.168.1.111:8080/UploadServer/UploadFile")//
+        OkHttpUtils.post(host + "UploadFile")//
                 .tag(this)//
-                .headers("aaa", "111").headers("bbb", "222").params("ccc", "333").params("ddd", "444").params("file1", new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera/IMG_20151225_155549.jpg"))//
-                .params("file2", new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera/IMG_20160109_010308.jpg"))//
-                .params("file3", new File(Environment.getExternalStorageDirectory() + "/video/splash.avi"))//
+                .headers("aaa", "111").headers("bbb", "222").params("ccc", "333").params("ddd", "444")//
+                .params("file1", new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera/IMG_20160125_230019.jpg"))//
+                .params("file2", new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera/IMG_20160125_230037.jpg"))//
+                .params("file2", new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera/IMG_20160125_230048.jpg"))//
                 .execute(new MyBeanCallBack<String>() {
                     @Override
                     public void onResponse(String s) {
@@ -159,7 +161,7 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
     }
 
     private void downloadFile() {
-        OkHttpUtils.post("http://192.168.1.111:8080/UploadServer/DownloadFile")//
+        OkHttpUtils.post(host + "DownloadFile")//
                 .tag(this)//
                 .params("ppppppp", "ppp")//
                 .headers("hhhhhhh", "hhh")//
@@ -183,7 +185,7 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
                 .addFormDataPart("aaa", "111")//
                 .addFormDataPart("ccc", "222.jpg", filebody)//
                 .addFormDataPart("ggg", "666.avi", videobody).build();
-        Request request = new Request.Builder().post(requestBody).url("http://192.168.1.111:8080/UploadServer/UploadFile").build();
+        Request request = new Request.Builder().post(requestBody).url(host + "UploadFile").build();
         Call call = client.newCall(request);
         call.enqueue(new okhttp3.Callback() {
             @Override
@@ -201,7 +203,7 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
     /** 原生方法调用 */
     private void get() {
         OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder().get().url("http://192.168.1.111:8080/UploadServer/ResponseJson").build();
+        Request request = new Request.Builder().get().url(host + "ResponseJson").build();
         Call call = client.newCall(request);
         call.enqueue(new okhttp3.Callback() {
             @Override

@@ -17,8 +17,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.lzy.downloadmanager.DownloadManager;
-import com.lzy.downloadmanager.DownloadService;
+import com.lzy.okhttpserver.download.DownloadManager;
+import com.lzy.okhttpserver.download.DownloadService;
 import com.lzy.okhttpdemo.Bean.ApkInfo;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.activity.DesActivity;

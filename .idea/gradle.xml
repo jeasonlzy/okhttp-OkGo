@@ -10,7 +10,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/library_dm" />
+            <option value="$PROJECT_DIR$/library_ImagePicker" />
+            <option value="$PROJECT_DIR$/library_okhttpserver" />
             <option value="$PROJECT_DIR$/library_okhttputils" />
           </set>
         </option>

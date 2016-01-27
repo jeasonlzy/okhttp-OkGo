@@ -3,6 +3,7 @@ package com.lzy.okhttputils.request;
 import com.lzy.okhttputils.model.RequestParams;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -103,6 +104,11 @@ public class PostRequest extends BaseRequest<PostRequest> {
     @Override
     public Request generateRequest(RequestBody requestBody) {
         Request.Builder requestBuilder = new Request.Builder();
+        try {
+            headers.put("Content-Length", String.valueOf(requestBody.contentLength()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         appendHeaders(requestBuilder);
         return requestBuilder.post(requestBody).url(url).tag(tag).build();
     }

@@ -1,10 +1,8 @@
-package com.lzy.downloadmanager;
+package com.lzy.okhttpserver.download;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.lzy.okhttpserver.listener.DownloadListener;
 
 /**
  * ================================================

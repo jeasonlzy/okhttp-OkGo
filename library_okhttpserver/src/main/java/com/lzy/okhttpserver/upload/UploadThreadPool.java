@@ -1,31 +1,32 @@
-package com.lzy.downloadmanager.task;
+package com.lzy.okhttpserver.upload;
+
+import com.lzy.okhttpserver.download.DownloadThreadPool;
+import com.lzy.okhttpserver.task.ExecutorWithListener;
+import com.lzy.okhttpserver.task.PriorityBlockingQueue;
 
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * ================================================
  * 作    者：廖子尧
  * 版    本：1.0
- * 创建日期：2016/1/19
- * 描    述：下载管理的线程池
+ * 创建日期：2016/1/26
+ * 描    述：上传管理的线程池
  * 修订历史：
  * ================================================
  */
-public class PriorityThreadPool {
+public class UploadThreadPool {
     private static final int MAX_IMUM_POOL_SIZE = 5;     //最大线程池的数量
     private static final int KEEP_ALIVE_TIME = 1;        //存活的时间
     private static final TimeUnit UNIT = TimeUnit.HOURS; //时间单位
-    private int corePoolSize = 3;                        //核心线程池的数量，同时能执行的线程数量，默认3个
+    private int corePoolSize = 1;                        //核心线程池的数量，同时能执行的线程数量，默认1个
     private ExecutorWithListener executor;               //线程池执行器
 
     public ExecutorWithListener getExecutor() {
         if (executor == null) {
-            synchronized (PriorityThreadPool.class) {
+            synchronized (DownloadThreadPool.class) {
                 if (executor == null) {
                     executor = new ExecutorWithListener(corePoolSize, MAX_IMUM_POOL_SIZE, KEEP_ALIVE_TIME, UNIT, //
                             new PriorityBlockingQueue<Runnable>(),   //无限容量的缓冲队列

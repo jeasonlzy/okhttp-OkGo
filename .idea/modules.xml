@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/OkHttpDemo.iml" filepath="$PROJECT_DIR$/OkHttpDemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OkHttpUtils.iml" filepath="$PROJECT_DIR$/OkHttpUtils.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/library_dm/library_dm.iml" filepath="$PROJECT_DIR$/library_dm/library_dm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library_ImagePicker/library_ImagePicker.iml" filepath="$PROJECT_DIR$/library_ImagePicker/library_ImagePicker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library_okhttpserver/library_okhttpserver.iml" filepath="$PROJECT_DIR$/library_okhttpserver/library_okhttpserver.iml" />
       <module fileurl="file://$PROJECT_DIR$/library_okhttputils/library_okhttputils.iml" filepath="$PROJECT_DIR$/library_okhttputils/library_okhttputils.iml" />
     </modules>
   </component>

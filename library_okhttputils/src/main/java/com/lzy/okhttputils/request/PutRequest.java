@@ -2,6 +2,7 @@ package com.lzy.okhttputils.request;
 
 import com.lzy.okhttputils.model.RequestParams;
 
+import java.io.IOException;
 import java.util.Map;
 
 import okhttp3.FormBody;
@@ -54,6 +55,11 @@ public class PutRequest extends BaseRequest<PutRequest> {
     @Override
     public Request generateRequest(RequestBody requestBody) {
         Request.Builder requestBuilder = new Request.Builder();
+        try {
+            headers.put("Content-Length", String.valueOf(requestBody.contentLength()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         appendHeaders(requestBuilder);
         return requestBuilder.put(requestBody).url(url).tag(tag).build();
     }

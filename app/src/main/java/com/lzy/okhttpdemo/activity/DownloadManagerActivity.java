@@ -14,19 +14,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.lzy.downloadmanager.DownloadInfo;
-import com.lzy.downloadmanager.DownloadListener;
-import com.lzy.downloadmanager.DownloadManager;
-import com.lzy.downloadmanager.DownloadService;
+import com.lzy.okhttpdemo.ui.NumberProgressBar;
+import com.lzy.okhttpserver.download.DownloadInfo;
+import com.lzy.okhttpserver.listener.DownloadListener;
+import com.lzy.okhttpserver.download.DownloadManager;
+import com.lzy.okhttpserver.download.DownloadService;
 import com.lzy.okhttpdemo.Bean.ApkInfo;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.utils.ApkUtils;
 import com.lzy.okhttpdemo.utils.AppCacheUtils;
+import com.lzy.okhttpserver.task.ExecutorWithListener;
 
 import java.io.File;
 import java.util.List;
 
-public class DownloadManagerActivity extends AppCompatActivity implements View.OnClickListener {
+public class DownloadManagerActivity extends AppCompatActivity implements View.OnClickListener, ExecutorWithListener.OnAllTaskEndListener {
 
     private List<DownloadInfo> allTask;
     private MyAdapter adapter;
@@ -42,6 +44,26 @@ public class DownloadManagerActivity extends AppCompatActivity implements View.O
         ListView listView = (ListView) findViewById(R.id.listView);
         adapter = new MyAdapter();
         listView.setAdapter(adapter);
+
+        downloadManager.getThreadPool().getExecutor().addOnAllTaskEndListener(this);
+    }
+
+    @Override
+    public void onAllTaskEnd() {
+        for (DownloadInfo downloadInfo : allTask) {
+            if (downloadInfo.getState() != DownloadManager.FINISH) {
+                Toast.makeText(DownloadManagerActivity.this, "所有下载线程结束，部分下载未完成", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        Toast.makeText(DownloadManagerActivity.this, "所有下载任务完成", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //记得移除，否者会回调多次
+        downloadManager.getThreadPool().getExecutor().removeOnAllTaskEndListener(this);
     }
 
     @Override
@@ -123,7 +145,7 @@ public class DownloadManagerActivity extends AppCompatActivity implements View.O
         private TextView downloadSize;
         private TextView tvProgress;
         private TextView netSpeed;
-        private ProgressBar pbProgress;
+        private NumberProgressBar pbProgress;
         private Button download;
         private Button remove;
         private Button restart;
@@ -134,7 +156,7 @@ public class DownloadManagerActivity extends AppCompatActivity implements View.O
             downloadSize = (TextView) convertView.findViewById(R.id.downloadSize);
             tvProgress = (TextView) convertView.findViewById(R.id.tvProgress);
             netSpeed = (TextView) convertView.findViewById(R.id.netSpeed);
-            pbProgress = (ProgressBar) convertView.findViewById(R.id.pbProgress);
+            pbProgress = (NumberProgressBar) convertView.findViewById(R.id.pbProgress);
             download = (Button) convertView.findViewById(R.id.start);
             remove = (Button) convertView.findViewById(R.id.remove);
             restart = (Button) convertView.findViewById(R.id.restart);

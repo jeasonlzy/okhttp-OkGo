@@ -43,6 +43,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
     protected InputStream[] certificates;
     protected RequestParams params = new RequestParams();
     protected RequestHeaders headers = new RequestHeaders();
+    private AbsCallback mCallback;
 
     public BaseRequest(String url) {
         this.url = url;
@@ -120,6 +121,14 @@ public abstract class BaseRequest<R extends BaseRequest> {
         return (R) this;
     }
 
+    public AbsCallback getCallback() {
+        return mCallback;
+    }
+
+    public void setCallback(AbsCallback callback) {
+        this.mCallback = callback;
+    }
+
     /** 将传递进来的参数拼接成 url */
     protected String createUrlFromParams(String url, Map<String, String> params) {
         try {
@@ -155,15 +164,15 @@ public abstract class BaseRequest<R extends BaseRequest> {
     public abstract RequestBody generateRequestBody();
 
     /** 对请求body进行包装，用于回调上传进度 */
-    public RequestBody wrapRequestBody(RequestBody requestBody, final AbsCallback callback) {
+    public RequestBody wrapRequestBody(RequestBody requestBody) {
         return new ProgressRequestBody(requestBody, new ProgressRequestBody.Listener() {
             @Override
             public void onRequestProgress(final long bytesWritten, final long contentLength, final long networkSpeed) {
                 OkHttpUtils.getInstance().getDelivery().post(new Runnable() {
                     @Override
                     public void run() {
-                        if (callback != null)
-                            callback.upProgress(bytesWritten, contentLength, bytesWritten * 1.0f / contentLength, networkSpeed);
+                        if (mCallback != null)
+                            mCallback.upProgress(bytesWritten, contentLength, bytesWritten * 1.0f / contentLength, networkSpeed);
                     }
                 });
             }
@@ -193,41 +202,41 @@ public abstract class BaseRequest<R extends BaseRequest> {
     /** 阻塞方法，同步请求执行 */
     public Response execute() throws IOException {
         RequestBody requestBody = generateRequestBody();
-        final Request request = generateRequest(wrapRequestBody(requestBody, null));
+        final Request request = generateRequest(wrapRequestBody(requestBody));
         Call call = generateCall(request);
         return call.execute();
     }
 
     /** 非阻塞方法，异步请求，但是回调在子线程中执行 */
     public <T> void execute(AbsCallback<T> callback) {
-        if (callback == null) callback = AbsCallback.CALLBACK_DEFAULT;
+        mCallback = callback;
+        if (mCallback == null) mCallback = AbsCallback.CALLBACK_DEFAULT;
 
-        final AbsCallback finalCallback = callback;
-        finalCallback.onBefore(this);      //请求执行前调用 （UI线程）
+        mCallback.onBefore(this);      //请求执行前调用 （UI线程）
         RequestBody requestBody = generateRequestBody();
-        Request request = generateRequest(wrapRequestBody(requestBody, finalCallback));
+        Request request = generateRequest(wrapRequestBody(requestBody));
         Call call = generateCall(request);
         call.enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
                 //请求失败，一般为url地址错误，网络错误等
-                sendFailResultCallback(request, null, e, finalCallback);
+                sendFailResultCallback(request, null, e, mCallback);
             }
 
             @Override
             public void onResponse(Response response) throws IOException {
                 //响应失败，一般为服务器内部错误，或者找不到页面等
                 if (response.code() >= 400 && response.code() <= 599) {
-                    sendFailResultCallback(response.request(), response, null, finalCallback);
+                    sendFailResultCallback(response.request(), response, null, mCallback);
                     return;
                 }
 
                 try {
                     //解析过程中抛出异常，一般为 json 格式错误，或者数据解析异常
-                    T t = (T) finalCallback.parseNetworkResponse(response);
-                    sendSuccessResultCallback(t, response.request(), response, finalCallback);
+                    T t = (T) mCallback.parseNetworkResponse(response);
+                    sendSuccessResultCallback(t, response.request(), response, mCallback);
                 } catch (Exception e) {
-                    sendFailResultCallback(response.request(), response, e, finalCallback);
+                    sendFailResultCallback(response.request(), response, e, mCallback);
                 }
             }
         });

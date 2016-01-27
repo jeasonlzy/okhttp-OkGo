@@ -22,7 +22,9 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':library_okhttputils')
-    compile project(':library_dm')
+    compile project(':library_okhttpserver')
+    compile project(':library_ImagePicker')
+    compile 'com.qiniu:qiniu-android-sdk:7.1.0'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:support-v4:23.1.1'
     compile 'com.github.bumptech.glide:glide:3.6.1'
