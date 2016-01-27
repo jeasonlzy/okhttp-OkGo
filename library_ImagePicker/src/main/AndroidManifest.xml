@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    package="com.lzy.imagepicker"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 在SDCard中创建与删除文件权限 -->
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+    <!-- 往SDCard写入数据权限 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <!-- 从SDCard读取数据权限 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <application
+        android:allowBackup="true"
+        android:supportsRtl="true">
+        <activity android:name=".ui.BaseActivity"/>
+        <activity
+            android:name=".ui.ImageGridActivity"
+            android:theme="@style/ImagePickerTheme"/>
+        <activity
+            android:name=".ui.ImageCropActivity"
+            android:theme="@style/ImagePickerTheme"/>
+        <activity
+            android:name=".ui.ImagePreviewActivity"
+            android:theme="@style/ImagePickerThemeFullScreen"/>
+    </application>
+
+</manifest>

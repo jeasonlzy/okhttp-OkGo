@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:background="#cc22292c"
+    android:clickable="true">
+
+    <ImageView
+        android:id="@+id/btn_back"
+        android:layout_width="48dp"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:background="@drawable/selector_back_press"
+        android:padding="14dp"
+        android:src="@mipmap/ic_back"/>
+
+    <View
+        android:layout_width="1px"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_toRightOf="@id/btn_back"
+        android:background="#cc111111"/>
+
+    <TextView
+        android:id="@+id/tv_des"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@id/btn_back"
+        android:text="选择图片"
+        android:textColor="#ffffff"
+        android:textSize="16dp"/>
+
+    <Button
+        android:id="@+id/btn_ok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/selector_top_ok"
+        android:minHeight="30dp"
+        android:minWidth="50dp"
+        android:padding="8dp"
+        android:text="完成(3/9)"
+        android:textColor="#ffffff"
+        android:textSize="14dp"/>
+</RelativeLayout>

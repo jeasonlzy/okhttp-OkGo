@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="theme_body">#cc22292c</color>
+    <color name="black">#000000</color>
+    <color name="status_bar">#303135</color>
+    <color name="top_bar">#9f556061</color>
+    <color name="transparent">#00000000</color>
+</resources>
