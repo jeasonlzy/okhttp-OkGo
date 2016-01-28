@@ -35,23 +35,21 @@ import okhttp3.Response;
 
 public class NormalFragment extends Fragment implements AdapterView.OnItemClickListener {
 
-    private ArrayList<String> strings;
     private String host = "http://192.168.1.108:8080/UploadServer/";
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_normal, container, false);
-        strings = new ArrayList<>();
-        strings.add("get");
-        strings.add("post");
-        strings.add("getJson");
-        strings.add("postString");
-        strings.add("postJson");
-        strings.add("responseJson");
-        strings.add("responseJsonArray");
-        strings.add("uploadFile");
-        strings.add("downloadFile");
+        ArrayList<String> strings = new ArrayList<>();
+        strings.add("okhttp原生的get请求");
+        strings.add("okhttp原生的post请求");
+        strings.add("get请求返回json");
+        strings.add("post上传json字符串");
+        strings.add("post上传string字符串");
+        strings.add("post请求返回json数组");
+        strings.add("post文件上传");
+        strings.add("get文件下载");
 
         ListView listView = (ListView) view.findViewById(R.id.listView);
         listView.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, strings));
@@ -62,18 +60,31 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Class<? extends NormalFragment> clazz = this.getClass();
-        Method[] methods = clazz.getDeclaredMethods();
-        for (Method method : methods) {
-            if (method.getName().equals(strings.get(position))) {
-                try {
-                    method.invoke(this);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                }
-            }
+        switch (position) {
+            case 0:
+                get();
+                break;
+            case 1:
+                post();
+                break;
+            case 2:
+                getJson();
+                break;
+            case 3:
+                postJson();
+                break;
+            case 4:
+                postString();
+                break;
+            case 5:
+                responseJsonArray();
+                break;
+            case 6:
+                uploadFile();
+                break;
+            case 7:
+                downloadFile();
+                break;
         }
     }
 
@@ -119,19 +130,6 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
                 });
     }
 
-    private void responseJson() {
-        OkHttpUtils.post(host + "ResponseJson")//
-                .tag(this)//
-                .params("ppppppp", "ppp")//
-                .headers("hhhhhhh", "hhh")//
-                .execute(new MyBeanCallBack<Bean>() {
-                    @Override
-                    public void onResponse(Bean bean) {
-                        System.out.println("onResponse:" + bean);
-                    }
-                });
-    }
-
     private void responseJsonArray() {
         OkHttpUtils.post(host + "ResponseJsonArray")//
                 .tag(this)//
@@ -161,7 +159,7 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
     }
 
     private void downloadFile() {
-        OkHttpUtils.post(host + "DownloadFile")//
+        OkHttpUtils.get(host + "DownloadFile")//
                 .tag(this)//
                 .params("ppppppp", "ppp")//
                 .headers("hhhhhhh", "hhh")//

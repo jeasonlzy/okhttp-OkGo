@@ -3,6 +3,8 @@ package com.lzy.okhttpdemo;
 import android.app.Application;
 
 import com.lzy.okhttputils.OkHttpUtils;
+import com.lzy.okhttputils.model.RequestHeaders;
+import com.lzy.okhttputils.model.RequestParams;
 
 import okio.Buffer;
 
@@ -39,14 +41,24 @@ public class GApp extends Application {
         System.setProperty("http.proxyHost", "192.168.1.108");
         System.setProperty("http.proxyPort", "8888");
 
-        OkHttpUtils.debug(true, "MyOkHttp");
+        OkHttpUtils.debug(true, "MyOkHttp");    //是否打开调试
         try {
             OkHttpUtils.getInstance()//
-                    .setConnectTimeout(OkHttpUtils.DEFAULT_MILLISECONDS)//
-                    .setReadTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS)//
-//                    .setCertificates(getAssets().open("srca.cer"), getAssets().open("zhy_server.cer"))//
-                    .setCertificates(new Buffer().writeUtf8(CER_12306).inputStream())//
-                    .setWriteTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS);
+                    .setConnectTimeout(OkHttpUtils.DEFAULT_MILLISECONDS)//全局的连接超时时间
+                    .setReadTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS)//全局的读取超时时间
+                    .setWriteTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS)//全局的写入超时时间
+                            //.setCertificates(getAssets().open("srca.cer"), getAssets().open("zhy_server.cer"))//
+                    .setCertificates(new Buffer().writeUtf8(CER_12306).inputStream());//设置自签名网站的证书
+
+            RequestHeaders headers = new RequestHeaders();
+            headers.put("aaa", "111");
+            headers.put("bbb", "222");
+            OkHttpUtils.getInstance().addCommonHeader(headers); //全局公共头
+
+            RequestParams params = new RequestParams();
+            params.put("ccc", "333");
+            params.put("ddd", "444");
+            OkHttpUtils.getInstance().addCommonParams(params);  //全局公共参数
         } catch (Exception e) {
             e.printStackTrace();
         }

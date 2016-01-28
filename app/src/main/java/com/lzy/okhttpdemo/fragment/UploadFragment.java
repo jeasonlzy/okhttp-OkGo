@@ -12,6 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,6 +58,28 @@ public class UploadFragment extends Fragment implements View.OnClickListener, Ex
 //        view.findViewById(R.id.qiniu).setOnClickListener(this);
         gridView = (GridView) view.findViewById(R.id.gridView);
 
+        final TextView tvCorePoolSize = (TextView) view.findViewById(R.id.tvCorePoolSize);
+        SeekBar sbCorePoolSize = (SeekBar) view.findViewById(R.id.sbCorePoolSize);
+        sbCorePoolSize.setMax(3);
+        sbCorePoolSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                UploadManager.getInstance(getContext()).getThreadPool().setCorePoolSize(progress);
+                tvCorePoolSize.setText(String.valueOf(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+        sbCorePoolSize.setProgress(1);
+
+        //此行代码会导致上面的seekbar监听修改线程池数量无效，此处只是为了演示功能，实际使用时，
+        //直接调用 UploadManager.getInstance(getContext()).getThreadPool().setCorePoolSize(progress); 即可生效
         UploadManager.getInstance(getContext()).getThreadPool().getExecutor().addOnAllTaskEndListener(this);
         return view;
     }
