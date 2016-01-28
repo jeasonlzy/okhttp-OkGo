@@ -2,15 +2,20 @@
 该项目是根据：[https://github.com/hongyangAndroid/okhttp-utils](https://github.com/hongyangAndroid/okhttp-utils)  和 [https://github.com/pengjianbo/OkHttpFinal](https://github.com/pengjianbo/OkHttpFinal) 和 [https://github.com/wyouflf/xUtils](https://github.com/wyouflf/xUtils) 修改而成，喜欢原作的可以去使用。同时欢迎大家下载体验本项目，如果使用过程中遇到什么问题，欢迎反馈。
 
 ## 演示
- ![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/preview.jpg)![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/preview.gif)![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/downloadmanager.gif)![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/uploadmanager.gif)
+ ![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/preview.jpg)![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/pre.gif)![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/dm.gif)![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/upload.gif)
 
 
 ## 1.用法
 
 使用前，对于Android Studio的用户，可以选择添加:
-
+```java
     compile project(':library_okhttputils')
     compile project(':library_okhttpserver')
+```
+其中是我的另一个开源项目，完全仿微信的图片选择库，带有自带 矩形图片裁剪 和 圆形图片裁剪 功能，有需要的可以去下载使用，附上地址：[https://github.com/jeasonlzy0216/ImagePicker](https://github.com/jeasonlzy0216/ImagePicker)
+```java
+    compile project(':library_ImagePicker')
+```
 	
 ## 2.注意
 
