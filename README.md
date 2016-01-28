@@ -2,7 +2,7 @@
 该项目是根据：[https://github.com/hongyangAndroid/okhttp-utils](https://github.com/hongyangAndroid/okhttp-utils)  和 [https://github.com/pengjianbo/OkHttpFinal](https://github.com/pengjianbo/OkHttpFinal) 和 [https://github.com/wyouflf/xUtils](https://github.com/wyouflf/xUtils) 修改而成，喜欢原作的可以去使用。同时欢迎大家下载体验本项目，如果使用过程中遇到什么问题，欢迎反馈。
 
 ## 演示
- ![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/preview.jpg)![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/pre.gif)![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/dm.gif)![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/upload.gif)
+ ![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/preview.jpg)![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/pre.gif)![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/dm.gif)![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/dm2.gif)![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/upload.gif)
 
 
 ## 1.用法
