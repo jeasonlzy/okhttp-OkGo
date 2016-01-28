@@ -20,6 +20,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * ================================================
+ * 作    者：廖子尧
+ * 版    本：1.0
+ * 创建日期：2015/9/23
+ * 描    述：欢迎关注我的 github地址：  https://github.com/jeasonlzy0216/ImagePicker
+ * 修订历史：
+ * ================================================
+ */
 public class ImagePicker {
 
     public static final String TAG = ImagePicker.class.getSimpleName();
