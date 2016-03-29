@@ -10,9 +10,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/library_ImagePicker" />
-            <option value="$PROJECT_DIR$/library_okhttpserver" />
-            <option value="$PROJECT_DIR$/library_okhttputils" />
+            <option value="$PROJECT_DIR$/okhttpserver" />
+            <option value="$PROJECT_DIR$/okhttputils" />
           </set>
         </option>
       </GradleProjectSettings>

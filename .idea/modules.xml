@@ -4,9 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/OkHttpUtils.iml" filepath="$PROJECT_DIR$/OkHttpUtils.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/library_ImagePicker/library_ImagePicker.iml" filepath="$PROJECT_DIR$/library_ImagePicker/library_ImagePicker.iml" />
-      <module fileurl="file://$PROJECT_DIR$/library_okhttpserver/library_okhttpserver.iml" filepath="$PROJECT_DIR$/library_okhttpserver/library_okhttpserver.iml" />
-      <module fileurl="file://$PROJECT_DIR$/library_okhttputils/library_okhttputils.iml" filepath="$PROJECT_DIR$/library_okhttputils/library_okhttputils.iml" />
+      <module fileurl="file://$PROJECT_DIR$/okhttpserver/okhttpserver.iml" filepath="$PROJECT_DIR$/okhttpserver/okhttpserver.iml" />
+      <module fileurl="file://$PROJECT_DIR$/okhttputils/okhttputils.iml" filepath="$PROJECT_DIR$/okhttputils/okhttputils.iml" />
     </modules>
   </component>
 </project>
