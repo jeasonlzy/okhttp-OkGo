@@ -2,10 +2,10 @@ package com.lzy.okhttpdemo.callback;
 
 import android.support.annotation.Nullable;
 
-import com.lzy.okhttputils.callback.BeanCallBack;
+import com.lzy.okhttputils.callback.JsonCallBack;
 import com.lzy.okhttputils.request.BaseRequest;
 
-import okhttp3.Request;
+import okhttp3.Call;
 import okhttp3.Response;
 
 /**
@@ -17,7 +17,7 @@ import okhttp3.Response;
  * 修订历史：
  * ================================================
  */
-public abstract class MyBeanCallBack<T> extends BeanCallBack<T> {
+public abstract class MyJsonCallBack<T> extends JsonCallBack<T> {
 
     @Override
     public T parseNetworkResponse(Response response) throws Exception {
@@ -26,7 +26,7 @@ public abstract class MyBeanCallBack<T> extends BeanCallBack<T> {
     }
 
     @Override
-    public void onAfter(@Nullable T t, Request request, Response response, @Nullable Exception e) {
+    public void onAfter(@Nullable T t, Call call, Response response, @Nullable Exception e) {
         System.out.println("onAfter");
     }
 
@@ -41,9 +41,9 @@ public abstract class MyBeanCallBack<T> extends BeanCallBack<T> {
     }
 
     @Override
-    public void onError(Request request, @Nullable Response response, @Nullable Exception e) {
+    public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
         System.out.println("onError");
-        super.onError(request, response, e);
+        super.onError(call, response, e);
     }
 
     @Override

@@ -22,7 +22,8 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.j256.ormlite:ormlite-android:4.48'
 
-    compile 'com.lzy.net:okhttputils:0.1.0'
+//    compile 'com.lzy.net:okhttputils:0.1.0'
+    compile project(':okhttputils')
 }
 
 //apply from: 'bintray.gradle'

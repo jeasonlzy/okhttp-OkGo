@@ -17,7 +17,7 @@ import okhttp3.Response;
  * 修订历史：
  * ================================================
  */
-public abstract class BeanCallBack<T> extends AbsCallback<T> {
+public abstract class JsonCallBack<T> extends AbsCallback<T> {
 
     @Override
     public T parseNetworkResponse(Response response) throws Exception {

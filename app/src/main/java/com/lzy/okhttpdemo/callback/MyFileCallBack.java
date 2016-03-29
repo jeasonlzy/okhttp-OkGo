@@ -8,6 +8,7 @@ import com.lzy.okhttputils.request.BaseRequest;
 import java.io.File;
 import java.io.IOException;
 
+import okhttp3.Call;
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -44,7 +45,7 @@ public abstract class MyFileCallBack extends FileCallBack {
     }
 
     @Override
-    public void onAfter(@Nullable File file, Request request, Response response, @Nullable Exception e) {
+    public void onAfter(@Nullable File file, Call call, Response response, @Nullable Exception e) {
         System.out.println("onAfter");
     }
 
@@ -59,8 +60,8 @@ public abstract class MyFileCallBack extends FileCallBack {
     }
 
     @Override
-    public void onError(Request request, @Nullable Response response, @Nullable Exception e) {
+    public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
         System.out.println("onError");
-        super.onError(request, response, e);
+        super.onError(call, response, e);
     }
 }

@@ -2,7 +2,6 @@ package com.lzy.okhttpdemo.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -21,7 +20,7 @@ import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.loader.GlideImageLoader;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.okhttpdemo.R;
-import com.lzy.okhttpdemo.callback.MyBeanCallBack;
+import com.lzy.okhttpdemo.callback.MyJsonCallBack;
 import com.lzy.okhttpdemo.ui.ProgressPieView;
 import com.lzy.okhttpdemo.utils.QiniuToken;
 import com.lzy.okhttpserver.download.DownloadManager;
@@ -31,9 +30,6 @@ import com.lzy.okhttpserver.upload.UploadInfo;
 import com.lzy.okhttpserver.upload.UploadManager;
 import com.lzy.okhttputils.L;
 import com.lzy.okhttputils.OkHttpUtils;
-import com.lzy.okhttputils.callback.AbsCallback;
-import com.qiniu.android.common.Zone;
-import com.qiniu.android.storage.Configuration;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -270,7 +266,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener, Ex
                 .params("x:aaa", "aaa")//
                 .params("token", QiniuToken.getToken())//
                 .params("file", new File(images.get(0).path))//
-                .execute(new MyBeanCallBack<String>() {
+                .execute(new MyJsonCallBack<String>() {
                     @Override
                     public void onResponse(String s) {
                         System.out.println("onResponse:" + s);

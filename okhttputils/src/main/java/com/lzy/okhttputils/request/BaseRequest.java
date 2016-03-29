@@ -190,10 +190,8 @@ public abstract class BaseRequest<R extends BaseRequest> {
         } else {
             OkHttpClient.Builder newClientBuilder = OkHttpUtils.getInstance().getOkHttpClient().newBuilder();
             if (readTimeOut > 0) newClientBuilder.readTimeout(readTimeOut, TimeUnit.MILLISECONDS);
-            if (writeTimeOut > 0)
-                newClientBuilder.writeTimeout(writeTimeOut, TimeUnit.MILLISECONDS);
-            if (connectTimeout > 0)
-                newClientBuilder.connectTimeout(connectTimeout, TimeUnit.MILLISECONDS);
+            if (writeTimeOut > 0) newClientBuilder.writeTimeout(writeTimeOut, TimeUnit.MILLISECONDS);
+            if (connectTimeout > 0) newClientBuilder.connectTimeout(connectTimeout, TimeUnit.MILLISECONDS);
             if (certificates != null)
                 newClientBuilder.sslSocketFactory(HttpsUtils.getSslSocketFactory(certificates, null, null));
             return newClientBuilder.build().newCall(request);
@@ -217,50 +215,50 @@ public abstract class BaseRequest<R extends BaseRequest> {
         RequestBody requestBody = generateRequestBody();
         Request request = generateRequest(wrapRequestBody(requestBody));
         Call call = generateCall(request);
-        call.enqueue(new okhttp3.Callback() {
+        call.enqueue(new Callback() {
             @Override
-            public void onFailure(Request request, IOException e) {
+            public void onFailure(Call call, IOException e) {
                 //请求失败，一般为url地址错误，网络错误等
-                sendFailResultCallback(request, null, e, mCallback);
+                sendFailResultCallback(call, null, e, mCallback);
             }
 
             @Override
-            public void onResponse(Response response) throws IOException {
+            public void onResponse(Call call, Response response) throws IOException {
                 //响应失败，一般为服务器内部错误，或者找不到页面等
                 if (response.code() >= 400 && response.code() <= 599) {
-                    sendFailResultCallback(response.request(), response, null, mCallback);
+                    sendFailResultCallback(call, response, null, mCallback);
                     return;
                 }
 
                 try {
                     //解析过程中抛出异常，一般为 json 格式错误，或者数据解析异常
                     T t = (T) mCallback.parseNetworkResponse(response);
-                    sendSuccessResultCallback(t, response.request(), response, mCallback);
+                    sendSuccessResultCallback(t, call, response, mCallback);
                 } catch (Exception e) {
-                    sendFailResultCallback(response.request(), response, e, mCallback);
+                    sendFailResultCallback(call, response, e, mCallback);
                 }
             }
         });
     }
 
     /** 失败回调，发送到主线程 */
-    public <T> void sendFailResultCallback(final Request request, final Response response, final Exception e, final AbsCallback<T> callback) {
+    public <T> void sendFailResultCallback(final Call call, final Response response, final Exception e, final AbsCallback<T> callback) {
         OkHttpUtils.getInstance().getDelivery().post(new Runnable() {
             @Override
             public void run() {
-                callback.onError(request, response, e);         //请求失败回调 （UI线程）
-                callback.onAfter(null, request, response, e);   //请求结束回调 （UI线程）
+                callback.onError(call, response, e);         //请求失败回调 （UI线程）
+                callback.onAfter(null, call, response, e);   //请求结束回调 （UI线程）
             }
         });
     }
 
     /** 成功回调，发送到主线程 */
-    public <T> void sendSuccessResultCallback(final T t, final Request request, final Response response, final AbsCallback<T> callback) {
+    public <T> void sendSuccessResultCallback(final T t, final Call call, final Response response, final AbsCallback<T> callback) {
         OkHttpUtils.getInstance().getDelivery().post(new Runnable() {
             @Override
             public void run() {
                 callback.onResponse(t);                         //请求成功回调 （UI线程）
-                callback.onAfter(t, request, response, null);   //请求结束回调 （UI线程）
+                callback.onAfter(t, call, response, null);      //请求结束回调 （UI线程）
             }
         });
     }

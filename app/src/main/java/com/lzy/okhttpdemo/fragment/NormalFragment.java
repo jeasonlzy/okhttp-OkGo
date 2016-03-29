@@ -13,19 +13,18 @@ import android.widget.ListView;
 
 import com.lzy.okhttpdemo.Bean.Bean;
 import com.lzy.okhttpdemo.R;
-import com.lzy.okhttpdemo.callback.MyBeanCallBack;
+import com.lzy.okhttpdemo.callback.MyJsonCallBack;
 import com.lzy.okhttpdemo.callback.MyFileCallBack;
 import com.lzy.okhttputils.OkHttpUtils;
 import com.lzy.okhttputils.request.PostRequest;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -93,7 +92,7 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
                 .tag(this)//
                 .params("ppppppp", "ppp")//
                 .headers("hhhhhhh", "hhh")//
-                .execute(new MyBeanCallBack<Bean>() {
+                .execute(new MyJsonCallBack<Bean>() {
                     @Override
                     public void onResponse(Bean bean) {
                         System.out.println("onResponse:" + bean);
@@ -108,7 +107,7 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
                 .headers("hhhhhhh", "hhh")//
                 .content("asdfasdfasdfas这是中文这是中文asdfasdfasdf")//
                 .mediaType(PostRequest.MEDIA_TYPE_PLAIN)//
-                .execute(new MyBeanCallBack<String>() {
+                .execute(new MyJsonCallBack<String>() {
                     @Override
                     public void onResponse(String s) {
                         System.out.println("onResponse:" + s);
@@ -122,7 +121,7 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
                 .params("ppppppp", "ppp")//
                 .headers("hhhhhhh", "hhh")//
                 .postJson("{}")//
-                .execute(new MyBeanCallBack<String>() {
+                .execute(new MyJsonCallBack<String>() {
                     @Override
                     public void onResponse(String s) {
                         System.out.println("onResponse:" + s);
@@ -135,7 +134,7 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
                 .tag(this)//
                 .connTimeOut(2000).writeTimeOut(3000).readTimeOut(4000).params("ppppppp", "ppp")//
                 .headers("hhhhhhh", "hhh")//
-                .execute(new MyBeanCallBack<List<Bean>>() {
+                .execute(new MyJsonCallBack<List<Bean>>() {
                     @Override
                     public void onResponse(List<Bean> beans) {
                         System.out.println("onResponse:" + beans);
@@ -150,7 +149,7 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
                 .params("file1", new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera/IMG_20160125_230019.jpg"))//
                 .params("file2", new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera/IMG_20160125_230037.jpg"))//
                 .params("file2", new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera/IMG_20160125_230048.jpg"))//
-                .execute(new MyBeanCallBack<String>() {
+                .execute(new MyJsonCallBack<String>() {
                     @Override
                     public void onResponse(String s) {
                         System.out.println("onResponse:" + s);
@@ -185,14 +184,14 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
                 .addFormDataPart("ggg", "666.avi", videobody).build();
         Request request = new Request.Builder().post(requestBody).url(host + "UploadFile").build();
         Call call = client.newCall(request);
-        call.enqueue(new okhttp3.Callback() {
+        call.enqueue(new Callback() {
             @Override
-            public void onFailure(Request request, IOException e) {
+            public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
             }
 
             @Override
-            public void onResponse(Response response) throws IOException {
+            public void onResponse(Call call, Response response) throws IOException {
                 System.out.println("-----" + response.body().string());
             }
         });
@@ -203,14 +202,14 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().get().url(host + "ResponseJson").build();
         Call call = client.newCall(request);
-        call.enqueue(new okhttp3.Callback() {
+        call.enqueue(new Callback() {
             @Override
-            public void onFailure(Request request, IOException e) {
+            public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
             }
 
             @Override
-            public void onResponse(Response response) throws IOException {
+            public void onResponse(Call call, Response response) throws IOException {
                 System.out.println("-----" + response.body().string());
             }
         });

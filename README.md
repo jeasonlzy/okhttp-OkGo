@@ -9,28 +9,30 @@
 
 使用前，对于Android Studio的用户，可以选择添加:
 ```java
-    compile project(':library_okhttputils')
-    compile project(':library_okhttpserver')
+    compile 'com.lzy.net:okhttputils:0.1.1'  //可以单独使用，不需要依赖下方的扩展包
+	compile 'com.lzy.net:okhttpserver:0.1.0' //扩展了下载管理和上传管理，根据需要添加
 ```
-其中是我的另一个开源项目，完全仿微信的图片选择库，带有自带 矩形图片裁剪 和 圆形图片裁剪 功能，有需要的可以去下载使用，附上地址：[https://github.com/jeasonlzy0216/ImagePicker](https://github.com/jeasonlzy0216/ImagePicker)
+或者使用
 ```java
-    compile project(':library_ImagePicker')
+    compile project(':okhttputils')
+	compile project(':okhttpserver')
 ```
+其中的图片选择是我的另一个开源项目，完全仿微信的图片选择库，自带 矩形图片裁剪 和 圆形图片裁剪 功能，有需要的可以去下载使用，附上地址：[https://github.com/jeasonlzy0216/ImagePicker](https://github.com/jeasonlzy0216/ImagePicker)
 	
 ## 2.注意
 
-`library_okhttputils`使用的okhttp的版本是最新的3.0版本，和以前的2.x的版本可能会存在冲突，并且整合了Gson，提供了自定Callback，可以按照泛型，自行解析返回结果，以下是该库的依赖项目：
+`okhttputils`使用的okhttp的版本是最新的3.2版本，和以前的2.x的版本可能会存在冲突，并且整合了Gson，提供了自定Callback，可以按照泛型，自行解析返回结果，以下是该库的依赖项目：
 
 ```java
     compile 'com.android.support:support-annotations:23.1.1'
-    compile 'com.squareup.okhttp3:okhttp:3.0.0-RC1'
+    compile 'com.squareup.okhttp3:okhttp:3.2.0'
     compile 'com.google.code.gson:gson:2.5'
 ```
 
-`library_okhttpserver`是对`library_okhttputils`的扩展，统一了下载管理和上传管理，对项目有需要做统一下载的可以考虑使用该项目，不需要的可以直接使用`library_okhttputils`，不用导入扩展，以下是`library_okhttpserver`的依赖关系：
+`okhttpserver`是对`okhttputils`的扩展，统一了下载管理和上传管理，对项目有需要做统一下载的可以考虑使用该项目，不需要的可以直接使用`okhttputils`，不用导入扩展，以下是`okhttpserver`的依赖关系：
 
 ```java
-    compile project(':library_okhttputils')
+    compile 'com.lzy.net:okhttputils:0.1.1'
     compile 'com.j256.ormlite:ormlite-android:4.48'
 ```
 
@@ -204,9 +206,9 @@
 
 ### 6.8 自定义CallBack
 
-目前内部提供的包含`BeanCallBack`, `StringCallBack`, `FileCallBack`, `BitmapCallback`，可以根据自己的需求去自定义Callback
+目前内部提供的包含`JsonCallBack`, `StringCallBack`, `FileCallBack`, `BitmapCallback`，可以根据自己的需求去自定义Callback
 
-#### 其中`BeanCallBack`使用比较多，它支持传递一个泛型，将返回的`Response`对象解析成需要的类型并且返回，目前支持：
+#### 其中`JsonCallBack`使用比较多，它支持传递一个泛型，将返回的`Response`对象解析成需要的类型并且返回，目前支持：
 
 * 一般的 JavaBean
 * 字符串 String 
@@ -216,27 +218,28 @@
 
 以下是实现代码
 ```java
-	public abstract class BeanCallBack<T> extends AbsCallback<T> {
-	    @Override
-	    public T parseNetworkResponse(Response response) throws Exception {
-	        Type type = this.getClass().getGenericSuperclass();
-	        if (type instanceof ParameterizedType) {
-	            //如果用户写了泛型，就会进入这里，否者不会执行
-	            ParameterizedType parameterizedType = (ParameterizedType) type;
-	            Type beanType = parameterizedType.getActualTypeArguments()[0];
-	            if (beanType == String.class) {
-	                //如果是String类型，直接返回字符串
-	                return (T) response.body().string();
-	            } else {
-	                //如果是 Bean List Map ，则解析完后返回
-	                return new Gson().fromJson(response.body().string(), beanType);
-	            }
-	        } else {
-	            //如果没有写泛型，直接返回Response对象
-	            return (T) response;
-	        }
-	    }
-	}
+	public abstract class JsonCallBack<T> extends AbsCallback<T> {
+
+    @Override
+    public T parseNetworkResponse(Response response) throws Exception {
+        Type type = this.getClass().getGenericSuperclass();
+        if (type instanceof ParameterizedType) {
+            //如果用户写了泛型，就会进入这里，否者不会执行
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            Type beanType = parameterizedType.getActualTypeArguments()[0];
+            if (beanType == String.class) {
+                //如果是String类型，直接返回字符串
+                return (T) response.body().string();
+            } else {
+                //如果是 Bean List Map ，则解析完后返回
+                return new Gson().fromJson(response.body().string(), beanType);
+            }
+        } else {
+            //如果没有写泛型，直接返回Response对象
+            return (T) response;
+        }
+    }
+}
 ```
 通过`parseNetworkResponse `回调的response进行解析，该方法运行在子线程，所以可以进行任何耗时操作
 
