@@ -38,12 +38,12 @@ public class GApp extends Application {
     public void onCreate() {
         super.onCreate();
 
-        System.setProperty("http.proxyHost", "192.168.1.108");
-        System.setProperty("http.proxyPort", "8888");
+//        System.setProperty("http.proxyHost", "192.168.1.108");
+//        System.setProperty("http.proxyPort", "8888");
 
-        OkHttpUtils.debug(true, "MyOkHttp");    //是否打开调试
         try {
             OkHttpUtils.getInstance()//
+                    .debug("OkHttpUtils", true) //是否打开调试
                     .setConnectTimeout(OkHttpUtils.DEFAULT_MILLISECONDS)//全局的连接超时时间
                     .setReadTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS)//全局的读取超时时间
                     .setWriteTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS)//全局的写入超时时间
@@ -53,7 +53,7 @@ public class GApp extends Application {
             RequestHeaders headers = new RequestHeaders();
             headers.put("aaa", "111");
             headers.put("bbb", "222");
-            OkHttpUtils.getInstance().addCommonHeader(headers); //全局公共头
+            OkHttpUtils.getInstance().addCommonHeaders(headers); //全局公共头
 
             RequestParams params = new RequestParams();
             params.put("ccc", "333");

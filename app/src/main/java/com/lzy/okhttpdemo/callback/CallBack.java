@@ -1,7 +1,8 @@
 package com.lzy.okhttpdemo.callback;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
-import com.lzy.okhttputils.L;
 import com.lzy.okhttputils.callback.AbsCallback;
 
 import org.json.JSONObject;
@@ -25,7 +26,7 @@ public abstract class CallBack<T> extends AbsCallback<T> {
     @Override
     public T parseNetworkResponse(Response response) throws Exception {
         String data = response.body().string();
-        L.i("请求网络返回数据: ------    " + data);
+        Log.i("CallBack", "请求网络返回数据: ------    " + data);
         JSONObject jsonObject = new JSONObject(data);
         boolean success = false;
         String resultMsg = "";
@@ -51,7 +52,7 @@ public abstract class CallBack<T> extends AbsCallback<T> {
                 return (T) gson.fromJson(response.body().string(), beanClass);
             }
         } else {
-            L.i(resultMsg);
+            Log.i("CallBack", resultMsg);
         }
         return (T) response;
     }

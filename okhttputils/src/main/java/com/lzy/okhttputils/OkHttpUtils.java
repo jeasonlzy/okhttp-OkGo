@@ -3,8 +3,10 @@ package com.lzy.okhttputils;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.lzy.okhttputils.cookie.SimpleCookieJar;
+import com.lzy.okhttputils.cookie.CookieJarImpl;
+import com.lzy.okhttputils.cookie.store.MemoryCookieStore;
 import com.lzy.okhttputils.https.HttpsUtils;
+import com.lzy.okhttputils.interceptor.LoggerInterceptor;
 import com.lzy.okhttputils.model.RequestHeaders;
 import com.lzy.okhttputils.model.RequestParams;
 import com.lzy.okhttputils.request.DeleteRequest;
@@ -15,7 +17,6 @@ import com.lzy.okhttputils.request.PostRequest;
 import com.lzy.okhttputils.request.PutRequest;
 
 import java.io.InputStream;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
@@ -34,11 +35,6 @@ import okio.Buffer;
  * 修订历史：
  * 本框架基于 张鸿洋 https://github.com/hongyangAndroid/okhttp-utils
  * 和  https://github.com/pengjianbo/OkHttpFinal 两个框架修改而成，
- * 目前Get，Post的请求已经完成，支持大文件上传下载，上传进度回调，下载进度回调，
- * 表单上传（多文件和多参数一起上传），链式调用，整合Gson，自动解析返回对象，
- * 支持Https和自签名证书，支持cookie自动管理，
- * 。。。。。。。。。。
- * 后期将要实现的功能，统一的上传管理和下载管理
  * ================================================
  */
 public class OkHttpUtils {
@@ -47,13 +43,13 @@ public class OkHttpUtils {
     private Handler mDelivery;                           //用于在主线程执行的调度器
     private OkHttpClient.Builder okHttpClientBuilder;    //ok请求的客户端
     private RequestParams mCommonParams;                 //全局公共请求参数
-    private RequestHeaders mCommonHeader;                //全局公共请求头
-    private HostnameVerifier hostnameVerifier;
+    private RequestHeaders mCommonHeaders;                //全局公共请求头
 
     private OkHttpUtils() {
         okHttpClientBuilder = new OkHttpClient.Builder();
         //允许cookie的自动化管理
-        okHttpClientBuilder.cookieJar(new SimpleCookieJar());
+        okHttpClientBuilder.cookieJar(new CookieJarImpl(new MemoryCookieStore()));
+        okHttpClientBuilder.hostnameVerifier(new DefaultHostnameVerifier());
         mDelivery = new Handler(Looper.getMainLooper());
     }
 
@@ -73,8 +69,6 @@ public class OkHttpUtils {
     }
 
     public OkHttpClient getOkHttpClient() {
-        if (hostnameVerifier == null)
-            okHttpClientBuilder.hostnameVerifier(new DefaultHostnameVerifier());
         return okHttpClientBuilder.build();
     }
 
@@ -109,9 +103,9 @@ public class OkHttpUtils {
     }
 
     /** 调试模式 */
-    public static void debug(boolean debug, String tag) {
-        L.debug = debug;
-        L.tag = tag;
+    public OkHttpUtils debug(String tag, boolean showResponse) {
+        okHttpClientBuilder.addInterceptor(new LoggerInterceptor(tag, showResponse));
+        return this;
     }
 
     /**
@@ -128,7 +122,6 @@ public class OkHttpUtils {
 
     /** https的全局访问规则 */
     public OkHttpUtils setHostnameVerifier(HostnameVerifier hostnameVerifier) {
-        this.hostnameVerifier = hostnameVerifier;
         okHttpClientBuilder.hostnameVerifier(hostnameVerifier);
         return this;
     }
@@ -173,17 +166,17 @@ public class OkHttpUtils {
 
     public void addCommonParams(RequestParams commonParams) {
         if (mCommonParams == null) mCommonParams = new RequestParams();
-        mCommonParams.put(mCommonParams);
+        mCommonParams.put(commonParams);
     }
 
     /** 全局公共请求头 */
-    public RequestHeaders getCommonHeader() {
-        return mCommonHeader;
+    public RequestHeaders getCommonHeaders() {
+        return mCommonHeaders;
     }
 
-    public void addCommonHeader(RequestHeaders commonHeader) {
-        if (mCommonHeader == null) mCommonHeader = new RequestHeaders();
-        mCommonHeader.put(commonHeader);
+    public void addCommonHeaders(RequestHeaders commonHeaders) {
+        if (mCommonHeaders == null) mCommonHeaders = new RequestHeaders();
+        mCommonHeaders.put(commonHeaders);
     }
 
     /** 根据Tag取消请求 */

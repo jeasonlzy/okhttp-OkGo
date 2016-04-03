@@ -1,4 +1,4 @@
-package com.lzy.okhttputils.cookie;
+package com.lzy.okhttputils.cookie.store;
 
 import android.content.Context;
 import android.content.SharedPreferences;

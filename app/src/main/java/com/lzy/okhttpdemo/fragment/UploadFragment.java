@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,7 @@ import com.lzy.okhttpserver.listener.UploadListener;
 import com.lzy.okhttpserver.task.ExecutorWithListener;
 import com.lzy.okhttpserver.upload.UploadInfo;
 import com.lzy.okhttpserver.upload.UploadManager;
-import com.lzy.okhttputils.L;
+import com.lzy.okhttputils.utils.L;
 import com.lzy.okhttputils.OkHttpUtils;
 
 import java.io.File;
@@ -234,25 +235,25 @@ public class UploadFragment extends Fragment implements View.OnClickListener, Ex
 
         @Override
         public void onProgress(UploadInfo uploadInfo) {
-            L.e("onProgress:" + uploadInfo.getFileName() + " " + uploadInfo.getTotalLength() + " " + uploadInfo.getUploadLength() + " " + uploadInfo.getProgress());
+            Log.e("MyUploadListener", "onProgress:" + uploadInfo.getFileName() + " " + uploadInfo.getTotalLength() + " " + uploadInfo.getUploadLength() + " " + uploadInfo.getProgress());
             holder = (ViewHolder) ((View) getUserTag()).getTag();
             holder.refresh(uploadInfo);
         }
 
         @Override
         public void onFinish(String s) {
-            L.e("finish:" + s);
+            Log.e("MyUploadListener","finish:" + s);
             holder.finish();
         }
 
         @Override
         public void onError(UploadInfo uploadInfo, String errorMsg, Exception e) {
-            L.e("onError:" + errorMsg);
+            Log.e("MyUploadListener","onError:" + errorMsg);
         }
 
         @Override
         public String parseNetworkResponse(Response response) throws Exception {
-            L.e("parseNetworkResponse");
+            Log.e("MyUploadListener","parseNetworkResponse");
             return response.body().string();
         }
     }

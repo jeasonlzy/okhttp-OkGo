@@ -2,11 +2,10 @@ package com.lzy.okhttputils.callback;
 
 import android.support.annotation.Nullable;
 
-import com.lzy.okhttputils.L;
+import com.lzy.okhttputils.utils.L;
 import com.lzy.okhttputils.request.BaseRequest;
 
 import okhttp3.Call;
-import okhttp3.Request;
 import okhttp3.Response;
 
 /**

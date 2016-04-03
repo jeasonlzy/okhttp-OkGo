@@ -1,4 +1,4 @@
-package com.lzy.okhttputils;
+package com.lzy.okhttputils.utils;
 
 import android.util.Log;
 

@@ -6,7 +6,7 @@ import android.text.TextUtils;
 
 import com.lzy.okhttpserver.listener.UploadListener;
 import com.lzy.okhttpserver.task.PriorityAsyncTask;
-import com.lzy.okhttputils.L;
+import com.lzy.okhttputils.utils.L;
 import com.lzy.okhttputils.OkHttpUtils;
 import com.lzy.okhttputils.callback.AbsCallback;
 import com.lzy.okhttputils.request.PostRequest;

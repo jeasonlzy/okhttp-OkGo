@@ -4,10 +4,10 @@ import android.content.Context;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.lzy.okhttpserver.listener.DownloadListener;
 import com.lzy.okhttpserver.task.ExecutorWithListener;
-import com.lzy.okhttputils.L;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -152,7 +152,7 @@ public class DownloadManager {
             DownloadTask downloadTask = new DownloadTask(downloadInfo, mContext, isRestart, listener);
             downloadInfo.setTask(downloadTask);
         } else {
-            L.d("任务正在下载或等待中 url:" + url);
+            Log.d("DownloadManager", "任务正在下载或等待中 url:" + url);
         }
     }
 

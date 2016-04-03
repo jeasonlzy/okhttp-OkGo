@@ -52,8 +52,8 @@ public abstract class BaseRequest<R extends BaseRequest> {
         if (OkHttpUtils.getInstance().getCommonParams() != null) {
             params.put(OkHttpUtils.getInstance().getCommonParams());
         }
-        if (OkHttpUtils.getInstance().getCommonHeader() != null) {
-            headers.put(OkHttpUtils.getInstance().getCommonHeader());
+        if (OkHttpUtils.getInstance().getCommonHeaders() != null) {
+            headers.put(OkHttpUtils.getInstance().getCommonHeaders());
         }
     }
 
