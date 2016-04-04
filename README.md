@@ -1,6 +1,13 @@
 # OkHttpUtils
 该项目是根据：[https://github.com/hongyangAndroid/okhttp-utils](https://github.com/hongyangAndroid/okhttp-utils)  和 [https://github.com/pengjianbo/OkHttpFinal](https://github.com/pengjianbo/OkHttpFinal) 和 [https://github.com/wyouflf/xUtils](https://github.com/wyouflf/xUtils) 修改而成，喜欢原作的可以去使用。同时欢迎大家下载体验本项目，如果使用过程中遇到什么问题，欢迎反馈。
 
+### 联系方式
+ * 邮箱地址： liaojeason@126.com
+ * 微信号： Lzy_19920216
+ * QQ群： 489873144 （建议使用QQ群，邮箱使用较少，可能看的不及时）
+ * 本群刚建立，旨在为使用我的github项目的人提供方便，如果遇到问题欢迎在群里提问。个人能力也有限，希望一起学习一起进步。
+
+
 ## 演示
  ![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/preview.jpg)![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/pre.gif)![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/dm.gif)![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/dm2.gif)![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/upload.gif)
 
