@@ -6,10 +6,8 @@ import com.lzy.okhttputils.callback.FileCallBack;
 import com.lzy.okhttputils.request.BaseRequest;
 
 import java.io.File;
-import java.io.IOException;
 
 import okhttp3.Call;
-import okhttp3.Request;
 import okhttp3.Response;
 
 /**
@@ -45,8 +43,8 @@ public abstract class MyFileCallBack extends FileCallBack {
     }
 
     @Override
-    public void onAfter(@Nullable File file, Call call, Response response, @Nullable Exception e) {
-        System.out.println("onAfter");
+    public void onAfter(boolean isFromCache, @Nullable File file, Call call, @Nullable Response response, @Nullable Exception e) {
+        System.out.println("isFromCache:" + isFromCache + "  onAfter");
     }
 
     @Override
@@ -60,8 +58,8 @@ public abstract class MyFileCallBack extends FileCallBack {
     }
 
     @Override
-    public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
-        System.out.println("onError");
-        super.onError(call, response, e);
+    public void onError(boolean isFromCache, Call call, @Nullable Response response, @Nullable Exception e) {
+        System.out.println("isFromCache:" + isFromCache + "  onError");
+        super.onError(isFromCache, call, response, e);
     }
 }

@@ -1,5 +1,7 @@
 package com.lzy.okhttpdemo.Bean;
 
+import java.io.Serializable;
+
 /**
  * ================================================
  * 作    者：廖子尧
@@ -9,7 +11,7 @@ package com.lzy.okhttpdemo.Bean;
  * 修订历史：
  * ================================================
  */
-public class Bean {
+public class Bean implements Serializable{
     public String ip;
     public String host;
     public String port;

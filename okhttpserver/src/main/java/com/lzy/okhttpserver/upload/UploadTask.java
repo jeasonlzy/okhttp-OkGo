@@ -6,10 +6,10 @@ import android.text.TextUtils;
 
 import com.lzy.okhttpserver.listener.UploadListener;
 import com.lzy.okhttpserver.task.PriorityAsyncTask;
-import com.lzy.okhttputils.utils.L;
 import com.lzy.okhttputils.OkHttpUtils;
 import com.lzy.okhttputils.callback.AbsCallback;
 import com.lzy.okhttputils.request.PostRequest;
+import com.lzy.okhttputils.utils.L;
 
 import java.io.File;
 import java.io.IOException;
@@ -134,7 +134,7 @@ public class UploadTask<T> extends PriorityAsyncTask<Void, UploadInfo, UploadInf
         }
 
         @Override
-        public void onResponse(T t) {
+        public void onResponse(boolean isFromCache, T t) {
         }
     }
 

@@ -1,14 +1,17 @@
 package com.lzy.okhttputils;
 
+import android.app.Application;
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.lzy.okhttputils.cache.CacheMode;
 import com.lzy.okhttputils.cookie.CookieJarImpl;
 import com.lzy.okhttputils.cookie.store.MemoryCookieStore;
 import com.lzy.okhttputils.https.HttpsUtils;
 import com.lzy.okhttputils.interceptor.LoggerInterceptor;
-import com.lzy.okhttputils.model.RequestHeaders;
-import com.lzy.okhttputils.model.RequestParams;
+import com.lzy.okhttputils.model.HttpHeaders;
+import com.lzy.okhttputils.model.HttpParams;
 import com.lzy.okhttputils.request.DeleteRequest;
 import com.lzy.okhttputils.request.GetRequest;
 import com.lzy.okhttputils.request.HeadRequest;
@@ -42,8 +45,10 @@ public class OkHttpUtils {
     private static OkHttpUtils mInstance;                //单例
     private Handler mDelivery;                           //用于在主线程执行的调度器
     private OkHttpClient.Builder okHttpClientBuilder;    //ok请求的客户端
-    private RequestParams mCommonParams;                 //全局公共请求参数
-    private RequestHeaders mCommonHeaders;                //全局公共请求头
+    private HttpParams mCommonParams;                    //全局公共请求参数
+    private HttpHeaders mCommonHeaders;                  //全局公共请求头
+    private CacheMode mCacheMode;                        //全局缓存模式
+    private static Application context;                  //全局上下文
 
     private OkHttpUtils() {
         okHttpClientBuilder = new OkHttpClient.Builder();
@@ -62,6 +67,16 @@ public class OkHttpUtils {
             }
         }
         return mInstance;
+    }
+
+    /** 必须在全局Application先调用，获取context上下文，否则缓存无法使用 */
+    public static void init(Application app) {
+        context = app;
+    }
+
+    /** 获取全局上下文 */
+    public static Context getContext() {
+        return context;
     }
 
     public Handler getDelivery() {
@@ -159,24 +174,39 @@ public class OkHttpUtils {
         return this;
     }
 
-    /** 全局公共请求参数 */
-    public RequestParams getCommonParams() {
+    /** 全局的缓存模式 */
+    public OkHttpUtils setCacheMode(CacheMode cacheMode) {
+        mCacheMode = cacheMode;
+        return this;
+    }
+
+    /** 获取全局的缓存模式 */
+    public CacheMode getCacheMode() {
+        return mCacheMode;
+    }
+
+    /** 获取全局公共请求参数 */
+    public HttpParams getCommonParams() {
         return mCommonParams;
     }
 
-    public void addCommonParams(RequestParams commonParams) {
-        if (mCommonParams == null) mCommonParams = new RequestParams();
+    /** 添加全局公共请求参数 */
+    public OkHttpUtils addCommonParams(HttpParams commonParams) {
+        if (mCommonParams == null) mCommonParams = new HttpParams();
         mCommonParams.put(commonParams);
+        return this;
     }
 
-    /** 全局公共请求头 */
-    public RequestHeaders getCommonHeaders() {
+    /** 获取全局公共请求头 */
+    public HttpHeaders getCommonHeaders() {
         return mCommonHeaders;
     }
 
-    public void addCommonHeaders(RequestHeaders commonHeaders) {
-        if (mCommonHeaders == null) mCommonHeaders = new RequestHeaders();
+    /** 添加全局公共请求参数 */
+    public OkHttpUtils addCommonHeaders(HttpHeaders commonHeaders) {
+        if (mCommonHeaders == null) mCommonHeaders = new HttpHeaders();
         mCommonHeaders.put(commonHeaders);
+        return this;
     }
 
     /** 根据Tag取消请求 */

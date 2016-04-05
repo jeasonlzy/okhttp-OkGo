@@ -13,9 +13,12 @@ import android.widget.ListView;
 
 import com.lzy.okhttpdemo.Bean.Bean;
 import com.lzy.okhttpdemo.R;
-import com.lzy.okhttpdemo.callback.MyJsonCallBack;
 import com.lzy.okhttpdemo.callback.MyFileCallBack;
+import com.lzy.okhttpdemo.callback.MyJsonCallBack;
 import com.lzy.okhttputils.OkHttpUtils;
+import com.lzy.okhttputils.cache.CacheEntity;
+import com.lzy.okhttputils.cache.CacheManager;
+import com.lzy.okhttputils.cache.CacheMode;
 import com.lzy.okhttputils.request.PostRequest;
 
 import java.io.File;
@@ -34,7 +37,7 @@ import okhttp3.Response;
 
 public class NormalFragment extends Fragment implements AdapterView.OnItemClickListener {
 
-    private String host = "http://192.168.1.108:8080/UploadServer/";
+    private String host = "http://192.168.56.1:8080/UploadServer/";
 
     @Nullable
     @Override
@@ -49,6 +52,7 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
         strings.add("post请求返回json数组");
         strings.add("post文件上传");
         strings.add("get文件下载");
+        strings.add("打印缓存");
 
         ListView listView = (ListView) view.findViewById(R.id.listView);
         listView.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, strings));
@@ -84,18 +88,25 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
             case 7:
                 downloadFile();
                 break;
+            case 8:
+                List<CacheEntity<Object>> all = CacheManager.INSTANCE.getAll();
+                for (CacheEntity<Object> cacheEntity : all) {
+                    System.out.println(cacheEntity);
+                }
+                break;
         }
     }
 
     private void getJson() {
         OkHttpUtils.get(host + "ResponseJson")//
                 .tag(this)//
+                .cacheMode(CacheMode.IF_NONE_CACHE_REQUEST)
                 .params("ppppppp", "ppp")//
                 .headers("hhhhhhh", "hhh")//
                 .execute(new MyJsonCallBack<Bean>() {
                     @Override
-                    public void onResponse(Bean bean) {
-                        System.out.println("onResponse:" + bean);
+                    public void onResponse(boolean isFromCache, Bean bean) {
+                        System.out.println("isFromCache:" + isFromCache + "  onResponse:" + bean);
                     }
                 });
     }
@@ -109,8 +120,8 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
                 .mediaType(PostRequest.MEDIA_TYPE_PLAIN)//
                 .execute(new MyJsonCallBack<String>() {
                     @Override
-                    public void onResponse(String s) {
-                        System.out.println("onResponse:" + s);
+                    public void onResponse(boolean isFromCache, String s) {
+                        System.out.println("isFromCache:" + isFromCache + "  onResponse:" + s);
                     }
                 });
     }
@@ -123,8 +134,8 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
                 .postJson("{}")//
                 .execute(new MyJsonCallBack<String>() {
                     @Override
-                    public void onResponse(String s) {
-                        System.out.println("onResponse:" + s);
+                    public void onResponse(boolean isFromCache, String s) {
+                        System.out.println("isFromCache:" + isFromCache + "  onResponse:" + s);
                     }
                 });
     }
@@ -132,12 +143,13 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
     private void responseJsonArray() {
         OkHttpUtils.post(host + "ResponseJsonArray")//
                 .tag(this)//
+                .cacheMode(CacheMode.REQUEST_FAILED_READ_CACHE)
                 .connTimeOut(2000).writeTimeOut(3000).readTimeOut(4000).params("ppppppp", "ppp")//
                 .headers("hhhhhhh", "hhh")//
                 .execute(new MyJsonCallBack<List<Bean>>() {
                     @Override
-                    public void onResponse(List<Bean> beans) {
-                        System.out.println("onResponse:" + beans);
+                    public void onResponse(boolean isFromCache, List<Bean> beans) {
+                        System.out.println("isFromCache:" + isFromCache + "  onResponse:" + beans);
                     }
                 });
     }
@@ -151,8 +163,8 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
                 .params("file2", new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera/IMG_20160125_230048.jpg"))//
                 .execute(new MyJsonCallBack<String>() {
                     @Override
-                    public void onResponse(String s) {
-                        System.out.println("onResponse:" + s);
+                    public void onResponse(boolean isFromCache, String s) {
+                        System.out.println("isFromCache:" + isFromCache + "  onResponse:" + s);
                     }
                 });
     }
@@ -164,8 +176,8 @@ public class NormalFragment extends Fragment implements AdapterView.OnItemClickL
                 .headers("hhhhhhh", "hhh")//
                 .execute(new MyFileCallBack(Environment.getExternalStorageDirectory() + "/video", "bbb.avi") {
                     @Override
-                    public void onResponse(File response) {
-                        System.out.println("onResponse:" + response);
+                    public void onResponse(boolean isFromCache, File response) {
+                        System.out.println("isFromCache:" + isFromCache + "  onResponse:" + response);
                     }
                 });
     }

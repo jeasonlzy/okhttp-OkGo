@@ -29,7 +29,6 @@ import com.lzy.okhttpserver.listener.UploadListener;
 import com.lzy.okhttpserver.task.ExecutorWithListener;
 import com.lzy.okhttpserver.upload.UploadInfo;
 import com.lzy.okhttpserver.upload.UploadManager;
-import com.lzy.okhttputils.utils.L;
 import com.lzy.okhttputils.OkHttpUtils;
 
 import java.io.File;
@@ -242,18 +241,18 @@ public class UploadFragment extends Fragment implements View.OnClickListener, Ex
 
         @Override
         public void onFinish(String s) {
-            Log.e("MyUploadListener","finish:" + s);
+            Log.e("MyUploadListener", "finish:" + s);
             holder.finish();
         }
 
         @Override
         public void onError(UploadInfo uploadInfo, String errorMsg, Exception e) {
-            Log.e("MyUploadListener","onError:" + errorMsg);
+            Log.e("MyUploadListener", "onError:" + errorMsg);
         }
 
         @Override
         public String parseNetworkResponse(Response response) throws Exception {
-            Log.e("MyUploadListener","parseNetworkResponse");
+            Log.e("MyUploadListener", "parseNetworkResponse");
             return response.body().string();
         }
     }
@@ -269,7 +268,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener, Ex
                 .params("file", new File(images.get(0).path))//
                 .execute(new MyJsonCallBack<String>() {
                     @Override
-                    public void onResponse(String s) {
+                    public void onResponse(boolean isFromCache, String s) {
                         System.out.println("onResponse:" + s);
                     }
                 });

@@ -1,6 +1,6 @@
 package com.lzy.okhttputils.request;
 
-import com.lzy.okhttputils.model.RequestParams;
+import com.lzy.okhttputils.model.HttpParams;
 
 import java.util.Map;
 
@@ -43,7 +43,7 @@ public class PatchRequest extends BaseRequest<PatchRequest> {
                 }
             }
             //拼接文件
-            for (Map.Entry<String, RequestParams.FileWrapper> entry : params.fileParamsMap.entrySet()) {
+            for (Map.Entry<String, HttpParams.FileWrapper> entry : params.fileParamsMap.entrySet()) {
                 RequestBody fileBody = RequestBody.create(entry.getValue().contentType, entry.getValue().file);
                 multipartBodybuilder.addFormDataPart(entry.getKey(), entry.getValue().fileName, fileBody);
             }

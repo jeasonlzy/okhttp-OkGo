@@ -1,15 +1,12 @@
 package com.lzy.okhttputils.model;
 
 import java.io.File;
+import java.io.Serializable;
 import java.net.FileNameMap;
 import java.net.URLConnection;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import okhttp3.FormBody;
 import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 
 /**
  * ================================================
@@ -20,7 +17,7 @@ import okhttp3.RequestBody;
  * 修订历史：
  * ================================================
  */
-public class RequestParams {
+public class HttpParams implements Serializable {
 
     /** 普通的键值对参数 */
     public ConcurrentHashMap<String, String> urlParamsMap;
@@ -33,24 +30,23 @@ public class RequestParams {
         fileParamsMap = new ConcurrentHashMap<>();
     }
 
-    public RequestParams() {
+    public HttpParams() {
         init();
     }
 
-    public RequestParams(String key, String value) {
+    public HttpParams(String key, String value) {
         init();
         put(key, value);
     }
 
-    public RequestParams(String key, File file) {
+    public HttpParams(String key, File file) {
         init();
         put(key, file);
     }
 
-    public void put(RequestParams params) {
+    public void put(HttpParams params) {
         if (params != null) {
-            if (params.urlParamsMap != null && !params.urlParamsMap.isEmpty())
-                urlParamsMap.putAll(params.urlParamsMap);
+            if (params.urlParamsMap != null && !params.urlParamsMap.isEmpty()) urlParamsMap.putAll(params.urlParamsMap);
             if (params.fileParamsMap != null && !params.fileParamsMap.isEmpty())
                 fileParamsMap.putAll(params.fileParamsMap);
         }
@@ -74,6 +70,14 @@ public class RequestParams {
         if (key != null) {
             fileParamsMap.put(key, new FileWrapper(file, fileName, contentType));
         }
+    }
+
+    public void removeUrl(String key) {
+        urlParamsMap.remove(key);
+    }
+
+    public void removeFile(String key) {
+        fileParamsMap.remove(key);
     }
 
     public void clear() {

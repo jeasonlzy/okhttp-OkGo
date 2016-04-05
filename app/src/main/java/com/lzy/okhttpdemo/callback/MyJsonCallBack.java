@@ -26,7 +26,7 @@ public abstract class MyJsonCallBack<T> extends JsonCallBack<T> {
     }
 
     @Override
-    public void onAfter(@Nullable T t, Call call, Response response, @Nullable Exception e) {
+    public void onAfter(boolean isFromCache, @Nullable T t, Call call, Response response, @Nullable Exception e) {
         System.out.println("onAfter");
     }
 
@@ -41,9 +41,9 @@ public abstract class MyJsonCallBack<T> extends JsonCallBack<T> {
     }
 
     @Override
-    public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+    public void onError(boolean isFromCache, Call call, @Nullable Response response, @Nullable Exception e) {
         System.out.println("onError");
-        super.onError(call, response, e);
+        super.onError(isFromCache, call, response, e);
     }
 
     @Override

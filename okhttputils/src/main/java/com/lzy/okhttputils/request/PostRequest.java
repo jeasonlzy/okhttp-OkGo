@@ -1,10 +1,8 @@
 package com.lzy.okhttputils.request;
 
-import com.lzy.okhttputils.model.RequestParams;
+import com.lzy.okhttputils.model.HttpParams;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 
 import okhttp3.FormBody;
@@ -93,7 +91,7 @@ public class PostRequest extends BaseRequest<PostRequest> {
                 }
             }
             //拼接文件
-            for (Map.Entry<String, RequestParams.FileWrapper> entry : params.fileParamsMap.entrySet()) {
+            for (Map.Entry<String, HttpParams.FileWrapper> entry : params.fileParamsMap.entrySet()) {
                 RequestBody fileBody = RequestBody.create(entry.getValue().contentType, entry.getValue().file);
                 multipartBodybuilder.addFormDataPart(entry.getKey(), entry.getValue().fileName, fileBody);
             }

@@ -2,8 +2,8 @@ package com.lzy.okhttputils.callback;
 
 import android.support.annotation.Nullable;
 
-import com.lzy.okhttputils.utils.L;
 import com.lzy.okhttputils.request.BaseRequest;
+import com.lzy.okhttputils.utils.L;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -23,7 +23,7 @@ public abstract class AbsCallback<T> {
     }
 
     /** 请求网络结束后，UI线程 */
-    public void onAfter(@Nullable T t, Call call, Response response, @Nullable Exception e) {
+    public void onAfter(boolean isFromCache, @Nullable T t, Call call, @Nullable Response response, @Nullable Exception e) {
     }
 
     /**
@@ -52,10 +52,10 @@ public abstract class AbsCallback<T> {
     public abstract T parseNetworkResponse(Response response) throws Exception;
 
     /** 对返回数据进行操作的回调， UI线程 */
-    public abstract void onResponse(T t);
+    public abstract void onResponse(boolean isFromCache, T t);
 
     /** 请求失败，响应错误，数据解析错误等，都会回调该方法， UI线程 */
-    public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+    public void onError(boolean isFromCache, Call call, @Nullable Response response, @Nullable Exception e) {
         if (e != null) e.printStackTrace();
         else if (response != null) L.e("服务器内部错误，或者找不到页面等");
     }
@@ -68,7 +68,7 @@ public abstract class AbsCallback<T> {
         }
 
         @Override
-        public void onResponse(Object response) {
+        public void onResponse(boolean isFromCache, Object response) {
         }
     };
 }

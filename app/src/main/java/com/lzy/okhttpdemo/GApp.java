@@ -3,8 +3,8 @@ package com.lzy.okhttpdemo;
 import android.app.Application;
 
 import com.lzy.okhttputils.OkHttpUtils;
-import com.lzy.okhttputils.model.RequestHeaders;
-import com.lzy.okhttputils.model.RequestParams;
+import com.lzy.okhttputils.model.HttpHeaders;
+import com.lzy.okhttputils.model.HttpParams;
 
 import okio.Buffer;
 
@@ -38,27 +38,28 @@ public class GApp extends Application {
     public void onCreate() {
         super.onCreate();
 
-//        System.setProperty("http.proxyHost", "192.168.1.108");
-//        System.setProperty("http.proxyPort", "8888");
+//        System.setProperty("http.proxyHost", "192.168.1.108");  //个人测试网络时用的，删掉即可
+//        System.setProperty("http.proxyPort", "8888");           //个人测试网络时用的，删掉即可
 
         try {
-            OkHttpUtils.getInstance()//
-                    .debug("OkHttpUtils", true) //是否打开调试
-                    .setConnectTimeout(OkHttpUtils.DEFAULT_MILLISECONDS)//全局的连接超时时间
-                    .setReadTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS)//全局的读取超时时间
-                    .setWriteTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS)//全局的写入超时时间
-                            //.setCertificates(getAssets().open("srca.cer"), getAssets().open("zhy_server.cer"))//
-                    .setCertificates(new Buffer().writeUtf8(CER_12306).inputStream());//设置自签名网站的证书
-
-            RequestHeaders headers = new RequestHeaders();
+            HttpHeaders headers = new HttpHeaders();
             headers.put("aaa", "111");
             headers.put("bbb", "222");
-            OkHttpUtils.getInstance().addCommonHeaders(headers); //全局公共头
-
-            RequestParams params = new RequestParams();
+            HttpParams params = new HttpParams();
             params.put("ccc", "333");
             params.put("ddd", "444");
-            OkHttpUtils.getInstance().addCommonParams(params);  //全局公共参数
+
+            //必须调用初始化
+            OkHttpUtils.init(this);
+            //以下都不是必须的，根据需要自行选择
+            OkHttpUtils.getInstance().debug("OkHttpUtils", true)                       //是否打开调试
+                    .setConnectTimeout(OkHttpUtils.DEFAULT_MILLISECONDS)               //全局的连接超时时间
+                    .setReadTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS)                  //全局的读取超时时间
+                    .setWriteTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS)                 //全局的写入超时时间
+                    .setCertificates(new Buffer().writeUtf8(CER_12306).inputStream())  //设置自签名网站的证书
+                    .addCommonHeaders(headers)                                         //设置全局公共头
+                    .addCommonParams(params);                                          //设置全局公共参数
+//                  .setCertificates(getAssets().open("srca.cer"), getAssets().open("zhy_server.cer"))//这种方式也可以设置https证书
         } catch (Exception e) {
             e.printStackTrace();
         }
