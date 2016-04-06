@@ -24,6 +24,14 @@
         </activity>
         <activity android:name=".activity.DownloadManagerActivity"/>
         <activity android:name=".activity.DesActivity"/>
+        <activity android:name=".activity.MethodActivity"/>
+        <activity android:name=".activity.CustomRequestActivity"/>
+        <activity android:name=".activity.BitmapRequestActivity"/>
+        <activity android:name=".activity.PostTextActivity"/>
+        <activity android:name=".activity.FormUploadActivity"/>
+        <activity android:name=".activity.FileDownloadActivity"/>
+        <activity android:name=".activity.CacheActivity"/>
+        <activity android:name=".activity.HttpsActivity"/>
     </application>
 
 </manifest>

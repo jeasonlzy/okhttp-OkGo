@@ -6,6 +6,7 @@ import com.lzy.okhttputils.request.BaseRequest;
 import com.lzy.okhttputils.utils.L;
 
 import okhttp3.Call;
+import okhttp3.Request;
 import okhttp3.Response;
 
 /**
@@ -52,7 +53,7 @@ public abstract class AbsCallback<T> {
     public abstract T parseNetworkResponse(Response response) throws Exception;
 
     /** 对返回数据进行操作的回调， UI线程 */
-    public abstract void onResponse(boolean isFromCache, T t);
+    public abstract void onResponse(boolean isFromCache, T t, Request request, Response response);
 
     /** 请求失败，响应错误，数据解析错误等，都会回调该方法， UI线程 */
     public void onError(boolean isFromCache, Call call, @Nullable Response response, @Nullable Exception e) {
@@ -68,7 +69,7 @@ public abstract class AbsCallback<T> {
         }
 
         @Override
-        public void onResponse(boolean isFromCache, Object response) {
+        public void onResponse(boolean isFromCache, Object data, Request request, Response response) {
         }
     };
 }

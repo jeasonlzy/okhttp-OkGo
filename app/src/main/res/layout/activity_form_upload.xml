@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <Button
+            android:id="@+id/selectImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="选择图片（可多选）"
+            android:textAllCaps="false"/>
+
+        <Button
+            android:id="@+id/formUpload"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="上传"
+            android:textAllCaps="false"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#888"
+            android:text="选择的图片路径"
+            android:textColor="#FFF"/>
+
+        <TextView
+            android:id="@+id/images"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="--"/>
+
+        <include layout="@layout/include_data"/>
+
+    </LinearLayout>
+
+</ScrollView>

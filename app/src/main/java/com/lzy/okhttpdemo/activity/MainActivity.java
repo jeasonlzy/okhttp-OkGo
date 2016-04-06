@@ -5,18 +5,17 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 
+import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.fragment.DownloadFragment;
-import com.lzy.okhttpdemo.fragment.NormalFragment;
+import com.lzy.okhttpdemo.fragment.OkhttpFragment;
 import com.lzy.okhttpdemo.fragment.UploadFragment;
 import com.lzy.okhttpdemo.ui.PagerSlidingTabStrip;
-import com.lzy.okhttpdemo.R;
 import com.lzy.okhttputils.OkHttpUtils;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private ArrayList<Fragment> fragments;
 
@@ -24,11 +23,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
         PagerSlidingTabStrip tab = (PagerSlidingTabStrip) findViewById(R.id.tab);
 
         fragments = new ArrayList<>();
-        fragments.add(new NormalFragment());
+        fragments.add(new OkhttpFragment());
         fragments.add(new DownloadFragment());
         fragments.add(new UploadFragment());
 

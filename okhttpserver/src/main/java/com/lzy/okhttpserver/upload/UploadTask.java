@@ -14,6 +14,7 @@ import com.lzy.okhttputils.utils.L;
 import java.io.File;
 import java.io.IOException;
 
+import okhttp3.Request;
 import okhttp3.Response;
 
 /**
@@ -134,7 +135,7 @@ public class UploadTask<T> extends PriorityAsyncTask<Void, UploadInfo, UploadInf
         }
 
         @Override
-        public void onResponse(boolean isFromCache, T t) {
+        public void onResponse(boolean isFromCache, T t, Request request, Response response) {
         }
     }
 

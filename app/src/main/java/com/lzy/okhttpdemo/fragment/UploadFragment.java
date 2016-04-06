@@ -21,7 +21,7 @@ import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.loader.GlideImageLoader;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.okhttpdemo.R;
-import com.lzy.okhttpdemo.callback.MyJsonCallBack;
+import com.lzy.okhttpdemo.callback.DialogCallBack;
 import com.lzy.okhttpdemo.ui.ProgressPieView;
 import com.lzy.okhttpdemo.utils.QiniuToken;
 import com.lzy.okhttpserver.download.DownloadManager;
@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import okhttp3.Request;
 import okhttp3.Response;
 
 public class UploadFragment extends Fragment implements View.OnClickListener, ExecutorWithListener.OnAllTaskEndListener {
@@ -172,7 +173,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener, Ex
             int size = gridView.getWidth() / 3;
             ViewHolder holder;
             if (convertView == null) {
-                convertView = View.inflate(getContext(), R.layout.item_up, null);
+                convertView = View.inflate(getContext(), R.layout.item_upload_manager, null);
                 holder = new ViewHolder(convertView);
                 convertView.setTag(holder);
             } else {
@@ -266,9 +267,9 @@ public class UploadFragment extends Fragment implements View.OnClickListener, Ex
                 .params("x:aaa", "aaa")//
                 .params("token", QiniuToken.getToken())//
                 .params("file", new File(images.get(0).path))//
-                .execute(new MyJsonCallBack<String>() {
+                .execute(new DialogCallBack<String>(getActivity()) {
                     @Override
-                    public void onResponse(boolean isFromCache, String s) {
+                    public void onResponse(boolean isFromCache, String s, Request request, Response response) {
                         System.out.println("onResponse:" + s);
                     }
                 });

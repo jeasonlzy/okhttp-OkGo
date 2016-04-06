@@ -38,16 +38,16 @@ public class GApp extends Application {
     public void onCreate() {
         super.onCreate();
 
-//        System.setProperty("http.proxyHost", "192.168.1.108");  //个人测试网络时用的，删掉即可
-//        System.setProperty("http.proxyPort", "8888");           //个人测试网络时用的，删掉即可
+        System.setProperty("http.proxyHost", "192.168.56.1");  //个人测试网络时用的，删掉即可
+        System.setProperty("http.proxyPort", "8888");           //个人测试网络时用的，删掉即可
 
         try {
             HttpHeaders headers = new HttpHeaders();
-            headers.put("aaa", "111");
-            headers.put("bbb", "222");
+            headers.put("commonHeadersA", "111");
+            headers.put("commonHeadersB", "222");
             HttpParams params = new HttpParams();
-            params.put("ccc", "333");
-            params.put("ddd", "444");
+            params.put("commonParamsA", "333");
+            params.put("commonParamsB", "444");
 
             //必须调用初始化
             OkHttpUtils.init(this);

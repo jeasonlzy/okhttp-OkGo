@@ -9,7 +9,6 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,7 +27,7 @@ import com.lzy.okhttpserver.task.ExecutorWithListener;
 import java.io.File;
 import java.util.List;
 
-public class DownloadManagerActivity extends AppCompatActivity implements View.OnClickListener, ExecutorWithListener.OnAllTaskEndListener {
+public class DownloadManagerActivity extends BaseActivity implements View.OnClickListener, ExecutorWithListener.OnAllTaskEndListener {
 
     private List<DownloadInfo> allTask;
     private MyAdapter adapter;
@@ -37,7 +36,7 @@ public class DownloadManagerActivity extends AppCompatActivity implements View.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dm);
+        setContentView(R.layout.activity_download_manager);
 
         downloadManager = DownloadService.getDownloadManager(this);
         allTask = downloadManager.getAllTask();
@@ -111,7 +110,7 @@ public class DownloadManagerActivity extends AppCompatActivity implements View.O
             DownloadInfo downloadInfo = getItem(position);
             ViewHolder holder;
             if (convertView == null) {
-                convertView = View.inflate(DownloadManagerActivity.this, R.layout.item_dm, null);
+                convertView = View.inflate(DownloadManagerActivity.this, R.layout.item_download_manager, null);
                 holder = new ViewHolder(convertView);
                 convertView.setTag(holder);
             } else {

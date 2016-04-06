@@ -120,7 +120,7 @@ public class DownloadFragment extends Fragment {
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                convertView = View.inflate(getContext(), R.layout.item_apk, null);
+                convertView = View.inflate(getContext(), R.layout.item_download_details, null);
             }
             final ApkInfo apk = getItem(position);
             TextView name = (TextView) convertView.findViewById(R.id.name);

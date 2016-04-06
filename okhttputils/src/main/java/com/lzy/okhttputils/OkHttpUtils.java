@@ -119,7 +119,7 @@ public class OkHttpUtils {
 
     /** 调试模式 */
     public OkHttpUtils debug(String tag, boolean showResponse) {
-        okHttpClientBuilder.addInterceptor(new LoggerInterceptor(tag, showResponse));
+//        okHttpClientBuilder.addInterceptor(new LoggerInterceptor(tag, showResponse));
         return this;
     }
 

@@ -1,6 +1,7 @@
 package com.lzy.okhttputils.request;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.lzy.okhttputils.OkHttpUtils;
@@ -238,6 +239,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
 
     /** 阻塞方法，同步请求执行 */
     public Response execute() throws IOException {
+        addDefaultHeaders();
         RequestBody requestBody = generateRequestBody();
         final Request request = generateRequest(wrapRequestBody(requestBody));
         Call call = generateCall(request);
@@ -249,24 +251,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
         mCallback = callback;
         if (mCallback == null) mCallback = AbsCallback.CALLBACK_DEFAULT;
 
-        //如果没有明确的指定key，默认使用url和和请求参数的拼接
-        if (cacheKey == null) cacheKey = createUrlFromParams(url, params.urlParamsMap);
-        if (cacheMode == null) cacheMode = CacheMode.DEFAULT;
-        //TODO 可能会报强制转换错误，处理方法，如果异常，请求网络
-        final CacheEntity<T> cacheEntity = (CacheEntity<T>) cacheManager.get(cacheKey);
-
-        //1. 按照标准的 http 协议，添加响应头
-        if (cacheEntity == null) {
-            removeHeader(HttpHeaders.HEAD_KEY_IF_NONE_MATCH);
-            removeHeader(HttpHeaders.HEAD_KEY_IF_MODIFIED_SINCE);
-        } else if (cacheEntity.getLocalExpire() < System.currentTimeMillis()) {
-            HttpHeaders headers = cacheEntity.getHeaders();
-            String eTag = headers.get(HttpHeaders.HEAD_KEY_E_TAG);
-            if (eTag != null) headers(HttpHeaders.HEAD_KEY_IF_NONE_MATCH, eTag);
-            long lastModified = HttpHeaders.getLastModified(headers.get(HttpHeaders.HEAD_KEY_LAST_MODIFIED));
-            if (lastModified > 0)
-                headers(HttpHeaders.HEAD_KEY_IF_MODIFIED_SINCE, HttpHeaders.formatMillisToGMT(lastModified));
-        }
+        final CacheEntity<T> cacheEntity = addDefaultHeaders();
 
         mCallback.onBefore(this);      //请求执行前调用 （UI线程）
         RequestBody requestBody = generateRequestBody();
@@ -333,6 +318,40 @@ public abstract class BaseRequest<R extends BaseRequest> {
                 }
             }
         });
+    }
+
+    /**
+     * 对每个请求添加默认的请求头，如果有缓存，并返回缓存实体对象
+     */
+    @Nullable
+    private <T> CacheEntity<T> addDefaultHeaders() {
+        //如果没有明确的指定key，默认使用url和和请求参数的拼接
+        if (cacheKey == null) cacheKey = createUrlFromParams(url, params.urlParamsMap);
+        if (cacheMode == null) cacheMode = CacheMode.DEFAULT;
+        //TODO 可能会报强制转换错误，处理方法，如果异常，请求网络
+        final CacheEntity<T> cacheEntity = (CacheEntity<T>) cacheManager.get(cacheKey);
+
+        //1. 按照标准的 http 协议，添加304相关响应头
+        if (cacheEntity == null) {
+            removeHeader(HttpHeaders.HEAD_KEY_IF_NONE_MATCH);
+            removeHeader(HttpHeaders.HEAD_KEY_IF_MODIFIED_SINCE);
+        } else if (cacheEntity.getLocalExpire() < System.currentTimeMillis()) {
+            HttpHeaders headers = cacheEntity.getHeaders();
+            String eTag = headers.get(HttpHeaders.HEAD_KEY_E_TAG);
+            if (eTag != null) headers(HttpHeaders.HEAD_KEY_IF_NONE_MATCH, eTag);
+            long lastModified = HttpHeaders.getLastModified(headers.get(HttpHeaders.HEAD_KEY_LAST_MODIFIED));
+            if (lastModified > 0)
+                headers(HttpHeaders.HEAD_KEY_IF_MODIFIED_SINCE, HttpHeaders.formatMillisToGMT(lastModified));
+        }
+
+        // 2. 添加 Accept-Language
+        String acceptLanguage = HttpHeaders.getAcceptLanguage();
+        if (!TextUtils.isEmpty(acceptLanguage)) headers(HttpHeaders.HEAD_KEY_ACCEPT_LANGUAGE, acceptLanguage);
+
+        // 3. 添加 UserAgent
+        String userAgent = HttpHeaders.getUserAgent();
+        if (!TextUtils.isEmpty(userAgent)) headers(HttpHeaders.HEAD_KEY_USER_AGENT, userAgent);
+        return cacheEntity;
     }
 
     /**
@@ -430,7 +449,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
         OkHttpUtils.getInstance().getDelivery().post(new Runnable() {
             @Override
             public void run() {
-                callback.onResponse(isFromCache, t);                         //请求成功回调 （UI线程）
+                callback.onResponse(isFromCache, t, call.request(), response);                         //请求成功回调 （UI线程）
                 callback.onAfter(isFromCache, t, call, response, null);      //请求结束回调 （UI线程）
             }
         });

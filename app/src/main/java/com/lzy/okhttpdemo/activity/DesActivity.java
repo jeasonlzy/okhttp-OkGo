@@ -21,7 +21,7 @@ import com.lzy.okhttpdemo.utils.ApkUtils;
 
 import java.io.File;
 
-public class DesActivity extends AppCompatActivity implements View.OnClickListener {
+public class DesActivity extends BaseActivity implements View.OnClickListener {
 
     private TextView downloadSize;
     private TextView tvProgress;
@@ -38,7 +38,7 @@ public class DesActivity extends AppCompatActivity implements View.OnClickListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_des);
+        setContentView(R.layout.activity_download_details);
         apk = (ApkInfo) getIntent().getSerializableExtra("apk");
         downloadManager = DownloadService.getDownloadManager(this);
 

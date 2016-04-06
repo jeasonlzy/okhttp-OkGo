@@ -1,5 +1,8 @@
 package com.lzy.okhttputils.request;
 
+import android.text.TextUtils;
+
+import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
@@ -14,13 +17,27 @@ import okhttp3.RequestBody;
  */
 public class DeleteRequest extends BaseRequest<DeleteRequest> {
 
+    public static final MediaType MEDIA_TYPE_PLAIN = MediaType.parse("text/plain;charset=utf-8");
+
+    private String content;
+    private MediaType mediaType;
+
     public DeleteRequest(String url) {
         super(url);
     }
 
+    public DeleteRequest content(String content) {
+        this.content = content;
+        this.mediaType = MEDIA_TYPE_PLAIN;
+        return this;
+    }
+
     @Override
     public RequestBody generateRequestBody() {
-        return null;
+        if (TextUtils.isEmpty(content)) {
+            throw new IllegalStateException("必须设置delete请求的 content，请调用content(String content) 方法");
+        }
+        return RequestBody.create(mediaType, content);
     }
 
     @Override
