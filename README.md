@@ -1,5 +1,10 @@
 # OkHttpUtils
-该项目是根据：[https://github.com/hongyangAndroid/okhttp-utils](https://github.com/hongyangAndroid/okhttp-utils)  和 [https://github.com/pengjianbo/OkHttpFinal](https://github.com/pengjianbo/OkHttpFinal) 和 [https://github.com/wyouflf/xUtils](https://github.com/wyouflf/xUtils) 修改而成，喜欢原作的可以去使用。同时欢迎大家下载体验本项目，如果使用过程中遇到什么问题，欢迎反馈。
+该项目参考了以下代码：
+ * [https://github.com/hongyangAndroid/okhttp-utils](https://github.com/hongyangAndroid/okhttp-utils)
+ * [https://github.com/pengjianbo/OkHttpFinal](https://github.com/pengjianbo/OkHttpFinal)
+ * [https://github.com/wyouflf/xUtils](https://github.com/wyouflf/xUtils)
+
+喜欢原作的可以去使用。同时欢迎大家下载体验本项目，如果使用过程中遇到什么问题，欢迎反馈。
 
 ### 联系方式
  * 邮箱地址： liaojeason@126.com
