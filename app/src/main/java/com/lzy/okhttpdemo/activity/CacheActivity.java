@@ -7,7 +7,7 @@ import android.view.View;
 
 import com.lzy.okhttpdemo.Bean.RequestInfo;
 import com.lzy.okhttpdemo.R;
-import com.lzy.okhttpdemo.callback.DialogCallback1;
+import com.lzy.okhttpdemo.callback.DialogCallback;
 import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
@@ -97,7 +97,7 @@ public class CacheActivity extends BaseActivity {
                 .execute(new CacheCallBack(this));
     }
 
-    private class CacheCallBack extends DialogCallback1<RequestInfo> {
+    private class CacheCallBack extends DialogCallback<RequestInfo> {
 
         public CacheCallBack(Activity activity) {
             super(activity, RequestInfo.class);

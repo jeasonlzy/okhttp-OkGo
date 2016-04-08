@@ -8,7 +8,7 @@ import android.view.View;
 import com.google.gson.reflect.TypeToken;
 import com.lzy.okhttpdemo.Bean.RequestInfo;
 import com.lzy.okhttpdemo.R;
-import com.lzy.okhttpdemo.callback.DialogCallback1;
+import com.lzy.okhttpdemo.callback.DialogCallback;
 import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
@@ -57,7 +57,7 @@ public class CustomRequestActivity extends BaseActivity {
                 .execute(new CustomCallBack<List<RequestInfo>>(this, new TypeToken<List<RequestInfo>>(){}.getType()));
     }
 
-    private class CustomCallBack<T> extends DialogCallback1<T> {
+    private class CustomCallBack<T> extends DialogCallback<T> {
         public CustomCallBack(Activity activity, Class<T> clazz) {
             super(activity, clazz);
         }

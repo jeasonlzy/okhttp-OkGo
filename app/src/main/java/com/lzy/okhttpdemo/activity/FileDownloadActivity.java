@@ -13,7 +13,7 @@ import com.lzy.okhttpdemo.ui.NumberProgressBar;
 import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
-import com.lzy.okhttputils.callback.FileCallback1;
+import com.lzy.okhttputils.callback.FileCallback;
 import com.lzy.okhttputils.request.BaseRequest;
 
 import java.io.File;
@@ -56,7 +56,7 @@ public class FileDownloadActivity extends BaseActivity {
                 .execute(new DownloadFileCallBack(Environment.getExternalStorageDirectory() + "/temp", "OkHttpUtils.apk"));
     }
 
-    private class DownloadFileCallBack extends FileCallback1 {
+    private class DownloadFileCallBack extends FileCallback {
 
         public DownloadFileCallBack(String destFileDir, String destFileName) {
             super(destFileDir, destFileName);

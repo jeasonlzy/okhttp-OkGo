@@ -21,7 +21,7 @@ import okhttp3.Response;
  * 修订历史：
  * ================================================
  */
-public abstract class FileCallback1 extends AbsCallback<File> {
+public abstract class FileCallback extends AbsCallback<File> {
 
     public static final String DM_TARGET_FOLDER = File.separator + "download" + File.separator; //下载目标文件夹
 
@@ -30,7 +30,7 @@ public abstract class FileCallback1 extends AbsCallback<File> {
     /** 目标文件存储的文件名 */
     private String destFileName;
 
-    public FileCallback1(String destFileName) {
+    public FileCallback(String destFileName) {
         this(Environment.getExternalStorageDirectory() + DM_TARGET_FOLDER, destFileName);
     }
 
@@ -38,7 +38,7 @@ public abstract class FileCallback1 extends AbsCallback<File> {
      * @param destFileDir  要保存的目标文件夹
      * @param destFileName 要保存的文件名
      */
-    public FileCallback1(@NonNull String destFileDir, @NonNull String destFileName) {
+    public FileCallback(@NonNull String destFileDir, @NonNull String destFileName) {
         this.destFileDir = destFileDir;
         this.destFileName = destFileName;
     }

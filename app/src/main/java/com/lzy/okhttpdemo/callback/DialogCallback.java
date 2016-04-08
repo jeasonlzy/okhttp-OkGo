@@ -21,7 +21,7 @@ import okhttp3.Response;
  * 修订历史：
  * ================================================
  */
-public abstract class DialogCallback1<T> extends JsonCallback<T> {
+public abstract class DialogCallback<T> extends JsonCallback<T> {
 
     private ProgressDialog dialog;
 
@@ -33,12 +33,12 @@ public abstract class DialogCallback1<T> extends JsonCallback<T> {
         dialog.setMessage("请求网络中...");
     }
 
-    public DialogCallback1(Activity activity, Class<T> clazz) {
+    public DialogCallback(Activity activity, Class<T> clazz) {
         super(clazz);
         initDialog(activity);
     }
 
-    public DialogCallback1(Activity activity, Type type) {
+    public DialogCallback(Activity activity, Type type) {
         super(type);
         initDialog(activity);
     }

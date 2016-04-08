@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.lzy.okhttpdemo.Bean.RequestInfo;
 import com.lzy.okhttpdemo.R;
-import com.lzy.okhttpdemo.callback.DialogCallback1;
+import com.lzy.okhttpdemo.callback.DialogCallback;
 import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
@@ -99,7 +99,7 @@ public class MethodActivity extends BaseActivity implements AdapterView.OnItemCl
         }
     }
 
-    private class MethodCallBack<T> extends DialogCallback1<T> {
+    private class MethodCallBack<T> extends DialogCallback<T> {
 
         public MethodCallBack(Activity activity, Class<T> clazz) {
             super(activity, clazz);
