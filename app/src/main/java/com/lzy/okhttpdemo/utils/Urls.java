@@ -10,21 +10,13 @@ package com.lzy.okhttpdemo.utils;
  * ================================================
  */
 public class Urls {
-    public static final String SERVER = "http://jeason.ecs02.tomcats.pw/UploadServer/";
-    public static final String UploadString = SERVER + "UploadString";
-    public static final String UploadFile = SERVER + "UploadFile";
-    public static final String DownloadFile = SERVER + "DownloadFile";
-    public static final String ResponseJson = SERVER + "ResponseJson";
-    public static final String ResponseJsonArray = SERVER + "ResponseJsonArray";
-
-    public static final String SERVER2 = "http://1.nohttp.applinzi.com/";
-    public static final String URL_NOHTTP_TEST = SERVER2 + "test";
-    public static final String URL_NOHTTP_METHOD = SERVER2 + "method";
-    public static final String URL_NOHTTP_CACHE_STRING = SERVER2 + "cache";
-    public static final String URL_NOHTTP_CACHE_IMAGE = SERVER2 + "imageCache";
-    public static final String URL_NOHTTP_IMAGE = SERVER2 + "image";
-    public static final String URL_NOHTTP_JSONOBJECT = SERVER2 + "jsonObject";
-    public static final String URL_NOHTTP_JSONARRAY = SERVER2 + "jsonArray";
-    public static final String URL_NOHTTP_REDIRECT = SERVER2 + "redirect";
-    public static final String URL_NOHTTP_UPLOAD = SERVER2 + "upload";
+    public static final String SERVER = "http://192.168.56.1:8080/OkHttpUtils/";
+    public static final String URL_METHOD = SERVER + "method";
+    public static final String URL_CACHE = SERVER + "cache";
+    public static final String URL_IMAGE = SERVER + "image";
+    public static final String URL_JSONOBJECT = SERVER + "jsonObject";
+    public static final String URL_JSONARRAY = SERVER + "jsonArray";
+    public static final String URL_FORM_UPLOAD = SERVER + "upload";
+    public static final String URL_TEXT_UPLOAD = SERVER + "uploadString";
+    public static final String URL_DOWNLOAD = SERVER + "download";
 }

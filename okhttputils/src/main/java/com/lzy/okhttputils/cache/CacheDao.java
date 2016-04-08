@@ -34,7 +34,7 @@ class CacheDao<T> extends DataBaseDao<CacheEntity<T>> {
         ContentValues values = new ContentValues();
         values.put(CacheHelper.KEY, cacheEntity.getKey());
 
-        HttpHeaders headers = cacheEntity.getHeaders();
+        HttpHeaders headers = cacheEntity.getResponseHeaders();
         ByteArrayOutputStream headerBAOS = null;
         ObjectOutputStream headerOOS = null;
         try {
@@ -110,7 +110,7 @@ class CacheDao<T> extends DataBaseDao<CacheEntity<T>> {
             headerBAIS = new ByteArrayInputStream(headerData);
             headerOIS = new ObjectInputStream(headerBAIS);
             Object header = headerOIS.readObject();
-            cacheEntity.setHeaders((HttpHeaders) header);
+            cacheEntity.setResponseHeaders((HttpHeaders) header);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

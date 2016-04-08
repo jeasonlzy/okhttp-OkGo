@@ -9,13 +9,12 @@ import com.lzy.okhttputils.cache.CacheMode;
 import com.lzy.okhttputils.cookie.CookieJarImpl;
 import com.lzy.okhttputils.cookie.store.MemoryCookieStore;
 import com.lzy.okhttputils.https.HttpsUtils;
-import com.lzy.okhttputils.interceptor.LoggerInterceptor;
 import com.lzy.okhttputils.model.HttpHeaders;
 import com.lzy.okhttputils.model.HttpParams;
 import com.lzy.okhttputils.request.DeleteRequest;
 import com.lzy.okhttputils.request.GetRequest;
 import com.lzy.okhttputils.request.HeadRequest;
-import com.lzy.okhttputils.request.PatchRequest;
+import com.lzy.okhttputils.request.OptionsRequest;
 import com.lzy.okhttputils.request.PostRequest;
 import com.lzy.okhttputils.request.PutRequest;
 
@@ -36,19 +35,17 @@ import okio.Buffer;
  * 创建日期：2016/1/12
  * 描    述：网络请求的入口类
  * 修订历史：
- * 本框架基于 张鸿洋 https://github.com/hongyangAndroid/okhttp-utils
- * 和  https://github.com/pengjianbo/OkHttpFinal 两个框架修改而成，
  * ================================================
  */
 public class OkHttpUtils {
-    public static final int DEFAULT_MILLISECONDS = 5000; //默认的超时时间
-    private static OkHttpUtils mInstance;                //单例
-    private Handler mDelivery;                           //用于在主线程执行的调度器
-    private OkHttpClient.Builder okHttpClientBuilder;    //ok请求的客户端
-    private HttpParams mCommonParams;                    //全局公共请求参数
-    private HttpHeaders mCommonHeaders;                  //全局公共请求头
-    private CacheMode mCacheMode;                        //全局缓存模式
-    private static Application context;                  //全局上下文
+    public static final int DEFAULT_MILLISECONDS = 10000; //默认的超时时间
+    private static OkHttpUtils mInstance;                 //单例
+    private Handler mDelivery;                            //用于在主线程执行的调度器
+    private OkHttpClient.Builder okHttpClientBuilder;     //ok请求的客户端
+    private HttpParams mCommonParams;                     //全局公共请求参数
+    private HttpHeaders mCommonHeaders;                   //全局公共请求头
+    private CacheMode mCacheMode;                         //全局缓存模式
+    private static Application context;                   //全局上下文
 
     private OkHttpUtils() {
         okHttpClientBuilder = new OkHttpClient.Builder();
@@ -113,8 +110,8 @@ public class OkHttpUtils {
     }
 
     /** patch请求 */
-    public static PatchRequest patch(String url) {
-        return new PatchRequest(url);
+    public static OptionsRequest options(String url) {
+        return new OptionsRequest(url);
     }
 
     /** 调试模式 */

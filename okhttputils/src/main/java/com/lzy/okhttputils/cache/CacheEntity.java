@@ -9,17 +9,17 @@ public class CacheEntity<T> implements Serializable {
 
     private long id;
     private String key;
-    private HttpHeaders headers;
+    private HttpHeaders responseHeaders;
     private T data;
     private long localExpire;
 
     public CacheEntity() {
     }
 
-    public CacheEntity(long id, String key, HttpHeaders headers, T data, long localExpire) {
+    public CacheEntity(long id, String key, HttpHeaders responseHeaders, T data, long localExpire) {
         this.id = id;
         this.key = key;
-        this.headers = headers;
+        this.responseHeaders = responseHeaders;
         this.data = data;
         this.localExpire = localExpire;
     }
@@ -40,12 +40,12 @@ public class CacheEntity<T> implements Serializable {
         this.key = key;
     }
 
-    public HttpHeaders getHeaders() {
-        return headers;
+    public HttpHeaders getResponseHeaders() {
+        return responseHeaders;
     }
 
-    public void setHeaders(HttpHeaders headers) {
-        this.headers = headers;
+    public void setResponseHeaders(HttpHeaders responseHeaders) {
+        this.responseHeaders = responseHeaders;
     }
 
     public T getData() {
@@ -69,7 +69,7 @@ public class CacheEntity<T> implements Serializable {
         return "CacheEntity{" +
                 "id=" + id +
                 ", key='" + key + '\'' +
-                ", headers=" + headers +
+                ", responseHeaders=" + responseHeaders +
                 ", data=" + data +
                 ", localExpire=" + localExpire +
                 '}';

@@ -1,15 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <Button
+        android:id="@+id/cache_default"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dp">
+        android:gravity="left|center_vertical"
+        android:text="Http标准的缓存协议(304缓存头)"
+        android:textAllCaps="false"/>
 
-    </LinearLayout>
+    <Button
+        android:id="@+id/request_failed_read_cache"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left|center_vertical"
+        android:text="先请求网络，如果失败，则返回上次的缓存"
+        android:textAllCaps="false"/>
 
-</ScrollView>
+    <Button
+        android:id="@+id/if_none_cache_request"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left|center_vertical"
+        android:text="先读取缓存，如果缓存不存在，才请求网络，\n如果网络请求也失败，则请求失败"
+        android:textAllCaps="false"/>
+
+    <Button
+        android:id="@+id/first_cache_then_request"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left|center_vertical"
+        android:text="先读取缓存，无论缓存是否存在，都请求网络，\n如果网络请求失败，则仍然使用缓存"
+        android:textAllCaps="false"/>
+
+    <Button
+        android:id="@+id/getAll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left|center_vertical"
+        android:text="显示所有缓存"
+        android:textAllCaps="false"/>
+
+    <Button
+        android:id="@+id/clear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left|center_vertical"
+        android:text="清除所有缓存"
+        android:textAllCaps="false"/>
+
+</LinearLayout>

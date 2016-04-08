@@ -11,40 +11,34 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.List;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
-/** Https相关的工具类 */
-public class HttpsUtils {
-    public static SSLSocketFactory getSslSocketFactory(InputStream[] certificates, InputStream bksFile, String password) {
-        try {
-            KeyManager[] keyManagers = prepareKeyManager(bksFile, password);
-            TrustManager[] trustManagers = prepareTrustManager(certificates);
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            TrustManager trustManager;
-            if (trustManagers != null) {
-                trustManager = new MyTrustManager(chooseTrustManager(trustManagers));
-            } else {
-                trustManager = new UnSafeTrustManager();
-            }
-            sslContext.init(keyManagers, new TrustManager[]{trustManager}, new SecureRandom());
-            return sslContext.getSocketFactory();
-        } catch (NoSuchAlgorithmException e) {
-            throw new AssertionError(e);
-        } catch (KeyManagementException e) {
-            throw new AssertionError(e);
-        } catch (KeyStoreException e) {
-            throw new AssertionError(e);
-        }
+import okhttp3.OkHttpClient;
+
+public class HttpsCerManager {
+
+    private OkHttpClient.Builder okHttpBuilder;
+
+    public HttpsCerManager(OkHttpClient.Builder builder) {
+        this.okHttpBuilder = builder;
     }
 
-    private static TrustManager[] prepareTrustManager(InputStream... certificates) {
+    public void setCertificates(List<InputStream> certificates) {
+        setCertificates(certificates.toArray(new InputStream[]{}), null, null);
+    }
+
+    public void setCertificates(InputStream... certificates) {
+        setCertificates(certificates, null, null);
+    }
+
+    private TrustManager[] prepareTrustManager(InputStream... certificates) {
         if (certificates == null || certificates.length <= 0) return null;
         try {
             CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
@@ -55,7 +49,9 @@ public class HttpsUtils {
                 String certificateAlias = Integer.toString(index++);
                 keyStore.setCertificateEntry(certificateAlias, certificateFactory.generateCertificate(certificate));
                 try {
-                    if (certificate != null) certificate.close();
+                    if (certificate != null) {
+                        certificate.close();
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -76,7 +72,7 @@ public class HttpsUtils {
         return null;
     }
 
-    private static KeyManager[] prepareKeyManager(InputStream bksFile, String password) {
+    private KeyManager[] prepareKeyManager(InputStream bksFile, String password) {
         try {
             if (bksFile == null || password == null) return null;
             KeyStore clientKeyStore = KeyStore.getInstance("BKS");
@@ -100,7 +96,23 @@ public class HttpsUtils {
         return null;
     }
 
-    private static X509TrustManager chooseTrustManager(TrustManager[] trustManagers) {
+    private void setCertificates(InputStream[] certificates, InputStream bksFile, String password) {
+        try {
+            TrustManager[] trustManagers = prepareTrustManager(certificates);
+            KeyManager[] keyManagers = prepareKeyManager(bksFile, password);
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(keyManagers, new TrustManager[]{new OkHttpTrustManager(chooseTrustManager(trustManagers))}, new SecureRandom());
+            okHttpBuilder.sslSocketFactory(sslContext.getSocketFactory());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private X509TrustManager chooseTrustManager(TrustManager[] trustManagers) {
         for (TrustManager trustManager : trustManagers) {
             if (trustManager instanceof X509TrustManager) {
                 return (X509TrustManager) trustManager;
@@ -109,26 +121,11 @@ public class HttpsUtils {
         return null;
     }
 
-    private static class UnSafeTrustManager implements X509TrustManager {
-        @Override
-        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-        }
-
-        @Override
-        public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-        }
-
-        @Override
-        public X509Certificate[] getAcceptedIssuers() {
-            return new java.security.cert.X509Certificate[]{};
-        }
-    }
-
-    private static class MyTrustManager implements X509TrustManager {
+    private class OkHttpTrustManager implements X509TrustManager {
         private X509TrustManager defaultTrustManager;
         private X509TrustManager localTrustManager;
 
-        public MyTrustManager(X509TrustManager localTrustManager) throws NoSuchAlgorithmException, KeyStoreException {
+        public OkHttpTrustManager(X509TrustManager localTrustManager) throws NoSuchAlgorithmException, KeyStoreException {
             TrustManagerFactory var4 = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             var4.init((KeyStore) null);
             defaultTrustManager = chooseTrustManager(var4.getTrustManagers());
@@ -137,7 +134,6 @@ public class HttpsUtils {
 
         @Override
         public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-
         }
 
         @Override

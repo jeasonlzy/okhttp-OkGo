@@ -21,7 +21,7 @@ import com.lzy.okhttpdemo.utils.ApkUtils;
 
 import java.io.File;
 
-public class DesActivity extends BaseActivity implements View.OnClickListener {
+public class DesActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView downloadSize;
     private TextView tvProgress;

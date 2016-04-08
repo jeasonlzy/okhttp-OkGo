@@ -1,29 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <Button
+        android:id="@+id/requestImage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dp">
+        android:text="请求图片"
+        android:textAllCaps="false"/>
 
-        <Button
-            android:id="@+id/requestImage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="请求图片"
-            android:textAllCaps="false"/>
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <include layout="@layout/include_data"/>
-
-    </LinearLayout>
-
-</ScrollView>
+</LinearLayout>

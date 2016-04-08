@@ -1,8 +1,6 @@
 package com.lzy.okhttputils.request;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.text.TextUtils;
 
 import com.lzy.okhttputils.OkHttpUtils;
 import com.lzy.okhttputils.cache.CacheEntity;
@@ -12,6 +10,7 @@ import com.lzy.okhttputils.callback.AbsCallback;
 import com.lzy.okhttputils.https.HttpsUtils;
 import com.lzy.okhttputils.model.HttpHeaders;
 import com.lzy.okhttputils.model.HttpParams;
+import com.lzy.okhttputils.utils.HeaderParser;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,8 +23,10 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.Headers;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -106,7 +107,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
         return (R) this;
     }
 
-    public R setCertificates(@NonNull InputStream... certificates) {
+    public R setCertificates(InputStream... certificates) {
         this.certificates = certificates;
         return (R) this;
     }
@@ -161,6 +162,14 @@ public abstract class BaseRequest<R extends BaseRequest> {
         return (R) this;
     }
 
+    public HttpParams getParams() {
+        return params;
+    }
+
+    public HttpHeaders getHeaders() {
+        return headers;
+    }
+
     public AbsCallback getCallback() {
         return mCallback;
     }
@@ -203,6 +212,33 @@ public abstract class BaseRequest<R extends BaseRequest> {
     /** 根据不同的请求方式和参数，生成不同的RequestBody */
     public abstract RequestBody generateRequestBody();
 
+    /** 生成类是表单的请求体 */
+    protected RequestBody generateMultipartRequestBody() {
+        if (params.fileParamsMap.isEmpty()) {
+            //表单提交，没有文件
+            FormBody.Builder bodyBuilder = new FormBody.Builder();
+            for (String key : params.urlParamsMap.keySet()) {
+                bodyBuilder.add(key, params.urlParamsMap.get(key));
+            }
+            return bodyBuilder.build();
+        } else {
+            //表单提交，有文件
+            MultipartBody.Builder multipartBodybuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+            //拼接键值对
+            if (!params.urlParamsMap.isEmpty()) {
+                for (Map.Entry<String, String> entry : params.urlParamsMap.entrySet()) {
+                    multipartBodybuilder.addFormDataPart(entry.getKey(), entry.getValue());
+                }
+            }
+            //拼接文件
+            for (Map.Entry<String, HttpParams.FileWrapper> entry : params.fileParamsMap.entrySet()) {
+                RequestBody fileBody = RequestBody.create(entry.getValue().contentType, entry.getValue().file);
+                multipartBodybuilder.addFormDataPart(entry.getKey(), entry.getValue().fileName, fileBody);
+            }
+            return multipartBodybuilder.build();
+        }
+    }
+
     /** 对请求body进行包装，用于回调上传进度 */
     public RequestBody wrapRequestBody(RequestBody requestBody) {
         return new ProgressRequestBody(requestBody, new ProgressRequestBody.Listener() {
@@ -239,7 +275,10 @@ public abstract class BaseRequest<R extends BaseRequest> {
 
     /** 阻塞方法，同步请求执行 */
     public Response execute() throws IOException {
-        addDefaultHeaders();
+        //添加缓存头和其他的公共头，同步请求不做缓存，缓存为空
+        HeaderParser.addDefaultHeaders(this, null);
+
+        //构建请求体，同步阻塞请求
         RequestBody requestBody = generateRequestBody();
         final Request request = generateRequest(wrapRequestBody(requestBody));
         Call call = generateCall(request);
@@ -251,32 +290,33 @@ public abstract class BaseRequest<R extends BaseRequest> {
         mCallback = callback;
         if (mCallback == null) mCallback = AbsCallback.CALLBACK_DEFAULT;
 
-        final CacheEntity<T> cacheEntity = addDefaultHeaders();
+        //请求之前获取缓存信息，添加缓存头和其他的公共头
+        if (cacheKey == null) cacheKey = createUrlFromParams(url, params.urlParamsMap);
+        if (cacheMode == null) cacheMode = CacheMode.DEFAULT;
+        //TODO 可能会报强制转换错误，处理方法，如果异常，请求网络
+        final CacheEntity<T> cacheEntity = (CacheEntity<T>) cacheManager.get(cacheKey);
+        HeaderParser.addDefaultHeaders(this, cacheEntity);
 
-        mCallback.onBefore(this);      //请求执行前调用 （UI线程）
+        //请求执行前UI线程调用
+        mCallback.onBefore(this);
         RequestBody requestBody = generateRequestBody();
         Request request = generateRequest(wrapRequestBody(requestBody));
         Call call = generateCall(request);
 
-        switch (cacheMode) {
-            //只读取缓存
-            case ONLY_READ_CACHE:
-                if (cacheEntity == null) {
-                    sendFailResultCallback(true, call, null, new IllegalArgumentException("缓存不存在，无法读取！"), mCallback);
-                    return;
-                } else {
-                    T data = cacheEntity.getData();
-                    sendSuccessResultCallback(true, data, call, null, mCallback);
-                    return;
-                }
-                //如果没有缓存，就请求网络，否者直接使用缓存
-            case IF_NONE_CACHE_REQUEST:
-                if (cacheEntity != null) {
-                    T data = cacheEntity.getData();
-                    sendSuccessResultCallback(true, data, call, null, mCallback);
-                    return;
-                }
-                break;
+        if (cacheMode == CacheMode.IF_NONE_CACHE_REQUEST) {
+            //如果没有缓存，就请求网络，否者直接使用缓存
+            if (cacheEntity != null) {
+                T data = cacheEntity.getData();
+                sendSuccessResultCallback(true, data, call, null, mCallback);
+                //返回即不请求网络
+                return;
+            }
+        } else if (cacheMode == CacheMode.FIRST_CACHE_THEN_REQUEST) {
+            //先使用缓存，不管是否存在，仍然请求网络
+            if (cacheEntity != null) {
+                T data = cacheEntity.getData();
+                sendSuccessResultCallback(true, data, call, null, mCallback);
+            }
         }
 
         call.enqueue(new Callback() {
@@ -290,7 +330,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
             public void onResponse(Call call, Response response) throws IOException {
                 int responseCode = response.code();
                 //304缓存数据
-                if (responseCode == 304) {
+                if (responseCode == 304 && cacheMode == CacheMode.DEFAULT) {
                     if (cacheEntity == null) {
                         sendFailResultCallback(true, call, response, new IllegalArgumentException("服务器响应码304，但是客户端没有缓存！"), mCallback);
                     } else {
@@ -305,117 +345,34 @@ public abstract class BaseRequest<R extends BaseRequest> {
                     return;
                 }
 
-                try {
-                    //解析过程中抛出异常，一般为 json 格式错误，或者数据解析异常
-                    T data = (T) mCallback.parseNetworkResponse(response);
-                    sendSuccessResultCallback(false, data, call, response, mCallback);
-                    // 请求成功缓存数据
-                    CacheEntity<T> finalCache = cacheEntity;
-                    if (finalCache == null) finalCache = parseCacheHeaders(response.headers(), data, true);
-                    if (finalCache != null) cacheManager.replace(cacheKey, (CacheEntity<Object>) finalCache);
-                } catch (Exception e) {
-                    sendFailResultCallback(false, call, response, e, mCallback);
-                }
+                T data = (T) mCallback.parseNetworkResponse(response);
+                sendSuccessResultCallback(false, data, call, response, mCallback);
+                //网络请求成功，保存缓存数据
+                saveCache(response.headers(), data, responseCode, cacheEntity);
             }
         });
     }
 
     /**
-     * 对每个请求添加默认的请求头，如果有缓存，并返回缓存实体对象
-     */
-    @Nullable
-    private <T> CacheEntity<T> addDefaultHeaders() {
-        //如果没有明确的指定key，默认使用url和和请求参数的拼接
-        if (cacheKey == null) cacheKey = createUrlFromParams(url, params.urlParamsMap);
-        if (cacheMode == null) cacheMode = CacheMode.DEFAULT;
-        //TODO 可能会报强制转换错误，处理方法，如果异常，请求网络
-        final CacheEntity<T> cacheEntity = (CacheEntity<T>) cacheManager.get(cacheKey);
-
-        //1. 按照标准的 http 协议，添加304相关响应头
-        if (cacheEntity == null) {
-            removeHeader(HttpHeaders.HEAD_KEY_IF_NONE_MATCH);
-            removeHeader(HttpHeaders.HEAD_KEY_IF_MODIFIED_SINCE);
-        } else if (cacheEntity.getLocalExpire() < System.currentTimeMillis()) {
-            HttpHeaders headers = cacheEntity.getHeaders();
-            String eTag = headers.get(HttpHeaders.HEAD_KEY_E_TAG);
-            if (eTag != null) headers(HttpHeaders.HEAD_KEY_IF_NONE_MATCH, eTag);
-            long lastModified = HttpHeaders.getLastModified(headers.get(HttpHeaders.HEAD_KEY_LAST_MODIFIED));
-            if (lastModified > 0)
-                headers(HttpHeaders.HEAD_KEY_IF_MODIFIED_SINCE, HttpHeaders.formatMillisToGMT(lastModified));
-        }
-
-        // 2. 添加 Accept-Language
-        String acceptLanguage = HttpHeaders.getAcceptLanguage();
-        if (!TextUtils.isEmpty(acceptLanguage)) headers(HttpHeaders.HEAD_KEY_ACCEPT_LANGUAGE, acceptLanguage);
-
-        // 3. 添加 UserAgent
-        String userAgent = HttpHeaders.getUserAgent();
-        if (!TextUtils.isEmpty(userAgent)) headers(HttpHeaders.HEAD_KEY_USER_AGENT, userAgent);
-        return cacheEntity;
-    }
-
-    /**
-     * 根据请求结果生成对应的缓存实体类
+     * 请求成功后根据缓存模式，更新缓存数据
      *
-     * @param responseHeaders 返回数据中的响应头
-     * @param data            解析出来的数据
-     * @param forceCache      是否强制缓存
-     * @return 缓存的实体类
+     * @param headers      响应头
+     * @param data         响应数据
+     * @param responseCode 响应码
+     * @param oldCache     以前的缓存
      */
-    public <T> CacheEntity<T> parseCacheHeaders(Headers responseHeaders, T data, boolean forceCache) {
-        long date = HttpHeaders.getDate(responseHeaders.get(HttpHeaders.HEAD_KEY_DATE));
-        long expires = HttpHeaders.getExpiration(responseHeaders.get(HttpHeaders.HEAD_KEY_EXPIRES));
-        String cacheControl = HttpHeaders.getCacheControl(responseHeaders.get(HttpHeaders.HEAD_KEY_CACHE_CONTROL), responseHeaders.get(HttpHeaders.HEAD_KEY_PRAGMA));
-
-        long maxAge = 0;
-        long staleWhileRevalidate = 0;
-        boolean mustRevalidate = false;
-
-        if (!TextUtils.isEmpty(cacheControl)) {
-            if ((cacheControl.equals("no-cache") || cacheControl.equals("no-store")) && !forceCache) {
-                //不缓存，返回空
-                return null;
-            } else if (cacheControl.startsWith("max-age=")) {
-                try {
-                    maxAge = Long.parseLong(cacheControl.substring(8));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else if (cacheControl.startsWith("stale-while-revalidate=")) {
-                try {
-                    staleWhileRevalidate = Long.parseLong(cacheControl.substring(23));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else if (cacheControl.equals("must-revalidate") || cacheControl.equals("proxy-revalidate")) {
-                mustRevalidate = true;
+    private <T> void saveCache(Headers headers, T data, int responseCode, CacheEntity<T> oldCache) {
+        // DEFAULT 默认遵循 304 规则，其他缓存模式忽略 304 缓存头
+        boolean forceCache = (cacheMode != CacheMode.DEFAULT);
+        CacheEntity<T> cache = HeaderParser.parseCacheHeaders(headers, data, cacheKey, forceCache);
+        if (cache != null) {
+            //如果仍然使用缓存，则缓存头不允许改变
+            if (responseCode == 304) {
+                cache.setLocalExpire(oldCache.getLocalExpire());
+                cache.setResponseHeaders(oldCache.getResponseHeaders());
             }
+            cacheManager.replace(cacheKey, (CacheEntity<Object>) cache);
         }
-
-        CacheEntity<T> cacheEntity = new CacheEntity<>();
-        long localExpire = 0;   // 缓存相对于本地的到期时间
-        long now = System.currentTimeMillis();
-        // If must-revalidate, 当缓存过期时, 强制从服务器验证
-        // Http1.1
-        if (!TextUtils.isEmpty(cacheControl)) {
-            localExpire = now + maxAge * 1000;
-            if (mustRevalidate) localExpire += staleWhileRevalidate * 1000;
-        }
-        // Http1.0
-        else if (date > 0 && expires >= date) {
-            localExpire = now + (expires - date);
-        }
-
-        HttpHeaders httpHeaders = new HttpHeaders();
-        for (String headerName : responseHeaders.names()) {
-            httpHeaders.put(headerName, responseHeaders.get(headerName));
-        }
-
-        cacheEntity.setKey(cacheKey);
-        cacheEntity.setData(data);
-        cacheEntity.setLocalExpire(localExpire);
-        cacheEntity.setHeaders(httpHeaders);
-        return cacheEntity;
     }
 
     /** 失败回调，发送到主线程 */

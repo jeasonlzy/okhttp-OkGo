@@ -39,7 +39,7 @@
             android:text="上传数量的设置，只在第一次添加上传任务前有效，后修改无效"
             android:textSize="10sp"/>
 
-        <com.lzy.okhttpdemo.ui.NoScrollGridView
+        <com.lzy.widget.ExpandGridView
             android:id="@+id/gridView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

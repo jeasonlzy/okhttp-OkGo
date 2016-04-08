@@ -27,7 +27,7 @@ import com.lzy.okhttpserver.task.ExecutorWithListener;
 import java.io.File;
 import java.util.List;
 
-public class DownloadManagerActivity extends BaseActivity implements View.OnClickListener, ExecutorWithListener.OnAllTaskEndListener {
+public class DownloadManagerActivity extends AppCompatActivity implements View.OnClickListener, ExecutorWithListener.OnAllTaskEndListener {
 
     private List<DownloadInfo> allTask;
     private MyAdapter adapter;

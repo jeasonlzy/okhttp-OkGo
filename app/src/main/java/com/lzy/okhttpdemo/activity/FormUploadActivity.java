@@ -1,12 +1,12 @@
 package com.lzy.okhttpdemo.activity;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.format.Formatter;
 import android.view.View;
-import android.view.Window;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,43 +14,42 @@ import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.loader.GlideImageLoader;
 import com.lzy.imagepicker.ui.ImageGridActivity;
+import com.lzy.okhttpdemo.Bean.RequestInfo;
 import com.lzy.okhttpdemo.R;
+import com.lzy.okhttpdemo.callback.JsonCallback;
+import com.lzy.okhttpdemo.ui.NumberProgressBar;
 import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
-import com.lzy.okhttputils.callback.JsonCallBack;
 import com.lzy.okhttputils.request.BaseRequest;
 import com.lzy.okhttputils.request.PostRequest;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Set;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Call;
-import okhttp3.Headers;
 import okhttp3.Request;
 import okhttp3.Response;
 
 public class FormUploadActivity extends BaseActivity {
 
-    @Bind(R.id.requestState) TextView requestState;
-    @Bind(R.id.requestHeaders) TextView requestHeaders;
-    @Bind(R.id.responseData) TextView responseData;
-    @Bind(R.id.responseHeader) TextView responseHeader;
-    @Bind(R.id.images) TextView images;
+    @Bind(R.id.formUpload) Button btnFormUpload;
+    @Bind(R.id.downloadSize) TextView tvDownloadSize;
+    @Bind(R.id.tvProgress) TextView tvProgress;
+    @Bind(R.id.netSpeed) TextView tvNetSpeed;
+    @Bind(R.id.pbProgress) NumberProgressBar pbProgress;
+    @Bind(R.id.images) TextView tvImages;
 
     private ArrayList<ImageItem> imageItems;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onActivityCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_form_upload);
         ButterKnife.bind(this);
-
-        if (actionBar != null) actionBar.setTitle(Constant.getData().get(4)[0]);
+        setTitle(Constant.getData().get(4)[0]);
     }
 
     @Override
@@ -82,16 +81,16 @@ public class FormUploadActivity extends BaseActivity {
                     StringBuilder sb = new StringBuilder();
                     for (int i = 0; i < imageItems.size(); i++) {
                         if (i == imageItems.size() - 1)
-                            sb.append("图片").append(i).append(" ： ").append(imageItems.get(i).path);
-                        else sb.append("图片").append(i).append(" ： ").append(imageItems.get(i).path).append("\n");
+                            sb.append("图片").append(i + 1).append(" ： ").append(imageItems.get(i).path);
+                        else sb.append("图片").append(i + 1).append(" ： ").append(imageItems.get(i).path).append("\n");
                     }
-                    images.setText(sb.toString());
+                    tvImages.setText(sb.toString());
                 } else {
-                    images.setText("--");
+                    tvImages.setText("--");
                 }
             } else {
                 Toast.makeText(this, "没有选择图片", Toast.LENGTH_SHORT).show();
-                images.setText("--");
+                tvImages.setText("--");
             }
         }
     }
@@ -99,7 +98,7 @@ public class FormUploadActivity extends BaseActivity {
     @OnClick(R.id.formUpload)
     public void formUpload(View view) {
         //拼接参数
-        PostRequest request = OkHttpUtils.post(Urls.URL_NOHTTP_UPLOAD)//
+        PostRequest request = OkHttpUtils.post(Urls.URL_FORM_UPLOAD)//
                 .tag(this)//
                 .headers("header1", "headerValue1")//
                 .headers("header2", "headerValue2")//
@@ -107,111 +106,51 @@ public class FormUploadActivity extends BaseActivity {
                 .params("param2", "paramValue2");//
         //拼接选中的文件参数（如果文件个数已知，可以链式调用到底，就不用这么断开了）
         if (imageItems != null && imageItems.size() > 0) {
-            for (ImageItem item : imageItems) {
-                request.params("file1", new File(item.path));
+            for (int i = 0; i < imageItems.size(); i++) {
+                request.params("file" + (i + 1), new File(imageItems.get(i).path));
             }
         }
         //执行请求
-        request.execute(new ProgressUpCallBack(this));
+        request.execute(new ProgressUpCallBack<>(this, RequestInfo.class));
     }
 
-    private class ProgressUpCallBack extends JsonCallBack<String> {
-        private ProgressDialog dialog;
+    private class ProgressUpCallBack<T> extends JsonCallback<T> {
 
-        public ProgressUpCallBack(Activity activity) {
-            dialog = new ProgressDialog(activity);
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            dialog.setMax(100);
-            dialog.setMessage("文件上传中...");
+        public ProgressUpCallBack(Activity activity, Class<T> clazz) {
+            super(clazz);
         }
 
         @Override
         public void onBefore(BaseRequest request) {
-            System.out.println("onBefore");
-            if (dialog != null && !dialog.isShowing()) {
-                dialog.show();
-            }
+            super.onBefore(request);
+            btnFormUpload.setText("正在上传中...");
         }
 
         @Override
-        public void onResponse(boolean isFromCache, String s, Request request, Response response) {
-            handleJsonResponse(isFromCache, s, request, response);
-        }
-
-        @Override
-        public void onAfter(boolean isFromCache, @Nullable String t, Call call, Response response, @Nullable Exception e) {
-            System.out.println("onAfter");
-            if (dialog != null && dialog.isShowing()) {
-                dialog.dismiss();
-            }
+        public void onResponse(boolean isFromCache, T s, Request request, Response response) {
+            handleResponse(isFromCache, s, request, response);
+            btnFormUpload.setText("上传完成");
         }
 
         @Override
         public void onError(boolean isFromCache, Call call, @Nullable Response response, @Nullable Exception e) {
-            System.out.println("onError");
             super.onError(isFromCache, call, response, e);
             handleError(isFromCache, call, response);
+            btnFormUpload.setText("上传出错");
         }
 
         @Override
         public void upProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
             System.out.println("upProgress -- " + totalSize + "  " + currentSize + "  " + progress + "  " + networkSpeed);
-            dialog.setProgress((int) (progress * 100));
-        }
 
-        @Override
-        public void downloadProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
-            System.out.println("downloadProgress -- " + totalSize + "  " + currentSize + "  " + progress + "  " + networkSpeed);
-        }
-    }
-
-    private void handleJsonResponse(boolean isFromCache, String s, Request request, Response response) {
-        requestState.setText("请求成功  是否来自缓存：" + isFromCache + "  请求方式：" + request.method());
-
-        Headers requestHeadersString = request.headers();
-        Set<String> requestNames = requestHeadersString.names();
-        StringBuilder sb = new StringBuilder();
-        for (String name : requestNames) {
-            sb.append(name).append(" ： ").append(requestHeadersString.get(name)).append("\n");
-        }
-        requestHeaders.setText(sb.toString());
-
-        responseData.setText(s);
-
-        Headers responseHeadersString = response.headers();
-        Set<String> names = responseHeadersString.names();
-        sb = new StringBuilder();
-        for (String name : names) {
-            sb.append(name).append(" ： ").append(responseHeadersString.get(name)).append("\n");
-        }
-        responseHeader.setText(sb.toString());
-    }
-
-    private void handleError(boolean isFromCache, Call call, @Nullable Response response) {
-        Request request = call.request();
-        requestState.setText("请求失败  是否来自缓存：" + isFromCache + "  请求方式：" + request.method());
-
-        Headers requestHeadersString = request.headers();
-        Set<String> requestNames = requestHeadersString.names();
-        StringBuilder sb = new StringBuilder();
-        for (String name : requestNames) {
-            sb.append(name).append(" ： ").append(requestHeadersString.get(name)).append("\n");
-        }
-        requestHeaders.setText(sb.toString());
-
-        responseData.setText("--");
-        if (response != null) {
-            Headers responseHeadersString = response.headers();
-            Set<String> names = responseHeadersString.names();
-            sb = new StringBuilder();
-            for (String name : names) {
-                sb.append(name).append(" ： ").append(responseHeadersString.get(name)).append("\n");
-            }
-            responseHeader.setText(sb.toString());
-        } else {
-            responseHeader.setText("--");
+            String downloadLength = Formatter.formatFileSize(getApplicationContext(), currentSize);
+            String totalLength = Formatter.formatFileSize(getApplicationContext(), totalSize);
+            tvDownloadSize.setText(downloadLength + "/" + totalLength);
+            String netSpeed = Formatter.formatFileSize(getApplicationContext(), networkSpeed);
+            tvNetSpeed.setText(netSpeed + "/S");
+            tvProgress.setText((Math.round(progress * 10000) * 1.0f / 100) + "%");
+            pbProgress.setMax(100);
+            pbProgress.setProgress((int) (progress * 100));
         }
     }
 }

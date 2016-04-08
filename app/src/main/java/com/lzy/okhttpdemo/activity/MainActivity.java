@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.fragment.DownloadFragment;
@@ -15,7 +16,7 @@ import com.lzy.okhttputils.OkHttpUtils;
 
 import java.util.ArrayList;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends AppCompatActivity {
 
     private ArrayList<Fragment> fragments;
 

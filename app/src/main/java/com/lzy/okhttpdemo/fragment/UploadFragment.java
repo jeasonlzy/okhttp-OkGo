@@ -21,7 +21,7 @@ import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.loader.GlideImageLoader;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.okhttpdemo.R;
-import com.lzy.okhttpdemo.callback.DialogCallBack;
+import com.lzy.okhttpdemo.callback.DialogCallback1;
 import com.lzy.okhttpdemo.ui.ProgressPieView;
 import com.lzy.okhttpdemo.utils.QiniuToken;
 import com.lzy.okhttpserver.download.DownloadManager;
@@ -267,7 +267,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener, Ex
                 .params("x:aaa", "aaa")//
                 .params("token", QiniuToken.getToken())//
                 .params("file", new File(images.get(0).path))//
-                .execute(new DialogCallBack<String>(getActivity()) {
+                .execute(new DialogCallback1<String>(getActivity(), String.class) {
                     @Override
                     public void onResponse(boolean isFromCache, String s, Request request, Response response) {
                         System.out.println("onResponse:" + s);

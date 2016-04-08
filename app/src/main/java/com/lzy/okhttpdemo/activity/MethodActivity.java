@@ -12,40 +12,33 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
 
+import com.lzy.okhttpdemo.Bean.RequestInfo;
 import com.lzy.okhttpdemo.R;
-import com.lzy.okhttpdemo.callback.DialogCallBack;
-import com.lzy.okhttpdemo.fragment.OkhttpFragment;
+import com.lzy.okhttpdemo.callback.DialogCallback1;
 import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
 import com.lzy.utils.ColorUtil;
 
-import java.util.Set;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import okhttp3.Call;
-import okhttp3.Headers;
 import okhttp3.Request;
 import okhttp3.Response;
 
 public class MethodActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
     @Bind(R.id.gridView) GridView gridView;
-    @Bind(R.id.requestState) TextView requestState;
-    @Bind(R.id.requestHeaders) TextView requestHeaders;
-    @Bind(R.id.responseData) TextView responseData;
-    @Bind(R.id.responseHeader) TextView responseHeader;
 
-    private String[] methods = {"GET", "POST", "PUT", "HEAD", "DELETE", "PATCH"};
+    private String[] methods = {"GET", "HEAD\n只有请求头", "OPTIONS\n获取服务器支持的HTTP请求方式",//
+            "POST", "PUT\n用法同POST主要用于创建资源", "DELETE\n与PUT对应主要用于删除资源"};
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onActivityCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_method);
         ButterKnife.bind(this);
 
-        if (actionBar != null) actionBar.setTitle(Constant.getData().get(0)[0]);
+        setTitle(Constant.getData().get(0)[0]);
         gridView.setAdapter(new MyAdapter());
         gridView.setOnItemClickListener(this);
     }
@@ -61,106 +54,66 @@ public class MethodActivity extends BaseActivity implements AdapterView.OnItemCl
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         switch (position) {
             case 0:
-                OkHttpUtils.get(Urls.URL_NOHTTP_METHOD)//
+                OkHttpUtils.get(Urls.URL_METHOD)//
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
-                        .execute(new MethodCallBack(this));
+                        .execute(new MethodCallBack<>(this, RequestInfo.class));
                 break;
             case 1:
-                OkHttpUtils.post(Urls.URL_NOHTTP_METHOD)//
+                OkHttpUtils.head(Urls.URL_METHOD)//
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
-                        .execute(new MethodCallBack(this));
+                        .execute(new MethodCallBack<>(this, RequestInfo.class));
                 break;
             case 2:
-                OkHttpUtils.put(Urls.URL_NOHTTP_METHOD)//
+                OkHttpUtils.options(Urls.URL_METHOD)//
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
-                        .execute(new MethodCallBack(this));
+                        .execute(new MethodCallBack<>(this, RequestInfo.class));
                 break;
             case 3:
-                OkHttpUtils.head(Urls.URL_NOHTTP_METHOD)//
+                OkHttpUtils.post(Urls.URL_METHOD)//
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
-                        .execute(new MethodCallBack(this));
+                        .execute(new MethodCallBack<>(this, RequestInfo.class));
                 break;
             case 4:
-                OkHttpUtils.delete(Urls.URL_NOHTTP_METHOD)//
+                OkHttpUtils.put(Urls.URL_METHOD)//
+                        .tag(this)//
+                        .headers("header1", "headerValue1")//
+                        .params("param1", "paramValue1")//
+                        .execute(new MethodCallBack<>(this, RequestInfo.class));
+                break;
+            case 5:
+                OkHttpUtils.delete(Urls.URL_METHOD)//
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
                         .content("aaa这是请求的数据ccc")//
-                        .execute(new MethodCallBack(this));
-                break;
-            case 5:
-                OkHttpUtils.patch(Urls.URL_NOHTTP_METHOD)//
-                        .tag(this)//
-                        .headers("header1", "headerValue1")//
-                        .params("param1", "paramValue1")//
-                        .execute(new MethodCallBack(this));
+                        .execute(new MethodCallBack<>(this, RequestInfo.class));
                 break;
         }
     }
 
-    private class MethodCallBack extends DialogCallBack<String> {
+    private class MethodCallBack<T> extends DialogCallback1<T> {
 
-        public MethodCallBack(Activity activity) {
-            super(activity);
+        public MethodCallBack(Activity activity, Class<T> clazz) {
+            super(activity, clazz);
         }
 
         @Override
-        public void onResponse(boolean isFromCache, String s, Request request, Response response) {
-            requestState.setText("请求成功  是否来自缓存：" + isFromCache + "  请求方式：" + request.method());
-
-            Headers requestHeadersString = request.headers();
-            Set<String> requestNames = requestHeadersString.names();
-            StringBuilder sb = new StringBuilder();
-            for (String name : requestNames) {
-                sb.append(name).append(" ： ").append(requestHeadersString.get(name)).append("\n");
-            }
-            requestHeaders.setText(sb.toString());
-
-            responseData.setText(s);
-
-            Headers responseHeadersString = response.headers();
-            Set<String> names = responseHeadersString.names();
-            sb = new StringBuilder();
-            for (String name : names) {
-                sb.append(name).append(" ： ").append(responseHeadersString.get(name)).append("\n");
-            }
-            responseHeader.setText(sb.toString());
+        public void onResponse(boolean isFromCache, T data, Request request, Response response) {
+            handleResponse(isFromCache, data, request, response);
         }
 
         @Override
         public void onError(boolean isFromCache, Call call, @Nullable Response response, @Nullable Exception e) {
             super.onError(isFromCache, call, response, e);
-            Request request = call.request();
-            requestState.setText("请求失败  是否来自缓存：" + isFromCache + "  请求方式：" + request.method());
-
-            Headers requestHeadersString = request.headers();
-            Set<String> requestNames = requestHeadersString.names();
-            StringBuilder sb = new StringBuilder();
-            for (String name : requestNames) {
-                sb.append(name).append(" ： ").append(requestHeadersString.get(name)).append("\n");
-            }
-            requestHeaders.setText(sb.toString());
-
-            responseData.setText("--");
-            if (response != null) {
-                Headers responseHeadersString = response.headers();
-                Set<String> names = responseHeadersString.names();
-                sb = new StringBuilder();
-                for (String name : names) {
-                    sb.append(name).append(" ： ").append(responseHeadersString.get(name)).append("\n");
-                }
-                responseHeader.setText(sb.toString());
-            } else {
-                responseHeader.setText("--");
-            }
+            handleError(isFromCache, call, response);
         }
     }
 
