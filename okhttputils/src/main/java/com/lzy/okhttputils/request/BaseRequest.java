@@ -180,20 +180,18 @@ public abstract class BaseRequest<R extends BaseRequest> {
         return (R) this;
     }
 
+    @SuppressWarnings("unchecked")
+    public R setCallback(AbsCallback callback) {
+        this.mCallback = callback;
+        return (R) this;
+    }
+
     public HttpParams getParams() {
         return params;
     }
 
     public HttpHeaders getHeaders() {
         return headers;
-    }
-
-    public AbsCallback getCallback() {
-        return mCallback;
-    }
-
-    public void setCallback(AbsCallback callback) {
-        this.mCallback = callback;
     }
 
     /** 将传递进来的参数拼接成 url */
@@ -228,7 +226,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
     }
 
     /** 根据不同的请求方式和参数，生成不同的RequestBody */
-    public abstract RequestBody generateRequestBody();
+    protected abstract RequestBody generateRequestBody();
 
     /** 生成类是表单的请求体 */
     protected RequestBody generateMultipartRequestBody() {
@@ -258,7 +256,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
     }
 
     /** 对请求body进行包装，用于回调上传进度 */
-    public RequestBody wrapRequestBody(RequestBody requestBody) {
+    protected RequestBody wrapRequestBody(RequestBody requestBody) {
         return new ProgressRequestBody(requestBody, new ProgressRequestBody.Listener() {
             @Override
             public void onRequestProgress(final long bytesWritten, final long contentLength, final long networkSpeed) {
@@ -274,10 +272,10 @@ public abstract class BaseRequest<R extends BaseRequest> {
     }
 
     /** 根据不同的请求方式，将RequestBody转换成Request对象 */
-    public abstract Request generateRequest(RequestBody requestBody);
+    protected abstract Request generateRequest(RequestBody requestBody);
 
     /** 根据当前的请求参数，生成对应的 Call 任务 */
-    public Call generateCall(Request request) {
+    protected Call generateCall(Request request) {
         if (readTimeOut <= 0 && writeTimeOut <= 0 && connectTimeout <= 0 && certificates == null) {
             return OkHttpUtils.getInstance().getOkHttpClient().newCall(request);
         } else {
@@ -389,8 +387,8 @@ public abstract class BaseRequest<R extends BaseRequest> {
 
     /** 失败回调，发送到主线程 */
     @SuppressWarnings("unchecked")
-    public <T> void sendFailResultCallback(final boolean isFromCache, final Call call,//
-                                           final Response response, final Exception e, final AbsCallback<T> callback) {
+    private <T> void sendFailResultCallback(final boolean isFromCache, final Call call,//
+                                            final Response response, final Exception e, final AbsCallback<T> callback) {
 
         //不同的缓存模式，可能会导致该失败进入两次，一次缓存失败，一次网络请求失败
         if (!isFromCache && cacheMode == CacheMode.REQUEST_FAILED_READ_CACHE) {
@@ -414,8 +412,8 @@ public abstract class BaseRequest<R extends BaseRequest> {
     }
 
     /** 成功回调，发送到主线程 */
-    public <T> void sendSuccessResultCallback(final boolean isFromCache, final T t, //
-                                              final Call call, final Response response, final AbsCallback<T> callback) {
+    private <T> void sendSuccessResultCallback(final boolean isFromCache, final T t, //
+                                               final Call call, final Response response, final AbsCallback<T> callback) {
         OkHttpUtils.getInstance().getDelivery().post(new Runnable() {
             @Override
             public void run() {

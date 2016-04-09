@@ -19,12 +19,12 @@ public class GetRequest extends BaseRequest<GetRequest> {
     }
 
     @Override
-    public RequestBody generateRequestBody() {
+    protected RequestBody generateRequestBody() {
         return null;
     }
 
     @Override
-    public Request generateRequest(RequestBody requestBody) {
+    protected Request generateRequest(RequestBody requestBody) {
         Request.Builder requestBuilder = new Request.Builder();
         appendHeaders(requestBuilder);
         url = createUrlFromParams(url, params.urlParamsMap);

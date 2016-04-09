@@ -41,7 +41,6 @@ public abstract class JsonCallback<T> extends EncryptCallback<T> {
     public T parseNetworkResponse(Response response) {
         try {
             String responseData = response.body().string();
-            Log.i("JsonCallback", "请求网络返回数据: ------    " + responseData);
             if (TextUtils.isEmpty(responseData)) return null;
 
             /**

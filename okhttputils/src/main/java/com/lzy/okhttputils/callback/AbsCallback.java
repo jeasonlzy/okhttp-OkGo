@@ -23,6 +23,17 @@ public abstract class AbsCallback<T> {
     public void onBefore(BaseRequest request) {
     }
 
+    /** 拿到响应后，将数据转换成需要的格式，子线程中执行，可以是耗时操作 */
+    public abstract T parseNetworkResponse(Response response);
+
+    /** 对返回数据进行操作的回调， UI线程 */
+    public abstract void onResponse(boolean isFromCache, T t, Request request, @Nullable Response response);
+
+    /** 请求失败，响应错误，数据解析错误等，都会回调该方法， UI线程 */
+    public void onError(boolean isFromCache, Call call, @Nullable Response response, @Nullable Exception e) {
+        if (e != null) e.printStackTrace();
+    }
+
     /** 请求网络结束后，UI线程 */
     public void onAfter(boolean isFromCache, @Nullable T t, Call call, @Nullable Response response, @Nullable Exception e) {
     }
@@ -47,17 +58,6 @@ public abstract class AbsCallback<T> {
      * @param networkSpeed 当前下载的速度   字节/秒
      */
     public void downloadProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
-    }
-
-    /** 拿到响应后，将数据转换成需要的格式，子线程中执行，可以是耗时操作 */
-    public abstract T parseNetworkResponse(Response response);
-
-    /** 对返回数据进行操作的回调， UI线程 */
-    public abstract void onResponse(boolean isFromCache, T t, Request request, @Nullable Response response);
-
-    /** 请求失败，响应错误，数据解析错误等，都会回调该方法， UI线程 */
-    public void onError(boolean isFromCache, Call call, @Nullable Response response, @Nullable Exception e) {
-        if (e != null) e.printStackTrace();
     }
 
     public static final AbsCallback CALLBACK_DEFAULT = new AbsCallback() {

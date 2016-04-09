@@ -64,9 +64,10 @@ public class LoggerInterceptor implements Interceptor {
                     }
                 }
             }
-            Log.e(tag, "---------------------request log end---------------------");
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            Log.e(tag, "---------------------request log end---------------------");
         }
     }
 
@@ -97,9 +98,10 @@ public class LoggerInterceptor implements Interceptor {
                     }
                 }
             }
-            Log.e(tag, "---------------------response log start---------------------");
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            Log.e(tag, "---------------------response log start---------------------");
         }
 
         return response;

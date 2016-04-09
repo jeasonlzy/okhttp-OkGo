@@ -30,13 +30,13 @@ public class OptionsRequest extends BaseRequest<OptionsRequest> {
     }
 
     @Override
-    public RequestBody generateRequestBody() {
+    protected RequestBody generateRequestBody() {
         if (requestBody != null) return requestBody;
         return generateMultipartRequestBody();
     }
 
     @Override
-    public Request generateRequest(RequestBody requestBody) {
+    protected Request generateRequest(RequestBody requestBody) {
         Request.Builder requestBuilder = new Request.Builder();
         try {
             headers.put("Content-Length", String.valueOf(requestBody.contentLength()));

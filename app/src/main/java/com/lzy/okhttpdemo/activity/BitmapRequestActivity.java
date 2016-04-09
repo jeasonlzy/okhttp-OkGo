@@ -11,6 +11,7 @@ import com.lzy.okhttpdemo.callback.BitmapDialogCallback;
 import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
+import com.lzy.okhttputils.callback.BitmapCallback;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

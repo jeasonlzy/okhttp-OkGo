@@ -33,7 +33,7 @@ public class DeleteRequest extends BaseRequest<DeleteRequest> {
     }
 
     @Override
-    public RequestBody generateRequestBody() {
+    protected RequestBody generateRequestBody() {
         if (TextUtils.isEmpty(content)) {
             throw new IllegalStateException("必须设置delete请求的 content，请调用content(String content) 方法");
         }
@@ -41,7 +41,7 @@ public class DeleteRequest extends BaseRequest<DeleteRequest> {
     }
 
     @Override
-    public Request generateRequest(RequestBody requestBody) {
+    protected Request generateRequest(RequestBody requestBody) {
         Request.Builder requestBuilder = new Request.Builder();
         appendHeaders(requestBuilder);
         url = createUrlFromParams(url, params.urlParamsMap);

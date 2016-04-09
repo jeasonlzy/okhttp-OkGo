@@ -8,13 +8,27 @@ android {
         applicationId "com.lzy.okhttpdemo"
         minSdkVersion 8
         targetSdkVersion 22
-        versionCode 1
-        versionName "0.1.0"
+        versionCode 10
+        versionName "1.1.0"
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+task makeApk {
+    doLast {
+        def versionName = android.defaultConfig.versionName
+        def appName = "okhttputils_v${versionName}.apk"
+        copy {
+            from "./build/outputs/apk/app-debug.apk"
+            into "../"
+            rename {
+                appName
+            }
         }
     }
 }
@@ -30,8 +44,8 @@ dependencies {
     compile 'com.lzy.widget:imagepicker:0.1.0'
     compile 'com.lzy.widget:view-core:0.1.6'
     compile 'com.lzy.utils:utils-core:0.1.2'
-//    compile 'com.lzy.net:okhttputils:1.0.0'
-//    compile 'com.lzy.net:okhttpserver:0.1.0'
+//    compile 'com.lzy.net:okhttputils:+'
+//    compile 'com.lzy.net:okhttpserver:+'
     compile project(':okhttputils')
     compile project(':okhttpserver')
 }

@@ -11,6 +11,7 @@ import com.lzy.okhttpdemo.callback.DialogCallback;
 import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
+import com.lzy.okhttputils.callback.StringCallback;
 import com.lzy.okhttputils.request.PostRequest;
 
 import butterknife.ButterKnife;
@@ -43,6 +44,16 @@ public class PostTextActivity extends BaseActivity {
                 .params("param1", "paramValue1")//
                 .postJson("{\"des\": \"这里面要写标准的json格式数据\"}")//
                 .execute(new TextCallBack<>(this, RequestInfo.class));
+        OkHttpUtils.post(Urls.URL_TEXT_UPLOAD)//
+                .tag(this)//
+                .content("这是要上传的长文本数据！")//
+                .mediaType(PostRequest.MEDIA_TYPE_PLAIN)//
+                .execute(new StringCallback() {
+                    @Override
+                    public void onResponse(boolean isFromCache, String s, Request request, @Nullable Response response) {
+
+                    }
+                });
     }
 
     @OnClick(R.id.postString)

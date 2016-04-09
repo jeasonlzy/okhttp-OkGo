@@ -60,7 +60,7 @@ public class PostRequest extends BaseRequest<PostRequest> {
     }
 
     @Override
-    public RequestBody generateRequestBody() {
+    protected RequestBody generateRequestBody() {
         if (content != null && mediaType != null) return RequestBody.create(mediaType, content);//post上传字符串数据
         if (string != null && mediaType != null) return RequestBody.create(mediaType, string);//post上传字符串数据
         if (json != null && mediaType != null) return RequestBody.create(mediaType, json); //post上传json数据
@@ -70,7 +70,7 @@ public class PostRequest extends BaseRequest<PostRequest> {
     }
 
     @Override
-    public Request generateRequest(RequestBody requestBody) {
+    protected Request generateRequest(RequestBody requestBody) {
         Request.Builder requestBuilder = new Request.Builder();
         try {
             headers.put("Content-Length", String.valueOf(requestBody.contentLength()));
