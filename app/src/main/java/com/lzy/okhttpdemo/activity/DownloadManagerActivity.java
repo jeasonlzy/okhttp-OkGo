@@ -20,14 +20,14 @@ import com.lzy.okhttpserver.download.DownloadManager;
 import com.lzy.okhttpserver.download.DownloadService;
 import com.lzy.okhttpdemo.Bean.ApkInfo;
 import com.lzy.okhttpdemo.R;
-import com.lzy.okhttpdemo.utils.ApkUtils;
-import com.lzy.okhttpdemo.utils.AppCacheUtils;
 import com.lzy.okhttpserver.task.ExecutorWithListener;
+import com.lzy.utils.ApkUtils;
+import com.lzy.utils.AppCacheUtils;
 
 import java.io.File;
 import java.util.List;
 
-public class DownloadManagerActivity extends BaseActivity implements View.OnClickListener, ExecutorWithListener.OnAllTaskEndListener {
+public class DownloadManagerActivity extends AppCompatActivity implements View.OnClickListener, ExecutorWithListener.OnAllTaskEndListener {
 
     private List<DownloadInfo> allTask;
     private MyAdapter adapter;

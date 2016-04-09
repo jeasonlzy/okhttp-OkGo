@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="#000"
-        android:textSize="16sp"/>
+        android:textSize="18sp"/>
 
     <TextView
         android:id="@+id/des"
@@ -18,6 +18,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:textColor="#888"
-        android:textSize="12sp"/>
+        android:textSize="14sp"/>
 
 </LinearLayout>

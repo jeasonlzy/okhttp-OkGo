@@ -17,7 +17,7 @@ import okhttp3.Response;
 public abstract class BitmapCallback extends AbsCallback<Bitmap> {
 
     @Override
-    public Bitmap parseNetworkResponse(Response response) throws Exception {
+    public Bitmap parseNetworkResponse(Response response) {
         return BitmapFactory.decodeStream(response.body().byteStream());
     }
 }

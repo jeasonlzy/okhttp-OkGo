@@ -21,9 +21,9 @@ import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.loader.GlideImageLoader;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.okhttpdemo.R;
-import com.lzy.okhttpdemo.callback.DialogCallBack;
+import com.lzy.okhttpdemo.callback.DialogCallback;
 import com.lzy.okhttpdemo.ui.ProgressPieView;
-import com.lzy.okhttpdemo.utils.QiniuToken;
+import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttpserver.download.DownloadManager;
 import com.lzy.okhttpserver.listener.UploadListener;
 import com.lzy.okhttpserver.task.ExecutorWithListener;
@@ -43,7 +43,6 @@ public class UploadFragment extends Fragment implements View.OnClickListener, Ex
 
     private GridView gridView;
     private ImagePicker imagePicker;
-    private String url = "http://192.168.1.108:8080/UploadServer/UploadFile";
     private ArrayList<ImageItem> images;
 
     @Nullable
@@ -116,7 +115,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener, Ex
                     for (int i = 0; i < images.size(); i++) {
                         MyUploadListener listener = new MyUploadListener();
                         listener.setUserTag(gridView.getChildAt(i));
-                        UploadManager.getInstance(getContext()).addTask(url, new File(images.get(i).path), "imageFile", listener);
+                        UploadManager.getInstance(getContext()).addTask(Urls.URL_FORM_UPLOAD, new File(images.get(i).path), "imageFile", listener);
                     }
                 }
                 break;
@@ -258,20 +257,20 @@ public class UploadFragment extends Fragment implements View.OnClickListener, Ex
         }
     }
 
-    private void uploadQiniu() {
-        Random random = new Random();
-        System.out.println("---------" + images.get(0).path);
-        OkHttpUtils.put("http://upload.qiniu.com")//
-                .tag(this)//
-                .params("key", "test" + random.nextInt(1000))//
-                .params("x:aaa", "aaa")//
-                .params("token", QiniuToken.getToken())//
-                .params("file", new File(images.get(0).path))//
-                .execute(new DialogCallBack<String>(getActivity()) {
-                    @Override
-                    public void onResponse(boolean isFromCache, String s, Request request, Response response) {
-                        System.out.println("onResponse:" + s);
-                    }
-                });
-    }
+//    private void uploadQiniu() {
+//        Random random = new Random();
+//        System.out.println("---------" + images.get(0).path);
+//        OkHttpUtils.put("http://upload.qiniu.com")//
+//                .tag(this)//
+//                .params("key", "test" + random.nextInt(1000))//
+//                .params("x:aaa", "aaa")//
+//                .params("token", QiniuToken.getToken())//
+//                .params("file", new File(images.get(0).path))//
+//                .execute(new DialogCallback<String>(getActivity(), String.class) {
+//                    @Override
+//                    public void onResponse(boolean isFromCache, String s, Request request, Response response) {
+//                        System.out.println("onResponse:" + s);
+//                    }
+//                });
+//    }
 }

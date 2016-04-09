@@ -1,4 +1,5 @@
 # OkHttpUtils
+<<<<<<< HEAD
 该项目参考了以下代码：
  * [https://github.com/hongyangAndroid/okhttp-utils](https://github.com/hongyangAndroid/okhttp-utils)
  * [https://github.com/pengjianbo/OkHttpFinal](https://github.com/pengjianbo/OkHttpFinal)
@@ -11,6 +12,15 @@
  * QQ群： 489873144 （建议使用QQ群，邮箱使用较少，可能看的不及时）
  * 本群刚建立，旨在为使用我的github项目的人提供方便，如果遇到问题欢迎在群里提问。个人能力也有限，希望一起学习一起进步。
 
+=======
+该项目参考了以下项目：
+
+ * [https://github.com/hongyangAndroid/okhttp-utils](https://github.com/hongyangAndroid/okhttp-utils)  
+ * [https://github.com/Y0LANDA/NoHttp](https://github.com/Y0LANDA/NoHttp) 
+ * [https://github.com/wyouflf/xUtils](https://github.com/wyouflf/xUtils) 
+
+在此特别感谢上述作者，喜欢原作的可以去使用原项目。同时欢迎大家下载体验本项目，如果使用过程中遇到什么问题，欢迎反馈。
+>>>>>>> cache
 
 ## 演示
  ![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/preview.jpg)![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/pre.gif)![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/dm.gif)![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/dm2.gif)![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/upload.gif)

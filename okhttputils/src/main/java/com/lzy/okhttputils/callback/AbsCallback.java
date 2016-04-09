@@ -3,7 +3,6 @@ package com.lzy.okhttputils.callback;
 import android.support.annotation.Nullable;
 
 import com.lzy.okhttputils.request.BaseRequest;
-import com.lzy.okhttputils.utils.L;
 
 import okhttp3.Call;
 import okhttp3.Request;
@@ -19,6 +18,7 @@ import okhttp3.Response;
  * ================================================
  */
 public abstract class AbsCallback<T> {
+
     /** 请求网络开始前，UI线程 */
     public void onBefore(BaseRequest request) {
     }
@@ -50,21 +50,20 @@ public abstract class AbsCallback<T> {
     }
 
     /** 拿到响应后，将数据转换成需要的格式，子线程中执行，可以是耗时操作 */
-    public abstract T parseNetworkResponse(Response response) throws Exception;
+    public abstract T parseNetworkResponse(Response response);
 
     /** 对返回数据进行操作的回调， UI线程 */
-    public abstract void onResponse(boolean isFromCache, T t, Request request, Response response);
+    public abstract void onResponse(boolean isFromCache, T t, Request request, @Nullable Response response);
 
     /** 请求失败，响应错误，数据解析错误等，都会回调该方法， UI线程 */
     public void onError(boolean isFromCache, Call call, @Nullable Response response, @Nullable Exception e) {
         if (e != null) e.printStackTrace();
-        else if (response != null) L.e("服务器内部错误，或者找不到页面等");
     }
 
     public static final AbsCallback CALLBACK_DEFAULT = new AbsCallback() {
 
         @Override
-        public Response parseNetworkResponse(Response response) throws Exception {
+        public Response parseNetworkResponse(Response response) {
             return response;
         }
 

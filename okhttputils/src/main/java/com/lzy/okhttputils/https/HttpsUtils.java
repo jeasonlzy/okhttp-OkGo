@@ -24,10 +24,16 @@ import javax.net.ssl.X509TrustManager;
 public class HttpsUtils {
     public static SSLSocketFactory getSslSocketFactory(InputStream[] certificates, InputStream bksFile, String password) {
         try {
-            TrustManager[] trustManagers = prepareTrustManager(certificates);
             KeyManager[] keyManagers = prepareKeyManager(bksFile, password);
+            TrustManager[] trustManagers = prepareTrustManager(certificates);
             SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(keyManagers, new TrustManager[]{new MyTrustManager(chooseTrustManager(trustManagers))}, new SecureRandom());
+            TrustManager trustManager;
+            if (trustManagers != null) {
+                trustManager = new MyTrustManager(chooseTrustManager(trustManagers));
+            } else {
+                trustManager = new UnSafeTrustManager();
+            }
+            sslContext.init(keyManagers, new TrustManager[]{trustManager}, new SecureRandom());
             return sslContext.getSocketFactory();
         } catch (NoSuchAlgorithmException e) {
             throw new AssertionError(e);
@@ -101,6 +107,21 @@ public class HttpsUtils {
             }
         }
         return null;
+    }
+
+    private static class UnSafeTrustManager implements X509TrustManager {
+        @Override
+        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+        }
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+        }
+
+        @Override
+        public X509Certificate[] getAcceptedIssuers() {
+            return new java.security.cert.X509Certificate[]{};
+        }
     }
 
     private static class MyTrustManager implements X509TrustManager {

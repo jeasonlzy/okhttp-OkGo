@@ -11,33 +11,8 @@ import java.io.Serializable;
  * 修订历史：
  * ================================================
  */
-public class BaseBean implements Serializable{
-
-    public int error;
-    public DataBean data;
-    public String method;
-    public String url;
-
-    public class DataBean {
-        public String nohttp;
-        public String yolanda;
-
-        @Override
-        public String toString() {
-            return "DataBean{" +
-                    "nohttp='" + nohttp + '\'' +
-                    ", yolanda='" + yolanda + '\'' +
-                    '}';
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "BaseBean{" +
-                "error=" + error +
-                ", data=" + data +
-                ", method='" + method + '\'' +
-                ", url='" + url + '\'' +
-                '}';
-    }
+public class BaseBean<T> implements Serializable{
+    public int code;
+    public String msg;
+    public T data;
 }

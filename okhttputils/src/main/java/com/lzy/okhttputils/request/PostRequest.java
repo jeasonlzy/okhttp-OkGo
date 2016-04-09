@@ -1,13 +1,8 @@
 package com.lzy.okhttputils.request;
 
-import com.lzy.okhttputils.model.HttpParams;
-
 import java.io.IOException;
-import java.util.Map;
 
-import okhttp3.FormBody;
 import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
@@ -66,37 +61,12 @@ public class PostRequest extends BaseRequest<PostRequest> {
 
     @Override
     public RequestBody generateRequestBody() {
-        if (content != null && mediaType != null)
-            return RequestBody.create(mediaType, content);//post上传字符串数据
-        if (string != null && mediaType != null)
-            return RequestBody.create(mediaType, string);//post上传字符串数据
-        if (json != null && mediaType != null)
-            return RequestBody.create(mediaType, json); //post上传json数据
+        if (content != null && mediaType != null) return RequestBody.create(mediaType, content);//post上传字符串数据
+        if (string != null && mediaType != null) return RequestBody.create(mediaType, string);//post上传字符串数据
+        if (json != null && mediaType != null) return RequestBody.create(mediaType, json); //post上传json数据
         if (bs != null && mediaType != null) return RequestBody.create(mediaType, bs);//post上传字节数组
 
-        if (params.fileParamsMap.isEmpty()) {
-            //表单提交，没有文件
-            FormBody.Builder bodyBuilder = new FormBody.Builder();
-            for (String key : params.urlParamsMap.keySet()) {
-                bodyBuilder.add(key, params.urlParamsMap.get(key));
-            }
-            return bodyBuilder.build();
-        } else {
-            //表单提交，有文件
-            MultipartBody.Builder multipartBodybuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
-            //拼接键值对
-            if (!params.urlParamsMap.isEmpty()) {
-                for (Map.Entry<String, String> entry : params.urlParamsMap.entrySet()) {
-                    multipartBodybuilder.addFormDataPart(entry.getKey(), entry.getValue());
-                }
-            }
-            //拼接文件
-            for (Map.Entry<String, HttpParams.FileWrapper> entry : params.fileParamsMap.entrySet()) {
-                RequestBody fileBody = RequestBody.create(entry.getValue().contentType, entry.getValue().file);
-                multipartBodybuilder.addFormDataPart(entry.getKey(), entry.getValue().fileName, fileBody);
-            }
-            return multipartBodybuilder.build();
-        }
+        return generateMultipartRequestBody();
     }
 
     @Override

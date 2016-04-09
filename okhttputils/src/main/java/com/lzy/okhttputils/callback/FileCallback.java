@@ -21,7 +21,7 @@ import okhttp3.Response;
  * 修订历史：
  * ================================================
  */
-public abstract class FileCallBack extends AbsCallback<File> {
+public abstract class FileCallback extends AbsCallback<File> {
 
     public static final String DM_TARGET_FOLDER = File.separator + "download" + File.separator; //下载目标文件夹
 
@@ -30,7 +30,7 @@ public abstract class FileCallBack extends AbsCallback<File> {
     /** 目标文件存储的文件名 */
     private String destFileName;
 
-    public FileCallBack(String destFileName) {
+    public FileCallback(String destFileName) {
         this(Environment.getExternalStorageDirectory() + DM_TARGET_FOLDER, destFileName);
     }
 
@@ -38,14 +38,19 @@ public abstract class FileCallBack extends AbsCallback<File> {
      * @param destFileDir  要保存的目标文件夹
      * @param destFileName 要保存的文件名
      */
-    public FileCallBack(@NonNull String destFileDir, @NonNull String destFileName) {
+    public FileCallback(@NonNull String destFileDir, @NonNull String destFileName) {
         this.destFileDir = destFileDir;
         this.destFileName = destFileName;
     }
 
     @Override
-    public File parseNetworkResponse(Response response) throws Exception {
-        return saveFile(response);
+    public File parseNetworkResponse(Response response) {
+        try {
+            return saveFile(response);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private File saveFile(Response response) throws IOException {
@@ -62,7 +67,7 @@ public abstract class FileCallBack extends AbsCallback<File> {
             is = response.body().byteStream();
             final long total = response.body().contentLength();
             long sum = 0;
-            int len = 0;
+            int len;
             fos = new FileOutputStream(file);
             while ((len = is.read(buf)) != -1) {
                 sum += len;
@@ -107,5 +112,4 @@ public abstract class FileCallBack extends AbsCallback<File> {
         }
         return filename;
     }
-
 }

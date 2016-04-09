@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <Button
+        android:id="@+id/btn_none_https_request"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dp">
+        android:text="访问可信Https网站(免证书)"
+        android:textAllCaps="false"/>
 
-    </LinearLayout>
+    <Button
+        android:id="@+id/btn_https_request"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="访问自签名Https网站(需要自签名证书)"
+        android:textAllCaps="false"/>
 
-</ScrollView>
+</LinearLayout>

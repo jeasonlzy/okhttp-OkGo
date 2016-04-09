@@ -5,17 +5,18 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.fragment.DownloadFragment;
 import com.lzy.okhttpdemo.fragment.OkhttpFragment;
 import com.lzy.okhttpdemo.fragment.UploadFragment;
-import com.lzy.okhttpdemo.ui.PagerSlidingTabStrip;
 import com.lzy.okhttputils.OkHttpUtils;
+import com.lzy.widget.tab.PagerSlidingTabStrip;
 
 import java.util.ArrayList;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends AppCompatActivity {
 
     private ArrayList<Fragment> fragments;
 

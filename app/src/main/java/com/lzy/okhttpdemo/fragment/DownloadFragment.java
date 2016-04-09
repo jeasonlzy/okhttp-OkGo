@@ -23,7 +23,7 @@ import com.lzy.okhttpdemo.Bean.ApkInfo;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.activity.DesActivity;
 import com.lzy.okhttpdemo.activity.DownloadManagerActivity;
-import com.lzy.okhttpdemo.utils.AppCacheUtils;
+import com.lzy.utils.AppCacheUtils;
 
 import java.util.ArrayList;
 
