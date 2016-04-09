@@ -9,7 +9,7 @@ android {
         minSdkVersion 8
         targetSdkVersion 22
         versionCode 1
-        versionName "1.0"
+        versionName "0.1.0"
     }
     buildTypes {
         release {
@@ -30,7 +30,7 @@ dependencies {
     compile 'com.lzy.widget:imagepicker:0.1.0'
     compile 'com.lzy.widget:view-core:0.1.6'
     compile 'com.lzy.utils:utils-core:0.1.2'
-//    compile 'com.lzy.net:okhttputils:0.1.1'
+//    compile 'com.lzy.net:okhttputils:1.0.0'
 //    compile 'com.lzy.net:okhttpserver:0.1.0'
     compile project(':okhttputils')
     compile project(':okhttpserver')

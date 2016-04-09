@@ -8,7 +8,7 @@ android {
         minSdkVersion 8
         targetSdkVersion 22
         versionCode 1
-        versionName "1.0"
+        versionName "0.1.0"
     }
     buildTypes {
         release {
@@ -26,4 +26,4 @@ dependencies {
     compile project(':okhttputils')
 }
 
-apply from: 'bintray.gradle'
+//apply from: 'bintray.gradle'

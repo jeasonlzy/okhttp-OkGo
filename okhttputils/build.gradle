@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 22
-        versionCode 2
-        versionName "0.1.1"
+        versionCode 3
+        versionName "1.0.0"
     }
     buildTypes {
         release {
@@ -25,4 +25,4 @@ dependencies {
 }
 
 
-apply from: 'bintray.gradle'
+//apply from: 'bintray.gradle'

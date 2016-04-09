@@ -21,17 +21,17 @@
 
 ## 1.用法
 
-对于Android Studio的用户，可以选择添加:
+ * 对于Android Studio的用户，可以选择添加:
 ```java
     compile 'com.lzy.net:okhttputils:1.0.0'  //可以单独使用，不需要依赖下方的扩展包
 	compile 'com.lzy.net:okhttpserver:0.1.0' //扩展了下载管理和上传管理，根据需要添加
 ```
-或者使用
+ * 或者使用
 ```java
     compile project(':okhttputils')
 	compile project(':okhttpserver')
 ```
-对于Eclipse的用户，可以选择添加 `/lib` 目录下的:
+* 对于Eclipse的用户，可以选择添加 `/lib` 目录下的:
 ```java
 	okhttputils-1.0.0.jar
 	okhttpserver-0.1.0.jar
@@ -42,9 +42,9 @@
 	
 ## 2.使用注意事项
 
- *　`okhttputils`使用的`okhttp`的版本是最新的 3.2.0 版本，和以前的 2.x 的版本可能会存在冲突。
- *　`okhttpserver`是对`okhttputils`的扩展，统一了下载管理和上传管理，对项目有需要做统一下载的可以考虑使用该扩展，不需要的可以直接使用`okhttputils`。
- *　对于缓存模式使用，所有`javaBean`必须实现`Serializable`接口
+ * `okhttputils`使用的`okhttp`的版本是最新的 3.2.0 版本，和以前的 2.x 的版本可能会存在冲突。
+ * `okhttpserver`是对`okhttputils`的扩展，统一了下载管理和上传管理，对项目有需要做统一下载的可以考虑使用该扩展，不需要的可以直接使用`okhttputils`即可。
+ * 对于缓存模式使用，所有`javaBean`必须实现`Serializable`接口
 
 ## 3.目前支持
 * 一般的 get,post,put,delete,head,options请求
@@ -60,10 +60,8 @@
 * 支持自定义泛型Callback，自动根据泛型返回对象
 
 ## 4.扩展功能
-### 1.统一的文件下载管理
-默认使用的是 get 请求，同时下载数量为3个，支持断点下载，断点信息使用`ORMLite`数据库框架保存，默认下载路径`/storage/emulated/0/download`，下载路径和下载数量都可以在代码中配置，下载管理使用了服务提高线程优先级，避免后台下载时被系统回收
-### 2.统一的文件上传管理
-默认使用的是 post 上传请求，该上传管理为简单管理，不支持断点续传和分片上传，只是简单的将所有上传任务使用线程池进行了统一管理，默认同时上传数量为1个
+ * 统一的文件下载管理：默认使用的是 get 请求，同时下载数量为3个，支持断点下载，断点信息使用`ORMLite`数据库框架保存，默认下载路径`/storage/emulated/0/download`，下载路径和下载数量都可以在代码中配置，下载管理使用了服务提高线程优先级，避免后台下载时被系统回收
+ * 统一的文件上传管理：默认使用的是 post 上传请求，该上传管理为简单管理，不支持断点续传和分片上传，只是简单的将所有上传任务使用线程池进行了统一管理，默认同时上传数量为1个
 
 ## 5.用法示例
 
