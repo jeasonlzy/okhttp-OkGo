@@ -18,7 +18,7 @@ import com.lzy.okhttpdemo.callback.DialogCallback;
 import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
-import com.lzy.utils.ColorUtil;
+import com.lzy.utils.ColorUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -144,7 +144,7 @@ public class MethodActivity extends BaseActivity implements AdapterView.OnItemCl
             textView.setText(getItem(position));
             textView.setTextColor(Color.WHITE);
             textView.setTextSize(16);
-            textView.setBackgroundColor(ColorUtil.generateBeautifulColor());
+            textView.setBackgroundColor(ColorUtils.randomColor());
             return textView;
         }
     }

@@ -1,6 +1,7 @@
 package com.lzy.okhttpdemo.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -42,15 +43,21 @@ public class CacheActivity extends BaseActivity {
     @OnClick(R.id.getAll)
     public void getAll(View view) {
         List<CacheEntity<Object>> all = CacheManager.INSTANCE.getAll();
-        for (CacheEntity<Object> cacheEntity : all) {
-            System.out.println(cacheEntity);
+        StringBuilder sb = new StringBuilder();
+        sb.append("共" + all.size() + "条缓存：").append("\n\n");
+        for (int i = 0; i < all.size(); i++) {
+            CacheEntity<Object> cacheEntity = all.get(i);
+            sb.append("第" + (i + 1) + "条缓存：").append("\n").append(cacheEntity).append("\n\n");
         }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("所有缓存显示").setMessage(sb.toString()).show();
     }
 
     @OnClick(R.id.clear)
     public void clear(View view) {
         boolean clear = CacheManager.INSTANCE.clear();
-        System.out.println("是否清除成功：" + clear);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("清除缓存").setMessage("是否清除成功：" + clear).show();
     }
 
     @OnClick(R.id.cache_default)
@@ -106,7 +113,9 @@ public class CacheActivity extends BaseActivity {
         @Override
         public void onResponse(boolean isFromCache, RequestInfo requestInfo, Request request, Response response) {
             handleResponse(isFromCache, requestInfo, request, response);
-            if (!isFromCache) responseData.setText("这是请求网络返回的新数据！，当前时间：" + System.currentTimeMillis());
+//            if (!isFromCache && response == null) {
+//                responseData.setText("这是请求网络返回的新数据！，当前时间：" + System.currentTimeMillis());
+//            }
         }
 
         @Override

@@ -98,6 +98,7 @@ class CacheDao<T> extends DataBaseDao<CacheEntity<T>> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public CacheEntity<T> parseCursorToBean(Cursor cursor) {
         CacheEntity<T> cacheEntity = new CacheEntity<>();
         cacheEntity.setId(cursor.getInt(cursor.getColumnIndex(CacheHelper.ID)));

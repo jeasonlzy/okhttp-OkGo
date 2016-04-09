@@ -6,10 +6,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.lzy.okhttpdemo.ui.PagerSlidingTabStrip
+    <com.lzy.widget.tab.PagerSlidingTabStrip
         android:id="@+id/tab"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="50dp"
+        android:textColor="#3F51B5"
+        android:textSize="16sp"
+        app:pstsDividerColor="#3F51B5"
+        app:pstsIndicatorColor="#3F51B5"
+        app:pstsIndicatorHeight="4dp"
         app:pstsShouldExpand="true"/>
 
     <android.support.v4.view.ViewPager

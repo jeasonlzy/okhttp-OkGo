@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="left|center_vertical"
-        android:text="Http标准的缓存协议(304缓存头)"
+        android:text="1. Http标准的缓存协议(304缓存头)"
         android:textAllCaps="false"/>
 
     <Button
@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="left|center_vertical"
-        android:text="先请求网络，如果失败，则返回上次的缓存"
+        android:text="2. 先请求网络，如果失败，则返回上次的缓存"
         android:textAllCaps="false"/>
 
     <Button
@@ -26,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="left|center_vertical"
-        android:text="先读取缓存，如果缓存不存在，才请求网络，\n如果网络请求也失败，则请求失败"
+        android:text="3. 先读取缓存，如果缓存不存在，才请求网络，\n如果网络请求也失败，则请求失败"
         android:textAllCaps="false"/>
 
     <Button
@@ -34,14 +34,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="left|center_vertical"
-        android:text="先读取缓存，无论缓存是否存在，都请求网络，\n如果网络请求失败，则仍然使用缓存"
+        android:text="4. 先读取缓存，无论缓存是否存在，都请求网络，\n如果网络请求失败，则仍然使用缓存"
         android:textAllCaps="false"/>
 
     <Button
         android:id="@+id/getAll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="left|center_vertical"
         android:text="显示所有缓存"
         android:textAllCaps="false"/>
 
@@ -49,7 +48,6 @@
         android:id="@+id/clear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="left|center_vertical"
         android:text="清除所有缓存"
         android:textAllCaps="false"/>
 

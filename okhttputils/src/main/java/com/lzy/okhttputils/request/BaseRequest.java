@@ -72,91 +72,109 @@ public abstract class BaseRequest<R extends BaseRequest> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public R url(@NonNull String url) {
         this.url = url;
         return (R) this;
     }
 
+    @SuppressWarnings("unchecked")
     public R tag(Object tag) {
         this.tag = tag;
         return (R) this;
     }
 
+    @SuppressWarnings("unchecked")
     public R readTimeOut(long readTimeOut) {
         this.readTimeOut = readTimeOut;
         return (R) this;
     }
 
+    @SuppressWarnings("unchecked")
     public R writeTimeOut(long writeTimeOut) {
         this.writeTimeOut = writeTimeOut;
         return (R) this;
     }
 
+    @SuppressWarnings("unchecked")
     public R connTimeOut(long connTimeOut) {
         this.connectTimeout = connTimeOut;
         return (R) this;
     }
 
+    @SuppressWarnings("unchecked")
     public R cacheMode(CacheMode cacheMode) {
         this.cacheMode = cacheMode;
         return (R) this;
     }
 
+    @SuppressWarnings("unchecked")
     public R cacheKey(String cacheKey) {
         this.cacheKey = cacheKey;
         return (R) this;
     }
 
+    @SuppressWarnings("unchecked")
     public R setCertificates(InputStream... certificates) {
         this.certificates = certificates;
         return (R) this;
     }
 
+    @SuppressWarnings("unchecked")
     public R headers(HttpHeaders headers) {
         this.headers.put(headers);
         return (R) this;
     }
 
+    @SuppressWarnings("unchecked")
     public R headers(String key, String value) {
         headers.put(key, value);
         return (R) this;
     }
 
+    @SuppressWarnings("unchecked")
     public R removeHeader(String key) {
         headers.remove(key);
         return (R) this;
     }
 
+    @SuppressWarnings("unchecked")
     public R params(HttpParams params) {
         this.params.put(params);
         return (R) this;
     }
 
+    @SuppressWarnings("unchecked")
     public R params(String key, String value) {
         params.put(key, value);
         return (R) this;
     }
 
+    @SuppressWarnings("unchecked")
     public R params(String key, File file) {
         params.put(key, file);
         return (R) this;
     }
 
+    @SuppressWarnings("unchecked")
     public R params(String key, File file, String fileName) {
         params.put(key, file, fileName);
         return (R) this;
     }
 
+    @SuppressWarnings("unchecked")
     public R params(String key, File file, String fileName, MediaType contentType) {
         params.put(key, file, fileName, contentType);
         return (R) this;
     }
 
+    @SuppressWarnings("unchecked")
     public R removeUrlParam(String key) {
         params.removeUrl(key);
         return (R) this;
     }
 
+    @SuppressWarnings("unchecked")
     public R removeFileParam(String key) {
         params.removeFile(key);
         return (R) this;
@@ -276,7 +294,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
     /** 阻塞方法，同步请求执行 */
     public Response execute() throws IOException {
         //添加缓存头和其他的公共头，同步请求不做缓存，缓存为空
-        HeaderParser.addDefaultHeaders(this, null);
+        HeaderParser.addDefaultHeaders(this, null, null);
 
         //构建请求体，同步阻塞请求
         RequestBody requestBody = generateRequestBody();
@@ -286,6 +304,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
     }
 
     /** 非阻塞方法，异步请求，但是回调在子线程中执行 */
+    @SuppressWarnings("unchecked")
     public <T> void execute(AbsCallback<T> callback) {
         mCallback = callback;
         if (mCallback == null) mCallback = AbsCallback.CALLBACK_DEFAULT;
@@ -293,9 +312,8 @@ public abstract class BaseRequest<R extends BaseRequest> {
         //请求之前获取缓存信息，添加缓存头和其他的公共头
         if (cacheKey == null) cacheKey = createUrlFromParams(url, params.urlParamsMap);
         if (cacheMode == null) cacheMode = CacheMode.DEFAULT;
-        //TODO 可能会报强制转换错误，处理方法，如果异常，请求网络
         final CacheEntity<T> cacheEntity = (CacheEntity<T>) cacheManager.get(cacheKey);
-        HeaderParser.addDefaultHeaders(this, cacheEntity);
+        HeaderParser.addDefaultHeaders(this, cacheEntity, cacheMode);
 
         //请求执行前UI线程调用
         mCallback.onBefore(this);
@@ -332,7 +350,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
                 //304缓存数据
                 if (responseCode == 304 && cacheMode == CacheMode.DEFAULT) {
                     if (cacheEntity == null) {
-                        sendFailResultCallback(true, call, response, new IllegalArgumentException("服务器响应码304，但是客户端没有缓存！"), mCallback);
+                        sendFailResultCallback(true, call, response, new IllegalStateException("服务器响应码304，但是客户端没有缓存！"), mCallback);
                     } else {
                         T data = cacheEntity.getData();
                         sendSuccessResultCallback(true, data, call, response, mCallback);
@@ -348,7 +366,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
                 T data = (T) mCallback.parseNetworkResponse(response);
                 sendSuccessResultCallback(false, data, call, response, mCallback);
                 //网络请求成功，保存缓存数据
-                saveCache(response.headers(), data, responseCode, cacheEntity);
+                saveCache(response.headers(), data);
             }
         });
     }
@@ -356,26 +374,21 @@ public abstract class BaseRequest<R extends BaseRequest> {
     /**
      * 请求成功后根据缓存模式，更新缓存数据
      *
-     * @param headers      响应头
-     * @param data         响应数据
-     * @param responseCode 响应码
-     * @param oldCache     以前的缓存
+     * @param headers 响应头
+     * @param data    响应数据
      */
-    private <T> void saveCache(Headers headers, T data, int responseCode, CacheEntity<T> oldCache) {
+    @SuppressWarnings("unchecked")
+    private <T> void saveCache(Headers headers, T data) {
         // DEFAULT 默认遵循 304 规则，其他缓存模式忽略 304 缓存头
         boolean forceCache = (cacheMode != CacheMode.DEFAULT);
         CacheEntity<T> cache = HeaderParser.parseCacheHeaders(headers, data, cacheKey, forceCache);
         if (cache != null) {
-            //如果仍然使用缓存，则缓存头不允许改变
-            if (responseCode == 304) {
-                cache.setLocalExpire(oldCache.getLocalExpire());
-                cache.setResponseHeaders(oldCache.getResponseHeaders());
-            }
             cacheManager.replace(cacheKey, (CacheEntity<Object>) cache);
         }
     }
 
     /** 失败回调，发送到主线程 */
+    @SuppressWarnings("unchecked")
     public <T> void sendFailResultCallback(final boolean isFromCache, final Call call,//
                                            final Response response, final Exception e, final AbsCallback<T> callback) {
 
@@ -387,7 +400,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
                 sendSuccessResultCallback(true, data, call, response, callback);
                 return;
             } else {
-                sendFailResultCallback(true, call, response, new IllegalArgumentException("请求网络失败后，无法读取缓存或者缓存不存在！"), callback);
+                sendFailResultCallback(true, call, response, new IllegalStateException("请求网络失败后，无法读取缓存或者缓存不存在！"), callback);
             }
         }
 

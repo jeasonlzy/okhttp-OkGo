@@ -67,7 +67,7 @@ public abstract class FileCallback extends AbsCallback<File> {
             is = response.body().byteStream();
             final long total = response.body().contentLength();
             long sum = 0;
-            int len = 0;
+            int len;
             fos = new FileOutputStream(file);
             while ((len = is.read(buf)) != -1) {
                 sum += len;

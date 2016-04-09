@@ -17,7 +17,7 @@ import com.lzy.okhttpserver.download.DownloadManager;
 import com.lzy.okhttpserver.download.DownloadService;
 import com.lzy.okhttpdemo.Bean.ApkInfo;
 import com.lzy.okhttpdemo.R;
-import com.lzy.okhttpdemo.utils.ApkUtils;
+import com.lzy.utils.ApkUtils;
 
 import java.io.File;
 

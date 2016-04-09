@@ -3,6 +3,7 @@ package com.lzy.okhttputils.utils;
 import android.text.TextUtils;
 
 import com.lzy.okhttputils.cache.CacheEntity;
+import com.lzy.okhttputils.cache.CacheMode;
 import com.lzy.okhttputils.model.HttpHeaders;
 import com.lzy.okhttputils.request.BaseRequest;
 
@@ -107,11 +108,12 @@ public class HeaderParser {
      *
      * @param request     请求类
      * @param cacheEntity 缓存实体类
+     * @param cacheMode   缓存模式
      */
-    public static <T> void addDefaultHeaders(BaseRequest request, CacheEntity<T> cacheEntity) {
+    public static <T> void addDefaultHeaders(BaseRequest request, CacheEntity<T> cacheEntity, CacheMode cacheMode) {
         //1. 按照标准的 http 协议，添加304相关响应头
-        if (cacheEntity == null) {
-            //缓存不存在，移除相关的缓存头
+        if (cacheEntity == null || cacheMode != CacheMode.DEFAULT) {
+            //缓存不存在，或者缓存模式不是标准的304，则移除相关的缓存头，避免服务器返回304
             request.removeHeader(HttpHeaders.HEAD_KEY_IF_NONE_MATCH);
             request.removeHeader(HttpHeaders.HEAD_KEY_IF_MODIFIED_SINCE);
         } else if (cacheEntity.getLocalExpire() < System.currentTimeMillis()) {

@@ -9,6 +9,7 @@ import com.lzy.okhttputils.cache.CacheMode;
 import com.lzy.okhttputils.cookie.CookieJarImpl;
 import com.lzy.okhttputils.cookie.store.MemoryCookieStore;
 import com.lzy.okhttputils.https.HttpsUtils;
+import com.lzy.okhttputils.interceptor.LoggerInterceptor;
 import com.lzy.okhttputils.model.HttpHeaders;
 import com.lzy.okhttputils.model.HttpParams;
 import com.lzy.okhttputils.request.DeleteRequest;
@@ -115,8 +116,8 @@ public class OkHttpUtils {
     }
 
     /** 调试模式 */
-    public OkHttpUtils debug(String tag, boolean showResponse) {
-//        okHttpClientBuilder.addInterceptor(new LoggerInterceptor(tag, showResponse));
+    public OkHttpUtils debug(String tag) {
+        okHttpClientBuilder.addInterceptor(new LoggerInterceptor(tag, true));
         return this;
     }
 

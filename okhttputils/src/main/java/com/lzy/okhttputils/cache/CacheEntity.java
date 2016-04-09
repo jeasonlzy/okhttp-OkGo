@@ -1,6 +1,5 @@
 package com.lzy.okhttputils.cache;
 
-
 import com.lzy.okhttputils.model.HttpHeaders;
 
 import java.io.Serializable;
@@ -12,17 +11,6 @@ public class CacheEntity<T> implements Serializable {
     private HttpHeaders responseHeaders;
     private T data;
     private long localExpire;
-
-    public CacheEntity() {
-    }
-
-    public CacheEntity(long id, String key, HttpHeaders responseHeaders, T data, long localExpire) {
-        this.id = id;
-        this.key = key;
-        this.responseHeaders = responseHeaders;
-        this.data = data;
-        this.localExpire = localExpire;
-    }
 
     public long getId() {
         return id;

@@ -1,8 +1,8 @@
 package com.lzy.okhttpdemo.callback;
 
-import com.lzy.okhttpdemo.utils.MD5Utils;
 import com.lzy.okhttputils.model.HttpParams;
 import com.lzy.okhttputils.request.BaseRequest;
+import com.lzy.utils.MD5Utils;
 
 import java.util.Comparator;
 import java.util.Map;

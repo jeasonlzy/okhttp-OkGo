@@ -11,8 +11,8 @@ import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.fragment.DownloadFragment;
 import com.lzy.okhttpdemo.fragment.OkhttpFragment;
 import com.lzy.okhttpdemo.fragment.UploadFragment;
-import com.lzy.okhttpdemo.ui.PagerSlidingTabStrip;
 import com.lzy.okhttputils.OkHttpUtils;
+import com.lzy.widget.tab.PagerSlidingTabStrip;
 
 import java.util.ArrayList;
 
