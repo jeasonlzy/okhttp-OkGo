@@ -68,6 +68,21 @@ artifacts {
     archives sourcesJar
 }
 
+//定义一个函数，target是生成jar包的文件名
+def makeJar(String target) {
+    exec {
+        executable "jar"   //调用jar
+        args "cvf", target
+        args "-C", "build/intermediates/classes/release"
+        args "", "."
+    }
+}
+
+//新建一个task,名为buildLib,依赖build(build是一个自带的task)
+task buildLib(dependsOn: build) {
+    makeJar("../lib/okhttputils-" + version + ".jar")
+}
+
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 bintray {

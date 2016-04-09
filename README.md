@@ -1,9 +1,6 @@
 # OkHttpUtils
 
-### 联系方式
- * 邮箱地址： liaojeason@126.com
- * QQ群： 489873144 （建议使用QQ群，邮箱使用较少，可能看的不及时）
- * 本群刚建立，旨在为使用我的github项目的人提供方便，如果遇到问题欢迎在群里提问。个人能力也有限，希望一起学习一起进步。
+### 封装了okhttp的网络框架，支持大文件上传下载，上传进度回调，下载进度回调，表单上传（多文件和多参数一起上传），链式调用，可以自定义返回对象，支持Https和自签名证书，支持cookie自动管理，支持四种缓存模式缓存网络数据，扩展了统一的上传管理和下载管理功能
 
 该项目参考了以下项目：
 
@@ -13,15 +10,20 @@
 
 在此特别感谢上述作者，喜欢原作的可以去使用原项目。同时欢迎大家下载体验本项目，如果使用过程中遇到什么问题，欢迎反馈。
 
+## 联系方式
+ * 邮箱地址： liaojeason@126.com
+ * QQ群： 489873144 （建议使用QQ群，邮箱使用较少，可能看的不及时）
+ * 本群刚建立，旨在为使用我的github项目的人提供方便，如果遇到问题欢迎在群里提问。个人能力也有限，希望一起学习一起进步。
+
 ## 演示
- ![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/preview.jpg)![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/pre.gif)![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/dm.gif)![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/dm2.gif)![image](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/screenshots/upload.gif)
+ ![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo1.png)![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo2.gif)![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo3.gif)![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo4.gif)![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo5.gif)
 
 
 ## 1.用法
 
-使用前，对于Android Studio的用户，可以选择添加:
+对于Android Studio的用户，可以选择添加:
 ```java
-    compile 'com.lzy.net:okhttputils:0.1.1'  //可以单独使用，不需要依赖下方的扩展包
+    compile 'com.lzy.net:okhttputils:1.0.0'  //可以单独使用，不需要依赖下方的扩展包
 	compile 'com.lzy.net:okhttpserver:0.1.0' //扩展了下载管理和上传管理，根据需要添加
 ```
 或者使用
@@ -29,56 +31,41 @@
     compile project(':okhttputils')
 	compile project(':okhttpserver')
 ```
+对于Eclipse的用户，可以选择添加 `/lib` 目录下的:
+```java
+	okhttputils-1.0.0.jar
+	okhttpserver-0.1.0.jar
+```
+
+
 其中的图片选择是我的另一个开源项目，完全仿微信的图片选择库，自带 矩形图片裁剪 和 圆形图片裁剪 功能，有需要的可以去下载使用，附上地址：[https://github.com/jeasonlzy0216/ImagePicker](https://github.com/jeasonlzy0216/ImagePicker)
 	
-## 2.注意
+## 2.使用注意事项
 
-`okhttputils`使用的okhttp的版本是最新的3.2版本，和以前的2.x的版本可能会存在冲突，并且整合了Gson，提供了自定Callback，可以按照泛型，自行解析返回结果，以下是该库的依赖项目：
-
-```java
-    compile 'com.android.support:support-annotations:23.1.1'
-    compile 'com.squareup.okhttp3:okhttp:3.2.0'
-    compile 'com.google.code.gson:gson:2.5'
-```
-
-`okhttpserver`是对`okhttputils`的扩展，统一了下载管理和上传管理，对项目有需要做统一下载的可以考虑使用该项目，不需要的可以直接使用`okhttputils`，不用导入扩展，以下是`okhttpserver`的依赖关系：
-
-```java
-    compile 'com.lzy.net:okhttputils:0.1.1'
-    compile 'com.j256.ormlite:ormlite-android:4.48'
-```
+ *　`okhttputils`使用的`okhttp`的版本是最新的 3.2.0 版本，和以前的 2.x 的版本可能会存在冲突。
+ *　`okhttpserver`是对`okhttputils`的扩展，统一了下载管理和上传管理，对项目有需要做统一下载的可以考虑使用该扩展，不需要的可以直接使用`okhttputils`。
+ *　对于缓存模式使用，所有`javaBean`必须实现`Serializable`接口
 
 ## 3.目前支持
-* 一般的get,post,put,delete,head,patch请求
-* 基于post,put,patch的文件上传
-* 多文件和多参数的表单上传
+* 一般的 get,post,put,delete,head,options请求
+* 基于Post的大文本数据上传
+* 多文件和多参数统一的表单上传
 * 大文件下载和下载进度回调
 * 大文件上传和上传进度回调
 * 支持session的保持
+* 支持四种本地缓存模式
 * 支持链式调用
-* 支持自签名网站https的访问，提供方法设置下证书就行
+* 支持可信证书和自签名证书的https的访问
 * 支持根据Tag取消请求
 * 支持自定义泛型Callback，自动根据泛型返回对象
 
 ## 4.扩展功能
 ### 1.统一的文件下载管理
-默认使用的是 get 请求，同时下载数量为3个，支持断点下载，断点信息使用ORMLite数据库框架保存，默认下载路径`/storage/emulated/0/download`，下载路径和下载数量都可以在代码中配置，下载管理使用了服务提高线程优先级，避免后台下载时被系统回收
+默认使用的是 get 请求，同时下载数量为3个，支持断点下载，断点信息使用`ORMLite`数据库框架保存，默认下载路径`/storage/emulated/0/download`，下载路径和下载数量都可以在代码中配置，下载管理使用了服务提高线程优先级，避免后台下载时被系统回收
 ### 2.统一的文件上传管理
-默认使用的是 post 请求，对于需要修改为 put 请求的，只需要修改`library_okhttpserver`中的`UploadTask`第67行代码：
-```java
-	PostRequest postRequest = OkHttpUtils.post(mUploadInfo.getUrl());
-```
-修改为
-```java
-	PostRequest postRequest = OkHttpUtils.put(mUploadInfo.getUrl());
-```
-该上传管理为简单管理，不支持断点续传和分片上传，只是简单的将所有上传任务使用线程池进行了统一管理，默认同时上传数量为1个
+默认使用的是 post 上传请求，该上传管理为简单管理，不支持断点续传和分片上传，只是简单的将所有上传任务使用线程池进行了统一管理，默认同时上传数量为1个
 
-## 5.友情提示
-* 该演示Demo中，一般请求Tab演示中，没有做任何UI上的变化，需要看详细的请求过程或是否请求成功的返回数据，自行看打印的log
-* 该演示Demo中，一般请求和上传管理的服务器地址是我自己的服务器，公网不可访问，自己测试的时候，自行将请求地址改为自己的服务器接口测试，否者会报请求超时的异常
-
-## 6.用法示例
+## 5.用法示例
 
 ### 6.1 全局配置
 一般在 Aplication，或者基类中，只需要调用一次即可，可以配置调试开关，全局的超时时间，公共的请求头和请求参数等信息

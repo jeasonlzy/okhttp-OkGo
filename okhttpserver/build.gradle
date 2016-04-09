@@ -26,4 +26,4 @@ dependencies {
     compile project(':okhttputils')
 }
 
-//apply from: 'bintray.gradle'
+apply from: 'bintray.gradle'

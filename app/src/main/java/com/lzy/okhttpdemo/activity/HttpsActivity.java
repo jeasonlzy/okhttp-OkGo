@@ -19,7 +19,7 @@ import okio.Buffer;
 
 public class HttpsActivity extends BaseActivity {
 
-    public static final String CER_12306 = "-----BEGIN CERTIFICATE-----\n" +
+    private static final String CER_12306 = "-----BEGIN CERTIFICATE-----\n" +
             "MIICmjCCAgOgAwIBAgIIbyZr5/jKH6QwDQYJKoZIhvcNAQEFBQAwRzELMAkGA1UEBhMCQ04xKTAn\n" +
             "BgNVBAoTIFNpbm9yYWlsIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MQ0wCwYDVQQDEwRTUkNBMB4X\n" +
             "DTA5MDUyNTA2NTYwMFoXDTI5MDUyMDA2NTYwMFowRzELMAkGA1UEBhMCQ04xKTAnBgNVBAoTIFNp\n" +
@@ -65,8 +65,8 @@ public class HttpsActivity extends BaseActivity {
                     .headers("header1", "headerValue1")//
                     .params("param1", "paramValue1")//
                     .setCertificates(new Buffer().writeUtf8(CER_12306).inputStream())  //方法一：设置自签名网站的证书（选一种即可）
-                    .setCertificates(getAssets().open("srca.cer"))                     //方法二：也可以设置https证书（选一种即可）
-                    .setCertificates()                                                 //方法三：信任所有证书（选一种即可）
+//                    .setCertificates(getAssets().open("srca.cer"))                     //方法二：也可以设置https证书（选一种即可）
+//                    .setCertificates()                                                 //方法三：信任所有证书（选一种即可）
                     .execute(new HttpsCallBack(this));
         } catch (Exception e) {
             e.printStackTrace();
@@ -88,7 +88,6 @@ public class HttpsActivity extends BaseActivity {
         public void onError(boolean isFromCache, Call call, @Nullable Response response, @Nullable Exception e) {
             super.onError(isFromCache, call, response, e);
             handleError(isFromCache, call, response);
-            System.out.println(call.request().url());
         }
     }
 }
