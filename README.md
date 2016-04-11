@@ -22,9 +22,11 @@
 ## 1.用法
    对于Eclipse不能运行项目的，提供了apk供直接运行，位于项目根目录 `okhttputils_v1.x.x.apk`。
 
+   本项目Demo的网络请求是我自己的服务器，有时候可能不稳定，网速比较慢时请耐心等待。。
+
  * 对于Android Studio的用户，可以选择添加:
 ```java
-    compile 'com.lzy.net:okhttputils:1.1.0'  //可以单独使用，不需要依赖下方的扩展包
+    compile 'com.lzy.net:okhttputils:1.2.0'  //可以单独使用，不需要依赖下方的扩展包
 	compile 'com.lzy.net:okhttpserver:0.1.0' //扩展了下载管理和上传管理，根据需要添加
 
 	compile 'com.lzy.net:okhttputils:+'  //版本号使用 + 可以自动引用最新版
@@ -37,7 +39,7 @@
 ```
 * 对于Eclipse的用户，可以选择添加 `/lib` 目录下的:
 ```java
-	okhttputils-1.1.0.jar
+	okhttputils-1.2.0.jar
 	okhttpserver-0.1.0.jar
 ```
 

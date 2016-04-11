@@ -28,7 +28,7 @@ public class HeaderParser {
      * Cache-Control: private                            响应只能作为私有缓存，不能在用户之间共享
      * Cache-Control: no-cache                           提醒浏览器要从服务器提取文档进行验证
      * Cache-Control: no-store                           绝对禁止缓存（用于机密，敏感文件）
-     * Cache-Control: max-age=60                         60秒之后缓存过期（相对时间）
+     * Cache-Control: max-age=60                         60秒之后缓存过期（相对时间）,优先级比Expires高
      * Date: Mon, 19 Nov 2012 08:39:00 GMT               当前response发送的时间
      * Expires: Mon, 19 Nov 2012 08:40:01 GMT            缓存过期的时间（绝对时间）
      * Last-Modified: Mon, 19 Nov 2012 08:38:01 GMT      服务器端文件的最后修改时间
@@ -46,6 +46,9 @@ public class HeaderParser {
         long expires = HttpHeaders.getExpiration(responseHeaders.get(HttpHeaders.HEAD_KEY_EXPIRES));
         String cacheControl = HttpHeaders.getCacheControl(responseHeaders.get(HttpHeaders.HEAD_KEY_CACHE_CONTROL), responseHeaders.get(HttpHeaders.HEAD_KEY_PRAGMA));
 
+        //没有缓存头控制，不需要缓存
+        if (TextUtils.isEmpty(cacheControl) && expires <= 0 && !forceCache) return null;
+
         long maxAge = 0;
         if (!TextUtils.isEmpty(cacheControl)) {
             StringTokenizer tokens = new StringTokenizer(cacheControl, ",");
@@ -58,6 +61,8 @@ public class HeaderParser {
                     try {
                         //获取最大缓存时间
                         maxAge = Long.parseLong(token.substring(8));
+                        //服务器缓存设置立马过期，不缓存
+                        if (maxAge <= 0 && !forceCache) return null;
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -72,10 +77,10 @@ public class HeaderParser {
         } else {
             now = System.currentTimeMillis();
         }
-        if (!TextUtils.isEmpty(cacheControl)) {
+        if (maxAge > 0) {
             // Http1.1 优先验证 Cache-Control 头
             localExpire = now + maxAge * 1000;
-        } else if (date > 0 && expires >= date) {
+        } else if (expires >= 0) {
             // Http1.0 验证 Expires 头
             localExpire = expires;
         }

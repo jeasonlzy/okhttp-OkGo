@@ -364,7 +364,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
                 T data = (T) mCallback.parseNetworkResponse(response);
                 sendSuccessResultCallback(false, data, call, response, mCallback);
                 //网络请求成功，保存缓存数据
-                saveCache(response.headers(), data);
+                handleCache(response.headers(), data);
             }
         });
     }
@@ -376,11 +376,15 @@ public abstract class BaseRequest<R extends BaseRequest> {
      * @param data    响应数据
      */
     @SuppressWarnings("unchecked")
-    private <T> void saveCache(Headers headers, T data) {
+    private <T> void handleCache(Headers headers, T data) {
         // DEFAULT 默认遵循 304 规则，其他缓存模式忽略 304 缓存头
         boolean forceCache = (cacheMode != CacheMode.DEFAULT);
         CacheEntity<T> cache = HeaderParser.parseCacheHeaders(headers, data, cacheKey, forceCache);
-        if (cache != null) {
+        if (cache == null) {
+            //服务器不需要缓存，移除本地缓存
+            cacheManager.remove(cacheKey);
+        } else {
+            //缓存命中，更新缓存
             cacheManager.replace(cacheKey, (CacheEntity<Object>) cache);
         }
     }
