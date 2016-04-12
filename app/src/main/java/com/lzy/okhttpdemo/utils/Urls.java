@@ -10,7 +10,7 @@ package com.lzy.okhttpdemo.utils;
  * ================================================
  */
 public class Urls {
-    public static final String SERVER = "http://jeason.ecs02.tomcats.pw/OkHttpUtils/";
+    public static final String SERVER = "http://server.jeasonlzy.com/OkHttpUtils/";
     public static final String URL_METHOD = SERVER + "method";
     public static final String URL_CACHE = SERVER + "cache";
     public static final String URL_IMAGE = SERVER + "image";
