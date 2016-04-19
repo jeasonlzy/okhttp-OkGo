@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.lzy.okhttpdemo"
-        minSdkVersion 8
+        minSdkVersion 14
         targetSdkVersion 22
         versionCode 12
         versionName "1.3.0"
@@ -40,7 +40,7 @@ dependencies {
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.google.code.gson:gson:2.5'
 
-    compile 'com.lzy.widget:imagepicker:0.1.0'
+    compile 'com.lzy.widget:imagepicker:0.1.3'
     compile 'com.lzy.widget:view-core:0.1.9'
 //    compile 'com.lzy.net:okhttputils:+'
 //    compile 'com.lzy.net:okhttpserver:+'

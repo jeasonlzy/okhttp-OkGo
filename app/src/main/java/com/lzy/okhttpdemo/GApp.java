@@ -22,11 +22,11 @@ public class GApp extends Application {
         super.onCreate();
 
         HttpHeaders headers = new HttpHeaders();
-        headers.put("commonHeaderKey1", "commonHeaderValue1");
+        headers.put("commonHeaderKey1", "commonHeaderValue1");    //所有的 header 都 不支持 中文
         headers.put("commonHeaderKey2", "commonHeaderValue2");
         HttpParams params = new HttpParams();
-        params.put("commonParamsKey1", "commonParamsValue1");
-        params.put("commonParamsKey2", "commonParamsValue2");
+        params.put("commonParamsKey1", "commonParamsValue1");     //所有的 params 都 支持 中文
+        params.put("commonParamsKey2", "这里支持中文参数");
 
         //必须调用初始化
         OkHttpUtils.init(this);
