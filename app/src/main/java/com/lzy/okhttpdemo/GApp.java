@@ -21,9 +21,6 @@ public class GApp extends Application {
     public void onCreate() {
         super.onCreate();
 
-//        System.setProperty("http.proxyHost", "192.168.56.1");   //个人测试网络时用的，删掉即可
-//        System.setProperty("http.proxyPort", "8888");           //个人测试网络时用的，删掉即可
-
         HttpHeaders headers = new HttpHeaders();
         headers.put("commonHeaderKey1", "commonHeaderValue1");
         headers.put("commonHeaderKey2", "commonHeaderValue2");
