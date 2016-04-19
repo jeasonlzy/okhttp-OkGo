@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import javax.net.ssl.HostnameVerifier;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -50,6 +52,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
     protected CacheMode cacheMode;
     protected String cacheKey;
     protected InputStream[] certificates;
+    protected HostnameVerifier hostnameVerifier;
     protected HttpParams params = new HttpParams();
     protected HttpHeaders headers = new HttpHeaders();
     private AbsCallback mCallback;
@@ -117,6 +120,12 @@ public abstract class BaseRequest<R extends BaseRequest> {
     @SuppressWarnings("unchecked")
     public R setCertificates(InputStream... certificates) {
         this.certificates = certificates;
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public R setHostnameVerifier(HostnameVerifier hostnameVerifier) {
+        this.hostnameVerifier = hostnameVerifier;
         return (R) this;
     }
 
@@ -257,7 +266,8 @@ public abstract class BaseRequest<R extends BaseRequest> {
 
     /** 对请求body进行包装，用于回调上传进度 */
     protected RequestBody wrapRequestBody(RequestBody requestBody) {
-        return new ProgressRequestBody(requestBody, new ProgressRequestBody.Listener() {
+        ProgressRequestBody progressRequestBody = new ProgressRequestBody(requestBody);
+        progressRequestBody.setListener(new ProgressRequestBody.Listener() {
             @Override
             public void onRequestProgress(final long bytesWritten, final long contentLength, final long networkSpeed) {
                 OkHttpUtils.getInstance().getDelivery().post(new Runnable() {
@@ -269,6 +279,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
                 });
             }
         });
+        return progressRequestBody;
     }
 
     /** 根据不同的请求方式，将RequestBody转换成Request对象 */
@@ -283,8 +294,10 @@ public abstract class BaseRequest<R extends BaseRequest> {
             if (readTimeOut > 0) newClientBuilder.readTimeout(readTimeOut, TimeUnit.MILLISECONDS);
             if (writeTimeOut > 0) newClientBuilder.writeTimeout(writeTimeOut, TimeUnit.MILLISECONDS);
             if (connectTimeout > 0) newClientBuilder.connectTimeout(connectTimeout, TimeUnit.MILLISECONDS);
-            if (certificates != null)
+            if (hostnameVerifier != null) newClientBuilder.hostnameVerifier(hostnameVerifier);
+            if (certificates != null) {
                 newClientBuilder.sslSocketFactory(HttpsUtils.getSslSocketFactory(certificates, null, null));
+            }
             return newClientBuilder.build().newCall(request);
         }
     }

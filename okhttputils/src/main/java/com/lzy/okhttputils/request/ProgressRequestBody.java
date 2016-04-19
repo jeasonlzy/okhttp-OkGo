@@ -19,10 +19,17 @@ public class ProgressRequestBody extends RequestBody {
     protected RequestBody delegate;  //实际的待包装请求体
     protected Listener listener;     //进度回调接口
     protected CountingSink countingSink; //包装完成的BufferedSink
-    private long mPreviousTime;  //开始下载时间，用户计算下载速度
+
+    public ProgressRequestBody(RequestBody delegate) {
+        this.delegate = delegate;
+    }
 
     public ProgressRequestBody(RequestBody delegate, Listener listener) {
         this.delegate = delegate;
+        this.listener = listener;
+    }
+
+    public void setListener(Listener listener) {
         this.listener = listener;
     }
 
@@ -46,7 +53,6 @@ public class ProgressRequestBody extends RequestBody {
     /** 重写进行写入 */
     @Override
     public void writeTo(BufferedSink sink) throws IOException {
-        mPreviousTime = System.currentTimeMillis();
         countingSink = new CountingSink(sink);
         BufferedSink bufferedSink = Okio.buffer(countingSink);
         delegate.writeTo(bufferedSink);
@@ -55,8 +61,10 @@ public class ProgressRequestBody extends RequestBody {
 
     /** 包装 */
     protected final class CountingSink extends ForwardingSink {
-        private long bytesWritten = 0;  //当前写入字节数
-        private long contentLength = 0; //总字节长度，避免多次调用contentLength()方法
+        private long bytesWritten = 0;   //当前写入字节数
+        private long contentLength = 0;  //总字节长度，避免多次调用contentLength()方法
+        private long lastRefreshUiTime;  //最后一次刷新的时间
+        private long lastWriteBytes;     //最后一次写入字节数据
 
         public CountingSink(Sink delegate) {
             super(delegate);
@@ -68,13 +76,20 @@ public class ProgressRequestBody extends RequestBody {
             if (contentLength <= 0) contentLength = contentLength(); //获得contentLength的值，后续不再调用
             bytesWritten += byteCount;
 
-            //计算下载速度
-            long totalTime = (System.currentTimeMillis() - mPreviousTime) / 1000;
-            if (totalTime == 0) totalTime += 1;
-            long networkSpeed = bytesWritten / totalTime;
-            listener.onRequestProgress(bytesWritten, contentLength, networkSpeed);
-        }
+            long curTime = System.currentTimeMillis();
+            //每200毫秒刷新一次数据
+            if (curTime - lastRefreshUiTime >= 200 || bytesWritten == contentLength) {
+                //计算下载速度
+                long diffTime = (curTime - lastRefreshUiTime) / 1000;
+                if (diffTime == 0) diffTime += 1;
+                long diffBytes = bytesWritten - lastWriteBytes;
+                long networkSpeed = diffBytes / diffTime;
+                if (listener != null) listener.onRequestProgress(bytesWritten, contentLength, networkSpeed);
 
+                lastRefreshUiTime = System.currentTimeMillis();
+                lastWriteBytes = bytesWritten;
+            }
+        }
     }
 
     /** 回调接口 */

@@ -15,10 +15,10 @@ import android.widget.TextView;
 import com.lzy.okhttpdemo.Bean.RequestInfo;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.callback.DialogCallback;
+import com.lzy.okhttpdemo.utils.ColorUtils;
 import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
-import com.lzy.utils.ColorUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

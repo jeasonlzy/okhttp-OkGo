@@ -59,7 +59,9 @@ public abstract class FileCallback extends AbsCallback<File> {
         File file = new File(dir, destFileName);
         if (file.exists()) file.delete();
 
-        long previousTime = System.currentTimeMillis();
+        long lastRefreshUiTime = 0;  //最后一次刷新的时间
+        long lastWriteBytes = 0;     //最后一次写入字节数据
+
         InputStream is = null;
         byte[] buf = new byte[2048];
         FileOutputStream fos = null;
@@ -74,16 +76,24 @@ public abstract class FileCallback extends AbsCallback<File> {
                 fos.write(buf, 0, len);
                 final long finalSum = sum;
 
-                //计算下载速度
-                long totalTime = (System.currentTimeMillis() - previousTime) / 1000;
-                if (totalTime == 0) totalTime += 1;
-                final long networkSpeed = finalSum / totalTime;
-                OkHttpUtils.getInstance().getDelivery().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        downloadProgress(finalSum, total, finalSum * 1.0f / total, networkSpeed);   //进度回调的方法
-                    }
-                });
+                long curTime = System.currentTimeMillis();
+                //每200毫秒刷新一次数据
+                if (curTime - lastRefreshUiTime >= 200 || finalSum == total) {
+                    //计算下载速度
+                    long diffTime = (curTime - lastRefreshUiTime) / 1000;
+                    if (diffTime == 0) diffTime += 1;
+                    long diffBytes = finalSum - lastWriteBytes;
+                    final long networkSpeed = diffBytes / diffTime;
+                    OkHttpUtils.getInstance().getDelivery().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            downloadProgress(finalSum, total, finalSum * 1.0f / total, networkSpeed);   //进度回调的方法
+                        }
+                    });
+
+                    lastRefreshUiTime = System.currentTimeMillis();
+                    lastWriteBytes = finalSum;
+                }
             }
             fos.flush();
             return file;
