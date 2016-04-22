@@ -159,6 +159,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             Headers responseHeadersString = response.headers();
             Set<String> names = responseHeadersString.names();
             sb = new StringBuilder();
+            sb.append("url ： ").append(response.request().url()).append("\n\n");
             sb.append("stateCode ： ").append(response.code()).append("\n");
             for (String name : names) {
                 sb.append(name).append(" ： ").append(responseHeadersString.get(name)).append("\n");

@@ -15,7 +15,6 @@ import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Request;
 import okhttp3.Response;
-import okio.Buffer;
 
 public class HttpsActivity extends BaseActivity {
 
@@ -62,10 +61,11 @@ public class HttpsActivity extends BaseActivity {
         try {
             OkHttpUtils.get("https://kyfw.12306.cn/otn")//
                     .tag(this)//
+                    .headers("Connection", "close")           //如果对于部分自签名的https访问不成功，需要加上该控制头
                     .headers("header1", "headerValue1")//
                     .params("param1", "paramValue1")//
-                    .setCertificates(new Buffer().writeUtf8(CER_12306).inputStream())  //方法一：设置自签名网站的证书（选一种即可）
-//                    .setCertificates(getAssets().open("srca.cer"))                     //方法二：也可以设置https证书（选一种即可）
+//                    .setCertificates(new Buffer().writeUtf8(CER_12306).inputStream())  //方法一：设置自签名网站的证书（选一种即可）
+                    .setCertificates(getAssets().open("srca.cer"))                     //方法二：也可以设置https证书（选一种即可）
 //                    .setCertificates()                                                 //方法三：信任所有证书（选一种即可）
                     .execute(new HttpsCallBack(this));
         } catch (Exception e) {

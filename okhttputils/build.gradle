@@ -8,7 +8,7 @@ android {
         minSdkVersion 8
         targetSdkVersion 22
         versionCode 5
-        versionName "1.2.0"
+        versionName "1.4.0"
     }
     buildTypes {
         release {
@@ -23,6 +23,5 @@ dependencies {
     compile 'com.android.support:support-annotations:23.1.1'
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
 }
-
 
 //apply from: 'bintray.gradle'

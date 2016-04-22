@@ -37,6 +37,7 @@ public abstract class JsonCallback<T> extends EncryptCallback<T> {
         this.type = type;
     }
 
+    //该方法是子线程处理，不能做ui相关的工作
     @Override
     public T parseNetworkResponse(Response response) {
         try {
@@ -48,8 +49,8 @@ public abstract class JsonCallback<T> extends EncryptCallback<T> {
              * 以下只是一个示例，具体业务具体实现
              */
             JSONObject jsonObject = new JSONObject(responseData);
-            String msg = jsonObject.optString("msg", "");
-            int code = jsonObject.optInt("code", 0);
+            final String msg = jsonObject.optString("msg", "");
+            final int code = jsonObject.optInt("code", 0);
             String data = jsonObject.optString("data", "");
             switch (code) {
                 case 0:
@@ -74,13 +75,20 @@ public abstract class JsonCallback<T> extends EncryptCallback<T> {
                     //比如：其他乱七八糟的等，在此实现相应的逻辑，弹出对话或者跳转到其他页面等
                     break;
             }
-            Toast.makeText(OkHttpUtils.getContext(), "错误代码：" + code + "，错误信息：" + msg, Toast.LENGTH_SHORT).show();
+            //如果要更新UI，需要使用handler，可以如下方式实现，也可以自己写handler
+            OkHttpUtils.getInstance().getDelivery().post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(OkHttpUtils.getContext(),"错误代码：" + code + "，错误信息：" + msg,Toast.LENGTH_SHORT).show();
+                }
+            });
+            Log.e("OkHttpUtils", "错误代码：" + code + "，错误信息：" + msg);
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(OkHttpUtils.getContext(), "网络IO流读取错误", Toast.LENGTH_SHORT).show();
+            Log.e("OkHttpUtils", "网络IO流读取错误");
         } catch (JSONException e) {
             e.printStackTrace();
-            Toast.makeText(OkHttpUtils.getContext(), "JSON解析异常", Toast.LENGTH_SHORT).show();
+            Log.e("OkHttpUtils", "JSON解析异常");
         }
         return null;
     }

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    package="com.lzy.okhttpdemo"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest package="com.lzy.okhttpdemo"
+          xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -32,6 +31,9 @@
         <activity android:name=".activity.FileDownloadActivity"/>
         <activity android:name=".activity.CacheActivity"/>
         <activity android:name=".activity.HttpsActivity"/>
+        <activity android:name=".activity.SyncActivity"/>
+        <activity android:name=".activity.RedirectActivity">
+        </activity>
     </application>
 
 </manifest>

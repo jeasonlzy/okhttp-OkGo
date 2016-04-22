@@ -30,6 +30,8 @@ public class Constant {
             data.add(new String[]{"文件下载", "可以做大文件或小文件下载，同时支持监听下载进度"});
             data.add(new String[]{"网络缓存", "默认提供了四种缓存模式，根据需要选择使用"});
             data.add(new String[]{"https请求", "允许访问拥有可信证书的网站，也支持自签名证书的网站"});
+            data.add(new String[]{"同步请求", "允许直接返回Response对象，会阻塞主线程，需要自行开启子线程"});
+            data.add(new String[]{"301重定向", "支持301重定向请求"});
         }
         return data;
     }

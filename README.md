@@ -1,6 +1,6 @@
 # OkHttpUtils
 
-### 封装了okhttp的网络框架，支持大文件上传下载，上传进度回调，下载进度回调，表单上传（多文件和多参数一起上传），链式调用，可以自定义返回对象，支持Https和自签名证书，支持cookie自动管理，支持四种缓存模式缓存网络数据，扩展了统一的上传管理和下载管理功能
+### 封装了okhttp的网络框架，支持大文件上传下载，上传进度回调，下载进度回调，表单上传（多文件和多参数一起上传），链式调用，可以自定义返回对象，支持Https和自签名证书，支持cookie自动管理，支持四种缓存模式缓存网络数据，支持301重定向，扩展了统一的上传管理和下载管理功能
 
 该项目参考了以下项目：
 
@@ -26,8 +26,8 @@
 
  * 对于Android Studio的用户，可以选择添加:
 ```java
-    compile 'com.lzy.net:okhttputils:1.3.0'  //可以单独使用，不需要依赖下方的扩展包
-	compile 'com.lzy.net:okhttpserver:0.1.0' //扩展了下载管理和上传管理，根据需要添加
+    compile 'com.lzy.net:okhttputils:1.4.0'  //可以单独使用，不需要依赖下方的扩展包
+	compile 'com.lzy.net:okhttpserver:0.1.2' //扩展了下载管理和上传管理，根据需要添加
 
 	compile 'com.lzy.net:okhttputils:+'  //版本号使用 + 可以自动引用最新版
 	compile 'com.lzy.net:okhttpserver:+' //版本号使用 + 可以自动引用最新版
@@ -39,8 +39,8 @@
 ```
 * 对于Eclipse的用户，可以选择添加 `/lib` 目录下的:
 ```java
-	okhttputils-1.3.0.jar
-	okhttpserver-0.1.0.jar
+	okhttputils-1.4.0.jar
+	okhttpserver-0.1.2.jar
 ```
 
 #### 其中的图片选择是我的另一个开源项目，完全仿微信的图片选择库，自带 矩形图片裁剪 和 圆形图片裁剪 功能，有需要的可以去下载使用，附上地址：[https://github.com/jeasonlzy0216/ImagePicker](https://github.com/jeasonlzy0216/ImagePicker)
@@ -59,7 +59,8 @@
 * 大文件下载和下载进度回调
 * 大文件上传和上传进度回调
 * 支持session的保持
-* 支持四种本地缓存模式
+* 支持304缓存协议，扩展三种本地缓存模式
+* 支持301重定向
 * 支持链式调用
 * 支持可信证书和自签名证书的https的访问
 * 支持根据Tag取消请求

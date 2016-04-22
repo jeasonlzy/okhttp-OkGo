@@ -337,14 +337,17 @@ public abstract class BaseRequest<R extends BaseRequest> {
             if (cacheEntity != null) {
                 T data = cacheEntity.getData();
                 sendSuccessResultCallback(true, data, call, null, mCallback);
-                //返回即不请求网络
-                return;
+                return;//返回即不请求网络
+            } else {
+                sendFailResultCallback(true, call, null, new IllegalStateException("没有获取到缓存！"), mCallback);
             }
         } else if (cacheMode == CacheMode.FIRST_CACHE_THEN_REQUEST) {
             //先使用缓存，不管是否存在，仍然请求网络
             if (cacheEntity != null) {
                 T data = cacheEntity.getData();
                 sendSuccessResultCallback(true, data, call, null, mCallback);
+            } else {
+                sendFailResultCallback(true, call, null, new IllegalStateException("没有获取到缓存！"), mCallback);
             }
         }
 
@@ -407,18 +410,6 @@ public abstract class BaseRequest<R extends BaseRequest> {
     private <T> void sendFailResultCallback(final boolean isFromCache, final Call call,//
                                             final Response response, final Exception e, final AbsCallback<T> callback) {
 
-        //不同的缓存模式，可能会导致该失败进入两次，一次缓存失败，一次网络请求失败
-        if (!isFromCache && cacheMode == CacheMode.REQUEST_FAILED_READ_CACHE) {
-            CacheEntity<T> cacheEntity = (CacheEntity<T>) cacheManager.get(cacheKey);
-            if (cacheEntity != null) {
-                T data = cacheEntity.getData();
-                sendSuccessResultCallback(true, data, call, response, callback);
-                return;
-            } else {
-                sendFailResultCallback(true, call, response, new IllegalStateException("请求网络失败后，无法读取缓存或者缓存不存在！"), callback);
-            }
-        }
-
         OkHttpUtils.getInstance().getDelivery().post(new Runnable() {
             @Override
             public void run() {
@@ -426,6 +417,17 @@ public abstract class BaseRequest<R extends BaseRequest> {
                 callback.onAfter(isFromCache, null, call, response, e);   //请求结束回调 （UI线程）
             }
         });
+
+        //不同的缓存模式，可能会导致该失败进入两次，一次缓存失败，一次网络请求失败
+        if (!isFromCache && cacheMode == CacheMode.REQUEST_FAILED_READ_CACHE) {
+            CacheEntity<T> cacheEntity = (CacheEntity<T>) cacheManager.get(cacheKey);
+            if (cacheEntity != null) {
+                T data = cacheEntity.getData();
+                sendSuccessResultCallback(true, data, call, response, callback);
+            } else {
+                sendFailResultCallback(true, call, response, new IllegalStateException("请求网络失败后，无法读取缓存或者缓存不存在！"), callback);
+            }
+        }
     }
 
     /** 成功回调，发送到主线程 */

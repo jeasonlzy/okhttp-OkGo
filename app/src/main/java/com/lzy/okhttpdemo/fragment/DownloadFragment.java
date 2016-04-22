@@ -17,13 +17,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.lzy.okhttpdemo.utils.AppCacheUtils;
-import com.lzy.okhttpserver.download.DownloadManager;
-import com.lzy.okhttpserver.download.DownloadService;
 import com.lzy.okhttpdemo.Bean.ApkInfo;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.activity.DesActivity;
 import com.lzy.okhttpdemo.activity.DownloadManagerActivity;
+import com.lzy.okhttpdemo.utils.AppCacheUtils;
+import com.lzy.okhttpserver.download.DownloadManager;
+import com.lzy.okhttpserver.download.DownloadService;
 
 import java.util.ArrayList;
 
@@ -32,15 +32,15 @@ public class DownloadFragment extends Fragment {
     private ArrayList<ApkInfo> apks;
     private MyAdapter adapter;
     private DownloadManager downloadManager;
-    
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_download, container, false);
         initData();
-    
+
         downloadManager = DownloadService.getDownloadManager(getContext());
-        
+
         TextView targetFolder = (TextView) view.findViewById(R.id.targetFolder);
         targetFolder.setText("下载路径: " + downloadManager.getTargetFolder());
         final TextView tvCorePoolSize = (TextView) view.findViewById(R.id.tvCorePoolSize);

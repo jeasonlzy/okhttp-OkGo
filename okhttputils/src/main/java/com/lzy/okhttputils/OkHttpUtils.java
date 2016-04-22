@@ -52,6 +52,7 @@ public class OkHttpUtils {
         okHttpClientBuilder = new OkHttpClient.Builder();
         //允许cookie的自动化管理
         okHttpClientBuilder.cookieJar(new CookieJarImpl(new MemoryCookieStore()));
+        okHttpClientBuilder.hostnameVerifier(new DefaultHostnameVerifier());
         mDelivery = new Handler(Looper.getMainLooper());
     }
 

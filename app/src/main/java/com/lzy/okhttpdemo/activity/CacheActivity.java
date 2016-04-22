@@ -113,9 +113,6 @@ public class CacheActivity extends BaseActivity {
         @Override
         public void onResponse(boolean isFromCache, RequestInfo requestInfo, Request request, Response response) {
             handleResponse(isFromCache, requestInfo, request, response);
-//            if (!isFromCache && response == null) {
-//                responseData.setText("这是请求网络返回的新数据！，当前时间：" + System.currentTimeMillis());
-//            }
         }
 
         @Override
