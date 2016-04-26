@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 22
-        versionCode 1
-        versionName "0.1.0"
+        versionCode 3
+        versionName "0.1.3"
     }
     buildTypes {
         release {
@@ -21,7 +21,8 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.j256.ormlite:ormlite-android:4.48'
-    compile project(':okhttputils')
+    compile 'com.lzy.net:okhttputils:+'
+//    compile project(':okhttputils')
 }
 
 //apply from: 'bintray.gradle'
