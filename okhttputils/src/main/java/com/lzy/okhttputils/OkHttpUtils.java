@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.Nullable;
 
 import com.lzy.okhttputils.cache.CacheMode;
 import com.lzy.okhttputils.cookie.CookieJarImpl;
@@ -26,6 +27,7 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 
 import okhttp3.Call;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okio.Buffer;
 
@@ -74,6 +76,7 @@ public class OkHttpUtils {
 
     /** 获取全局上下文 */
     public static Context getContext() {
+        if (context == null) throw new IllegalStateException("请先在全局Application中调用 OkHttpUtils.init() 初始化！");
         return context;
     }
 
@@ -204,6 +207,12 @@ public class OkHttpUtils {
     public OkHttpUtils addCommonHeaders(HttpHeaders commonHeaders) {
         if (mCommonHeaders == null) mCommonHeaders = new HttpHeaders();
         mCommonHeaders.put(commonHeaders);
+        return this;
+    }
+
+    /** 添加全局拦截器 */
+    public OkHttpUtils addInterceptor(@Nullable Interceptor interceptor) {
+        okHttpClientBuilder.addInterceptor(interceptor);
         return this;
     }
 

@@ -51,7 +51,17 @@ public class PostTextActivity extends BaseActivity {
                 .tag(this)//
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
-                .content("这是要上传的长文本数据！")//
+                .postString("这是要上传的长文本数据！")//
+                .execute(new TextCallBack<>(this, RequestInfo.class));
+    }
+
+    @OnClick(R.id.postBytes)
+    public void postBytes(View view) {
+        OkHttpUtils.post(Urls.URL_TEXT_UPLOAD)//
+                .tag(this)//
+                .headers("header1", "headerValue1")//
+                .params("param1", "paramValue1")//
+                .postBytes("这是字节数据".getBytes())//
                 .mediaType(PostRequest.MEDIA_TYPE_PLAIN)//
                 .execute(new TextCallBack<>(this, RequestInfo.class));
     }

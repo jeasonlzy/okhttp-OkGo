@@ -19,8 +19,8 @@ public class PostRequest extends BaseRequest<PostRequest> {
 
     public static final MediaType MEDIA_TYPE_PLAIN = MediaType.parse("text/plain;charset=utf-8");
     public static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json;charset=utf-8");
+    public static final MediaType MEDIA_TYPE_STREAM = MediaType.parse("application/octet-stream");
 
-    private String content;      //上传的文本内容
     private MediaType mediaType; //上传的MIME类型
     private String string;       //上传的文本内容
     private String json;         //上传的Json
@@ -31,8 +31,22 @@ public class PostRequest extends BaseRequest<PostRequest> {
     }
 
     /** 注意使用该方法上传字符串会清空实体中其他所有的参数，头信息不清除 */
-    public PostRequest content(String content) {
-        this.content = content;
+    public PostRequest postString(String string) {
+        this.string = string;
+        this.mediaType = MEDIA_TYPE_PLAIN;
+        return this;
+    }
+
+    /** 注意使用该方法上传字符串会清空实体中其他所有的参数，头信息不清除 */
+    public PostRequest postJson(String json) {
+        this.json = json;
+        this.mediaType = MEDIA_TYPE_JSON;
+        return this;
+    }
+
+    /** 注意使用该方法上传字符串会清空实体中其他所有的参数，头信息不清除 */
+    public PostRequest postBytes(byte[] bs) {
+        this.bs = bs;
         return this;
     }
 
@@ -41,31 +55,11 @@ public class PostRequest extends BaseRequest<PostRequest> {
         return this;
     }
 
-    public PostRequest postString(String string) {
-        this.string = string;
-        this.mediaType = MEDIA_TYPE_PLAIN;
-        return this;
-    }
-
-    public PostRequest postJson(String json) {
-        this.json = json;
-        this.mediaType = MEDIA_TYPE_JSON;
-        return this;
-    }
-
-    public PostRequest postStream(byte[] bs) {
-        this.bs = bs;
-        this.mediaType = MEDIA_TYPE_JSON;
-        return this;
-    }
-
     @Override
     protected RequestBody generateRequestBody() {
-        if (content != null && mediaType != null) return RequestBody.create(mediaType, content);//post上传字符串数据
-        if (string != null && mediaType != null) return RequestBody.create(mediaType, string);//post上传字符串数据
-        if (json != null && mediaType != null) return RequestBody.create(mediaType, json); //post上传json数据
-        if (bs != null && mediaType != null) return RequestBody.create(mediaType, bs);//post上传字节数组
-
+        if (string != null && mediaType != null) return RequestBody.create(mediaType, string); //post上传字符串数据
+        if (json != null && mediaType != null) return RequestBody.create(mediaType, json);     //post上传json数据
+        if (bs != null && mediaType != null) return RequestBody.create(mediaType, bs);         //post上传字节数组
         return generateMultipartRequestBody();
     }
 

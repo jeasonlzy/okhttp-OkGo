@@ -17,6 +17,7 @@ import com.lzy.okhttputils.callback.FileCallback;
 import com.lzy.okhttputils.request.BaseRequest;
 
 import java.io.File;
+import java.nio.ByteBuffer;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

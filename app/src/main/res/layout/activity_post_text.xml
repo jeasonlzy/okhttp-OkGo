@@ -19,4 +19,11 @@
         android:text="向服务器Post上传String字符串"
         android:textAllCaps="false"/>
 
+    <Button
+        android:id="@+id/postBytes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="向服务器Post上传其他数据"
+        android:textAllCaps="false"/>
+
 </LinearLayout>

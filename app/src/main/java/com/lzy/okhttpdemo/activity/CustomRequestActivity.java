@@ -36,7 +36,6 @@ public class CustomRequestActivity extends BaseActivity {
         super.onDestroy();
         //Activity销毁时，取消网络请求
         OkHttpUtils.getInstance().cancelTag(this);
-
     }
 
     @OnClick(R.id.requestJson)

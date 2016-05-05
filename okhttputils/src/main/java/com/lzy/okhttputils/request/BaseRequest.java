@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -27,6 +29,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.Headers;
+import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -57,6 +60,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
     protected HttpHeaders headers = new HttpHeaders();
     private AbsCallback mCallback;
     private CacheManager cacheManager;
+    private List<Interceptor> interceptors = new ArrayList<>();
 
     public BaseRequest(String url) {
         this.url = url;
@@ -195,6 +199,12 @@ public abstract class BaseRequest<R extends BaseRequest> {
         return (R) this;
     }
 
+    @SuppressWarnings("unchecked")
+    public R addInterceptor(Interceptor interceptor) {
+        interceptors.add(interceptor);
+        return (R) this;
+    }
+
     public HttpParams getParams() {
         return params;
     }
@@ -297,6 +307,11 @@ public abstract class BaseRequest<R extends BaseRequest> {
             if (hostnameVerifier != null) newClientBuilder.hostnameVerifier(hostnameVerifier);
             if (certificates != null) {
                 newClientBuilder.sslSocketFactory(HttpsUtils.getSslSocketFactory(certificates, null, null));
+            }
+            if (interceptors.size() > 0) {
+                for (Interceptor interceptor : interceptors) {
+                    newClientBuilder.addInterceptor(interceptor);
+                }
             }
             return newClientBuilder.build().newCall(request);
         }

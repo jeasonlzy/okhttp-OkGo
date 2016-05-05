@@ -8,8 +8,8 @@ android {
         applicationId "com.lzy.okhttpdemo"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 14
-        versionName "1.4.0"
+        versionCode 15
+        versionName "1.4.1"
     }
     buildTypes {
         release {

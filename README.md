@@ -26,7 +26,7 @@
 
  * 对于Android Studio的用户，可以选择添加:
 ```java
-    compile 'com.lzy.net:okhttputils:1.4.0'  //可以单独使用，不需要依赖下方的扩展包
+    compile 'com.lzy.net:okhttputils:1.4.1'  //可以单独使用，不需要依赖下方的扩展包
 	compile 'com.lzy.net:okhttpserver:0.1.4' //扩展了下载管理和上传管理，根据需要添加
 
 	compile 'com.lzy.net:okhttputils:+'  //版本号使用 + 可以自动引用最新版
@@ -39,7 +39,7 @@
 ```
 * 对于Eclipse的用户，可以选择添加 `/lib` 目录下的:
 ```java
-	okhttputils-1.4.0.jar
+	okhttputils-1.4.1.jar
 	okhttpserver-0.1.4.jar
 ```
 
@@ -93,7 +93,8 @@
                 .setReadTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS)                  //全局的读取超时时间
                 .setWriteTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS)                 //全局的写入超时时间
                 .addCommonHeaders(headers)                                         //设置全局公共头
-                .addCommonParams(params);                                          //设置全局公共参数
+                .addCommonParams(params)                                           //设置全局公共参数
+				.addInterceptor(interceptor);                                      //添加自定义拦截器
     }
 ```
 
@@ -138,8 +139,7 @@ OkHttpUtils.get(Urls.URL_DOWNLOAD)//
 ```java
 OkHttpUtils.post(Urls.URL_TEXT_UPLOAD)//
 	.tag(this)//
-	.content("这是要上传的长文本数据！")//
-	.mediaType(PostRequest.MEDIA_TYPE_PLAIN)//
+	.postString("这是要上传的长文本数据！")//
 	.execute(new StringCallback() {
 	    @Override
 	    public void onResponse(boolean isFromCache, String s, Request request, @Nullable Response response) {
@@ -147,9 +147,22 @@ OkHttpUtils.post(Urls.URL_TEXT_UPLOAD)//
 	    }
 	});
 ```
-如果要上传Json，把上面的 mediaType 改为  `.mediaType(PostRequest.MEDIA_TYPE_JSON)`
 
-### 5.请求功能的所有配置讲解
+### 5.普通Post，直接上传Json类型的文本
+不建议这么用，该方法上传字符串会清空实体中其他所有的参数，但头信息不清除
+```java
+OkHttpUtils.post(Urls.URL_TEXT_UPLOAD)//
+	.tag(this)//
+	.postJson("{\"des\": \"这里面要写标准的json格式数据\"}")//
+	.execute(new StringCallback() {
+	    @Override
+	    public void onResponse(boolean isFromCache, String s, Request request, @Nullable Response response) {
+			//上传成功
+	    }
+	});
+```
+
+### 6.请求功能的所有配置讲解
 
 以下代码包含了以下内容：
 
@@ -167,6 +180,7 @@ OkHttpUtils.get(Urls.URL_METHOD) // 请求方式和请求url, get请求不需要
     .cacheKey("cacheKey")    // 设置当前请求的缓存key,建议每个不同功能的请求设置一个
     .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST) // 缓存模式，详细请看第四部分，缓存介绍
     .setCertificates(getAssets().open("srca.cer")) // 自签名https的证书，可变参数，可以设置多个
+	.addInterceptor(interceptor)            // 添加自定义拦截器
     .headers("header1", "headerValue1")     // 添加请求头参数
     .headers("header2", "headerValue2")     // 支持多请求头参数同时添加
     .params("param1", "paramValue1")        // 添加请求参数
@@ -232,7 +246,7 @@ OkHttpUtils.get(Urls.URL_METHOD) // 请求方式和请求url, get请求不需要
 		}
     });
 ```
-### 6.取消请求
+### 7.取消请求
 每个请求前都设置了一个参数`tag`，取消则通过` OkHttpUtils.cancel(tag)`执行。
 例如：在Activity中，当Activity销毁取消请求，可以在onDestory里面统一取消。
 ```java
@@ -244,7 +258,7 @@ OkHttpUtils.get(Urls.URL_METHOD) // 请求方式和请求url, get请求不需要
 	    OkHttpUtils.getInstance().cancelTag(this);
 	}
 ```
-### 7.同步的请求
+### 8.同步的请求
 execute方法不传入callback即为同步的请求，返回`Response`对象，需要自己解析
 ```java
 	Response response = OkHttpUtils.get("http://www.baidu.com")//
