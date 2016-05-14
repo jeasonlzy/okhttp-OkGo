@@ -24,7 +24,7 @@ public abstract class AbsCallback<T> {
     }
 
     /** 拿到响应后，将数据转换成需要的格式，子线程中执行，可以是耗时操作 */
-    public abstract T parseNetworkResponse(Response response);
+    public abstract T parseNetworkResponse(Response response) throws Exception;
 
     /** 对返回数据进行操作的回调， UI线程 */
     public abstract void onResponse(boolean isFromCache, T t, Request request, @Nullable Response response);
