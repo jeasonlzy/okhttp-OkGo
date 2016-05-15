@@ -1,6 +1,6 @@
 # OkHttpUtils
 
-### 封装了okhttp的网络框架，支持大文件上传下载，上传进度回调，下载进度回调，表单上传（多文件和多参数一起上传），链式调用，可以自定义返回对象，支持Https和自签名证书，支持cookie自动管理，支持四种缓存模式缓存网络数据，支持301重定向，扩展了统一的上传管理和下载管理功能
+### 封装了okhttp的网络框架，支持大文件上传下载，上传进度回调，下载进度回调，表单上传（多文件和多参数一起上传），链式调用，可以自定义返回对象，支持Https和自签名证书，支持cookie自动管理，支持四种缓存模式缓存网络数据，支持301、302重定向，扩展了统一的上传管理和下载管理功能
 
 该项目参考了以下项目：
 
@@ -26,8 +26,8 @@
 
  * 对于Android Studio的用户，可以选择添加:
 ```java
-    compile 'com.lzy.net:okhttputils:1.4.1'  //可以单独使用，不需要依赖下方的扩展包
-	compile 'com.lzy.net:okhttpserver:0.1.4' //扩展了下载管理和上传管理，根据需要添加
+    compile 'com.lzy.net:okhttputils:1.5.0'  //可以单独使用，不需要依赖下方的扩展包
+	compile 'com.lzy.net:okhttpserver:0.1.5' //扩展了下载管理和上传管理，根据需要添加
 
 	compile 'com.lzy.net:okhttputils:+'  //版本号使用 + 可以自动引用最新版
 	compile 'com.lzy.net:okhttpserver:+' //版本号使用 + 可以自动引用最新版
@@ -39,8 +39,8 @@
 ```
 * 对于Eclipse的用户，可以选择添加 `/lib` 目录下的:
 ```java
-	okhttputils-1.4.1.jar
-	okhttpserver-0.1.4.jar
+	okhttputils-1.5.0.jar
+	okhttpserver-0.1.5.jar
 ```
 
 #### 其中的图片选择是我的另一个开源项目，完全仿微信的图片选择库，自带 矩形图片裁剪 和 圆形图片裁剪 功能，有需要的可以去下载使用，附上地址：[https://github.com/jeasonlzy0216/ImagePicker](https://github.com/jeasonlzy0216/ImagePicker)
@@ -58,9 +58,9 @@
 * 多文件和多参数统一的表单上传
 * 大文件下载和下载进度回调
 * 大文件上传和上传进度回调
-* 支持session的保持
+* 支持cookie的内存存储和持久化存储
 * 支持304缓存协议，扩展三种本地缓存模式
-* 支持301重定向
+* 支持301、302重定向
 * 支持链式调用
 * 支持可信证书和自签名证书的https的访问
 * 支持根据Tag取消请求
@@ -92,9 +92,10 @@
                 .setConnectTimeout(OkHttpUtils.DEFAULT_MILLISECONDS)               //全局的连接超时时间
                 .setReadTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS)                  //全局的读取超时时间
                 .setWriteTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS)                 //全局的写入超时时间
+			  //.setCookieStore(new MemoryCookieStore())                           //cookie使用内存缓存（app退出后，cookie消失）
+			  //.setCookieStore(new PersistentCookieStore(this))                   //cookie持久化存储，如果cookie不过期，则一直有效
                 .addCommonHeaders(headers)                                         //设置全局公共头
-                .addCommonParams(params)                                           //设置全局公共参数
-				.addInterceptor(interceptor);                                      //添加自定义拦截器
+                .addCommonParams(params);                                          //设置全局公共参数
     }
 ```
 
@@ -196,9 +197,10 @@ OkHttpUtils.get(Urls.URL_METHOD) // 请求方式和请求url, get请求不需要
 		}
 	
 		@Override
-		public RequestInfo parseNetworkResponse(Response response) {
+		public RequestInfo parseNetworkResponse(Response response) throws Exception{
 		    // 子线程，可以做耗时操作
 		    // 根据传递进来的 response 对象，把数据解析成需要的 RequestInfo 类型并返回
+			// 可以根据自己的需要，抛出异常，在onError中处理
 		    return null;
 		}
 	
@@ -270,7 +272,7 @@ execute方法不传入callback即为同步的请求，返回`Response`对象，�
 
 ## 三、自定义CallBack使用
 
-目前内部提供的包含, , , ，可以根据自己的需求去自定义Callback
+目前内部提供的包含`AbsCallback`, `StringCallBack` ,`BitmapCallback` ,`FileCallBack` ,可以根据自己的需求去自定义Callback
 
  * `AbsCallback`: 所有回调的父类，抽象类
  * `StringCallBack`：如果返回值类型是纯文本数据，即可使用该回调

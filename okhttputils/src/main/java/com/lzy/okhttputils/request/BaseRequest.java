@@ -392,10 +392,15 @@ public abstract class BaseRequest<R extends BaseRequest> {
                     return;
                 }
 
-                T data = (T) mCallback.parseNetworkResponse(response);
-                sendSuccessResultCallback(false, data, call, response, mCallback);
-                //网络请求成功，保存缓存数据
-                handleCache(response.headers(), data);
+                try {
+                    T data = (T) mCallback.parseNetworkResponse(response);
+                    sendSuccessResultCallback(false, data, call, response, mCallback);
+                    //网络请求成功，保存缓存数据
+                    handleCache(response.headers(), data);
+                } catch (Exception e) {
+                    //一般为服务器响应成功，但是数据解析错误
+                    sendFailResultCallback(false, call, response, e, mCallback);
+                }
             }
         });
     }

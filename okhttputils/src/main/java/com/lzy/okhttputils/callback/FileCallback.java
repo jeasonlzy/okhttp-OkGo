@@ -44,7 +44,7 @@ public abstract class FileCallback extends AbsCallback<File> {
     }
 
     @Override
-    public File parseNetworkResponse(Response response) {
+    public File parseNetworkResponse(Response response) throws Exception {
         try {
             return saveFile(response);
         } catch (IOException e) {

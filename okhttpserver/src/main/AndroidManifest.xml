@@ -2,9 +2,7 @@
     package="com.lzy.downloadmanager"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <application
-        android:allowBackup="true"
-        android:supportsRtl="true">
+    <application >
 
         <service android:name="com.lzy.okhttpserver.download.DownloadService"/>
 

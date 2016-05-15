@@ -23,7 +23,7 @@ import java.util.Map;
  */
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
-    private static final String TABLE_NAME = "OkHttpUtils.db";
+    private static final String TABLE_NAME = "okhttputils_server.db";
     private Map<String, Dao> daos = new HashMap<>();
 
     private DatabaseHelper(Context context) {

@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 
 import com.lzy.okhttputils.cache.CacheMode;
 import com.lzy.okhttputils.cookie.CookieJarImpl;
+import com.lzy.okhttputils.cookie.store.CookieStore;
 import com.lzy.okhttputils.cookie.store.MemoryCookieStore;
 import com.lzy.okhttputils.https.HttpsUtils;
 import com.lzy.okhttputils.interceptor.LoggerInterceptor;
@@ -52,7 +53,7 @@ public class OkHttpUtils {
 
     private OkHttpUtils() {
         okHttpClientBuilder = new OkHttpClient.Builder();
-        //允许cookie的自动化管理
+        //允许cookie的自动化管理，默认内存管理
         okHttpClientBuilder.cookieJar(new CookieJarImpl(new MemoryCookieStore()));
         okHttpClientBuilder.hostnameVerifier(new DefaultHostnameVerifier());
         mDelivery = new Handler(Looper.getMainLooper());
@@ -154,6 +155,12 @@ public class OkHttpUtils {
             InputStream inputStream = new Buffer().writeUtf8(certificate).inputStream();
             setCertificates(inputStream);
         }
+        return this;
+    }
+
+    /** 全局cookie存取规则 */
+    public OkHttpUtils setCookieStore(CookieStore cookieStore) {
+        okHttpClientBuilder.cookieJar(new CookieJarImpl(cookieStore));
         return this;
     }
 

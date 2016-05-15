@@ -7,8 +7,6 @@ import android.view.Window;
 
 import com.lzy.okhttputils.request.BaseRequest;
 
-import java.io.IOException;
-
 import okhttp3.Call;
 import okhttp3.Response;
 
@@ -34,13 +32,8 @@ public abstract class StringDialogCallback extends EncryptCallback<String> {
     }
 
     @Override
-    public String parseNetworkResponse(Response response) {
-        try {
-            return response.body().string();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public String parseNetworkResponse(Response response) throws Exception {
+        return response.body().string();
     }
 
     @Override

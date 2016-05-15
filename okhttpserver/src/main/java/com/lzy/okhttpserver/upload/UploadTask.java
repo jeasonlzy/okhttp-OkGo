@@ -130,7 +130,7 @@ public class UploadTask<T> extends PriorityAsyncTask<Void, UploadInfo, UploadInf
         }
 
         @Override
-        public T parseNetworkResponse(Response response) {
+        public T parseNetworkResponse(Response response) throws Exception {
             return null;
         }
 
