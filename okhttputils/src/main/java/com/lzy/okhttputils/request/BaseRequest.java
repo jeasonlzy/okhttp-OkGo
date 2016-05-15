@@ -391,8 +391,12 @@ public abstract class BaseRequest<R extends BaseRequest> {
                     sendFailResultCallback(false, call, response, null, mCallback);
                     return;
                 }
-
-                T data = (T) mCallback.parseNetworkResponse(response);
+                T data = null;
+                try {
+                    data = (T) mCallback.parseNetworkResponse(response);
+                } catch (Exception e) {
+                    sendFailResultCallback(false, call, response, e, mCallback);
+                }
                 sendSuccessResultCallback(false, data, call, response, mCallback);
                 //网络请求成功，保存缓存数据
                 handleCache(response.headers(), data);
