@@ -47,4 +47,9 @@ public class TestActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    @OnClick(R.id.btn3)
+    public void btn3(View view) {
+
+    }
 }
