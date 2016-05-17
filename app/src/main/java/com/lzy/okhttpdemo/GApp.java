@@ -39,7 +39,7 @@ public class GApp extends Application {
                 .setReadTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS)                  //全局的读取超时时间
                 .setWriteTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS)                 //全局的写入超时时间
 //                .setCookieStore(new MemoryCookieStore())                           //cookie使用内存缓存（app退出后，cookie消失）
-//                .setCookieStore(new PersistentCookieStore(this))                   //cookie持久化存储，如果cookie不过期，则一直有效
+                .setCookieStore(new PersistentCookieStore())                       //cookie持久化存储，如果cookie不过期，则一直有效
                 .addCommonHeaders(headers)                                         //设置全局公共头
                 .addCommonParams(params);                                          //设置全局公共参数
     }

@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.lzy.okhttputils.OkHttpUtils;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -22,51 +24,34 @@ import okhttp3.Cookie;
 import okhttp3.HttpUrl;
 
 /**
- * <pre>
- *     OkHttpClient client = new OkHttpClient.Builder()
- *             .cookieJar(new JavaNetCookieJar(new CookieManager(
- *                     new PersistentCookieStore(getApplicationContext()),
- *                             CookiePolicy.ACCEPT_ALL))
- *             .build();
- * </pre>
- * from http://stackoverflow.com/questions/25461792/persistent-cookie-store-using-okhttp-2-on-android
- * <br/>
- * A persistent cookie store which implements the Apache HttpClient CookieStore interface.
- * Cookies are stored and will persist on the user's device between application sessions since they
- * are serialized and stored in SharedPreferences. Instances of this class are
- * designed to be used with AsyncHttpClient#setCookieStore, but can also be used with a
- * regular old apache HttpClient/HttpContext if you prefer.
+ * 使用 SharedPreferences 持久化存储 cookie
  */
 public class PersistentCookieStore implements CookieStore {
 
     private static final String LOG_TAG = "PersistentCookieStore";
-    private static final String COOKIE_PREFS = "CookiePrefsFile";
-    private static final String COOKIE_NAME_PREFIX = "cookie_";
+    private static final String COOKIE_PREFS = "okhttputils_cookie";     //cookie使用prefs保存
+    private static final String COOKIE_NAME_PREFIX = "cookie_";          //cookie持久化的统一前缀
 
     private final HashMap<String, ConcurrentHashMap<String, Cookie>> cookies;
     private final SharedPreferences cookiePrefs;
 
-    /**
-     * Construct a persistent cookie store.
-     *
-     * @param context Context to attach cookie store to
-     */
-    public PersistentCookieStore(Context context) {
-        cookiePrefs = context.getSharedPreferences(COOKIE_PREFS, 0);
+    public PersistentCookieStore() {
+        cookiePrefs = OkHttpUtils.getContext().getSharedPreferences(COOKIE_PREFS, Context.MODE_PRIVATE);
         cookies = new HashMap<>();
 
-        //将持久化的cookies缓存到内存中 即map cookies
+        //将持久化的cookies缓存到内存中,数据结构为 Map<Url.host, Map<Cookie.name, Cookie>>
         Map<String, ?> prefsMap = cookiePrefs.getAll();
         for (Map.Entry<String, ?> entry : prefsMap.entrySet()) {
-            if ((entry.getValue()) != null && !((String) entry.getValue()).startsWith(COOKIE_NAME_PREFIX)) {
+            if ((entry.getValue()) != null && !entry.getKey().startsWith(COOKIE_NAME_PREFIX)) {
+                //获取url对应的所有cookie的key,用","分割
                 String[] cookieNames = TextUtils.split((String) entry.getValue(), ",");
                 for (String name : cookieNames) {
+                    //根据对应cookie的Key,从xml中获取cookie的真实值
                     String encodedCookie = cookiePrefs.getString(COOKIE_NAME_PREFIX + name, null);
                     if (encodedCookie != null) {
                         Cookie decodedCookie = decodeCookie(encodedCookie);
                         if (decodedCookie != null) {
-                            if (!cookies.containsKey(entry.getKey()))
-                                cookies.put(entry.getKey(), new ConcurrentHashMap<String, Cookie>());
+                            if (!cookies.containsKey(entry.getKey())) cookies.put(entry.getKey(), new ConcurrentHashMap<String, Cookie>());
                             cookies.get(entry.getKey()).put(name, decodedCookie);
                         }
                     }
@@ -75,40 +60,50 @@ public class PersistentCookieStore implements CookieStore {
         }
     }
 
-    protected void add(HttpUrl uri, Cookie cookie) {
+    /** 将url的所有Cookie保存在本地 */
+    @Override
+    public void add(HttpUrl url, List<Cookie> cookies) {
+        for (Cookie cookie : cookies) {
+            add(url, cookie);
+        }
+    }
+
+    protected void add(HttpUrl url, Cookie cookie) {
         String name = getCookieToken(cookie);
 
-        //将cookies缓存到内存中 如果缓存过期 就重置此cookie
-        if (cookie.persistent()) {
-            if (!cookies.containsKey(uri.host())) cookies.put(uri.host(), new ConcurrentHashMap<String, Cookie>());
-            cookies.get(uri.host()).put(name, cookie);
+        //当前cookie是否在当前会话结束后过期
+        if (!cookie.persistent()) {
+            //不过期,内存中缓存cookie
+            if (!cookies.containsKey(url.host())) cookies.put(url.host(), new ConcurrentHashMap<String, Cookie>());
+            cookies.get(url.host()).put(name, cookie);
+        } else {
+            //过期,内存中移除cookie
+            if (cookies.containsKey(url.host())) cookies.get(url.host()).remove(name);
         }
-        //讲cookies持久化到本地
+
+        //将cookies持久化到本地,数据结构为
+        //Url.host -> Cookie1.name,Cookie2.name,Cookie3.name
+        //cookie_Cookie1.name -> CookieString
+        //cookie_Cookie2.name -> CookieString
         SharedPreferences.Editor prefsWriter = cookiePrefs.edit();
-        prefsWriter.putString(uri.host(), TextUtils.join(",", cookies.get(uri.host()).keySet()));
+        prefsWriter.putString(url.host(), TextUtils.join(",", cookies.get(url.host()).keySet()));
         prefsWriter.putString(COOKIE_NAME_PREFIX + name, encodeCookie(new SerializableHttpCookie(cookie)));
         prefsWriter.commit();
     }
 
     protected String getCookieToken(Cookie cookie) {
-        return cookie.name() + cookie.domain();
+        return cookie.name() + "@" + cookie.domain();
     }
 
+    /** 根据当前url获取所有需要的cookie,只返回没有过期的cookie */
     @Override
-    public void add(HttpUrl uri, List<Cookie> cookies) {
-        for (Cookie cookie : cookies) {
-            add(uri, cookie);
-        }
-    }
-
-    @Override
-    public List<Cookie> get(HttpUrl uri) {
+    public List<Cookie> get(HttpUrl url) {
         ArrayList<Cookie> ret = new ArrayList<>();
-        if (cookies.containsKey(uri.host())) {
-            Collection<Cookie> cookies = this.cookies.get(uri.host()).values();
+        if (cookies.containsKey(url.host())) {
+            Collection<Cookie> cookies = this.cookies.get(url.host()).values();
             for (Cookie cookie : cookies) {
                 if (isCookieExpired(cookie)) {
-                    remove(uri, cookie);
+                    remove(url, cookie);
                 } else {
                     ret.add(cookie);
                 }
@@ -117,8 +112,27 @@ public class PersistentCookieStore implements CookieStore {
         return ret;
     }
 
+    /** 当前cookie是否过期 */
     private static boolean isCookieExpired(Cookie cookie) {
         return cookie.expiresAt() < System.currentTimeMillis();
+    }
+
+    /** 根据url移除当前的cookie */
+    @Override
+    public boolean remove(HttpUrl url, Cookie cookie) {
+        String name = getCookieToken(cookie);
+        if (cookies.containsKey(url.host()) && cookies.get(url.host()).containsKey(name)) {
+            cookies.get(url.host()).remove(name);
+            SharedPreferences.Editor prefsWriter = cookiePrefs.edit();
+            if (cookiePrefs.contains(COOKIE_NAME_PREFIX + name)) {
+                prefsWriter.remove(COOKIE_NAME_PREFIX + name);
+            }
+            prefsWriter.putString(url.host(), TextUtils.join(",", cookies.get(url.host()).keySet()));
+            prefsWriter.commit();
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -130,25 +144,7 @@ public class PersistentCookieStore implements CookieStore {
         return true;
     }
 
-    @Override
-    public boolean remove(HttpUrl uri, Cookie cookie) {
-        String name = getCookieToken(cookie);
-
-        if (cookies.containsKey(uri.host()) && cookies.get(uri.host()).containsKey(name)) {
-            cookies.get(uri.host()).remove(name);
-
-            SharedPreferences.Editor prefsWriter = cookiePrefs.edit();
-            if (cookiePrefs.contains(COOKIE_NAME_PREFIX + name)) {
-                prefsWriter.remove(COOKIE_NAME_PREFIX + name);
-            }
-            prefsWriter.putString(uri.host(), TextUtils.join(",", cookies.get(uri.host()).keySet()));
-            prefsWriter.commit();
-            return true;
-        } else {
-            return false;
-        }
-    }
-
+    /** 获取所有的cookie */
     @Override
     public List<Cookie> getCookies() {
         ArrayList<Cookie> ret = new ArrayList<>();

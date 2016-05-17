@@ -9,6 +9,7 @@ import okhttp3.Cookie;
 import okhttp3.HttpUrl;
 
 public class MemoryCookieStore implements CookieStore {
+
     private final HashMap<String, List<Cookie>> allCookies = new HashMap<>();
 
     @Override
@@ -25,7 +26,6 @@ public class MemoryCookieStore implements CookieStore {
         }
         oldCookies.removeAll(needRemove);
         oldCookies.addAll(cookies);
-
     }
 
     @Override
@@ -36,7 +36,6 @@ public class MemoryCookieStore implements CookieStore {
             allCookies.put(uri.host(), cookies);
         }
         return cookies;
-
     }
 
     @Override

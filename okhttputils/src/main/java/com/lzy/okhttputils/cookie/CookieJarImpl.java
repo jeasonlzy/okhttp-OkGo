@@ -1,7 +1,6 @@
 package com.lzy.okhttputils.cookie;
 
 import com.lzy.okhttputils.cookie.store.CookieStore;
-import com.lzy.okhttputils.cookie.store.HasCookieStore;
 
 import java.util.List;
 
@@ -9,7 +8,7 @@ import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
 
-public class CookieJarImpl implements CookieJar, HasCookieStore {
+public class CookieJarImpl implements CookieJar {
     private CookieStore cookieStore;
 
     public CookieJarImpl(CookieStore cookieStore) {
@@ -29,7 +28,6 @@ public class CookieJarImpl implements CookieJar, HasCookieStore {
         return cookieStore.get(url);
     }
 
-    @Override
     public CookieStore getCookieStore() {
         return cookieStore;
     }

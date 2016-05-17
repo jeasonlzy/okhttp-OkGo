@@ -32,6 +32,7 @@ public class Constant {
             data.add(new String[]{"https请求", "允许访问拥有可信证书的网站，也支持自签名证书的网站"});
             data.add(new String[]{"同步请求", "允许直接返回Response对象，会阻塞主线程，需要自行开启子线程"});
             data.add(new String[]{"301重定向", "支持301重定向请求"});
+            data.add(new String[]{"测试页面", "用于测试特殊情况下的网络连接,可忽略"});
         }
         return data;
     }

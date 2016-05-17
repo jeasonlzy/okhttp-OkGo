@@ -23,6 +23,7 @@ import com.lzy.okhttpdemo.activity.MethodActivity;
 import com.lzy.okhttpdemo.activity.PostTextActivity;
 import com.lzy.okhttpdemo.activity.RedirectActivity;
 import com.lzy.okhttpdemo.activity.SyncActivity;
+import com.lzy.okhttpdemo.activity.TestActivity;
 import com.lzy.okhttpdemo.utils.Constant;
 
 import java.util.ArrayList;
@@ -78,6 +79,9 @@ public class OkhttpFragment extends Fragment implements AdapterView.OnItemClickL
                 break;
             case 9:
                 intent = new Intent(getActivity(), RedirectActivity.class);
+                break;
+            case 10:
+                intent = new Intent(getActivity(), TestActivity.class);
                 break;
         }
         startActivity(intent);

@@ -32,8 +32,8 @@
         <activity android:name=".activity.CacheActivity"/>
         <activity android:name=".activity.HttpsActivity"/>
         <activity android:name=".activity.SyncActivity"/>
-        <activity android:name=".activity.RedirectActivity">
-        </activity>
+        <activity android:name=".activity.RedirectActivity"/>
+        <activity android:name=".activity.TestActivity"/>
     </application>
 
 </manifest>
