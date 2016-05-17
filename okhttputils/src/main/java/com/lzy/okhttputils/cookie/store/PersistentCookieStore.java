@@ -18,13 +18,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import okhttp3.Cookie;
 import okhttp3.HttpUrl;
 
 /**
- * 使用 SharedPreferences 持久化存储 cookie
+ * ================================================
+ * 作    者：廖子尧
+ * 版    本：1.0
+ * 创建日期：2016/1/14
+ * 描    述：使用 SharedPreferences 持久化存储 cookie
+ * 修订历史：
+ * ================================================
  */
 public class PersistentCookieStore implements CookieStore {
 
@@ -51,7 +58,8 @@ public class PersistentCookieStore implements CookieStore {
                     if (encodedCookie != null) {
                         Cookie decodedCookie = decodeCookie(encodedCookie);
                         if (decodedCookie != null) {
-                            if (!cookies.containsKey(entry.getKey())) cookies.put(entry.getKey(), new ConcurrentHashMap<String, Cookie>());
+                            if (!cookies.containsKey(entry.getKey()))
+                                cookies.put(entry.getKey(), new ConcurrentHashMap<String, Cookie>());
                             cookies.get(entry.getKey()).put(name, decodedCookie);
                         }
                     }
@@ -60,50 +68,24 @@ public class PersistentCookieStore implements CookieStore {
         }
     }
 
-    /** 将url的所有Cookie保存在本地 */
-    @Override
-    public void add(HttpUrl url, List<Cookie> cookies) {
-        for (Cookie cookie : cookies) {
-            add(url, cookie);
-        }
-    }
-
-    protected void add(HttpUrl url, Cookie cookie) {
-        String name = getCookieToken(cookie);
-
-        //当前cookie是否在当前会话结束后过期
-        if (!cookie.persistent()) {
-            //不过期,内存中缓存cookie
-            if (!cookies.containsKey(url.host())) cookies.put(url.host(), new ConcurrentHashMap<String, Cookie>());
-            cookies.get(url.host()).put(name, cookie);
-        } else {
-            //过期,内存中移除cookie
-            if (cookies.containsKey(url.host())) cookies.get(url.host()).remove(name);
-        }
-
-        //将cookies持久化到本地,数据结构为
-        //Url.host -> Cookie1.name,Cookie2.name,Cookie3.name
-        //cookie_Cookie1.name -> CookieString
-        //cookie_Cookie2.name -> CookieString
-        SharedPreferences.Editor prefsWriter = cookiePrefs.edit();
-        prefsWriter.putString(url.host(), TextUtils.join(",", cookies.get(url.host()).keySet()));
-        prefsWriter.putString(COOKIE_NAME_PREFIX + name, encodeCookie(new SerializableHttpCookie(cookie)));
-        prefsWriter.commit();
-    }
-
-    protected String getCookieToken(Cookie cookie) {
+    private String getCookieToken(Cookie cookie) {
         return cookie.name() + "@" + cookie.domain();
+    }
+
+    /** 当前cookie是否过期 */
+    private static boolean isCookieExpired(Cookie cookie) {
+        return cookie.expiresAt() < System.currentTimeMillis();
     }
 
     /** 根据当前url获取所有需要的cookie,只返回没有过期的cookie */
     @Override
-    public List<Cookie> get(HttpUrl url) {
+    public List<Cookie> loadCookies(HttpUrl url) {
         ArrayList<Cookie> ret = new ArrayList<>();
         if (cookies.containsKey(url.host())) {
-            Collection<Cookie> cookies = this.cookies.get(url.host()).values();
-            for (Cookie cookie : cookies) {
+            Collection<Cookie> urlCookies = cookies.get(url.host()).values();
+            for (Cookie cookie : urlCookies) {
                 if (isCookieExpired(cookie)) {
-                    remove(url, cookie);
+                    removeCookie(url, cookie);
                 } else {
                     ret.add(cookie);
                 }
@@ -112,17 +94,46 @@ public class PersistentCookieStore implements CookieStore {
         return ret;
     }
 
-    /** 当前cookie是否过期 */
-    private static boolean isCookieExpired(Cookie cookie) {
-        return cookie.expiresAt() < System.currentTimeMillis();
+    /** 将url的所有Cookie保存在本地 */
+    @Override
+    public void saveCookies(HttpUrl url, List<Cookie> urlCookies) {
+        if (!cookies.containsKey(url.host())) {
+            cookies.put(url.host(), new ConcurrentHashMap<String, Cookie>());
+        }
+        for (Cookie cookie : urlCookies) {
+            //当前cookie是否过期
+            if (isCookieExpired(cookie)) {
+                removeCookie(url, cookie);
+            } else {
+                saveCookie(url, cookie, getCookieToken(cookie));
+            }
+        }
+    }
+
+    /**
+     * 保存cookie，并将cookies持久化到本地,数据结构为
+     * Url.host -> Cookie1.name,Cookie2.name,Cookie3.name
+     * cookie_Cookie1.name -> CookieString
+     * cookie_Cookie2.name -> CookieString
+     */
+    private void saveCookie(HttpUrl url, Cookie cookie, String name) {
+        //内存缓存
+        cookies.get(url.host()).put(name, cookie);
+        //文件缓存
+        SharedPreferences.Editor prefsWriter = cookiePrefs.edit();
+        prefsWriter.putString(url.host(), TextUtils.join(",", cookies.get(url.host()).keySet()));
+        prefsWriter.putString(COOKIE_NAME_PREFIX + name, encodeCookie(new SerializableHttpCookie(cookie)));
+        prefsWriter.commit();
     }
 
     /** 根据url移除当前的cookie */
     @Override
-    public boolean remove(HttpUrl url, Cookie cookie) {
+    public boolean removeCookie(HttpUrl url, Cookie cookie) {
         String name = getCookieToken(cookie);
         if (cookies.containsKey(url.host()) && cookies.get(url.host()).containsKey(name)) {
+            //内存移除
             cookies.get(url.host()).remove(name);
+            //文件移除
             SharedPreferences.Editor prefsWriter = cookiePrefs.edit();
             if (cookiePrefs.contains(COOKIE_NAME_PREFIX + name)) {
                 prefsWriter.remove(COOKIE_NAME_PREFIX + name);
@@ -136,7 +147,28 @@ public class PersistentCookieStore implements CookieStore {
     }
 
     @Override
-    public boolean removeAll() {
+    public boolean removeCookies(HttpUrl url) {
+        if (cookies.containsKey(url.host())) {
+            //文件移除
+            Set<String> cookieNames = cookies.get(url.host()).keySet();
+            SharedPreferences.Editor prefsWriter = cookiePrefs.edit();
+            for (String cookieName : cookieNames) {
+                if (cookiePrefs.contains(COOKIE_NAME_PREFIX + cookieName)) {
+                    prefsWriter.remove(COOKIE_NAME_PREFIX + cookieName);
+                }
+            }
+            prefsWriter.remove(url.host());
+            prefsWriter.commit();
+            //内存移除
+            cookies.remove(url.host());
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean removeAllCookie() {
         SharedPreferences.Editor prefsWriter = cookiePrefs.edit();
         prefsWriter.clear();
         prefsWriter.commit();
@@ -146,7 +178,7 @@ public class PersistentCookieStore implements CookieStore {
 
     /** 获取所有的cookie */
     @Override
-    public List<Cookie> getCookies() {
+    public List<Cookie> getAllCookie() {
         ArrayList<Cookie> ret = new ArrayList<>();
         for (String key : cookies.keySet())
             ret.addAll(cookies.get(key).values());

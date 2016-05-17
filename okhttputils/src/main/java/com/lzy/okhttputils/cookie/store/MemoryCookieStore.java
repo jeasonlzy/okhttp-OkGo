@@ -8,15 +8,23 @@ import java.util.Set;
 import okhttp3.Cookie;
 import okhttp3.HttpUrl;
 
+/**
+ * ================================================
+ * 作    者：廖子尧
+ * 版    本：1.0
+ * 创建日期：2016/1/14
+ * 描    述：Cookie 的内存管理
+ * 修订历史：
+ * ================================================
+ */
 public class MemoryCookieStore implements CookieStore {
 
     private final HashMap<String, List<Cookie>> allCookies = new HashMap<>();
 
     @Override
-    public void add(HttpUrl url, List<Cookie> cookies) {
+    public void saveCookies(HttpUrl url, List<Cookie> cookies) {
         List<Cookie> oldCookies = allCookies.get(url.host());
         List<Cookie> needRemove = new ArrayList<>();
-
         for (Cookie newCookie : cookies) {
             for (Cookie oldCookie : oldCookies) {
                 if (newCookie.name().equals(oldCookie.name())) {
@@ -29,23 +37,17 @@ public class MemoryCookieStore implements CookieStore {
     }
 
     @Override
-    public List<Cookie> get(HttpUrl uri) {
-        List<Cookie> cookies = allCookies.get(uri.host());
+    public List<Cookie> loadCookies(HttpUrl url) {
+        List<Cookie> cookies = allCookies.get(url.host());
         if (cookies == null) {
             cookies = new ArrayList<>();
-            allCookies.put(uri.host(), cookies);
+            allCookies.put(url.host(), cookies);
         }
         return cookies;
     }
 
     @Override
-    public boolean removeAll() {
-        allCookies.clear();
-        return true;
-    }
-
-    @Override
-    public List<Cookie> getCookies() {
+    public List<Cookie> getAllCookie() {
         List<Cookie> cookies = new ArrayList<>();
         Set<String> httpUrls = allCookies.keySet();
         for (String url : httpUrls) {
@@ -55,8 +57,19 @@ public class MemoryCookieStore implements CookieStore {
     }
 
     @Override
-    public boolean remove(HttpUrl uri, Cookie cookie) {
-        List<Cookie> cookies = allCookies.get(uri.host());
+    public boolean removeCookie(HttpUrl url, Cookie cookie) {
+        List<Cookie> cookies = allCookies.get(url.host());
         return (cookie != null) && cookies.remove(cookie);
+    }
+
+    @Override
+    public boolean removeCookies(HttpUrl url) {
+        return allCookies.remove(url.host()) != null;
+    }
+
+    @Override
+    public boolean removeAllCookie() {
+        allCookies.clear();
+        return true;
     }
 }

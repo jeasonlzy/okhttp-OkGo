@@ -21,7 +21,7 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.j256.ormlite:ormlite-android:4.48'
-//    compile 'com.lzy.net:okhttputils:1.5.0'
+//    compile 'com.lzy.net:okhttputils:1.5.1'
     compile project(':okhttputils')
 }
 

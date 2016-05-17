@@ -9,6 +9,7 @@ import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
 
 public class CookieJarImpl implements CookieJar {
+
     private CookieStore cookieStore;
 
     public CookieJarImpl(CookieStore cookieStore) {
@@ -20,12 +21,12 @@ public class CookieJarImpl implements CookieJar {
 
     @Override
     public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-        cookieStore.add(url, cookies);
+        cookieStore.saveCookies(url, cookies);
     }
 
     @Override
     public List<Cookie> loadForRequest(HttpUrl url) {
-        return cookieStore.get(url);
+        return cookieStore.loadCookies(url);
     }
 
     public CookieStore getCookieStore() {
