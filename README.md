@@ -20,14 +20,21 @@
 
 
 ## 1.用法
+
+> * 为了方便大家使用，更加通俗的理解http的网络协议，建议做网络请求的时候，对每个请求抓包后查看请求信息和响应信息。
+> * 如果是 Windows 操作系统，可以使用 `Fiddler` 对手机的请求进行抓包查看。
+> * 如果是 Mac OS  操作系统，可以使用 `Charles` 对手机的请求进行抓包查看。
+> * 具体的下载地址和抓包配置方法，我这就不提供了，请自行百度或谷歌。
+
+
    对于Eclipse不能运行项目的，提供了apk供直接运行，位于项目根目录 `okhttputils_v1.x.x.apk`。
 
    本项目Demo的网络请求是我自己的服务器，有时候可能不稳定，网速比较慢时请耐心等待。。
 
  * 对于Android Studio的用户，可以选择添加:
 ```java
-    compile 'com.lzy.net:okhttputils:1.5.1'  //可以单独使用，不需要依赖下方的扩展包
-	compile 'com.lzy.net:okhttpserver:0.1.6' //扩展了下载管理和上传管理，根据需要添加
+    compile 'com.lzy.net:okhttputils:1.5.2'  //可以单独使用，不需要依赖下方的扩展包
+	compile 'com.lzy.net:okhttpserver:0.1.7' //扩展了下载管理和上传管理，根据需要添加
 
 	compile 'com.lzy.net:okhttputils:+'  //版本号使用 + 可以自动引用最新版
 	compile 'com.lzy.net:okhttpserver:+' //版本号使用 + 可以自动引用最新版
@@ -39,8 +46,8 @@
 ```
 * 对于Eclipse的用户，可以选择添加 `/lib` 目录下的:
 ```java
-	okhttputils-1.5.1.jar
-	okhttpserver-0.1.6.jar
+	okhttputils-1.5.2.jar
+	okhttpserver-0.1.7.jar
 ```
 
 #### 其中的图片选择是我的另一个开源项目，完全仿微信的图片选择库，自带 矩形图片裁剪 和 圆形图片裁剪 功能，有需要的可以去下载使用，附上地址：[https://github.com/jeasonlzy0216/ImagePicker](https://github.com/jeasonlzy0216/ImagePicker)
@@ -58,7 +65,7 @@
 * 多文件和多参数统一的表单上传
 * 大文件下载和下载进度回调
 * 大文件上传和上传进度回调
-* 支持cookie的内存存储和持久化存储
+* 支持cookie的内存存储和持久化存储，支持传递自定义cookie
 * 支持304缓存协议，扩展三种本地缓存模式
 * 支持301、302重定向
 * 支持链式调用
@@ -171,6 +178,7 @@ OkHttpUtils.post(Urls.URL_TEXT_UPLOAD)//
  * 多文件和多参数的表单上传，同时支持进度监听
  * 自签名网站https的访问，调用`setCertificates`方法即可
  * 为单个请求设置超时，比如涉及到文件的需要设置读写等待时间多一点。
+ * Cookie一般情况下只需要在初始化的时候调用`setCookieStore`即可实现cookie的自动管理，如果特殊业务需要，需要手动额外向服务器传递自定义的cookie，可以在每次请求的时候调用`addCookie`方法，该方法提供了3个重载形式，可以根据自己的需要选择使用。
 
 ```java
 OkHttpUtils.get(Urls.URL_METHOD) // 请求方式和请求url, get请求不需要拼接参数，支持get，post，put，delete，head，options请求
@@ -188,6 +196,9 @@ OkHttpUtils.get(Urls.URL_METHOD) // 请求方式和请求url, get请求不需要
     .params("param2", "paramValue2")        // 支持多请求参数同时添加
     .params("file1", new File("filepath1")) // 可以添加文件上传
     .params("file2", new File("filepath2")) // 支持多文件同时添加上传
+	.addCookie("aaa", "bbb")				// 这里可以传递自己想传的Cookie
+    .addCookie(cookie)						// 可以自己构建cookie
+    .addCookies(cookies)					// 可以一次传递批量的cookie
      //这里给出的泛型为 RequestInfo，同时传递一个泛型的 class对象，即可自动将数据结果转成对象返回
     .execute(new DialogCallback<RequestInfo>(this, RequestInfo.class) {
 		@Override

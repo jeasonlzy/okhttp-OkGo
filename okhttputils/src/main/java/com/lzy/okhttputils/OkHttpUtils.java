@@ -50,11 +50,13 @@ public class OkHttpUtils {
     private HttpHeaders mCommonHeaders;                   //全局公共请求头
     private CacheMode mCacheMode;                         //全局缓存模式
     private static Application context;                   //全局上下文
+    private CookieJarImpl cookieJar;                      //全局 Cookie 实例
 
     private OkHttpUtils() {
         okHttpClientBuilder = new OkHttpClient.Builder();
         //允许cookie的自动化管理，默认内存管理
-        okHttpClientBuilder.cookieJar(new CookieJarImpl(new MemoryCookieStore()));
+        cookieJar = new CookieJarImpl(new MemoryCookieStore());
+        okHttpClientBuilder.cookieJar(cookieJar);
         okHttpClientBuilder.hostnameVerifier(new DefaultHostnameVerifier());
         mDelivery = new Handler(Looper.getMainLooper());
     }
@@ -160,8 +162,14 @@ public class OkHttpUtils {
 
     /** 全局cookie存取规则 */
     public OkHttpUtils setCookieStore(CookieStore cookieStore) {
-        okHttpClientBuilder.cookieJar(new CookieJarImpl(cookieStore));
+        cookieJar = new CookieJarImpl(cookieStore);
+        okHttpClientBuilder.cookieJar(cookieJar);
         return this;
+    }
+
+    /** 获取全局的cookie实例 */
+    public CookieJarImpl getCookieJar() {
+        return cookieJar;
     }
 
     /** 全局读取超时时间 */
