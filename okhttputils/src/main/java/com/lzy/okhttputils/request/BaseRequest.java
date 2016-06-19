@@ -170,8 +170,26 @@ public abstract class BaseRequest<R extends BaseRequest> {
     }
 
     @SuppressWarnings("unchecked")
+    public R addUrlParams(String key, List<String> values) {
+        params.putUrlParams(key, values);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
     public R params(String key, File file) {
         params.put(key, file);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public R addFileParams(String key, List<File> files) {
+        params.putFileParams(key, files);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public R addFileWrapperParams(String key, List<HttpParams.FileWrapper> fileWrappers) {
+        params.putFileWrapperParams(key, fileWrappers);
         return (R) this;
     }
 
@@ -240,15 +258,18 @@ public abstract class BaseRequest<R extends BaseRequest> {
     }
 
     /** 将传递进来的参数拼接成 url */
-    protected String createUrlFromParams(String url, Map<String, String> params) {
+    protected String createUrlFromParams(String url, Map<String, List<String>> params) {
         try {
             StringBuilder sb = new StringBuilder();
             sb.append(url);
             if (url.indexOf('&') > 0 || url.indexOf('?') > 0) sb.append("&");
             else sb.append("?");
-            for (Map.Entry<String, String> urlParams : params.entrySet()) {
-                String urlValue = URLEncoder.encode(urlParams.getValue(), "UTF-8");
-                sb.append(urlParams.getKey()).append("=").append(urlValue).append("&");
+            for (Map.Entry<String, List<String>> urlParams : params.entrySet()) {
+                List<String> urlValues = urlParams.getValue();
+                for (String value : urlValues) {
+                    String urlValue = URLEncoder.encode(value, "UTF-8");
+                    sb.append(urlParams.getKey()).append("=").append(urlValue).append("&");
+                }
             }
             sb.deleteCharAt(sb.length() - 1);
             return sb.toString();
@@ -279,7 +300,10 @@ public abstract class BaseRequest<R extends BaseRequest> {
             //表单提交，没有文件
             FormBody.Builder bodyBuilder = new FormBody.Builder();
             for (String key : params.urlParamsMap.keySet()) {
-                bodyBuilder.add(key, params.urlParamsMap.get(key));
+                List<String> urlValues = params.urlParamsMap.get(key);
+                for (String value : urlValues) {
+                    bodyBuilder.add(key, value);
+                }
             }
             return bodyBuilder.build();
         } else {
@@ -287,14 +311,20 @@ public abstract class BaseRequest<R extends BaseRequest> {
             MultipartBody.Builder multipartBodybuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
             //拼接键值对
             if (!params.urlParamsMap.isEmpty()) {
-                for (Map.Entry<String, String> entry : params.urlParamsMap.entrySet()) {
-                    multipartBodybuilder.addFormDataPart(entry.getKey(), entry.getValue());
+                for (Map.Entry<String, List<String>> entry : params.urlParamsMap.entrySet()) {
+                    List<String> urlValues = entry.getValue();
+                    for (String value : urlValues) {
+                        multipartBodybuilder.addFormDataPart(entry.getKey(), value);
+                    }
                 }
             }
             //拼接文件
-            for (Map.Entry<String, HttpParams.FileWrapper> entry : params.fileParamsMap.entrySet()) {
-                RequestBody fileBody = RequestBody.create(entry.getValue().contentType, entry.getValue().file);
-                multipartBodybuilder.addFormDataPart(entry.getKey(), entry.getValue().fileName, fileBody);
+            for (Map.Entry<String, List<HttpParams.FileWrapper>> entry : params.fileParamsMap.entrySet()) {
+                List<HttpParams.FileWrapper> fileValues = entry.getValue();
+                for (HttpParams.FileWrapper fileWrapper : fileValues) {
+                    RequestBody fileBody = RequestBody.create(fileWrapper.contentType, fileWrapper.file);
+                    multipartBodybuilder.addFormDataPart(entry.getKey(), fileWrapper.fileName, fileBody);
+                }
             }
             return multipartBodybuilder.build();
         }

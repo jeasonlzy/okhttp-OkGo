@@ -5,6 +5,7 @@ import com.lzy.okhttputils.model.HttpParams;
 import com.lzy.okhttputils.request.BaseRequest;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
@@ -39,7 +40,7 @@ public abstract class EncryptCallback<T> extends CommonCallback<T> {
         params.put("nonce", getRndStr(6 + RANDOM.nextInt(8)));
         params.put("timestamp", "" + (System.currentTimeMillis() / 1000L));
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, String> entry : getSortedMapByKey(params.urlParamsMap).entrySet()) {
+        for (Map.Entry<String, List<String>> entry : getSortedMapByKey(params.urlParamsMap).entrySet()) {
             sb.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
         }
         sb.delete(sb.length() - 1, sb.length());
@@ -59,15 +60,15 @@ public abstract class EncryptCallback<T> extends CommonCallback<T> {
     }
 
     /** 按照key的自然顺序进行排序，并返回 */
-    private Map<String, String> getSortedMapByKey(ConcurrentHashMap<String, String> map) {
+    private Map<String, List<String>> getSortedMapByKey(ConcurrentHashMap<String, List<String>> map) {
         Comparator<String> comparator = new Comparator<String>() {
             @Override
             public int compare(String lhs, String rhs) {
                 return lhs.compareTo(rhs);
             }
         };
-        TreeMap<String, String> treeMap = new TreeMap<>(comparator);
-        for (Map.Entry<String, String> entry : map.entrySet()) {
+        TreeMap<String, List<String>> treeMap = new TreeMap<>(comparator);
+        for (Map.Entry<String, List<String>> entry : map.entrySet()) {
             treeMap.put(entry.getKey(), entry.getValue());
         }
         return treeMap;

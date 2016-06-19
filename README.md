@@ -33,7 +33,7 @@
 
  * 对于Android Studio的用户，可以选择添加:
 ```java
-    compile 'com.lzy.net:okhttputils:1.5.2'  //可以单独使用，不需要依赖下方的扩展包
+    compile 'com.lzy.net:okhttputils:1.6.0'  //可以单独使用，不需要依赖下方的扩展包
 	compile 'com.lzy.net:okhttpserver:0.1.7' //扩展了下载管理和上传管理，根据需要添加
 
 	compile 'com.lzy.net:okhttputils:+'  //版本号使用 + 可以自动引用最新版
@@ -46,7 +46,7 @@
 ```
 * 对于Eclipse的用户，可以选择添加 `/lib` 目录下的:
 ```java
-	okhttputils-1.5.2.jar
+	okhttputils-1.6.0.jar
 	okhttpserver-0.1.7.jar
 ```
 
@@ -63,6 +63,7 @@
 * 一般的 get,post,put,delete,head,options请求
 * 基于Post的大文本数据上传
 * 多文件和多参数统一的表单上传
+* 支持一个key上传一个文件，也可以一个Key上传多个文件
 * 大文件下载和下载进度回调
 * 大文件上传和上传进度回调
 * 支持cookie的内存存储和持久化存储，支持传递自定义cookie
@@ -143,7 +144,7 @@ OkHttpUtils.get(Urls.URL_DOWNLOAD)//
 	});
 ```
 ### 4.普通Post，直接上传String类型的文本
-不建议这么用，该方法上传字符串会清空实体中其他所有的参数，但头信息不清除
+一般此种用法用于与服务器约定的数据格式，当使用该方法时，params中的参数设置是无效的，所有参数均需要通过需要上传的文本中指定，此外，额外指定的header参数仍然保持有效。
 ```java
 OkHttpUtils.post(Urls.URL_TEXT_UPLOAD)//
 	.tag(this)//
@@ -157,7 +158,7 @@ OkHttpUtils.post(Urls.URL_TEXT_UPLOAD)//
 ```
 
 ### 5.普通Post，直接上传Json类型的文本
-不建议这么用，该方法上传字符串会清空实体中其他所有的参数，但头信息不清除
+该方法与postString没有本质区别，只是数据格式是json,一般来说，需要自己创建一个实体bean或者一个map，把需要的参数设置进去，然后通过三方的Gson或者fastjson转换成json字符串，最后直接使用该方法提交到服务器。
 ```java
 OkHttpUtils.post(Urls.URL_TEXT_UPLOAD)//
 	.tag(this)//
@@ -196,6 +197,9 @@ OkHttpUtils.get(Urls.URL_METHOD) // 请求方式和请求url, get请求不需要
     .params("param2", "paramValue2")        // 支持多请求参数同时添加
     .params("file1", new File("filepath1")) // 可以添加文件上传
     .params("file2", new File("filepath2")) // 支持多文件同时添加上传
+	.addUrlParams("key", List<String> values) 									//这里支持一个key传多个参数
+	.addFileParams("key", List<File> files)										//这里支持一个key传多个文件
+	.addFileWrapperParams("key", List<HttpParams.FileWrapper> fileWrappers)		//这里支持一个key传多个文件
 	.addCookie("aaa", "bbb")				// 这里可以传递自己想传的Cookie
     .addCookie(cookie)						// 可以自己构建cookie
     .addCookies(cookies)					// 可以一次传递批量的cookie

@@ -152,6 +152,10 @@ public class HttpHeaders implements Serializable {
         else return null;
     }
 
+    public static void setAcceptLanguage(String language) {
+        acceptLanguage = language;
+    }
+
     /**
      * Accept-Language: zh-CN,zh;q=0.8
      */
@@ -167,6 +171,10 @@ public class HttpHeaders implements Serializable {
             return acceptLanguage;
         }
         return acceptLanguage;
+    }
+
+    public static void setUserAgent(String agent) {
+        userAgent = agent;
     }
 
     /**
@@ -246,8 +254,6 @@ public class HttpHeaders implements Serializable {
 
     @Override
     public String toString() {
-        return "HttpHeaders{" +
-                "headersMap=" + headersMap +
-                '}';
+        return "HttpHeaders{" + "headersMap=" + headersMap + '}';
     }
 }

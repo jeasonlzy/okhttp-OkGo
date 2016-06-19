@@ -8,8 +8,8 @@ android {
         applicationId "com.lzy.okhttpdemo"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 17
-        versionName "1.5.2"
+        versionCode 18
+        versionName "1.6.0"
     }
     buildTypes {
         release {
@@ -40,7 +40,7 @@ dependencies {
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.google.code.gson:gson:2.5'
 
-    compile 'com.lzy.widget:imagepicker:0.2.1'
+    compile 'com.lzy.widget:imagepicker:0.2.6'
     compile 'com.lzy.widget:view-core:0.2.1'
 //    compile 'com.lzy.net:okhttputils:+'
 //    compile 'com.lzy.net:okhttpserver:+'

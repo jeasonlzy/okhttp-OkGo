@@ -1,9 +1,9 @@
 *.iml
 .gradle
-bintray.gradle
 /.idea
 /screenshots
 /local.properties
 .DS_Store
 /build
 /captures
+libs/

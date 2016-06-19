@@ -22,7 +22,6 @@ import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
 import com.lzy.okhttputils.request.BaseRequest;
-import com.lzy.okhttputils.request.PostRequest;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -80,8 +79,7 @@ public class FormUploadActivity extends BaseActivity {
                 if (imageItems != null && imageItems.size() > 0) {
                     StringBuilder sb = new StringBuilder();
                     for (int i = 0; i < imageItems.size(); i++) {
-                        if (i == imageItems.size() - 1)
-                            sb.append("图片").append(i + 1).append(" ： ").append(imageItems.get(i).path);
+                        if (i == imageItems.size() - 1) sb.append("图片").append(i + 1).append(" ： ").append(imageItems.get(i).path);
                         else sb.append("图片").append(i + 1).append(" ： ").append(imageItems.get(i).path).append("\n");
                     }
                     tvImages.setText(sb.toString());
@@ -97,21 +95,24 @@ public class FormUploadActivity extends BaseActivity {
 
     @OnClick(R.id.formUpload)
     public void formUpload(View view) {
+        ArrayList<File> files = new ArrayList<>();
+        if (imageItems != null && imageItems.size() > 0) {
+            for (int i = 0; i < imageItems.size(); i++) {
+                files.add(new File(imageItems.get(i).path));
+            }
+        }
         //拼接参数
-        PostRequest request = OkHttpUtils.post(Urls.URL_FORM_UPLOAD)//
+        OkHttpUtils.post(Urls.URL_FORM_UPLOAD)//
                 .tag(this)//
                 .headers("header1", "headerValue1")//
                 .headers("header2", "headerValue2")//
                 .params("param1", "paramValue1")//
-                .params("param2", "paramValue2");//
-        //拼接选中的文件参数（如果文件个数已知，可以链式调用到底，就不用这么断开了）
-        if (imageItems != null && imageItems.size() > 0) {
-            for (int i = 0; i < imageItems.size(); i++) {
-                request.params("file" + (i + 1), new File(imageItems.get(i).path));
-            }
-        }
-        //执行请求
-        request.execute(new ProgressUpCallBack<>(this, RequestInfo.class));
+                .params("param2", "paramValue2")//
+//                .params("file1",new File("文件路径"))   //这种方式为一个key，对应一个文件
+//                .params("file2",new File("文件路径"))
+//                .params("file3",new File("文件路径"))
+                .addFileParams("file", files)           // 这种方式为同一个key，上传多个文件
+                .execute(new ProgressUpCallBack<>(this, RequestInfo.class));
     }
 
     private class ProgressUpCallBack<T> extends JsonCallback<T> {

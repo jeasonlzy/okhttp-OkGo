@@ -3,7 +3,6 @@ package com.lzy.okhttpdemo;
 import android.app.Application;
 
 import com.lzy.okhttputils.OkHttpUtils;
-import com.lzy.okhttputils.cookie.store.MemoryCookieStore;
 import com.lzy.okhttputils.cookie.store.PersistentCookieStore;
 import com.lzy.okhttputils.model.HttpHeaders;
 import com.lzy.okhttputils.model.HttpParams;
