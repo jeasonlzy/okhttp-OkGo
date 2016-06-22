@@ -5,7 +5,7 @@
 该项目参考了以下项目：
 
  * [https://github.com/hongyangAndroid/okhttp-utils](https://github.com/hongyangAndroid/okhttp-utils)  
- * [https://github.com/Y0LANDA/NoHttp](https://github.com/Y0LANDA/NoHttp) 
+ * [https://github.com/yanzhenjie/NoHttp](https://github.com/Y0LANDA/NoHttp) 
  * [https://github.com/wyouflf/xUtils](https://github.com/wyouflf/xUtils) 
 
 在此特别感谢上述作者，喜欢原作的可以去使用原项目。同时欢迎大家下载体验本项目，如果使用过程中遇到什么问题，欢迎反馈。
