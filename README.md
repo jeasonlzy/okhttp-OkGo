@@ -160,9 +160,16 @@ OkHttpUtils.post(Urls.URL_TEXT_UPLOAD)//
 ### 5.普通Post，直接上传Json类型的文本
 该方法与postString没有本质区别，只是数据格式是json,一般来说，需要自己创建一个实体bean或者一个map，把需要的参数设置进去，然后通过三方的Gson或者fastjson转换成json字符串，最后直接使用该方法提交到服务器。
 ```java
+HashMap<String, String> params = new HashMap<>();
+params.put("key1", "value1");
+params.put("key2", "这里是需要提交的json格式数据");
+params.put("key3", "也可以使用三方工具将对象转成json字符串");
+params.put("key4", "其实你怎么高兴怎么写都行");
+JSONObject jsonObject = new JSONObject(params);
+        
 OkHttpUtils.post(Urls.URL_TEXT_UPLOAD)//
 	.tag(this)//
-	.postJson("{\"des\": \"这里面要写标准的json格式数据\"}")//
+	.postJson(jsonObject.toString())//
 	.execute(new StringCallback() {
 	    @Override
 	    public void onResponse(boolean isFromCache, String s, Request request, @Nullable Response response) {

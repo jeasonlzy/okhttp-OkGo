@@ -6,13 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.lzy.okhttpdemo.R;
-import com.lzy.okhttpdemo.callback.StringDialogCallback;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
 import com.lzy.okhttputils.callback.StringCallback;
-
-import java.io.File;
-import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -30,15 +26,10 @@ public class TestActivity extends AppCompatActivity {
 
     @OnClick(R.id.btn1)
     public void btn1(View view) {
-        ArrayList<String> params = new ArrayList<>();
-        params.add("111");
-        params.add("222");
-        params.add("333");
-        params.add("444");
-        OkHttpUtils.get(Urls.URL_METHOD)//
+        OkHttpUtils.post("http://mail.luichi.info:8885/appserver/account/login")//
                 .tag(this)//
-                .addUrlParams("aaa",params)
-                .params("ddd","444")
+                .params("loginName", "15805187431")//
+                .params("password", "E10ADC3949BA59ABBE56E057F20F883E")//
                 .execute(new StringCallback() {
                     @Override
                     public void onResponse(boolean isFromCache, String s, Request request, @Nullable Response response) {
@@ -48,16 +39,12 @@ public class TestActivity extends AppCompatActivity {
 
     @OnClick(R.id.btn2)
     public void btn2(View view) {
-        ArrayList<String> params = new ArrayList<>();
-        params.add("111");
-        params.add("222");
-        params.add("333");
-        params.add("444");
-        OkHttpUtils.post(Urls.URL_METHOD)//
+        OkHttpUtils.post("http://mail.luichi.info:8885/appserver/order/getOrderList")//
                 .tag(this)//
-                .addUrlParams("aaa",params)
-                .params("bbb","666")
-                .params("ccc","777")
+                .params("pageSize", "10")//
+                .params("start", "0")//
+                .params("orderStatus", "")//
+                .params("orderType", "0")//
                 .execute(new StringCallback() {
                     @Override
                     public void onResponse(boolean isFromCache, String s, Request request, @Nullable Response response) {
@@ -67,14 +54,14 @@ public class TestActivity extends AppCompatActivity {
 
     @OnClick(R.id.btn3)
     public void btn3(View view) {
-        OkHttpUtils.post("http://dev.11yuehui.com/WebApi/Login/login.html")//
+        OkHttpUtils.get(Urls.URL_METHOD)//
                 .tag(this)//
-                .params("username", "273029")    //用户名
-                .params("password", "273029tc")  //密码
-                .execute(new StringDialogCallback(this) {
+                .execute(new StringCallback() {
                     @Override
                     public void onResponse(boolean isFromCache, String s, Request request, @Nullable Response response) {
+
                     }
                 });
+
     }
 }

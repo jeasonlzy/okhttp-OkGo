@@ -11,7 +11,10 @@ import com.lzy.okhttpdemo.callback.DialogCallback;
 import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
-import com.lzy.okhttputils.request.PostRequest;
+
+import org.json.JSONObject;
+
+import java.util.HashMap;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -37,11 +40,19 @@ public class PostTextActivity extends BaseActivity {
 
     @OnClick(R.id.postJson)
     public void postJson(View view) {
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("key1", "value1");
+        params.put("key2", "这里是需要提交的json格式数据");
+        params.put("key3", "也可以使用三方工具将对象转成json字符串");
+        params.put("key4", "其实你怎么高兴怎么写都行");
+        JSONObject jsonObject = new JSONObject(params);
+
         OkHttpUtils.post(Urls.URL_TEXT_UPLOAD)//
                 .tag(this)//
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
-                .postJson("{\"des\": \"这里面要写标准的json格式数据\"}")//
+                .postJson(jsonObject.toString())//
                 .execute(new TextCallBack<>(this, RequestInfo.class));
     }
 
@@ -62,7 +73,6 @@ public class PostTextActivity extends BaseActivity {
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
                 .postBytes("这是字节数据".getBytes())//
-                .mediaType(PostRequest.MEDIA_TYPE_PLAIN)//
                 .execute(new TextCallBack<>(this, RequestInfo.class));
     }
 
