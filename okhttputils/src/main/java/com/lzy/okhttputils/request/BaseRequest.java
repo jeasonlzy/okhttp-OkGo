@@ -422,12 +422,12 @@ public abstract class BaseRequest<R extends BaseRequest> {
             cacheEntity.setExpire(true);
         }
         HeaderParser.addDefaultHeaders(this, cacheEntity, cacheMode);
+        //请求执行前UI线程调用
+        mCallback.onBefore(this);
         //构建请求
         RequestBody requestBody = generateRequestBody();
         Request request = generateRequest(wrapRequestBody(requestBody));
         Call call = generateCall(request);
-        //请求执行前UI线程调用
-        mCallback.onBefore(this);
 
         if (cacheMode == CacheMode.IF_NONE_CACHE_REQUEST) {
             //如果没有缓存，或者缓存过期,就请求网络，否者直接使用缓存

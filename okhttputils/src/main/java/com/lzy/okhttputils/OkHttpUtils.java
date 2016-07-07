@@ -10,7 +10,6 @@ import com.lzy.okhttputils.cache.CacheEntity;
 import com.lzy.okhttputils.cache.CacheMode;
 import com.lzy.okhttputils.cookie.CookieJarImpl;
 import com.lzy.okhttputils.cookie.store.CookieStore;
-import com.lzy.okhttputils.cookie.store.MemoryCookieStore;
 import com.lzy.okhttputils.https.HttpsUtils;
 import com.lzy.okhttputils.interceptor.LoggerInterceptor;
 import com.lzy.okhttputils.model.HttpHeaders;
@@ -56,9 +55,6 @@ public class OkHttpUtils {
 
     private OkHttpUtils() {
         okHttpClientBuilder = new OkHttpClient.Builder();
-        //允许cookie的自动化管理，默认内存管理
-        cookieJar = new CookieJarImpl(new MemoryCookieStore());
-        okHttpClientBuilder.cookieJar(cookieJar);
         okHttpClientBuilder.hostnameVerifier(new DefaultHostnameVerifier());
         mDelivery = new Handler(Looper.getMainLooper());
     }
