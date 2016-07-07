@@ -60,12 +60,25 @@ public class CacheActivity extends BaseActivity {
         builder.setTitle("清除缓存").setMessage("是否清除成功：" + clear).show();
     }
 
+    @OnClick(R.id.no_cache)
+    public void no_cache(View view) {
+        OkHttpUtils.get(Urls.URL_CACHE)//
+                .tag(this)//
+                .cacheMode(CacheMode.NO_CACHE)//
+                .cacheKey("no_cache")   //对于无缓存模式,该参数无效
+                .cacheTime(5000)        //对于无缓存模式,该时间无效
+                .headers("header1", "headerValue1")//
+                .params("param1", "paramValue1")//
+                .execute(new CacheCallBack(this));
+    }
+
     @OnClick(R.id.cache_default)
     public void cache_default(View view) {
         OkHttpUtils.get(Urls.URL_CACHE)//
                 .tag(this)//
                 .cacheMode(CacheMode.DEFAULT)//
                 .cacheKey("cache_default")//
+                .cacheTime(5000)//对于默认的缓存模式,该时间无效,依靠的是服务端对304缓存的控制
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
                 .execute(new CacheCallBack(this));
@@ -77,6 +90,7 @@ public class CacheActivity extends BaseActivity {
                 .tag(this)//
                 .cacheMode(CacheMode.REQUEST_FAILED_READ_CACHE)//
                 .cacheKey("request_failed_read_cache")//
+                .cacheTime(5000)            // 单位毫秒.5秒后过期
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
                 .execute(new CacheCallBack(this));
@@ -88,6 +102,7 @@ public class CacheActivity extends BaseActivity {
                 .tag(this)//
                 .cacheMode(CacheMode.IF_NONE_CACHE_REQUEST)//
                 .cacheKey("if_none_cache_request")//
+                .cacheTime(5000)            // 单位毫秒.5秒后过期
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
                 .execute(new CacheCallBack(this));
@@ -99,6 +114,7 @@ public class CacheActivity extends BaseActivity {
                 .tag(this)//
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)//
                 .cacheKey("only_read_cache")//
+                .cacheTime(5000)            // 单位毫秒.5秒后过期
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
                 .execute(new CacheCallBack(this));

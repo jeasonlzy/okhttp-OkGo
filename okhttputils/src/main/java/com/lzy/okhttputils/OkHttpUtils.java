@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
 
+import com.lzy.okhttputils.cache.CacheEntity;
 import com.lzy.okhttputils.cache.CacheMode;
 import com.lzy.okhttputils.cookie.CookieJarImpl;
 import com.lzy.okhttputils.cookie.store.CookieStore;
@@ -49,6 +50,7 @@ public class OkHttpUtils {
     private HttpParams mCommonParams;                     //全局公共请求参数
     private HttpHeaders mCommonHeaders;                   //全局公共请求头
     private CacheMode mCacheMode;                         //全局缓存模式
+    private long mCacheTime = CacheEntity.CACHE_NEVER_EXPIRE;  //全局缓存过期时间,默认永不过期
     private static Application context;                   //全局上下文
     private CookieJarImpl cookieJar;                      //全局 Cookie 实例
 
@@ -199,6 +201,18 @@ public class OkHttpUtils {
     /** 获取全局的缓存模式 */
     public CacheMode getCacheMode() {
         return mCacheMode;
+    }
+
+    /** 全局的缓存过期时间 */
+    public OkHttpUtils setCacheTime(long cacheTime) {
+        if (cacheTime <= -1) cacheTime = CacheEntity.CACHE_NEVER_EXPIRE;
+        mCacheTime = cacheTime;
+        return this;
+    }
+
+    /** 获取全局的缓存过期时间 */
+    public long getCacheTime() {
+        return mCacheTime;
     }
 
     /** 获取全局公共请求参数 */

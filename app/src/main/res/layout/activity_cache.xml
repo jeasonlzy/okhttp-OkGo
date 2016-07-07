@@ -6,6 +6,14 @@
     android:orientation="vertical">
 
     <Button
+        android:id="@+id/no_cache"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left|center_vertical"
+        android:text="0. 不使用缓存"
+        android:textAllCaps="false"/>
+
+    <Button
         android:id="@+id/cache_default"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

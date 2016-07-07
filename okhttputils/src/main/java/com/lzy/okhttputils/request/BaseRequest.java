@@ -56,6 +56,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
     protected long connectTimeout;
     protected CacheMode cacheMode;
     protected String cacheKey;
+    protected long cacheTime = CacheEntity.CACHE_NEVER_EXPIRE;      //默认缓存的超时时间
     protected InputStream[] certificates;
     protected HostnameVerifier hostnameVerifier;
     protected HttpParams params = new HttpParams();                 //添加的param
@@ -73,16 +74,11 @@ public abstract class BaseRequest<R extends BaseRequest> {
         OkHttpUtils okHttpUtils = OkHttpUtils.getInstance();
         cacheManager = CacheManager.INSTANCE;
         //添加公共请求参数
-        if (okHttpUtils.getCommonParams() != null) {
-            params.put(okHttpUtils.getCommonParams());
-        }
-        if (okHttpUtils.getCommonHeaders() != null) {
-            headers.put(okHttpUtils.getCommonHeaders());
-        }
+        if (okHttpUtils.getCommonParams() != null) params.put(okHttpUtils.getCommonParams());
+        if (okHttpUtils.getCommonHeaders() != null) headers.put(okHttpUtils.getCommonHeaders());
         //添加缓存模式
-        if (okHttpUtils.getCacheMode() != null) {
-            cacheMode = okHttpUtils.getCacheMode();
-        }
+        if (okHttpUtils.getCacheMode() != null) cacheMode = okHttpUtils.getCacheMode();
+        cacheTime = okHttpUtils.getCacheTime();
     }
 
     @SuppressWarnings("unchecked")
@@ -124,6 +120,14 @@ public abstract class BaseRequest<R extends BaseRequest> {
     @SuppressWarnings("unchecked")
     public R cacheKey(String cacheKey) {
         this.cacheKey = cacheKey;
+        return (R) this;
+    }
+
+    /** 传入 -1 表示永久有效,默认值即为 -1 */
+    @SuppressWarnings("unchecked")
+    public R cacheTime(long cacheTime) {
+        if (cacheTime <= -1) cacheTime = CacheEntity.CACHE_NEVER_EXPIRE;
+        this.cacheTime = cacheTime;
         return (R) this;
     }
 
@@ -257,6 +261,26 @@ public abstract class BaseRequest<R extends BaseRequest> {
         return headers;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public Object getTag() {
+        return tag;
+    }
+
+    public CacheMode getCacheMode() {
+        return cacheMode;
+    }
+
+    public String getCacheKey() {
+        return cacheKey;
+    }
+
+    public long getCacheTime() {
+        return cacheTime;
+    }
+
     /** 将传递进来的参数拼接成 url */
     protected String createUrlFromParams(String url, Map<String, List<String>> params) {
         try {
@@ -339,8 +363,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
                 OkHttpUtils.getInstance().getDelivery().post(new Runnable() {
                     @Override
                     public void run() {
-                        if (mCallback != null)
-                            mCallback.upProgress(bytesWritten, contentLength, bytesWritten * 1.0f / contentLength, networkSpeed);
+                        if (mCallback != null) mCallback.upProgress(bytesWritten, contentLength, bytesWritten * 1.0f / contentLength, networkSpeed);
                     }
                 });
             }
@@ -394,30 +417,34 @@ public abstract class BaseRequest<R extends BaseRequest> {
         if (cacheKey == null) cacheKey = createUrlFromParams(url, params.urlParamsMap);
         if (cacheMode == null) cacheMode = CacheMode.DEFAULT;
         final CacheEntity<T> cacheEntity = (CacheEntity<T>) cacheManager.get(cacheKey);
+        //检查缓存的有效时间,判断缓存是否已经过期
+        if (cacheEntity != null && cacheEntity.checkExpire(cacheMode, cacheTime, System.currentTimeMillis())) {
+            cacheEntity.setExpire(true);
+        }
         HeaderParser.addDefaultHeaders(this, cacheEntity, cacheMode);
-
-        //请求执行前UI线程调用
-        mCallback.onBefore(this);
+        //构建请求
         RequestBody requestBody = generateRequestBody();
         Request request = generateRequest(wrapRequestBody(requestBody));
         Call call = generateCall(request);
+        //请求执行前UI线程调用
+        mCallback.onBefore(this);
 
         if (cacheMode == CacheMode.IF_NONE_CACHE_REQUEST) {
-            //如果没有缓存，就请求网络，否者直接使用缓存
-            if (cacheEntity != null) {
+            //如果没有缓存，或者缓存过期,就请求网络，否者直接使用缓存
+            if (cacheEntity != null && !cacheEntity.isExpire()) {
                 T data = cacheEntity.getData();
                 sendSuccessResultCallback(true, data, call, null, mCallback);
                 return;//返回即不请求网络
             } else {
-                sendFailResultCallback(true, call, null, new IllegalStateException("没有获取到缓存！"), mCallback);
+                sendFailResultCallback(true, call, null, new IllegalStateException("没有获取到缓存,或者缓存已经过期!"), mCallback);
             }
         } else if (cacheMode == CacheMode.FIRST_CACHE_THEN_REQUEST) {
             //先使用缓存，不管是否存在，仍然请求网络
-            if (cacheEntity != null) {
+            if (cacheEntity != null && !cacheEntity.isExpire()) {
                 T data = cacheEntity.getData();
                 sendSuccessResultCallback(true, data, call, null, mCallback);
             } else {
-                sendFailResultCallback(true, call, null, new IllegalStateException("没有获取到缓存！"), mCallback);
+                sendFailResultCallback(true, call, null, new IllegalStateException("没有获取到缓存,或者缓存已经过期!"), mCallback);
             }
         }
 
@@ -468,9 +495,10 @@ public abstract class BaseRequest<R extends BaseRequest> {
      */
     @SuppressWarnings("unchecked")
     private <T> void handleCache(Headers headers, T data) {
-        // DEFAULT 默认遵循 304 规则，其他缓存模式忽略 304 缓存头
-        boolean forceCache = (cacheMode != CacheMode.DEFAULT);
-        CacheEntity<T> cache = HeaderParser.parseCacheHeaders(headers, data, cacheKey, forceCache);
+        //不需要缓存,直接返回
+        if (cacheMode == CacheMode.NO_CACHE) return;
+
+        CacheEntity<T> cache = HeaderParser.createCacheEntity(headers, data, cacheMode, cacheKey);
         if (cache == null) {
             //服务器不需要缓存，移除本地缓存
             cacheManager.remove(cacheKey);

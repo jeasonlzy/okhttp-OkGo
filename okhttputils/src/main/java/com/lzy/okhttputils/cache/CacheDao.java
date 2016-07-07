@@ -33,6 +33,7 @@ class CacheDao<T> extends DataBaseDao<CacheEntity<T>> {
         SQLiteDatabase database = openWriter();
         ContentValues values = new ContentValues();
         values.put(CacheHelper.KEY, cacheEntity.getKey());
+        values.put(CacheHelper.LOCAL_EXPIRE, cacheEntity.getLocalExpire());
 
         HttpHeaders headers = cacheEntity.getResponseHeaders();
         ByteArrayOutputStream headerBAOS = null;
@@ -103,6 +104,7 @@ class CacheDao<T> extends DataBaseDao<CacheEntity<T>> {
         CacheEntity<T> cacheEntity = new CacheEntity<>();
         cacheEntity.setId(cursor.getInt(cursor.getColumnIndex(CacheHelper.ID)));
         cacheEntity.setKey(cursor.getString(cursor.getColumnIndex(CacheHelper.KEY)));
+        cacheEntity.setLocalExpire(cursor.getLong(cursor.getColumnIndex(CacheHelper.LOCAL_EXPIRE)));
 
         byte[] headerData = cursor.getBlob(cursor.getColumnIndex(CacheHelper.HEAD));
         ByteArrayInputStream headerBAIS = null;

@@ -13,7 +13,7 @@
 ## 联系方式
  * 邮箱地址： liaojeason@126.com
  * QQ群： 489873144 （建议使用QQ群，邮箱使用较少，可能看的不及时）
- * 本群刚建立，旨在为使用我的github项目的人提供方便，如果遇到问题欢迎在群里提问。个人能力也有限，希望一起学习一起进步。
+ * 本群旨在为使用我的github项目的人提供方便，如果遇到问题欢迎在群里提问。个人能力也有限，希望一起学习一起进步。
 
 ## 演示
  ![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo1.png)![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo2.gif)![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo3.gif)![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo4.gif)![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo5.gif)
@@ -33,7 +33,7 @@
 
  * 对于Android Studio的用户，可以选择添加:
 ```java
-    compile 'com.lzy.net:okhttputils:1.6.0'  //可以单独使用，不需要依赖下方的扩展包
+    compile 'com.lzy.net:okhttputils:1.6.1'  //可以单独使用，不需要依赖下方的扩展包
 	compile 'com.lzy.net:okhttpserver:0.1.7' //扩展了下载管理和上传管理，根据需要添加
 
 	compile 'com.lzy.net:okhttputils:+'  //版本号使用 + 可以自动引用最新版
@@ -46,7 +46,7 @@
 ```
 * 对于Eclipse的用户，可以选择添加 `/lib` 目录下的:
 ```java
-	okhttputils-1.6.0.jar
+	okhttputils-1.6.1.jar
 	okhttpserver-0.1.7.jar
 ```
 
@@ -195,6 +195,7 @@ OkHttpUtils.get(Urls.URL_METHOD) // 请求方式和请求url, get请求不需要
     .readTimeOut(10000)      // 设置当前请求的读取超时时间
     .writeTimeOut(10000)     // 设置当前请求的写入超时时间
     .cacheKey("cacheKey")    // 设置当前请求的缓存key,建议每个不同功能的请求设置一个
+    .cacheTime(5000)         // 缓存的过期时间,单位毫秒
     .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST) // 缓存模式，详细请看第四部分，缓存介绍
     .setCertificates(getAssets().open("srca.cer")) // 自签名https的证书，可变参数，可以设置多个
 	.addInterceptor(interceptor)            // 添加自定义拦截器
@@ -319,8 +320,11 @@ execute方法不传入callback即为同步的请求，返回`Response`对象，�
 ###使用缓存前，必须让缓存的数据`javaBean`对象实现`Serializable`接口，否者会报`NotSerializableException`。
 因为缓存的原理是将对象序列化后直接写入 数据库中，如果不实现`Serializable`接口，会导致对象无法序列化，进而无法写入到数据库中，也就达不到缓存的效果。
 
-目前提供了四种`CacheMode`缓存模式
+对于`DEFAULT`缓存模式,超时时间是无效的,因为该模式是完全遵循标准的http协议的,缓存时间是依靠服务端响应头来控制,所以客户端的cacheTime参数无效
 
+目前提供了五种`CacheMode`缓存模式
+
+ * `NO_CACHE`: 不使用缓存,该模式下,`cacheKey`,`cacheTime` 参数均无效
  * `DEFAULT`: 按照HTTP协议的默认缓存规则，例如有304响应头时缓存
  * `REQUEST_FAILED_READ_CACHE`：先请求网络，如果请求网络失败，则读取缓存，如果读取缓存失败，本次请求失败。该缓存模式的使用，会根据实际情况，导致`onResponse`,`onError`,`onAfter`三个方法调用不只一次，具体请在三个方法返回的参数中进行判断。
  * `IF_NONE_CACHE_REQUEST`：如果缓存不存在才请求网络，否则使用缓存。

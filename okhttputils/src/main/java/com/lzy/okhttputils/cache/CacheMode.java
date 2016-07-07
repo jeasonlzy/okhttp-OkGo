@@ -4,6 +4,9 @@ public enum CacheMode {
     /** 按照HTTP协议的默认缓存规则，例如有304响应头时缓存 */
     DEFAULT,
 
+    /** 不使用缓存 */
+    NO_CACHE,
+
     /** 请求网络失败后，读取缓存 */
     REQUEST_FAILED_READ_CACHE,
 
