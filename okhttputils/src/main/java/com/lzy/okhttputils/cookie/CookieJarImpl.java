@@ -3,7 +3,11 @@ package com.lzy.okhttputils.cookie;
 import com.lzy.okhttputils.cookie.store.CookieStore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
@@ -12,10 +16,18 @@ import okhttp3.HttpUrl;
 public class CookieJarImpl implements CookieJar {
 
     private CookieStore cookieStore;
-    private List<Cookie> userCookies = new ArrayList<>();   //用户手动添加的Cookie
+    private Map<String, Set<Cookie>> userCookies = new HashMap<>();  //用户手动添加的Cookie
 
     public void addCookies(List<Cookie> cookies) {
-        userCookies.addAll(cookies);
+        for (Cookie cookie : cookies) {
+            String domain = cookie.domain();
+            Set<Cookie> domainCookies = userCookies.get(domain);
+            if (domainCookies == null) {
+                domainCookies = new HashSet<>();
+                userCookies.put(domain, domainCookies);
+            }
+            domainCookies.add(cookie);
+        }
     }
 
     public CookieJarImpl(CookieStore cookieStore) {
@@ -26,15 +38,17 @@ public class CookieJarImpl implements CookieJar {
     }
 
     @Override
-    public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+    public synchronized void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
         cookieStore.saveCookies(url, cookies);
     }
 
     @Override
-    public List<Cookie> loadForRequest(HttpUrl url) {
-        List<Cookie> cookies = cookieStore.loadCookies(url);
-        cookies.addAll(userCookies);
-        return cookies;
+    public synchronized List<Cookie> loadForRequest(HttpUrl url) {
+        List<Cookie> requestUrlCookies = cookieStore.loadCookies(url);
+        Set<Cookie> userUrlCookies = userCookies.get(url.host());
+        Set<Cookie> cookieSet = new HashSet<>(requestUrlCookies);
+        cookieSet.addAll(userUrlCookies);
+        return new ArrayList<>(cookieSet);
     }
 
     public CookieStore getCookieStore() {

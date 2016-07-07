@@ -27,7 +27,7 @@ class CacheHelper extends SQLiteOpenHelper {
             DATA + " BLOB)";
     private static final String SQL_CREATE_UNIQUE_INDEX = "CREATE UNIQUE INDEX cache_unique_index ON " + TABLE_NAME + "(\"key\")";
     private static final String SQL_DELETE_TABLE = "DROP TABLE " + TABLE_NAME;
-    private static final String SQL_DELETE_UNIQUE_INDEX = "DROP UNIQUE INDEX cache_unique_index";
+    private static final String SQL_DELETE_UNIQUE_INDEX = "DROP INDEX cache_unique_index";
 
     public CacheHelper() {
         super(OkHttpUtils.getContext(), DB_CACHE_NAME, null, DB_CACHE_VERSION);
@@ -51,8 +51,8 @@ class CacheHelper extends SQLiteOpenHelper {
         if (newVersion != oldVersion) {
             db.beginTransaction();
             try {
-                db.execSQL(SQL_DELETE_TABLE);
                 db.execSQL(SQL_DELETE_UNIQUE_INDEX);
+                db.execSQL(SQL_DELETE_TABLE);
                 db.execSQL(SQL_CREATE_TABLE);
                 db.execSQL(SQL_CREATE_UNIQUE_INDEX);
                 db.setTransactionSuccessful();
