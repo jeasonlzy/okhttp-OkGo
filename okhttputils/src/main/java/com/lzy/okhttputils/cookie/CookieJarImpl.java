@@ -46,8 +46,9 @@ public class CookieJarImpl implements CookieJar {
     public synchronized List<Cookie> loadForRequest(HttpUrl url) {
         List<Cookie> requestUrlCookies = cookieStore.loadCookies(url);
         Set<Cookie> userUrlCookies = userCookies.get(url.host());
-        Set<Cookie> cookieSet = new HashSet<>(requestUrlCookies);
-        cookieSet.addAll(userUrlCookies);
+        Set<Cookie> cookieSet = new HashSet<>();
+        if (requestUrlCookies != null) cookieSet.addAll(requestUrlCookies);
+        if (userUrlCookies != null) cookieSet.addAll(userUrlCookies);
         return new ArrayList<>(cookieSet);
     }
 
