@@ -8,7 +8,7 @@ import com.lzy.okhttputils.OkHttpUtils;
 class CacheHelper extends SQLiteOpenHelper {
 
     public static final String DB_CACHE_NAME = "okhttputils_cache.db";
-    public static final int DB_CACHE_VERSION = 1;
+    public static final int DB_CACHE_VERSION = 2;
     public static final String TABLE_NAME = "cache_table";
 
     //表中的五个字段
