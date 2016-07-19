@@ -1,7 +1,7 @@
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
-version = "1.6.5"              // 数据仓库依赖第三部分
+version = "1.6.6"              // 数据仓库依赖第三部分
 
 def siteUrl = 'https://github.com/jeasonlzy0216/OkHttpUtils'
 def gitUrl = 'https://github.com/jeasonlzy0216/OkHttpUtils.git'
@@ -71,7 +71,7 @@ artifacts {
 // 生成jar包
 task releaseJar(type: Copy) {
     from( 'build/intermediates/bundles/release')
-    into( '../lib')
+    into( '../jar')
     include('classes.jar')
     rename('classes.jar', 'okhttputils-' + version + '.jar')
 }

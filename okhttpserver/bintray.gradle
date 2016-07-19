@@ -80,7 +80,7 @@ def makeJar(String target) {
 
 //新建一个task,名为buildLib,依赖build(build是一个自带的task)
 task buildLib(dependsOn: build) {
-    makeJar("../lib/okhttpserver-" + version + ".jar")
+    makeJar("../jar/okhttpserver-" + version + ".jar")
 }
 
 Properties properties = new Properties()
