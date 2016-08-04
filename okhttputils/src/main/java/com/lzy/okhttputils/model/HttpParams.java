@@ -5,7 +5,9 @@ import java.io.Serializable;
 import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import okhttp3.MediaType;
@@ -22,15 +24,10 @@ import okhttp3.MediaType;
 public class HttpParams implements Serializable {
 
     /** 普通的键值对参数 */
-    public ConcurrentHashMap<String, List<String>> urlParamsMap;
+    public LinkedHashMap<String, List<String>> urlParamsMap;
 
     /** 文件的键值对参数 */
-    public ConcurrentHashMap<String, List<FileWrapper>> fileParamsMap;
-
-    private void init() {
-        urlParamsMap = new ConcurrentHashMap<>();
-        fileParamsMap = new ConcurrentHashMap<>();
-    }
+    public LinkedHashMap<String, List<FileWrapper>> fileParamsMap;
 
     public HttpParams() {
         init();
@@ -46,10 +43,22 @@ public class HttpParams implements Serializable {
         put(key, file);
     }
 
+    private void init() {
+        urlParamsMap = new LinkedHashMap<>();
+        fileParamsMap = new LinkedHashMap<>();
+    }
+
     public void put(HttpParams params) {
         if (params != null) {
             if (params.urlParamsMap != null && !params.urlParamsMap.isEmpty()) urlParamsMap.putAll(params.urlParamsMap);
             if (params.fileParamsMap != null && !params.fileParamsMap.isEmpty()) fileParamsMap.putAll(params.fileParamsMap);
+        }
+    }
+
+    public void put(Map<String, String> params) {
+        if (params == null || params.isEmpty()) return;
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            put(entry.getKey(), entry.getValue());
         }
     }
 
@@ -135,9 +144,7 @@ public class HttpParams implements Serializable {
         return MediaType.parse(contentType);
     }
 
-    /**
-     * 文件类型的包装类
-     */
+    /** 文件类型的包装类 */
     public static class FileWrapper {
         public File file;
         public String fileName;

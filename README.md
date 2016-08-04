@@ -27,13 +27,13 @@
 > * 具体的下载地址和抓包配置方法，我这就不提供了，请自行百度或谷歌。
 
 
-   对于Eclipse不能运行项目的，提供了apk供直接运行，位于项目根目录 `okhttputils_v1.x.x.apk`。
+   对于Eclipse不能运行项目的，提供了apk供直接运行，或者点击下载 [okhttputils_v1.x.x.apk](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/okhttputils_v1.6.7.apk?raw=true)。
 
    本项目Demo的网络请求是我自己的服务器，有时候可能不稳定，网速比较慢时请耐心等待。。
 
  * 对于Android Studio的用户，可以选择添加:
 ```java
-    compile 'com.lzy.net:okhttputils:1.6.6'  //可以单独使用，不需要依赖下方的扩展包
+    compile 'com.lzy.net:okhttputils:1.6.7'  //可以单独使用，不需要依赖下方的扩展包
 	compile 'com.lzy.net:okhttpserver:0.1.7' //扩展了下载管理和上传管理，根据需要添加
 
 	compile 'com.lzy.net:okhttputils:+'  //版本号使用 + 可以自动引用最新版
@@ -46,7 +46,7 @@
 ```
 * 对于Eclipse的用户，可以选择添加 `/lib` 目录下的:
 ```java
-	okhttputils-1.6.6.jar
+	okhttputils-1.6.7.jar
 	okhttpserver-0.1.7.jar
 ```
 
@@ -85,29 +85,69 @@
     public void onCreate() {
         super.onCreate();
 
+        //---------这里给出的是示例代码,告诉你可以这么传,实际使用的时候,根据需要传,不需要就不传-------------//
         HttpHeaders headers = new HttpHeaders();
-        headers.put("commonHeaderKey1", "commonHeaderValue1");    //所有的 header 都 不支持 中文
+        headers.put("commonHeaderKey1", "commonHeaderValue1");    //header不支持中文
         headers.put("commonHeaderKey2", "commonHeaderValue2");
         HttpParams params = new HttpParams();
-        params.put("commonParamsKey1", "commonParamsValue1");     //所有的 params 都 支持 中文
+        params.put("commonParamsKey1", "commonParamsValue1");     //param支持中文,直接传,不要自己编码
         params.put("commonParamsKey2", "这里支持中文参数");
+        //-----------------------------------------------------------------------------------//
 
         //必须调用初始化
         OkHttpUtils.init(this);
-        //以下都不是必须的，根据需要自行选择
-        OkHttpUtils.getInstance()//
-                .debug("OkHttpUtils")                                              //是否打开调试
+
+        //以下都不是必须的，根据需要自行选择,一般来说只需要 debug,缓存相关,cookie相关的 就可以了
+        OkHttpUtils.getInstance()
+
+                //打开该调试开关,控制台会使用 红色error 级别打印log,并不是错误,是为了显眼,不需要就不要加入该行
+                .debug("OkHttpUtils")
+
+                //如果使用默认的 60秒,以下三行也不需要传
                 .setConnectTimeout(OkHttpUtils.DEFAULT_MILLISECONDS)               //全局的连接超时时间
                 .setReadTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS)                  //全局的读取超时时间
                 .setWriteTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS)                 //全局的写入超时时间
-			  //.setCookieStore(new MemoryCookieStore())                           //cookie使用内存缓存（app退出后，cookie消失）
-			  //.setCookieStore(new PersistentCookieStore())                       //cookie持久化存储，如果cookie不过期，则一直有效
+
+                //可以全局统一设置缓存模式,默认就是Default,可以不传,具体其他模式看 github 介绍 https://github.com/jeasonlzy0216/
+                .setCacheMode(CacheMode.DEFAULT)
+
+                //可以全局统一设置缓存时间,默认永不过期,具体使用方法看 github 介绍
+                .setCacheTime(CacheEntity.CACHE_NEVER_EXPIRE)
+
+                //如果不想让框架管理cookie,以下不需要
+//                .setCookieStore(new MemoryCookieStore())                           //cookie使用内存缓存（app退出后，cookie消失）
+                .setCookieStore(new PersistentCookieStore())                       //cookie持久化存储，如果cookie不过期，则一直有效
+
+                //可以添加全局拦截器,不会用的千万不要传,错误写法直接导致任何回调不执行
+//                .addInterceptor(new Interceptor() {
+//                    @Override
+//                    public Response intercept(Chain chain) throws IOException {
+//                        return chain.proceed(chain.request());
+//                    }
+//                })
+
+                //这两行同上,不需要就不要传
                 .addCommonHeaders(headers)                                         //设置全局公共头
                 .addCommonParams(params);                                          //设置全局公共参数
+
     }
 ```
 
 ## 二、普通请求
+
+#### 0.写在开始的话,`callback`回调默认只需要复写`onResponse`,并不代表所有的回调都只走这一个,实际开发中,错误回调并没有成功回调使用频繁,所以`callback`的失败回调`onError`并没有声明为抽象的,如果有需要,请自行复写,不要再问我为什么回调没有执行啊,既然`onResponse`没有执行,那么一定是出错了回调了`onError`
+
+callback一共有以下 7 个回调,除`onResponse`必须实现以外,其余均可以按需实现,每个方法参数详细说明,请看下面第6点:
+
+ * RequestInfo parseNetworkResponse(Response response) throws Exception:解析网络返回的数据回调
+ * onBefore(BaseRequest request):网络请求真正执行前回调
+ * onResponse(boolean isFromCache, RequestInfo requestInfo, Request request, @Nullable Response response):网络请求成功的回调
+ * onError(boolean isFromCache, Call call, @Nullable Response response, @Nullable Exception e):网络请求失败的回调
+ * onAfter(boolean isFromCache, @Nullable RequestInfo requestInfo, Call call, @Nullable Response response, @Nullable Exception e):网络请求结束的回调,无论成功失败一定会执行
+ * upProgress(long currentSize, long totalSize, float progress, long networkSpeed):上传进度的回调
+ * downloadProgress(long currentSize, long totalSize, float progress, long networkSpeed):下载进度的回调
+ 
+
 ### 1.基本的网络请求
 ```java
 OkHttpUtils.get(Urls.URL_METHOD)     // 请求方式和请求url
@@ -128,7 +168,7 @@ OkHttpUtils.get(Urls.URL_IMAGE)//
 	.execute(new BitmapCallback() {
 	    @Override
 	    public void onResponse(boolean isFromCache, Bitmap bitmap, Request request, @Nullable Response response) {
-		// bitmap 即为返回的图片数据
+		    // bitmap 即为返回的图片数据
 	    }
 	});
 ```
@@ -139,8 +179,13 @@ OkHttpUtils.get(Urls.URL_DOWNLOAD)//
 	.execute(new FileCallback("/sdcard/temp/", "file.jpg") {  //文件下载时，需要指定下载的文件目录和文件名
 	    @Override
 	    public void onResponse(boolean isFromCache, File file, Request request, @Nullable Response response) {
-		// file 即为文件数据，文件保存在指定布幕
+		    // file 即为文件数据，文件保存在指定目录
 	    }
+	    
+	    @Override
+        public void downloadProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
+            //这里回调下载进度(该回调在主线程,可以直接更新ui)
+        }
 	});
 ```
 ### 4.普通Post，直接上传String类型的文本
@@ -154,6 +199,11 @@ OkHttpUtils.post(Urls.URL_TEXT_UPLOAD)//
 	    public void onResponse(boolean isFromCache, String s, Request request, @Nullable Response response) {
 			//上传成功
 	    }
+	    
+	    @Override
+        public void upProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
+            //这里回调上传进度(该回调在主线程,可以直接更新ui)
+        }
 	});
 ```
 
@@ -175,6 +225,12 @@ OkHttpUtils.post(Urls.URL_TEXT_UPLOAD)//
 	    public void onResponse(boolean isFromCache, String s, Request request, @Nullable Response response) {
 			//上传成功
 	    }
+	    
+	    	    
+	    @Override
+        public void upProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
+            //这里回调上传进度(该回调在主线程,可以直接更新ui)
+        }
 	});
 ```
 
@@ -292,7 +348,59 @@ execute方法不传入callback即为同步的请求，返回`Response`对象，�
 					                .params("bbb", "222")
 									.execute();
 ```
+### 9.参数的顺序
+添加header和param的方法各有三个地方,在提交的时候,他们是有顺序的,如果对提交顺序有需要的话,请注意这里
 
+ * 第一个地方,全局初始化时,使用`OkHttpUtils.getInstance().addCommonHeaders()`,`OkHttpUtils.getInstance().addCommonParams()` 添加
+
+```java
+    HttpHeaders headers = new HttpHeaders();
+    headers.put("HKAAA", "HVAAA");
+    headers.put("HKBBB", "HVBBB");
+    HttpParams params = new HttpParams();
+    params.put("PKAAA", "PVAAA"); 
+    params.put("PKBBB", "PVBBB");
+    
+    OkHttpUtils.getInstance()
+               .addCommonHeaders(headers) //设置全局公共头
+               .addCommonParams(params);  //设置全局公共参数
+```
+
+ * 第二个地方,`callback`的`onBefore`方法中添加
+ 
+```java
+    public abstract class CommonCallback<T> extends AbsCallback<T> {
+        @Override
+        public void onBefore(BaseRequest request) {
+            super.onBefore(request);
+            
+            request.headers("HKCCC", "HVCCC")//
+                    .headers("HKDDD", "HVDDD")//
+                    .params("PKCCC", "PVCCC")//
+                    .params("PKDDD", "PVDDD")//
+        }
+    }
+```
+
+ * 第三个地方,执行网络请求的时候添加
+
+```java
+    OkHttpUtils.get(Urls.URL_METHOD)//
+            .tag(this)//
+            .headers("HKEEE", "HVEEE")//
+            .headers("HKFFF", "HVFFF")//
+            .params("PKEEE", "PVEEE")//
+            .params("PKFFF", "PVFFF")//
+            .execute(new MethodCallBack<>(this, RequestInfo.class));
+```
+ 
+ 那么,最终执行请求的参数的添加顺序为
+ 
+> * Header顺序: HKAAA -> HKBBB -> HKEEE -> HKFFF -> HKCCC -> HKDDD
+> * Params顺序: PKAAA -> PKBBB -> PKEEE -> PKFFF -> PKCCC -> PKDDD
+ 
+### 总结一句话就是,全局添加的在最开始,callback添加的在最后,请求添加的在中间
+ 
 ## 三、自定义CallBack使用
 
 目前内部提供的包含`AbsCallback`, `StringCallBack` ,`BitmapCallback` ,`FileCallBack` ,可以根据自己的需求去自定义Callback

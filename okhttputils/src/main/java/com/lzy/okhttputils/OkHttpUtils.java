@@ -92,6 +92,11 @@ public class OkHttpUtils {
         return okHttpClientBuilder.build();
     }
 
+    /** 对外暴露 OkHttpClient,方便自定义 */
+    public OkHttpClient.Builder getOkHttpClientBuilder() {
+        return okHttpClientBuilder;
+    }
+
     /** get请求 */
     public static GetRequest get(String url) {
         return new GetRequest(url);

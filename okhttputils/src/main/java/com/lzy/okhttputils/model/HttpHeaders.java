@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -61,12 +62,12 @@ public class HttpHeaders implements Serializable {
     public static final String HEAD_KEY_SET_COOKIE = "Set-Cookie";
     public static final String HEAD_KEY_SET_COOKIE2 = "Set-Cookie2";
 
-    public ConcurrentHashMap<String, String> headersMap;
+    public LinkedHashMap<String, String> headersMap;
     private static String acceptLanguage;
     private static String userAgent;
 
     private void init() {
-        headersMap = new ConcurrentHashMap<>();
+        headersMap = new LinkedHashMap<>();
     }
 
     public HttpHeaders() {

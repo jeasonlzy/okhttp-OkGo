@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * ================================================
@@ -60,7 +59,7 @@ public abstract class EncryptCallback<T> extends CommonCallback<T> {
     }
 
     /** 按照key的自然顺序进行排序，并返回 */
-    private Map<String, List<String>> getSortedMapByKey(ConcurrentHashMap<String, List<String>> map) {
+    private Map<String, List<String>> getSortedMapByKey(Map<String, List<String>> map) {
         Comparator<String> comparator = new Comparator<String>() {
             @Override
             public int compare(String lhs, String rhs) {

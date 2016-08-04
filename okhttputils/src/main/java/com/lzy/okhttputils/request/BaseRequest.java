@@ -20,7 +20,6 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
@@ -168,6 +167,12 @@ public abstract class BaseRequest<R extends BaseRequest> {
     }
 
     @SuppressWarnings("unchecked")
+    public R params(Map<String, String> params) {
+        this.params.put(params);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
     public R params(String key, String value) {
         params.put(key, value);
         return (R) this;
@@ -291,6 +296,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
             for (Map.Entry<String, List<String>> urlParams : params.entrySet()) {
                 List<String> urlValues = urlParams.getValue();
                 for (String value : urlValues) {
+                    //对参数进行 utf-8 编码,防止头信息传中文
                     String urlValue = URLEncoder.encode(value, "UTF-8");
                     sb.append(urlParams.getKey()).append("=").append(urlValue).append("&");
                 }
@@ -305,11 +311,17 @@ public abstract class BaseRequest<R extends BaseRequest> {
 
     /** 通用的拼接请求头 */
     protected Request.Builder appendHeaders(Request.Builder requestBuilder) {
-        Headers.Builder headerBuilder = new Headers.Builder();
-        ConcurrentHashMap<String, String> headerMap = headers.headersMap;
+        Map<String, String> headerMap = headers.headersMap;
         if (headerMap.isEmpty()) return requestBuilder;
-        for (String key : headerMap.keySet()) {
-            headerBuilder.add(key, headerMap.get(key));
+        Headers.Builder headerBuilder = new Headers.Builder();
+        try {
+            for (Map.Entry<String, String> entry : headerMap.entrySet()) {
+                //对头信息进行 utf-8 编码,防止头信息传中文,这里暂时不编码,可能出现未知问题,如有需要自行编码
+//                String headerValue = URLEncoder.encode(entry.getValue(), "UTF-8");
+                headerBuilder.add(entry.getKey(), entry.getValue());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         requestBuilder.headers(headerBuilder.build());
         return requestBuilder;
@@ -395,16 +407,19 @@ public abstract class BaseRequest<R extends BaseRequest> {
         }
     }
 
-    /** 阻塞方法，同步请求执行 */
-    public Response execute() throws IOException {
+    /** 获取同步call对象 */
+    public Call getCall() {
         //添加缓存头和其他的公共头，同步请求不做缓存，缓存为空
         HeaderParser.addDefaultHeaders(this, null, null);
-
-        //构建请求体，同步阻塞请求
+        //构建请求体，返回call对象
         RequestBody requestBody = generateRequestBody();
-        final Request request = generateRequest(wrapRequestBody(requestBody));
-        Call call = generateCall(request);
-        return call.execute();
+        Request request = generateRequest(wrapRequestBody(requestBody));
+        return generateCall(request);
+    }
+
+    /** 阻塞方法，同步请求执行 */
+    public Response execute() throws IOException {
+        return getCall().execute();
     }
 
     /** 非阻塞方法，异步请求，但是回调在子线程中执行 */
@@ -412,6 +427,9 @@ public abstract class BaseRequest<R extends BaseRequest> {
     public <T> void execute(AbsCallback<T> callback) {
         mCallback = callback;
         if (mCallback == null) mCallback = AbsCallback.CALLBACK_DEFAULT;
+
+        //请求执行前UI线程调用
+        mCallback.onBefore(this);
 
         //请求之前获取缓存信息，添加缓存头和其他的公共头
         if (cacheKey == null) cacheKey = createUrlFromParams(url, params.urlParamsMap);
@@ -422,8 +440,6 @@ public abstract class BaseRequest<R extends BaseRequest> {
             cacheEntity.setExpire(true);
         }
         HeaderParser.addDefaultHeaders(this, cacheEntity, cacheMode);
-        //请求执行前UI线程调用
-        mCallback.onBefore(this);
         //构建请求
         RequestBody requestBody = generateRequestBody();
         Request request = generateRequest(wrapRequestBody(requestBody));
