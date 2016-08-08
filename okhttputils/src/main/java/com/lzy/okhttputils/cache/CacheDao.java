@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.lzy.okhttputils.model.HttpHeaders;
+import com.lzy.okhttputils.utils.OkLogger;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -39,20 +40,22 @@ class CacheDao<T> extends DataBaseDao<CacheEntity<T>> {
         ByteArrayOutputStream headerBAOS = null;
         ObjectOutputStream headerOOS = null;
         try {
-            headerBAOS = new ByteArrayOutputStream();
-            headerOOS = new ObjectOutputStream(headerBAOS);
-            headerOOS.writeObject(headers);
-            headerOOS.flush();
-            byte[] headerData = headerBAOS.toByteArray();
-            values.put(CacheHelper.HEAD, headerData);
+            if (headers != null) {
+                headerBAOS = new ByteArrayOutputStream();
+                headerOOS = new ObjectOutputStream(headerBAOS);
+                headerOOS.writeObject(headers);
+                headerOOS.flush();
+                byte[] headerData = headerBAOS.toByteArray();
+                values.put(CacheHelper.HEAD, headerData);
+            }
         } catch (IOException e) {
-            e.printStackTrace();
+            OkLogger.e(e);
         } finally {
             try {
                 if (headerOOS != null) headerOOS.close();
                 if (headerBAOS != null) headerBAOS.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                OkLogger.e(e);
             }
         }
 
@@ -60,20 +63,22 @@ class CacheDao<T> extends DataBaseDao<CacheEntity<T>> {
         ByteArrayOutputStream dataBAOS = null;
         ObjectOutputStream dataOOS = null;
         try {
-            dataBAOS = new ByteArrayOutputStream();
-            dataOOS = new ObjectOutputStream(dataBAOS);
-            dataOOS.writeObject(data);
-            dataOOS.flush();
-            byte[] dataData = dataBAOS.toByteArray();
-            values.put(CacheHelper.DATA, dataData);
+            if (data != null) {
+                dataBAOS = new ByteArrayOutputStream();
+                dataOOS = new ObjectOutputStream(dataBAOS);
+                dataOOS.writeObject(data);
+                dataOOS.flush();
+                byte[] dataData = dataBAOS.toByteArray();
+                values.put(CacheHelper.DATA, dataData);
+            }
         } catch (IOException e) {
-            e.printStackTrace();
+            OkLogger.e(e);
         } finally {
             try {
                 if (dataOOS != null) dataOOS.close();
                 if (dataBAOS != null) dataBAOS.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                OkLogger.e(e);
             }
         }
 
@@ -110,18 +115,21 @@ class CacheDao<T> extends DataBaseDao<CacheEntity<T>> {
         ByteArrayInputStream headerBAIS = null;
         ObjectInputStream headerOIS = null;
         try {
-            headerBAIS = new ByteArrayInputStream(headerData);
-            headerOIS = new ObjectInputStream(headerBAIS);
-            Object header = headerOIS.readObject();
-            cacheEntity.setResponseHeaders((HttpHeaders) header);
+            if (headerData != null) {
+                headerBAIS = new ByteArrayInputStream(headerData);
+                headerOIS = new ObjectInputStream(headerBAIS);
+                Object header = headerOIS.readObject();
+                cacheEntity.setResponseHeaders((HttpHeaders) header);
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            OkLogger.e(e);
+            ;
         } finally {
             try {
                 if (headerOIS != null) headerOIS.close();
                 if (headerBAIS != null) headerBAIS.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                OkLogger.e(e);
             }
         }
 
@@ -129,18 +137,21 @@ class CacheDao<T> extends DataBaseDao<CacheEntity<T>> {
         ByteArrayInputStream dataBAIS = null;
         ObjectInputStream dataOIS = null;
         try {
-            dataBAIS = new ByteArrayInputStream(dataData);
-            dataOIS = new ObjectInputStream(dataBAIS);
-            T data = (T) dataOIS.readObject();
-            cacheEntity.setData(data);
+            if (dataData != null) {
+                dataBAIS = new ByteArrayInputStream(dataData);
+                dataOIS = new ObjectInputStream(dataBAIS);
+                T data = (T) dataOIS.readObject();
+                cacheEntity.setData(data);
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            OkLogger.e(e);
+            ;
         } finally {
             try {
                 if (dataOIS != null) dataOIS.close();
                 if (dataBAIS != null) dataBAIS.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                OkLogger.e(e);
             }
         }
 

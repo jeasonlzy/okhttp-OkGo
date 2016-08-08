@@ -1,5 +1,6 @@
 package com.lzy.okhttputils.request;
 
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 
 import com.lzy.okhttputils.OkHttpUtils;
@@ -11,6 +12,7 @@ import com.lzy.okhttputils.https.HttpsUtils;
 import com.lzy.okhttputils.model.HttpHeaders;
 import com.lzy.okhttputils.model.HttpParams;
 import com.lzy.okhttputils.utils.HeaderParser;
+import com.lzy.okhttputils.utils.OkLogger;
 
 import java.io.File;
 import java.io.IOException;
@@ -304,7 +306,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
             sb.deleteCharAt(sb.length() - 1);
             return sb.toString();
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            OkLogger.e(e);
         }
         return url;
     }
@@ -321,7 +323,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
                 headerBuilder.add(entry.getKey(), entry.getValue());
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            OkLogger.e(e);
         }
         requestBuilder.headers(headerBuilder.build());
         return requestBuilder;
@@ -511,8 +513,8 @@ public abstract class BaseRequest<R extends BaseRequest> {
      */
     @SuppressWarnings("unchecked")
     private <T> void handleCache(Headers headers, T data) {
-        //不需要缓存,直接返回
-        if (cacheMode == CacheMode.NO_CACHE) return;
+        if (cacheMode == CacheMode.NO_CACHE) return;    //不需要缓存,直接返回
+        if (data instanceof Bitmap) return;             //Bitmap没有实现Serializable,不能缓存
 
         CacheEntity<T> cache = HeaderParser.createCacheEntity(headers, data, cacheMode, cacheKey);
         if (cache == null) {

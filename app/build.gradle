@@ -39,11 +39,11 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.6.1'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.google.code.gson:gson:2.5'
-
     compile 'com.lzy.widget:imagepicker:0.2.6'
     compile 'com.lzy.widget:view-core:0.2.1'
-//    compile 'com.lzy.net:okhttputils:+'
-//    compile 'com.lzy.net:okhttpserver:+'
+    //    compile 'com.lzy.net:okhttputils:+'
+    //    compile 'com.lzy.net:okhttpserver:+'
     compile project(':okhttputils')
     compile project(':okhttpserver')
+    compile 'org.jsoup:jsoup:1.9.2'
 }

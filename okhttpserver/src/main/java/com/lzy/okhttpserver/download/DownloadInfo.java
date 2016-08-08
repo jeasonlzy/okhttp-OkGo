@@ -16,26 +16,16 @@ import com.lzy.okhttpserver.listener.DownloadListener;
 @DatabaseTable(tableName = "DownloadInfo")
 public class DownloadInfo implements Comparable<DownloadInfo> {
 
-    @DatabaseField(generatedId = true, columnName = "id")
-    private int id;               //id自增长
-    @DatabaseField(columnName = "url")
-    private String url;           //文件URL
-    @DatabaseField(columnName = "targetFolder")
-    private String targetFolder;  //保存文件夹
-    @DatabaseField(columnName = "targetPath")
-    private String targetPath;    //保存文件地址
-    @DatabaseField(columnName = "fileName")
-    private String fileName;      //保存的文件名
-    @DatabaseField(columnName = "progress")
-    private float progress;       //下载进度
-    @DatabaseField(columnName = "totalLength")
-    private long totalLength;     //总大小
-    @DatabaseField(columnName = "downloadLength")
-    private long downloadLength;  //已下载大小
-    @DatabaseField(columnName = "networkSpeed")
-    private long networkSpeed;    //下载速度
-    @DatabaseField(columnName = "state")
-    private int state = 0;        //当前状态
+    @DatabaseField(generatedId = true, columnName = "id") private int id;               //id自增长
+    @DatabaseField(columnName = "url") private String url;                              //文件URL
+    @DatabaseField(columnName = "targetFolder") private String targetFolder;            //保存文件夹
+    @DatabaseField(columnName = "targetPath") private String targetPath;                //保存文件地址
+    @DatabaseField(columnName = "fileName") private String fileName;                    //保存的文件名
+    @DatabaseField(columnName = "progress") private float progress;                     //下载进度
+    @DatabaseField(columnName = "totalLength") private long totalLength;                //总大小
+    @DatabaseField(columnName = "downloadLength") private long downloadLength;          //已下载大小
+    @DatabaseField(columnName = "networkSpeed") private long networkSpeed;              //下载速度
+    @DatabaseField(columnName = "state") private int state = 0;                         //当前状态
 
     private DownloadTask task;                  //执行当前下载的任务
     private DownloadListener listener;          //当前下载任务的监听

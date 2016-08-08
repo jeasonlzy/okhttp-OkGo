@@ -68,7 +68,7 @@ public class HeaderParser {
                             //服务器缓存设置立马过期，不缓存
                             if (maxAge <= 0) return null;
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            OkLogger.e(e);
                         }
                     }
                 }

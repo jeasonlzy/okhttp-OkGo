@@ -1,5 +1,7 @@
 package com.lzy.okhttputils.https;
 
+import com.lzy.okhttputils.utils.OkLogger;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyManagementException;
@@ -57,7 +59,7 @@ public class HttpsUtils {
                 try {
                     if (certificate != null) certificate.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    OkLogger.e(e);
                 }
             }
             TrustManagerFactory trustManagerFactory;
@@ -65,13 +67,13 @@ public class HttpsUtils {
             trustManagerFactory.init(keyStore);
             return trustManagerFactory.getTrustManagers();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            OkLogger.e(e);
         } catch (CertificateException e) {
-            e.printStackTrace();
+            OkLogger.e(e);
         } catch (KeyStoreException e) {
-            e.printStackTrace();
+            OkLogger.e(e);
         } catch (Exception e) {
-            e.printStackTrace();
+            OkLogger.e(e);
         }
         return null;
     }
@@ -85,17 +87,17 @@ public class HttpsUtils {
             keyManagerFactory.init(clientKeyStore, password.toCharArray());
             return keyManagerFactory.getKeyManagers();
         } catch (KeyStoreException e) {
-            e.printStackTrace();
+            OkLogger.e(e);
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            OkLogger.e(e);
         } catch (UnrecoverableKeyException e) {
-            e.printStackTrace();
+            OkLogger.e(e);
         } catch (CertificateException e) {
-            e.printStackTrace();
+            OkLogger.e(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            OkLogger.e(e);
         } catch (Exception e) {
-            e.printStackTrace();
+            OkLogger.e(e);
         }
         return null;
     }

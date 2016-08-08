@@ -1,5 +1,7 @@
 package com.lzy.okhttputils.request;
 
+import com.lzy.okhttputils.utils.OkLogger;
+
 import java.io.IOException;
 
 import okhttp3.MediaType;
@@ -70,7 +72,7 @@ public class PostRequest extends BaseRequest<PostRequest> {
         try {
             headers.put("Content-Length", String.valueOf(requestBody.contentLength()));
         } catch (IOException e) {
-            e.printStackTrace();
+            OkLogger.e(e);
         }
         appendHeaders(requestBuilder);
         return requestBuilder.post(requestBody).url(url).tag(tag).build();

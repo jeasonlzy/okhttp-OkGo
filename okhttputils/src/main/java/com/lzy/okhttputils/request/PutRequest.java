@@ -2,6 +2,8 @@ package com.lzy.okhttputils.request;
 
 import android.support.annotation.NonNull;
 
+import com.lzy.okhttputils.utils.OkLogger;
+
 import java.io.IOException;
 
 import okhttp3.Request;
@@ -41,7 +43,7 @@ public class PutRequest extends BaseRequest<PutRequest> {
         try {
             headers.put("Content-Length", String.valueOf(requestBody.contentLength()));
         } catch (IOException e) {
-            e.printStackTrace();
+            OkLogger.e(e);
         }
         appendHeaders(requestBuilder);
         return requestBuilder.put(requestBody).url(url).tag(tag).build();

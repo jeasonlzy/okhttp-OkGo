@@ -3,6 +3,8 @@ package com.lzy.okhttputils.interceptor;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.lzy.okhttputils.utils.OkLogger;
+
 import java.io.IOException;
 
 import okhttp3.Headers;
@@ -65,7 +67,7 @@ public class LoggerInterceptor implements Interceptor {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            OkLogger.e(e);
         } finally {
             Log.e(tag, "---------------------request log end-----------------------");
         }
@@ -99,7 +101,7 @@ public class LoggerInterceptor implements Interceptor {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            OkLogger.e(e);
         } finally {
             Log.e(tag, "---------------------response log end-----------------------");
         }
@@ -112,7 +114,8 @@ public class LoggerInterceptor implements Interceptor {
             return true;
         }
         if (mediaType.subtype() != null) {
-            if (mediaType.subtype().equals("json") ||
+            if (mediaType.toString().equals("application/x-www-form-urlencoded") ||
+                    mediaType.subtype().equals("json") ||
                     mediaType.subtype().equals("xml") ||
                     mediaType.subtype().equals("html") ||
                     mediaType.subtype().equals("webviewhtml")) //

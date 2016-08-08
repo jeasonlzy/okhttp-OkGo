@@ -1,5 +1,7 @@
 package com.lzy.okhttputils.request;
 
+import com.lzy.okhttputils.utils.OkLogger;
+
 import java.io.IOException;
 
 import okhttp3.MediaType;
@@ -45,9 +47,9 @@ public class ProgressRequestBody extends RequestBody {
         try {
             return delegate.contentLength();
         } catch (IOException e) {
-            e.printStackTrace();
+            OkLogger.e(e);
+            return -1;
         }
-        return -1;
     }
 
     /** 重写进行写入 */

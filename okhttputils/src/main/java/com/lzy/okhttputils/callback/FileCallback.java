@@ -4,6 +4,7 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 
 import com.lzy.okhttputils.OkHttpUtils;
+import com.lzy.okhttputils.utils.OkLogger;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -45,12 +46,7 @@ public abstract class FileCallback extends AbsCallback<File> {
 
     @Override
     public File parseNetworkResponse(Response response) throws Exception {
-        try {
-            return saveFile(response);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return saveFile(response);
     }
 
     private File saveFile(Response response) throws IOException {
@@ -101,12 +97,12 @@ public abstract class FileCallback extends AbsCallback<File> {
             try {
                 if (is != null) is.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                OkLogger.e(e);
             }
             try {
                 if (fos != null) fos.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                OkLogger.e(e);
             }
         }
     }

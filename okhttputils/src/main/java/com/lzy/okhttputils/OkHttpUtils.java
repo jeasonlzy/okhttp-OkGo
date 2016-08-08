@@ -20,6 +20,7 @@ import com.lzy.okhttputils.request.HeadRequest;
 import com.lzy.okhttputils.request.OptionsRequest;
 import com.lzy.okhttputils.request.PostRequest;
 import com.lzy.okhttputils.request.PutRequest;
+import com.lzy.okhttputils.utils.OkLogger;
 
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
@@ -127,9 +128,19 @@ public class OkHttpUtils {
         return new OptionsRequest(url);
     }
 
-    /** 调试模式 */
+    /** 调试模式,默认打开所有的异常调试 */
     public OkHttpUtils debug(String tag) {
+        debug(tag, true);
+        return this;
+    }
+
+    /**
+     * 调试模式,第二个参数表示所有catch住的log是否需要打印
+     * 一般来说,这些异常是由于不标准的数据格式,或者特殊需要主动产生的,并不是框架错误,如果不想每次打印,这里可以关闭异常显示
+     */
+    public OkHttpUtils debug(String tag, boolean isPrintException) {
         okHttpClientBuilder.addInterceptor(new LoggerInterceptor(tag, true));
+        OkLogger.debug(isPrintException);
         return this;
     }
 
