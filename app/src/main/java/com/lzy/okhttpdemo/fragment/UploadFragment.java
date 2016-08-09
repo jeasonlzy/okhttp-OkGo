@@ -18,11 +18,10 @@ import android.widget.Toast;
 
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
-import com.lzy.imagepicker.loader.GlideImageLoader;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.okhttpdemo.R;
-import com.lzy.okhttpdemo.callback.DialogCallback;
 import com.lzy.okhttpdemo.ui.ProgressPieView;
+import com.lzy.okhttpdemo.utils.GlideImageLoader;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttpserver.download.DownloadManager;
 import com.lzy.okhttpserver.listener.UploadListener;
@@ -30,37 +29,38 @@ import com.lzy.okhttpserver.task.ExecutorWithListener;
 import com.lzy.okhttpserver.upload.UploadInfo;
 import com.lzy.okhttpserver.upload.UploadManager;
 import com.lzy.okhttputils.OkHttpUtils;
+import com.lzy.okhttputils.request.PostRequest;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
-import okhttp3.Request;
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import okhttp3.Response;
 
-public class UploadFragment extends Fragment implements View.OnClickListener, ExecutorWithListener.OnAllTaskEndListener {
+public class UploadFragment extends Fragment implements ExecutorWithListener.OnAllTaskEndListener {
 
-    private GridView gridView;
+    @Bind(R.id.gridView) GridView gridView;
+    @Bind(R.id.tvCorePoolSize) TextView tvCorePoolSize;
+    @Bind(R.id.sbCorePoolSize) SeekBar sbCorePoolSize;
     private ImagePicker imagePicker;
     private ArrayList<ImageItem> images;
+    private UploadManager uploadManager;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_upload, container, false);
-        view.findViewById(R.id.select).setOnClickListener(this);
-        view.findViewById(R.id.upload).setOnClickListener(this);
-//        view.findViewById(R.id.qiniu).setOnClickListener(this);
-        gridView = (GridView) view.findViewById(R.id.gridView);
+        ButterKnife.bind(this, view);
 
-        final TextView tvCorePoolSize = (TextView) view.findViewById(R.id.tvCorePoolSize);
-        SeekBar sbCorePoolSize = (SeekBar) view.findViewById(R.id.sbCorePoolSize);
+        uploadManager = UploadManager.getInstance();
         sbCorePoolSize.setMax(3);
         sbCorePoolSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                UploadManager.getInstance(getContext()).getThreadPool().setCorePoolSize(progress);
+                uploadManager.getThreadPool().setCorePoolSize(progress);
                 tvCorePoolSize.setText(String.valueOf(progress));
             }
 
@@ -76,7 +76,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener, Ex
 
         //此行代码会导致上面的seekbar监听修改线程池数量无效，此处只是为了演示功能，实际使用时，
         //直接调用 UploadManager.getInstance(getContext()).getThreadPool().setCorePoolSize(progress); 即可生效
-        UploadManager.getInstance(getContext()).getThreadPool().getExecutor().addOnAllTaskEndListener(this);
+        uploadManager.getThreadPool().getExecutor().addOnAllTaskEndListener(this);
         return view;
     }
 
@@ -84,44 +84,39 @@ public class UploadFragment extends Fragment implements View.OnClickListener, Ex
     public void onDestroyView() {
         super.onDestroyView();
         //记得移除
-        UploadManager.getInstance(getContext()).getThreadPool().getExecutor().removeOnAllTaskEndListener(this);
+        uploadManager.getThreadPool().getExecutor().removeOnAllTaskEndListener(this);
     }
 
     @Override
     public void onAllTaskEnd() {
-        for (UploadInfo uploadInfo : UploadManager.getInstance(getContext()).getAllTask()) {
-            if (uploadInfo.getState() != UploadManager.FINISH) {
-                Toast.makeText(getContext(), "所有上传线程结束，部分上传未完成", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
         Toast.makeText(getContext(), "所有上传任务完成", Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.select:
-                imagePicker = ImagePicker.getInstance();
-                imagePicker.setImageLoader(new GlideImageLoader());
-                imagePicker.setShowCamera(true);
-                imagePicker.setSelectLimit(9);
-                imagePicker.setCrop(false);
-                Intent intent = new Intent(getContext(), ImageGridActivity.class);
-                startActivityForResult(intent, 100);
-                break;
-            case R.id.upload:
-                if (images != null) {
-                    for (int i = 0; i < images.size(); i++) {
-                        MyUploadListener listener = new MyUploadListener();
-                        listener.setUserTag(gridView.getChildAt(i));
-                        UploadManager.getInstance(getContext()).addTask(Urls.URL_FORM_UPLOAD, new File(images.get(i).path), "imageFile", listener);
-                    }
-                }
-                break;
-//            case R.id.qiniu:
-//                uploadQiniu();
-//                break;
+    @OnClick(R.id.select)
+    public void select(View view) {
+        imagePicker = ImagePicker.getInstance();
+        imagePicker.setImageLoader(new GlideImageLoader());
+        imagePicker.setShowCamera(true);
+        imagePicker.setSelectLimit(9);
+        imagePicker.setCrop(false);
+        Intent intent = new Intent(getContext(), ImageGridActivity.class);
+        startActivityForResult(intent, 100);
+    }
+
+    @OnClick(R.id.upload)
+    public void upload(View view) {
+        if (images != null) {
+            for (int i = 0; i < images.size(); i++) {
+                MyUploadListener listener = new MyUploadListener();
+                listener.setUserTag(gridView.getChildAt(i));
+                PostRequest postRequest = OkHttpUtils.post(Urls.URL_FORM_UPLOAD)//
+                        .headers("headerKey1", "headerValue1")//
+                        .headers("headerKey2", "headerValue2")//
+                        .params("paramKey1", "paramValue1")//
+                        .params("paramKey2", "paramValue2")//
+                        .params("fileKey" + i, new File(images.get(i).path));
+                uploadManager.addTask(images.get(i).path, postRequest, listener);
+            }
         }
     }
 
@@ -234,7 +229,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener, Ex
 
         @Override
         public void onProgress(UploadInfo uploadInfo) {
-            Log.e("MyUploadListener", "onProgress:" + uploadInfo.getFileName() + " " + uploadInfo.getTotalLength() + " " + uploadInfo.getUploadLength() + " " + uploadInfo.getProgress());
+            Log.e("MyUploadListener", "onProgress:" + uploadInfo.getTotalLength() + " " + uploadInfo.getUploadLength() + " " + uploadInfo.getProgress());
             holder = (ViewHolder) ((View) getUserTag()).getTag();
             holder.refresh(uploadInfo);
         }
@@ -256,21 +251,4 @@ public class UploadFragment extends Fragment implements View.OnClickListener, Ex
             return response.body().string();
         }
     }
-
-//    private void uploadQiniu() {
-//        Random random = new Random();
-//        System.out.println("---------" + images.get(0).path);
-//        OkHttpUtils.put("http://upload.qiniu.com")//
-//                .tag(this)//
-//                .params("key", "test" + random.nextInt(1000))//
-//                .params("x:aaa", "aaa")//
-//                .params("token", QiniuToken.getToken())//
-//                .params("file", new File(images.get(0).path))//
-//                .execute(new DialogCallback<String>(getActivity(), String.class) {
-//                    @Override
-//                    public void onResponse(boolean isFromCache, String s, Request request, Response response) {
-//                        System.out.println("onResponse:" + s);
-//                    }
-//                });
-//    }
 }

@@ -23,7 +23,9 @@ import com.lzy.okhttputils.OkHttpUtils;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import okhttp3.Call;
+import okhttp3.MediaType;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class MethodActivity extends BaseActivity implements AdapterView.OnItemClickListener {
@@ -93,7 +95,7 @@ public class MethodActivity extends BaseActivity implements AdapterView.OnItemCl
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
-                        .content("aaa这是请求的数据ccc")//
+                        .requestBody(RequestBody.create(MediaType.parse("text/plain;charset=utf-8"), "这是要上传的数据"))//
                         .execute(new MethodCallBack<>(this, RequestInfo.class));
                 break;
         }

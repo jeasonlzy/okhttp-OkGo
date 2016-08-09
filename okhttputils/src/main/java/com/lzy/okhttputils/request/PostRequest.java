@@ -1,5 +1,6 @@
 package com.lzy.okhttputils.request;
 
+import com.lzy.okhttputils.utils.HttpUtils;
 import com.lzy.okhttputils.utils.OkLogger;
 
 import java.io.IOException;
@@ -17,16 +18,16 @@ import okhttp3.RequestBody;
  * 修订历史：
  * ================================================
  */
-public class PostRequest extends BaseRequest<PostRequest> {
+public class PostRequest extends BaseBodyRequest<PostRequest> {
 
     public static final MediaType MEDIA_TYPE_PLAIN = MediaType.parse("text/plain;charset=utf-8");
     public static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json;charset=utf-8");
     public static final MediaType MEDIA_TYPE_STREAM = MediaType.parse("application/octet-stream");
 
-    private MediaType mediaType; //上传的MIME类型
-    private String string;       //上传的文本内容
-    private String json;         //上传的Json
-    private byte[] bs;           //上传的字节数据
+    protected MediaType mediaType;      //上传的MIME类型
+    protected String string;            //上传的文本内容
+    protected String json;              //上传的Json
+    protected byte[] bs;                //上传的字节数据
 
     public PostRequest(String url) {
         super(url);
@@ -60,21 +61,21 @@ public class PostRequest extends BaseRequest<PostRequest> {
 
     @Override
     protected RequestBody generateRequestBody() {
+        if (requestBody != null) return requestBody;                                           //自定义的请求体
         if (string != null && mediaType != null) return RequestBody.create(mediaType, string); //post上传字符串数据
         if (json != null && mediaType != null) return RequestBody.create(mediaType, json);     //post上传json数据
         if (bs != null && mediaType != null) return RequestBody.create(mediaType, bs);         //post上传字节数组
-        return generateMultipartRequestBody();
+        return HttpUtils.generateMultipartRequestBody(params);
     }
 
     @Override
     protected Request generateRequest(RequestBody requestBody) {
-        Request.Builder requestBuilder = new Request.Builder();
         try {
             headers.put("Content-Length", String.valueOf(requestBody.contentLength()));
         } catch (IOException e) {
             OkLogger.e(e);
         }
-        appendHeaders(requestBuilder);
+        Request.Builder requestBuilder = HttpUtils.appendHeaders(headers);
         return requestBuilder.post(requestBody).url(url).tag(tag).build();
     }
 }

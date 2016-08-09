@@ -4,6 +4,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.lzy.okhttputils.OkHttpUtils;
+import com.lzy.okhttputils.utils.OkLogger;
 
 class CacheHelper extends SQLiteOpenHelper {
 
@@ -41,6 +42,8 @@ class CacheHelper extends SQLiteOpenHelper {
             //建立key的唯一索引后，方便使用 replace 语句
             db.execSQL(SQL_CREATE_UNIQUE_INDEX);
             db.setTransactionSuccessful();
+        } catch (Exception e) {
+            OkLogger.e(e);
         } finally {
             db.endTransaction();
         }
@@ -56,6 +59,8 @@ class CacheHelper extends SQLiteOpenHelper {
                 db.execSQL(SQL_CREATE_TABLE);
                 db.execSQL(SQL_CREATE_UNIQUE_INDEX);
                 db.setTransactionSuccessful();
+            } catch (Exception e) {
+                OkLogger.e(e);
             } finally {
                 db.endTransaction();
             }

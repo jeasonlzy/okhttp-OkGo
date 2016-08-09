@@ -1,17 +1,11 @@
 package com.lzy.okhttpserver.upload;
 
-import android.content.Context;
 import android.os.Message;
-import android.text.TextUtils;
 
 import com.lzy.okhttpserver.listener.UploadListener;
 import com.lzy.okhttpserver.task.PriorityAsyncTask;
-import com.lzy.okhttputils.OkHttpUtils;
 import com.lzy.okhttputils.callback.AbsCallback;
-import com.lzy.okhttputils.request.PostRequest;
-import com.lzy.okhttpserver.L;
 
-import java.io.File;
 import java.io.IOException;
 
 import okhttp3.Request;
@@ -31,19 +25,17 @@ public class UploadTask<T> extends PriorityAsyncTask<Void, UploadInfo, UploadInf
     private UploadUIHandler mUploadUIHandler;    //下载UI回调
     private UploadInfo mUploadInfo;              //当前任务的信息
 
-    public UploadTask(UploadInfo downloadInfo, Context context, UploadListener<T> uploadListener) {
+    public UploadTask(UploadInfo downloadInfo, UploadListener<T> uploadListener) {
         mUploadInfo = downloadInfo;
         mUploadInfo.setListener(uploadListener);
-        mUploadUIHandler = UploadManager.getInstance(context).getHandler();
+        mUploadUIHandler = UploadManager.getInstance().getHandler();
         //将当前任务在定义的线程池中执行
-        executeOnExecutor(UploadManager.getInstance(context).getThreadPool().getExecutor());
+        executeOnExecutor(UploadManager.getInstance().getThreadPool().getExecutor());
     }
 
     /** 每个任务进队列的时候，都会执行该方法 */
     @Override
     protected void onPreExecute() {
-        L.e("onPreExecute:" + mUploadInfo.getResourcePath());
-
         //添加成功的回调
         UploadListener listener = mUploadInfo.getListener();
         if (listener != null) listener.onAdd(mUploadInfo);
@@ -57,7 +49,6 @@ public class UploadTask<T> extends PriorityAsyncTask<Void, UploadInfo, UploadInf
     @Override
     protected UploadInfo doInBackground(Void... params) {
         if (isCancelled()) return mUploadInfo;
-        L.e("doInBackground:" + mUploadInfo.getResourcePath());
         mUploadInfo.setNetworkSpeed(0);
         mUploadInfo.setState(UploadManager.UPLOADING);
         postMessage(null, null, null);
@@ -65,15 +56,7 @@ public class UploadTask<T> extends PriorityAsyncTask<Void, UploadInfo, UploadInf
         //构建请求体,默认使用post请求上传
         Response response;
         try {
-            PostRequest postRequest = OkHttpUtils.post(mUploadInfo.getUrl());
-            File resource = new File(mUploadInfo.getResourcePath());
-            if (TextUtils.isEmpty(mUploadInfo.getFileName())) {
-                mUploadInfo.setFileName(resource.getName());
-            }
-            postRequest.params(mUploadInfo.getKey(), resource, mUploadInfo.getFileName());
-            //接口对接，数据回调
-            postRequest.setCallback(new MergeListener());
-            response = postRequest.execute();
+            response = mUploadInfo.getRequest().setCallback(new MergeListener()).execute();
         } catch (IOException e) {
             e.printStackTrace();
             mUploadInfo.setNetworkSpeed(0);
@@ -117,8 +100,8 @@ public class UploadTask<T> extends PriorityAsyncTask<Void, UploadInfo, UploadInf
         @Override
         public void upProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
             long curTime = System.currentTimeMillis();
-            //每100毫秒刷新一次数据
-            if (curTime - lastRefreshUiTime >= 100 || progress == 1.0f) {
+            //每200毫秒刷新一次数据
+            if (curTime - lastRefreshUiTime >= 200 || progress == 1.0f) {
                 mUploadInfo.setState(UploadManager.UPLOADING);
                 mUploadInfo.setUploadLength(currentSize);
                 mUploadInfo.setTotalLength(totalSize);

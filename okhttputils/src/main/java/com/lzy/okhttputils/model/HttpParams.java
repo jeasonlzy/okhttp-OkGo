@@ -23,6 +23,8 @@ import okhttp3.MediaType;
  */
 public class HttpParams implements Serializable {
 
+    private static final long serialVersionUID = 7369819159227055048L;
+
     /** 普通的键值对参数 */
     public LinkedHashMap<String, List<String>> urlParamsMap;
 

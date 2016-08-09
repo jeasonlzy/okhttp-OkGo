@@ -11,13 +11,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.lzy.okhttpdemo.utils.ApkUtils;
-import com.lzy.okhttpserver.download.DownloadInfo;
-import com.lzy.okhttpserver.listener.DownloadListener;
-import com.lzy.okhttpserver.download.DownloadManager;
-import com.lzy.okhttpserver.download.DownloadService;
 import com.lzy.okhttpdemo.Bean.ApkInfo;
 import com.lzy.okhttpdemo.R;
+import com.lzy.okhttpdemo.utils.ApkUtils;
+import com.lzy.okhttpserver.download.DownloadInfo;
+import com.lzy.okhttpserver.download.DownloadManager;
+import com.lzy.okhttpserver.download.DownloadService;
+import com.lzy.okhttpserver.listener.DownloadListener;
+import com.lzy.okhttputils.OkHttpUtils;
+import com.lzy.okhttputils.request.GetRequest;
 
 import java.io.File;
 
@@ -40,7 +42,7 @@ public class DesActivity extends AppCompatActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download_details);
         apk = (ApkInfo) getIntent().getSerializableExtra("apk");
-        downloadManager = DownloadService.getDownloadManager(this);
+        downloadManager = DownloadService.getDownloadManager();
 
         ImageView icon = (ImageView) findViewById(R.id.icon);
         TextView name = (TextView) findViewById(R.id.name);
@@ -59,7 +61,7 @@ public class DesActivity extends AppCompatActivity implements View.OnClickListen
         restart.setOnClickListener(this);
         listener = new MyListener();
 
-        downloadInfo = downloadManager.getTaskByUrl(apk.getUrl());
+        downloadInfo = downloadManager.getDownloadInfo(apk.getUrl());
         if (downloadInfo != null) {
             //如果任务存在，把任务的监听换成当前页面需要的监听
             downloadInfo.setListener(listener);
@@ -83,17 +85,22 @@ public class DesActivity extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onClick(View v) {
         //每次点击的时候，需要更新当前对象
-        downloadInfo = downloadManager.getTaskByUrl(apk.getUrl());
+        downloadInfo = downloadManager.getDownloadInfo(apk.getUrl());
         if (v.getId() == download.getId()) {
             if (downloadInfo == null) {
-                downloadManager.addTask(apk.getUrl(), listener);
+                GetRequest request = OkHttpUtils.get(downloadInfo.getUrl())//
+                        .headers("headerKey1", "headerValue1")//
+                        .headers("headerKey2", "headerValue2")//
+                        .params("paramKey1", "paramValue1")//
+                        .params("paramKey2", "paramValue2");
+                downloadManager.addTask(apk.getUrl(), request, listener);
                 return;
             }
             switch (downloadInfo.getState()) {
                 case DownloadManager.PAUSE:
                 case DownloadManager.NONE:
                 case DownloadManager.ERROR:
-                    downloadManager.addTask(downloadInfo.getUrl(), listener);
+                    downloadManager.addTask(downloadInfo.getUrl(), downloadInfo.getRequest(), listener);
                     break;
                 case DownloadManager.DOWNLOADING:
                     downloadManager.pauseTask(downloadInfo.getUrl());
@@ -142,8 +149,7 @@ public class DesActivity extends AppCompatActivity implements View.OnClickListen
         @Override
         public void onError(DownloadInfo downloadInfo, String errorMsg, Exception e) {
             System.out.println("onError");
-            if (errorMsg != null)
-                Toast.makeText(DesActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
+            if (errorMsg != null) Toast.makeText(DesActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
         }
     }
 

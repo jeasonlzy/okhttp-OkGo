@@ -2,6 +2,7 @@ package com.lzy.okhttpserver.upload;
 
 import com.lzy.okhttpserver.download.DownloadInfo;
 import com.lzy.okhttpserver.listener.UploadListener;
+import com.lzy.okhttputils.request.BaseBodyRequest;
 
 /**
  * ================================================
@@ -14,17 +15,17 @@ import com.lzy.okhttpserver.listener.UploadListener;
  */
 public class UploadInfo {
 
-    private String url;           //文件URL
-    private String resourcePath;  //上传源文件地址
-    private String key;           //指定上传文件的key
-    private String fileName;      //指定上传文件的名字
-    private float progress;       //下载进度
-    private long totalLength;     //总大小
-    private long uploadLength;    //已上传大小
-    private long networkSpeed;    //下载速度
-    private int state;            //当前状态
-    private UploadTask task;                  //执行当前上传的任务
-    private UploadListener listener;          //当前上传任务的监听
+    private String url;                         //文件URL
+    private String taskKey;                     //下载的标识键
+    private float progress;                     //上传进度
+    private long totalLength;                   //总大小
+    private long uploadLength;                  //已上传大小
+    private long networkSpeed;                  //上传速度
+    private int state;                          //当前状态
+    private BaseBodyRequest request;            //当前任务的网络请求
+
+    private UploadTask task;                    //执行当前上传的任务
+    private UploadListener listener;            //当前上传任务的监听
 
     public String getUrl() {
         return url;
@@ -34,28 +35,12 @@ public class UploadInfo {
         this.url = url;
     }
 
-    public String getResourcePath() {
-        return resourcePath;
+    public String getTaskKey() {
+        return taskKey;
     }
 
-    public void setResourcePath(String resourcePath) {
-        this.resourcePath = resourcePath;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setTaskKey(String taskKey) {
+        this.taskKey = taskKey;
     }
 
     public float getProgress() {
@@ -96,6 +81,14 @@ public class UploadInfo {
 
     public void setState(int state) {
         this.state = state;
+    }
+
+    public BaseBodyRequest getRequest() {
+        return request;
+    }
+
+    public void setRequest(BaseBodyRequest request) {
+        this.request = request;
     }
 
     public UploadTask getTask() {

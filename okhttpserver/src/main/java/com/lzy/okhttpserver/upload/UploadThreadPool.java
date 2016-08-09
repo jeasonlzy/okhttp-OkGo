@@ -1,6 +1,5 @@
 package com.lzy.okhttpserver.upload;
 
-import com.lzy.okhttpserver.download.DownloadThreadPool;
 import com.lzy.okhttpserver.task.ExecutorWithListener;
 import com.lzy.okhttpserver.task.PriorityBlockingQueue;
 
@@ -26,7 +25,7 @@ public class UploadThreadPool {
 
     public ExecutorWithListener getExecutor() {
         if (executor == null) {
-            synchronized (DownloadThreadPool.class) {
+            synchronized (UploadThreadPool.class) {
                 if (executor == null) {
                     executor = new ExecutorWithListener(corePoolSize, MAX_IMUM_POOL_SIZE, KEEP_ALIVE_TIME, UNIT, //
                             new PriorityBlockingQueue<Runnable>(),   //无限容量的缓冲队列

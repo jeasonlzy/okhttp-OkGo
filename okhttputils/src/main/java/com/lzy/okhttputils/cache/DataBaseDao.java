@@ -1,8 +1,11 @@
 package com.lzy.okhttputils.cache;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.lzy.okhttputils.utils.OkLogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +31,9 @@ public abstract class DataBaseDao<T> {
         if (database != null && database.isOpen()) database.close();
     }
 
+    /** 获取对应的表名 */
+    protected abstract String getTableName();
+
     /** 需要数据库中有个 _id 的字段 */
     public final int count() {
         return countColumn("_id");
@@ -37,13 +43,23 @@ public abstract class DataBaseDao<T> {
     public final int countColumn(String columnName) {
         String sql = "SELECT COUNT(?) FROM " + getTableName();
         SQLiteDatabase database = openReader();
-        Cursor cursor = database.rawQuery(sql, new String[]{columnName});
-        int count = 0;
-        if (cursor.moveToNext()) {
-            count = cursor.getInt(0);
+        Cursor cursor = null;
+        try {
+            database.beginTransaction();
+            cursor = database.rawQuery(sql, new String[]{columnName});
+            int count = 0;
+            if (cursor.moveToNext()) {
+                count = cursor.getInt(0);
+            }
+            database.setTransactionSuccessful();
+            return count;
+        } catch (Exception e) {
+            OkLogger.e(e);
+        } finally {
+            database.endTransaction();
+            closeDatabase(database, cursor);
         }
-        closeDatabase(database, cursor);
-        return count;
+        return 0;
     }
 
     /** 删除所有数据 */
@@ -54,9 +70,18 @@ public abstract class DataBaseDao<T> {
     /** 根据条件删除数据库中的数据 */
     public final int delete(String whereClause, String[] whereArgs) {
         SQLiteDatabase database = openWriter();
-        int result = database.delete(getTableName(), whereClause, whereArgs);
-        closeDatabase(database, null);
-        return result;
+        try {
+            database.beginTransaction();
+            int result = database.delete(getTableName(), whereClause, whereArgs);
+            database.setTransactionSuccessful();
+            return result;
+        } catch (Exception e) {
+            OkLogger.e(e);
+        } finally {
+            database.endTransaction();
+            closeDatabase(database, null);
+        }
+        return 0;
     }
 
     /** 查询并返回所有对象的集合 */
@@ -73,20 +98,53 @@ public abstract class DataBaseDao<T> {
     public final List<T> get(String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
         SQLiteDatabase database = openReader();
         List<T> list = new ArrayList<>();
-        Cursor cursor = database.query(getTableName(), columns, selection, selectionArgs, groupBy, having, orderBy, limit);
-        while (!cursor.isClosed() && cursor.moveToNext()) {
-            list.add(parseCursorToBean(cursor));
+        Cursor cursor = null;
+        try {
+            database.beginTransaction();
+            cursor = database.query(getTableName(), columns, selection, selectionArgs, groupBy, having, orderBy, limit);
+            while (!cursor.isClosed() && cursor.moveToNext()) {
+                list.add(parseCursorToBean(cursor));
+            }
+            database.setTransactionSuccessful();
+        } catch (Exception e) {
+            OkLogger.e(e);
+        } finally {
+            database.endTransaction();
+            closeDatabase(database, cursor);
         }
-        closeDatabase(database, cursor);
         return list;
     }
 
     /** 将Cursor解析成对应的JavaBean */
     public abstract T parseCursorToBean(Cursor cursor);
 
-    /** 修改数据的方法 */
-    public abstract long replace(T t);
+    /**
+     * replace 语句有如下行为特点
+     * 1. replace语句会删除原有的一条记录， 并且插入一条新的记录来替换原记录。
+     * 2. 一般用replace语句替换一条记录的所有列， 如果在replace语句中没有指定某列， 在replace之后这列的值被置空 。
+     * 3. replace语句根据主键的值确定被替换的是哪一条记录
+     * 4. 如果执行replace语句时， 不存在要替换的记录， 那么就会插入一条新的记录。
+     * 5. replace语句不能根据where子句来定位要被替换的记录
+     * 6. 如果新插入的或替换的记录中， 有字段和表中的其他记录冲突， 那么会删除那条其他记录。
+     */
+    public long replace(T t) {
+        SQLiteDatabase database = openWriter();
+        ContentValues values = getContentValues(t);
 
-    /** 获取对应的表名 */
-    protected abstract String getTableName();
+        try {
+            database.beginTransaction();
+            long id = database.replace(getTableName(), null, values);
+            database.setTransactionSuccessful();
+            return id;
+        } catch (Exception e) {
+            OkLogger.e(e);
+        } finally {
+            database.endTransaction();
+            closeDatabase(database, null);
+        }
+        return 0;
+    }
+
+    /** 需要替换的列 */
+    public abstract ContentValues getContentValues(T t);
 }

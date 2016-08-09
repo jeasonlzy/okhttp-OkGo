@@ -1,10 +1,11 @@
 package com.lzy.okhttpserver.upload;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.lzy.okhttpserver.listener.UploadListener;
-import com.lzy.okhttpserver.L;
+import com.lzy.okhttputils.OkHttpUtils;
+import com.lzy.okhttputils.request.BaseBodyRequest;
+import com.lzy.okhttputils.request.PostRequest;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -30,26 +31,43 @@ public class UploadManager {
 
     private List<UploadInfo> mUploadInfoList;       //维护了所有下载任务的集合
     private UploadUIHandler mUploadUIHandler;       //主线程执行的handler
-    private Context mContext;                       //上下文
     private static UploadManager mInstance;         //使用单例模式
     private UploadThreadPool threadPool;            //上传的线程池
 
-    public static UploadManager getInstance(Context context) {
+    public static UploadManager getInstance() {
         if (null == mInstance) {
             synchronized (UploadManager.class) {
                 if (null == mInstance) {
-                    mInstance = new UploadManager(context);
+                    mInstance = new UploadManager();
                 }
             }
         }
         return mInstance;
     }
 
-    private UploadManager(Context context) {
-        mContext = context;
+    private UploadManager() {
         mUploadInfoList = Collections.synchronizedList(new ArrayList<UploadInfo>());
         mUploadUIHandler = new UploadUIHandler();
         threadPool = new UploadThreadPool();
+    }
+
+    /** 添加一个上传任务,默认使用post请求 */
+    @Deprecated
+    public <T> void addTask(String url, @NonNull File resource, @NonNull String key, UploadListener<T> listener) {
+        PostRequest request = OkHttpUtils.post(url).params(key, resource);
+        addTask(url, request, listener);
+    }
+
+    /** 添加一个上传任务 */
+    public <T> void addTask(String taskKey, @NonNull BaseBodyRequest request, UploadListener<T> listener) {
+        UploadInfo uploadInfo = new UploadInfo();
+        uploadInfo.setTaskKey(taskKey);
+        uploadInfo.setState(UploadManager.NONE);
+        uploadInfo.setRequest(request);
+        mUploadInfoList.add(uploadInfo);
+        //构造即开始执行
+        UploadTask uploadTask = new UploadTask<T>(uploadInfo, listener);
+        uploadInfo.setTask(uploadTask);
     }
 
     public UploadThreadPool getThreadPool() {
@@ -62,40 +80,5 @@ public class UploadManager {
 
     public List<UploadInfo> getAllTask() {
         return mUploadInfoList;
-    }
-
-    public UploadInfo getTaskByResourcePath(@NonNull String resourcePath) {
-        for (UploadInfo uploadInfo : mUploadInfoList) {
-            if (resourcePath.equals(uploadInfo.getResourcePath())) {
-                return uploadInfo;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 添加一个上传任务
-     *
-     * @param url      上传地址
-     * @param listener 上传监听
-     */
-    public <T> void addTask(@NonNull String url, @NonNull File resource, @NonNull String key, UploadListener<T> listener) {
-        UploadInfo uploadInfo = getTaskByResourcePath(url);
-        if (uploadInfo == null) {
-            uploadInfo = new UploadInfo();
-            uploadInfo.setUrl(url);
-            uploadInfo.setState(UploadManager.NONE);
-            uploadInfo.setResourcePath(resource.getAbsolutePath());
-            uploadInfo.setKey(key);
-            mUploadInfoList.add(uploadInfo);
-        }
-        //无状态，暂停，错误才允许开始上传
-        if (uploadInfo.getState() == UploadManager.NONE || uploadInfo.getState() == UploadManager.ERROR) {
-            //构造即开始执行
-            UploadTask uploadTask = new UploadTask<T>(uploadInfo, mContext, listener);
-            uploadInfo.setTask(uploadTask);
-        } else {
-            L.d("任务正在上传或等待中 url:" + url);
-        }
     }
 }

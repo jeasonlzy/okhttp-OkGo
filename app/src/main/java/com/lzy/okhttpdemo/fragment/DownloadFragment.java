@@ -24,6 +24,8 @@ import com.lzy.okhttpdemo.activity.DownloadManagerActivity;
 import com.lzy.okhttpdemo.utils.AppCacheUtils;
 import com.lzy.okhttpserver.download.DownloadManager;
 import com.lzy.okhttpserver.download.DownloadService;
+import com.lzy.okhttputils.OkHttpUtils;
+import com.lzy.okhttputils.request.GetRequest;
 
 import java.util.ArrayList;
 
@@ -39,7 +41,7 @@ public class DownloadFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_download, container, false);
         initData();
 
-        downloadManager = DownloadService.getDownloadManager(getContext());
+        downloadManager = DownloadService.getDownloadManager();
 
         TextView targetFolder = (TextView) view.findViewById(R.id.targetFolder);
         targetFolder.setText("下载路径: " + downloadManager.getTargetFolder());
@@ -126,7 +128,7 @@ public class DownloadFragment extends Fragment {
             TextView name = (TextView) convertView.findViewById(R.id.name);
             ImageView icon = (ImageView) convertView.findViewById(R.id.icon);
             final Button download = (Button) convertView.findViewById(R.id.download);
-            if (downloadManager.getTaskByUrl(apk.getUrl()) != null) {
+            if (downloadManager.getDownloadInfo(apk.getUrl()) != null) {
                 download.setText("已在队列");
                 download.setEnabled(false);
             } else {
@@ -138,10 +140,15 @@ public class DownloadFragment extends Fragment {
             download.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (downloadManager.getTaskByUrl(apk.getUrl()) != null) {
+                    if (downloadManager.getDownloadInfo(apk.getUrl()) != null) {
                         Toast.makeText(getContext(), "任务已经在下载列表中", Toast.LENGTH_SHORT).show();
                     } else {
-                        downloadManager.addTask(apk.getUrl(), null);
+                        GetRequest request = OkHttpUtils.get(apk.getUrl())//
+                                .headers("headerKey1", "headerValue1")//
+                                .headers("headerKey2", "headerValue2")//
+                                .params("paramKey1", "paramValue1")//
+                                .params("paramKey2", "paramValue2");
+                        downloadManager.addTask(apk.getUrl(), request, null);
                         AppCacheUtils.getInstance(getContext()).put(apk.getUrl(), apk);
                         download.setText("已在队列");
                         download.setEnabled(false);

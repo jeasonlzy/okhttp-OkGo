@@ -12,13 +12,10 @@ import com.lzy.okhttputils.https.HttpsUtils;
 import com.lzy.okhttputils.model.HttpHeaders;
 import com.lzy.okhttputils.model.HttpParams;
 import com.lzy.okhttputils.utils.HeaderParser;
-import com.lzy.okhttputils.utils.OkLogger;
+import com.lzy.okhttputils.utils.HttpUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,12 +26,9 @@ import javax.net.ssl.HostnameVerifier;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Cookie;
-import okhttp3.FormBody;
 import okhttp3.Headers;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -50,7 +44,9 @@ import okhttp3.Response;
  * ================================================
  */
 public abstract class BaseRequest<R extends BaseRequest> {
+
     protected String url;
+    protected String baseUrl;
     protected Object tag;
     protected long readTimeOut;
     protected long writeTimeOut;
@@ -71,6 +67,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
 
     public BaseRequest(String url) {
         this.url = url;
+        baseUrl = url;
         httpUrl = HttpUrl.parse(url);
         OkHttpUtils okHttpUtils = OkHttpUtils.getInstance();
         cacheManager = CacheManager.INSTANCE;
@@ -187,44 +184,8 @@ public abstract class BaseRequest<R extends BaseRequest> {
     }
 
     @SuppressWarnings("unchecked")
-    public R params(String key, File file) {
-        params.put(key, file);
-        return (R) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public R addFileParams(String key, List<File> files) {
-        params.putFileParams(key, files);
-        return (R) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public R addFileWrapperParams(String key, List<HttpParams.FileWrapper> fileWrappers) {
-        params.putFileWrapperParams(key, fileWrappers);
-        return (R) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public R params(String key, File file, String fileName) {
-        params.put(key, file, fileName);
-        return (R) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public R params(String key, File file, String fileName, MediaType contentType) {
-        params.put(key, file, fileName, contentType);
-        return (R) this;
-    }
-
-    @SuppressWarnings("unchecked")
     public R removeUrlParam(String key) {
         params.removeUrl(key);
-        return (R) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public R removeFileParam(String key) {
-        params.removeFile(key);
         return (R) this;
     }
 
@@ -272,6 +233,10 @@ public abstract class BaseRequest<R extends BaseRequest> {
         return url;
     }
 
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
     public Object getTag() {
         return tag;
     }
@@ -288,85 +253,8 @@ public abstract class BaseRequest<R extends BaseRequest> {
         return cacheTime;
     }
 
-    /** 将传递进来的参数拼接成 url */
-    protected String createUrlFromParams(String url, Map<String, List<String>> params) {
-        try {
-            StringBuilder sb = new StringBuilder();
-            sb.append(url);
-            if (url.indexOf('&') > 0 || url.indexOf('?') > 0) sb.append("&");
-            else sb.append("?");
-            for (Map.Entry<String, List<String>> urlParams : params.entrySet()) {
-                List<String> urlValues = urlParams.getValue();
-                for (String value : urlValues) {
-                    //对参数进行 utf-8 编码,防止头信息传中文
-                    String urlValue = URLEncoder.encode(value, "UTF-8");
-                    sb.append(urlParams.getKey()).append("=").append(urlValue).append("&");
-                }
-            }
-            sb.deleteCharAt(sb.length() - 1);
-            return sb.toString();
-        } catch (UnsupportedEncodingException e) {
-            OkLogger.e(e);
-        }
-        return url;
-    }
-
-    /** 通用的拼接请求头 */
-    protected Request.Builder appendHeaders(Request.Builder requestBuilder) {
-        Map<String, String> headerMap = headers.headersMap;
-        if (headerMap.isEmpty()) return requestBuilder;
-        Headers.Builder headerBuilder = new Headers.Builder();
-        try {
-            for (Map.Entry<String, String> entry : headerMap.entrySet()) {
-                //对头信息进行 utf-8 编码,防止头信息传中文,这里暂时不编码,可能出现未知问题,如有需要自行编码
-//                String headerValue = URLEncoder.encode(entry.getValue(), "UTF-8");
-                headerBuilder.add(entry.getKey(), entry.getValue());
-            }
-        } catch (Exception e) {
-            OkLogger.e(e);
-        }
-        requestBuilder.headers(headerBuilder.build());
-        return requestBuilder;
-    }
-
     /** 根据不同的请求方式和参数，生成不同的RequestBody */
     protected abstract RequestBody generateRequestBody();
-
-    /** 生成类是表单的请求体 */
-    protected RequestBody generateMultipartRequestBody() {
-        if (params.fileParamsMap.isEmpty()) {
-            //表单提交，没有文件
-            FormBody.Builder bodyBuilder = new FormBody.Builder();
-            for (String key : params.urlParamsMap.keySet()) {
-                List<String> urlValues = params.urlParamsMap.get(key);
-                for (String value : urlValues) {
-                    bodyBuilder.add(key, value);
-                }
-            }
-            return bodyBuilder.build();
-        } else {
-            //表单提交，有文件
-            MultipartBody.Builder multipartBodybuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
-            //拼接键值对
-            if (!params.urlParamsMap.isEmpty()) {
-                for (Map.Entry<String, List<String>> entry : params.urlParamsMap.entrySet()) {
-                    List<String> urlValues = entry.getValue();
-                    for (String value : urlValues) {
-                        multipartBodybuilder.addFormDataPart(entry.getKey(), value);
-                    }
-                }
-            }
-            //拼接文件
-            for (Map.Entry<String, List<HttpParams.FileWrapper>> entry : params.fileParamsMap.entrySet()) {
-                List<HttpParams.FileWrapper> fileValues = entry.getValue();
-                for (HttpParams.FileWrapper fileWrapper : fileValues) {
-                    RequestBody fileBody = RequestBody.create(fileWrapper.contentType, fileWrapper.file);
-                    multipartBodybuilder.addFormDataPart(entry.getKey(), fileWrapper.fileName, fileBody);
-                }
-            }
-            return multipartBodybuilder.build();
-        }
-    }
 
     /** 对请求body进行包装，用于回调上传进度 */
     protected RequestBody wrapRequestBody(RequestBody requestBody) {
@@ -434,7 +322,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
         mCallback.onBefore(this);
 
         //请求之前获取缓存信息，添加缓存头和其他的公共头
-        if (cacheKey == null) cacheKey = createUrlFromParams(url, params.urlParamsMap);
+        if (cacheKey == null) cacheKey = HttpUtils.createUrlFromParams(baseUrl, params.urlParamsMap);
         if (cacheMode == null) cacheMode = CacheMode.DEFAULT;
         final CacheEntity<T> cacheEntity = (CacheEntity<T>) cacheManager.get(cacheKey);
         //检查缓存的有效时间,判断缓存是否已经过期

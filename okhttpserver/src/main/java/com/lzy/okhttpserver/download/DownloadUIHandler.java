@@ -4,7 +4,7 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.lzy.okhttpserver.listener.DownloadListener;
-import com.lzy.okhttpserver.L;
+import com.lzy.okhttputils.utils.OkLogger;
 
 /**
  * ================================================
@@ -32,7 +32,7 @@ public class DownloadUIHandler extends Handler {
             DownloadListener listener = info.getListener();
             if (listener != null) executeListener(listener, info, errorMsg, e);
         } else {
-            L.e("DownloadUIHandler DownloadInfo null");
+            OkLogger.e("DownloadUIHandler DownloadInfo null");
         }
     }
 

@@ -10,7 +10,6 @@ import android.widget.ImageView;
 
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttputils.OkHttpUtils;
-import com.lzy.okhttputils.cache.CacheMode;
 import com.lzy.okhttputils.callback.BitmapCallback;
 import com.lzy.okhttputils.callback.StringCallback;
 
@@ -43,38 +42,13 @@ public class TestActivity extends AppCompatActivity {
     public void btn1(View view) {
         OkHttpUtils.post("http://jwgl.gdut.edu.cn/CheckCode.aspx")//
                 .tag(this)//
-//                .headers("Refer", "http://jwgl.gdut.edu.cn/default2.aspx")//
+                .headers("Refer", "http://jwgl.gdut.edu.cn/default2.aspx")//
                 .execute(new BitmapCallback() {
                     @Override
                     public void onResponse(boolean isFromCache, Bitmap bitmap, Request request, @Nullable Response response) {
                         imageView.setImageBitmap(bitmap);
                     }
                 });
-    }
-
-    @OnClick(R.id.btn2)
-    public void btn2(View view) {
-        String txtSecretCode = editText.getText().toString();
-        OkHttpUtils.post("http://jwgl.gdut.edu.cn/default2.aspx")//
-                .tag(this)//
-//                .headers("Refer", "http://jwgl.gdut.edu.cn/default2.aspx")//
-                .params("__VIEWSTATE", __VIEWSTATE)//
-                .params("txtUserName", "3115005074")//
-                .params("TextBox2", "sea8689030")//
-                .params("txtSecretCode", txtSecretCode)//
-                .params("RadioButtonList1", "学生")//
-                .params("Button1", "")//
-                .params("lbLanguage", "")//
-                .execute(new StringCallback() {
-                    @Override
-                    public void onResponse(boolean isFromCache, String s, Request request, @Nullable Response response) {
-                        System.out.println("onResponse");
-                    }
-                });
-    }
-
-    @OnClick(R.id.btn3)
-    public void btn3(View view) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -94,5 +68,53 @@ public class TestActivity extends AppCompatActivity {
                 }
             }
         }).start();
+    }
+
+    @OnClick(R.id.btn2)
+    public void btn2(View view) {
+        String txtSecretCode = editText.getText().toString();
+        OkHttpUtils.post("http://jwgl.gdut.edu.cn/default2.aspx")//
+                .tag(this)//
+                .headers("Refer", "http://jwgl.gdut.edu.cn/default2.aspx")//
+                .params("__VIEWSTATE", __VIEWSTATE)//
+                .params("txtUserName", "3115005074")//
+                .params("TextBox2", "sea8689030")//
+                .params("txtSecretCode", txtSecretCode)//
+                .params("RadioButtonList1", "学生")//
+                .params("Button1", "")//
+                .params("lbLanguage", "")//
+                .execute(new StringCallback() {
+                    @Override
+                    public void onResponse(boolean isFromCache, String s, Request request, @Nullable Response response) {
+                        System.out.println("onResponse");
+                    }
+                });
+    }
+
+    @OnClick(R.id.btn3)
+    public void btn3(View view) {
+        String url = "http://wenku.baidu.com/";
+        String dispositionHeader = "Content-Disposition:attachment;filenameFileName.txt";
+        String result = "";
+        String split = "filename=";
+        int indexOf = dispositionHeader.indexOf(split);
+        if (indexOf != -1) {
+            result = dispositionHeader.substring(indexOf + split.length(), dispositionHeader.length());
+        } else {
+            result = getUrlFileName(url);
+        }
+        System.out.println(result);
+    }
+
+    /** 通过 ‘？’ 和 ‘/’ 判断文件名 */
+    private static String getUrlFileName(String url) {
+        int index = url.lastIndexOf('?');
+        String filename;
+        if (index > 1) {
+            filename = url.substring(url.lastIndexOf('/') + 1, index);
+        } else {
+            filename = url.substring(url.lastIndexOf('/') + 1);
+        }
+        return filename;
     }
 }

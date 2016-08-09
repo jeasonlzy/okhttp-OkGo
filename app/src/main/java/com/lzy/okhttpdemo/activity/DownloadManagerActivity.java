@@ -13,15 +13,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.lzy.okhttpdemo.Bean.ApkInfo;
+import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.ui.NumberProgressBar;
 import com.lzy.okhttpdemo.utils.ApkUtils;
 import com.lzy.okhttpdemo.utils.AppCacheUtils;
 import com.lzy.okhttpserver.download.DownloadInfo;
-import com.lzy.okhttpserver.listener.DownloadListener;
 import com.lzy.okhttpserver.download.DownloadManager;
 import com.lzy.okhttpserver.download.DownloadService;
-import com.lzy.okhttpdemo.Bean.ApkInfo;
-import com.lzy.okhttpdemo.R;
+import com.lzy.okhttpserver.listener.DownloadListener;
 import com.lzy.okhttpserver.task.ExecutorWithListener;
 
 import java.io.File;
@@ -38,7 +38,7 @@ public class DownloadManagerActivity extends AppCompatActivity implements View.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download_manager);
 
-        downloadManager = DownloadService.getDownloadManager(this);
+        downloadManager = DownloadService.getDownloadManager();
         allTask = downloadManager.getAllTask();
         ListView listView = (ListView) findViewById(R.id.listView);
         adapter = new MyAdapter();
@@ -208,7 +208,7 @@ public class DownloadManagerActivity extends AppCompatActivity implements View.O
                     case DownloadManager.PAUSE:
                     case DownloadManager.NONE:
                     case DownloadManager.ERROR:
-                        downloadManager.addTask(downloadInfo.getUrl(), downloadInfo.getListener());
+                        downloadManager.addTask(downloadInfo.getUrl(), downloadInfo.getRequest(), downloadInfo.getListener());
                         break;
                     case DownloadManager.DOWNLOADING:
                         downloadManager.pauseTask(downloadInfo.getUrl());
@@ -247,8 +247,7 @@ public class DownloadManagerActivity extends AppCompatActivity implements View.O
 
         @Override
         public void onError(DownloadInfo downloadInfo, String errorMsg, Exception e) {
-            if (errorMsg != null)
-                Toast.makeText(DownloadManagerActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
+            if (errorMsg != null) Toast.makeText(DownloadManagerActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
         }
     }
 }

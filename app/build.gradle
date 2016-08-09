@@ -8,8 +8,8 @@ android {
         applicationId "com.lzy.okhttpdemo"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 18
-        versionName "1.6.7"
+        versionCode 20
+        versionName "1.7.0"
     }
     buildTypes {
         release {
@@ -36,14 +36,14 @@ task makeApk {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'org.jsoup:jsoup:1.9.2'
     compile 'com.github.bumptech.glide:glide:3.6.1'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.google.code.gson:gson:2.5'
-    compile 'com.lzy.widget:imagepicker:0.2.6'
+    compile 'com.lzy.widget:imagepicker:0.3.2'
     compile 'com.lzy.widget:view-core:0.2.1'
     //    compile 'com.lzy.net:okhttputils:+'
     //    compile 'com.lzy.net:okhttpserver:+'
     compile project(':okhttputils')
     compile project(':okhttpserver')
-    compile 'org.jsoup:jsoup:1.9.2'
 }

@@ -4,7 +4,6 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.lzy.okhttpserver.listener.UploadListener;
-import com.lzy.okhttpserver.L;
 
 /**
  * ================================================
@@ -32,8 +31,6 @@ public class UploadUIHandler extends Handler {
             }
             UploadListener listener = info.getListener();
             if (listener != null) executeListener(listener, info, t, errorMsg, e);
-        } else {
-            L.e("UploadUIHandler UploadInfo null");
         }
     }
 

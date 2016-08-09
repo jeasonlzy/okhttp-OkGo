@@ -12,13 +12,13 @@ import android.widget.Toast;
 
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
-import com.lzy.imagepicker.loader.GlideImageLoader;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.okhttpdemo.Bean.RequestInfo;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.callback.JsonCallback;
 import com.lzy.okhttpdemo.ui.NumberProgressBar;
 import com.lzy.okhttpdemo.utils.Constant;
+import com.lzy.okhttpdemo.utils.GlideImageLoader;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
 import com.lzy.okhttputils.request.BaseRequest;
