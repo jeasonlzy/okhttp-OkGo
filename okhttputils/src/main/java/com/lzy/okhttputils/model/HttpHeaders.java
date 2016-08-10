@@ -45,6 +45,7 @@ public class HttpHeaders implements Serializable {
     public static final String HEAD_KEY_CONTENT_TYPE = "Content-Type";
     public static final String HEAD_KEY_CONTENT_LENGTH = "Content-Length";
     public static final String HEAD_KEY_CONTENT_ENCODING = "Content-Encoding";
+    public static final String HEAD_KEY_CONTENT_DISPOSITION = "Content-Disposition";
     public static final String HEAD_KEY_CONTENT_RANGE = "Content-Range";
     public static final String HEAD_KEY_CACHE_CONTROL = "Cache-Control";
     public static final String HEAD_KEY_CONNECTION = "Connection";
@@ -99,6 +100,10 @@ public class HttpHeaders implements Serializable {
 
     public String remove(String key) {
         return headersMap.remove(key);
+    }
+
+    public void clear() {
+        headersMap.clear();
     }
 
     public Set<String> getNames() {

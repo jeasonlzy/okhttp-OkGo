@@ -2,6 +2,7 @@ package com.lzy.okhttpserver.utils;
 
 import android.text.TextUtils;
 
+import com.lzy.okhttputils.model.HttpHeaders;
 import com.lzy.okhttputils.utils.OkLogger;
 
 import java.io.File;
@@ -29,7 +30,7 @@ public class ServerUtils {
 
     /** 解析文件头 Content-Disposition:attachment;filename=FileName.txt */
     private static String getHeaderFileName(Response response) {
-        String dispositionHeader = response.header("Content-Disposition");
+        String dispositionHeader = response.header(HttpHeaders.HEAD_KEY_CONTENT_DISPOSITION);
         if (dispositionHeader != null) {
             String split = "filename=";
             int indexOf = dispositionHeader.indexOf(split);

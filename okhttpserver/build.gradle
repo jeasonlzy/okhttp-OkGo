@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 22
-        versionCode 10
-        versionName "1.0.0"
+        versionCode 11
+        versionName "1.0.1"
     }
     buildTypes {
         release {
@@ -20,7 +20,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-//    compile 'com.lzy.net:okhttputils:+'
+//    compile 'com.lzy.net:okhttputils:1.7.1'
     compile project(':okhttputils')
 }
 

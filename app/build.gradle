@@ -8,8 +8,8 @@ android {
         applicationId "com.lzy.okhttpdemo"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 20
-        versionName "1.7.0"
+        versionCode 21
+        versionName "1.7.1"
     }
     buildTypes {
         release {
@@ -42,8 +42,9 @@ dependencies {
     compile 'com.google.code.gson:gson:2.5'
     compile 'com.lzy.widget:imagepicker:0.3.2'
     compile 'com.lzy.widget:view-core:0.2.1'
-    //    compile 'com.lzy.net:okhttputils:+'
-    //    compile 'com.lzy.net:okhttpserver:+'
+
+//    compile 'com.lzy.net:okhttputils:+'
+//    compile 'com.lzy.net:okhttpserver:+'
     compile project(':okhttputils')
     compile project(':okhttpserver')
 }

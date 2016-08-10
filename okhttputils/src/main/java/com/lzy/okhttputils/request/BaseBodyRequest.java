@@ -70,13 +70,6 @@ public abstract class BaseBodyRequest<R extends BaseBodyRequest> extends BaseReq
         return (R) this;
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public R removeFileParam(String key) {
-        params.removeFile(key);
-        return (R) this;
-    }
-
     @Override
     protected RequestBody generateRequestBody() {
         if (requestBody != null) return requestBody;

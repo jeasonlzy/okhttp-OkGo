@@ -35,6 +35,15 @@ public class DownloadInfoDao extends DataBaseDao<DownloadInfo> {
         delete(DownloadInfo.TASK_KEY + "=?", new String[]{taskKey});
     }
 
+    public int update(DownloadInfo downloadInfo) {
+        return update(downloadInfo, DownloadInfo.TASK_KEY + "=?", new String[]{downloadInfo.getTaskKey()});
+    }
+
+    @Override
+    public List<DownloadInfo> getAll() {
+        return get(null, null, null, null, null, DownloadInfo.ID + " ASC", null);
+    }
+
     @Override
     public DownloadInfo parseCursorToBean(Cursor cursor) {
         return DownloadInfo.parseCursorToBean(cursor);

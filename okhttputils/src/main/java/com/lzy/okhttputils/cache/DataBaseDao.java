@@ -35,12 +35,12 @@ public abstract class DataBaseDao<T> {
     protected abstract String getTableName();
 
     /** 需要数据库中有个 _id 的字段 */
-    public final int count() {
+    public int count() {
         return countColumn("_id");
     }
 
     /** 返回一列的总记录数量 */
-    public final int countColumn(String columnName) {
+    public int countColumn(String columnName) {
         String sql = "SELECT COUNT(?) FROM " + getTableName();
         SQLiteDatabase database = openReader();
         Cursor cursor = null;
@@ -63,12 +63,12 @@ public abstract class DataBaseDao<T> {
     }
 
     /** 删除所有数据 */
-    public final int deleteAll() {
+    public int deleteAll() {
         return delete(null, null);
     }
 
     /** 根据条件删除数据库中的数据 */
-    public final int delete(String whereClause, String[] whereArgs) {
+    public int delete(String whereClause, String[] whereArgs) {
         SQLiteDatabase database = openWriter();
         try {
             database.beginTransaction();
@@ -85,17 +85,17 @@ public abstract class DataBaseDao<T> {
     }
 
     /** 查询并返回所有对象的集合 */
-    public final List<T> getAll() {
+    public List<T> getAll() {
         return get(null, null);
     }
 
     /** 按条件查询对象并返回集合 */
-    public final List<T> get(String selection, String[] selectionArgs) {
+    public List<T> get(String selection, String[] selectionArgs) {
         return get(null, selection, selectionArgs, null, null, null, null);
     }
 
     /** 按条件查询对象并返回集合 */
-    public final List<T> get(String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
+    public List<T> get(String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
         SQLiteDatabase database = openReader();
         List<T> list = new ArrayList<>();
         Cursor cursor = null;
@@ -115,9 +115,6 @@ public abstract class DataBaseDao<T> {
         return list;
     }
 
-    /** 将Cursor解析成对应的JavaBean */
-    public abstract T parseCursorToBean(Cursor cursor);
-
     /**
      * replace 语句有如下行为特点
      * 1. replace语句会删除原有的一条记录， 并且插入一条新的记录来替换原记录。
@@ -129,11 +126,9 @@ public abstract class DataBaseDao<T> {
      */
     public long replace(T t) {
         SQLiteDatabase database = openWriter();
-        ContentValues values = getContentValues(t);
-
         try {
             database.beginTransaction();
-            long id = database.replace(getTableName(), null, values);
+            long id = database.replace(getTableName(), null, getContentValues(t));
             database.setTransactionSuccessful();
             return id;
         } catch (Exception e) {
@@ -144,6 +139,43 @@ public abstract class DataBaseDao<T> {
         }
         return 0;
     }
+
+    /** 创建一条记录 */
+    public long create(T t) {
+        SQLiteDatabase database = openWriter();
+        try {
+            database.beginTransaction();
+            long id = database.insert(getTableName(), null, getContentValues(t));
+            database.setTransactionSuccessful();
+            return id;
+        } catch (Exception e) {
+            OkLogger.e(e);
+        } finally {
+            database.endTransaction();
+            closeDatabase(database, null);
+        }
+        return 0;
+    }
+
+    /** 更新一条记录 */
+    public int update(T t, String whereClause, String[] whereArgs) {
+        SQLiteDatabase database = openWriter();
+        try {
+            database.beginTransaction();
+            int count = database.update(getTableName(), getContentValues(t), whereClause, whereArgs);
+            database.setTransactionSuccessful();
+            return count;
+        } catch (Exception e) {
+            OkLogger.e(e);
+        } finally {
+            database.endTransaction();
+            closeDatabase(database, null);
+        }
+        return 0;
+    }
+
+    /** 将Cursor解析成对应的JavaBean */
+    public abstract T parseCursorToBean(Cursor cursor);
 
     /** 需要替换的列 */
     public abstract ContentValues getContentValues(T t);

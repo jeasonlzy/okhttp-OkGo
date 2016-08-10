@@ -132,6 +132,11 @@ public class HttpParams implements Serializable {
         fileParamsMap.remove(key);
     }
 
+    public void remove(String key) {
+        removeUrl(key);
+        removeFile(key);
+    }
+
     public void clear() {
         urlParamsMap.clear();
         fileParamsMap.clear();

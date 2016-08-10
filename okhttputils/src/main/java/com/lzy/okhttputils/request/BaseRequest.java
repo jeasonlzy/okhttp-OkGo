@@ -160,6 +160,12 @@ public abstract class BaseRequest<R extends BaseRequest> {
     }
 
     @SuppressWarnings("unchecked")
+    public R removeAllHeaders() {
+        headers.clear();
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
     public R params(HttpParams params) {
         this.params.put(params);
         return (R) this;
@@ -184,8 +190,14 @@ public abstract class BaseRequest<R extends BaseRequest> {
     }
 
     @SuppressWarnings("unchecked")
-    public R removeUrlParam(String key) {
-        params.removeUrl(key);
+    public R removeParam(String key) {
+        params.remove(key);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public R removeAllParams() {
+        params.clear();
         return (R) this;
     }
 
@@ -219,6 +231,20 @@ public abstract class BaseRequest<R extends BaseRequest> {
     public R addInterceptor(Interceptor interceptor) {
         interceptors.add(interceptor);
         return (R) this;
+    }
+
+    /** 默认返回第一个参数 */
+    public String getUrlParam(String key) {
+        List<String> values = params.urlParamsMap.get(key);
+        if (values != null && values.size() > 0) return values.get(0);
+        return null;
+    }
+
+    /** 默认返回第一个参数 */
+    public HttpParams.FileWrapper getFileParam(String key) {
+        List<HttpParams.FileWrapper> values = params.fileParamsMap.get(key);
+        if (values != null && values.size() > 0) return values.get(0);
+        return null;
     }
 
     public HttpParams getParams() {

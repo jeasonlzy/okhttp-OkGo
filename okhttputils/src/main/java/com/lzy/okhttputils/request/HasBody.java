@@ -31,6 +31,4 @@ public interface HasBody<R> {
     R params(String key, File file, String fileName);
 
     R params(String key, File file, String fileName, MediaType contentType);
-
-    R removeFileParam(String key);
 }

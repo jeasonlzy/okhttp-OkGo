@@ -68,6 +68,26 @@ public enum DownloadDBManager {
         }
     }
 
+    /** 创建下载任务 */
+    public void create(DownloadInfo entity) {
+        mLock.lock();
+        try {
+            infoDao.create(entity);
+        } finally {
+            mLock.unlock();
+        }
+    }
+
+    /** 更新下载任务 */
+    public void update(DownloadInfo entity) {
+        mLock.lock();
+        try {
+            infoDao.update(entity);
+        } finally {
+            mLock.unlock();
+        }
+    }
+
     /** 清空下载任务 */
     public boolean clear() {
         mLock.lock();

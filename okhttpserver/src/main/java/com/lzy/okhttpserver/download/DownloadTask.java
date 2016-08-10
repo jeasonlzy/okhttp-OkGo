@@ -196,7 +196,7 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
     }
 
     private void postMessage(String errorMsg, Exception e) {
-        DownloadDBManager.INSTANCE.replace(mDownloadInfo); //发消息前首先更新数据库
+        DownloadDBManager.INSTANCE.update(mDownloadInfo); //发消息前首先更新数据库
         DownloadUIHandler.MessageBean messageBean = new DownloadUIHandler.MessageBean();
         messageBean.downloadInfo = mDownloadInfo;
         messageBean.errorMsg = errorMsg;

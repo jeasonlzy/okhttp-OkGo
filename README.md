@@ -29,14 +29,14 @@
 
    对于Eclipse不能运行项目的，提供了apk供直接运行
    
-### 或者点击下载Demo [okhttputils_v1.7.0.apk](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/okhttputils_v1.7.0.apk?raw=true)。
+### 或者点击下载Demo [okhttputils_v1.7.1.apk](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/okhttputils_v1.7.1.apk?raw=true)。
 
    本项目Demo的网络请求是我自己的服务器，有时候可能不稳定，网速比较慢时请耐心等待。。
 
  * 对于Android Studio的用户，可以选择添加:
 ```java
-    compile 'com.lzy.net:okhttputils:1.7.0'  //可以单独使用，不需要依赖下方的扩展包
-	compile 'com.lzy.net:okhttpserver:1.0.0' //扩展了下载管理和上传管理，根据需要添加
+    compile 'com.lzy.net:okhttputils:1.7.1'  //可以单独使用，不需要依赖下方的扩展包
+	compile 'com.lzy.net:okhttpserver:1.0.1' //扩展了下载管理和上传管理，根据需要添加
 
 	compile 'com.lzy.net:okhttputils:+'  //版本号使用 + 可以自动引用最新版
 	compile 'com.lzy.net:okhttpserver:+' //版本号使用 + 可以自动引用最新版
@@ -48,8 +48,8 @@
 ```
 * 对于Eclipse的用户，可以选择添加 `/lib` 目录下的:
 ```java
-	okhttputils-1.7.0.jar
-	okhttpserver-1.0.0.jar
+	okhttputils-1.7.1.jar
+	okhttpserver-1.0.1.jar
 ```
 
 #### 其中的图片选择是我的另一个开源项目，完全仿微信的图片选择库，自带 矩形图片裁剪 和 圆形图片裁剪 功能，有需要的可以去下载使用，附上地址：[https://github.com/jeasonlzy0216/ImagePicker](https://github.com/jeasonlzy0216/ImagePicker)
@@ -163,14 +163,11 @@ callback一共有以下 7 个回调,除`onResponse`必须实现以外,其余均�
  * upProgress():上传进度的回调
  * downloadProgress():下载进度的回调
  
-> 无缓存模式,请求成功调用顺序(upProgress只在有请求体的情况下回调)
-> onBefore -> upProgress -> parseNetworkResponse -> downloadProgress -> onResponse -> onAfter
->  UI线程        UI线程              子线程                 UI线程            UI线程       UI线程
->  
-> 无缓存模式,请求失败调用顺序
-> onBefore -> onError -> onAfter
->  UI线程       UI线程     UI线程
- 
+#### 无缓存模式,请求成功调用顺序(upProgress只在有请求体的情况下回调)
+> onBefore(UI线程) -> upProgress(UI线程) -> parseNetworkResponse(子线程) -> downloadProgress(UI线程) -> onResponse(UI线程) -> onAfter(UI线程)
+
+#### 无缓存模式,请求失败调用顺序
+> onBefore(UI线程) -> onError(UI线程) -> onAfter(UI线程)
 
 ### 1.基本的网络请求
 ```java
