@@ -27,7 +27,9 @@
 > * 具体的下载地址和抓包配置方法，我这就不提供了，请自行百度或谷歌。
 
 
-   对于Eclipse不能运行项目的，提供了apk供直接运行，或者点击下载 [okhttputils_v1.x.x.apk](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/okhttputils_v1.6.7.apk?raw=true)。
+   对于Eclipse不能运行项目的，提供了apk供直接运行
+   
+### 或者点击下载Demo [okhttputils_v1.7.0.apk](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/okhttputils_v1.7.0.apk?raw=true)。
 
    本项目Demo的网络请求是我自己的服务器，有时候可能不稳定，网速比较慢时请耐心等待。。
 
@@ -59,7 +61,7 @@
  * 使用缓存时，如果不指定`cacheKey`，默认是用url带参数的全路径名为`cacheKey`。
  * 使用该网络框架时，必须要在 Application 中做初始化 `OkHttpUtils.init(this);`。
 
-## 3.目前支持
+## 3.OkHttpUtils 目前支持
 * 一般的 get,post,put,delete,head,options请求
 * 基于Post的大文本数据上传
 * 多文件和多参数统一的表单上传
@@ -74,9 +76,23 @@
 * 支持根据Tag取消请求
 * 支持自定义泛型Callback，自动根据泛型返回对象
 
-## 4.扩展功能
- * 统一的文件下载管理：默认使用的是 get 请求，同时下载数量为3个，支持断点下载，断点信息使用`ORMLite`数据库框架保存，默认下载路径`/storage/emulated/0/download`，下载路径和下载数量都可以在代码中配置，下载管理使用了服务提高线程优先级，避免后台下载时被系统回收
- * 统一的文件上传管理：默认使用的是 post 上传请求，该上传管理为简单管理，不支持断点续传和分片上传，只是简单的将所有上传任务使用线程池进行了统一管理，默认同时上传数量为1个
+## 4.OkHttpServer 扩展功能
+
+### 4.1 统一的文件下载管理(DownloadManager)：
+ * 结合OkHttpUtils的request进行网络请求,支持与OkHttpUtils保持相同的全局公共参数,同时支持请求传递参数
+ * 支持断点下载，支持突然断网,强杀进程后,断点依然有效
+ * 支持 下载 暂停 等待 停止 出错 完成 六种下载状态
+ * 所有下载任务按照taskKey区分,切记不同的任务必须使用不一样的key,否者断点会发生覆盖
+ * 相同的下载url地址如果使用不一样的taskKey,也会认为是两个下载任务
+ * 默认同时下载数量为3个，默认下载路径`/storage/emulated/0/download`，下载路径和下载数量都可以在代码中配置
+ * 下载文件名可以自己定义,也可以不传,框架自动解析响应头或者url地址获得文件名,如果都没获取到,使用default作为文件名
+ * 下载管理使用了服务提高线程优先级，避免后台下载时被系统回收
+ 
+### 4.2 统一的文件上传管理(UploadManager)
+ * 结合OkHttpUtils的request进行网络请求,支持与OkHttpUtils保持相同的全局公共参数,同时支持请求传递参数
+ * 上传只能使用`Post`, `Put`, `Delete`, `Options` 这四种请求,不支持`Get`, `Head`
+ * 该上传管理为简单管理，不支持断点续传或分片上传，只是简单的将所有上传任务使用线程池进行了统一管理
+ * 默认同时上传数量为1个,该数列可以在代码中配置修改
 
 ## 一、全局配置
 一般在 Aplication，或者基类中，只需要调用一次即可，可以配置调试开关，全局的超时时间，公共的请求头和请求参数等信息
@@ -139,13 +155,21 @@
 
 callback一共有以下 7 个回调,除`onResponse`必须实现以外,其余均可以按需实现,每个方法参数详细说明,请看下面第6点:
 
- * RequestInfo parseNetworkResponse(Response response) throws Exception:解析网络返回的数据回调
- * onBefore(BaseRequest request):网络请求真正执行前回调
- * onResponse(boolean isFromCache, RequestInfo requestInfo, Request request, @Nullable Response response):网络请求成功的回调
- * onError(boolean isFromCache, Call call, @Nullable Response response, @Nullable Exception e):网络请求失败的回调
- * onAfter(boolean isFromCache, @Nullable RequestInfo requestInfo, Call call, @Nullable Response response, @Nullable Exception e):网络请求结束的回调,无论成功失败一定会执行
- * upProgress(long currentSize, long totalSize, float progress, long networkSpeed):上传进度的回调
- * downloadProgress(long currentSize, long totalSize, float progress, long networkSpeed):下载进度的回调
+ * parseNetworkResponse():解析网络返回的数据回调
+ * onBefore():网络请求真正执行前回调
+ * onResponse():网络请求成功的回调
+ * onError():网络请求失败的回调
+ * onAfter():网络请求结束的回调,无论成功失败一定会执行
+ * upProgress():上传进度的回调
+ * downloadProgress():下载进度的回调
+ 
+> 无缓存模式,请求成功调用顺序(upProgress只在有请求体的情况下回调)
+> onBefore -> upProgress -> parseNetworkResponse -> downloadProgress -> onResponse -> onAfter
+>  UI线程        UI线程              子线程                 UI线程            UI线程       UI线程
+>  
+> 无缓存模式,请求失败调用顺序
+> onBefore -> onError -> onAfter
+>  UI线程       UI线程     UI线程
  
 
 ### 1.基本的网络请求
