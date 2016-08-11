@@ -59,6 +59,8 @@ public class HttpsActivity extends BaseActivity {
     @OnClick(R.id.btn_https_request)
     public void btn_https_request(View view) {
         try {
+
+            //证书可以在全局初始化的时候设置,不用每次请求设置一遍
             OkHttpUtils.get("https://kyfw.12306.cn/otn")//
                     .tag(this)//
                     .headers("Connection", "close")           //如果对于部分自签名的https访问不成功，需要加上该控制头
@@ -67,6 +69,9 @@ public class HttpsActivity extends BaseActivity {
 //                    .setCertificates(new Buffer().writeUtf8(CER_12306).inputStream())  //方法一：设置自签名网站的证书（选一种即可）
                     .setCertificates(getAssets().open("srca.cer"))                     //方法二：也可以设置https证书（选一种即可）
 //                    .setCertificates()                                                 //方法三：信任所有证书（选一种即可）
+
+                    //方法四：传入bks证书,密码,和cer证书,支持双向加密
+//                    .setCertificates(getAssets().open("aaaa.bks"), "123456", getAssets().open("srca.cer"))
                     .execute(new HttpsCallBack(this));
         } catch (Exception e) {
             e.printStackTrace();

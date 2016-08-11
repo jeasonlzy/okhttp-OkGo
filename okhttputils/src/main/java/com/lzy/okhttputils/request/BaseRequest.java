@@ -54,7 +54,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
     protected CacheMode cacheMode;
     protected String cacheKey;
     protected long cacheTime = CacheEntity.CACHE_NEVER_EXPIRE;      //默认缓存的超时时间
-    protected InputStream[] certificates;
+    private HttpsUtils.SSLParams sslParams;
     protected HostnameVerifier hostnameVerifier;
     protected HttpParams params = new HttpParams();                 //添加的param
     protected HttpHeaders headers = new HttpHeaders();              //添加的header
@@ -131,7 +131,13 @@ public abstract class BaseRequest<R extends BaseRequest> {
 
     @SuppressWarnings("unchecked")
     public R setCertificates(InputStream... certificates) {
-        this.certificates = certificates;
+        sslParams = HttpsUtils.getSslSocketFactory(null, null, certificates);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public R setCertificates(InputStream bksFile, String password, InputStream... certificates) {
+        sslParams = HttpsUtils.getSslSocketFactory(bksFile, password, certificates);
         return (R) this;
     }
 
@@ -304,7 +310,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
 
     /** 根据当前的请求参数，生成对应的 Call 任务 */
     protected Call generateCall(Request request) {
-        if (readTimeOut <= 0 && writeTimeOut <= 0 && connectTimeout <= 0 && certificates == null && userCookies.size() == 0) {
+        if (readTimeOut <= 0 && writeTimeOut <= 0 && connectTimeout <= 0 && sslParams == null && userCookies.size() == 0) {
             return OkHttpUtils.getInstance().getOkHttpClient().newCall(request);
         } else {
             OkHttpClient.Builder newClientBuilder = OkHttpUtils.getInstance().getOkHttpClient().newBuilder();
@@ -312,7 +318,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
             if (writeTimeOut > 0) newClientBuilder.writeTimeout(writeTimeOut, TimeUnit.MILLISECONDS);
             if (connectTimeout > 0) newClientBuilder.connectTimeout(connectTimeout, TimeUnit.MILLISECONDS);
             if (hostnameVerifier != null) newClientBuilder.hostnameVerifier(hostnameVerifier);
-            if (certificates != null) newClientBuilder.sslSocketFactory(HttpsUtils.getSslSocketFactory(certificates, null, null));
+            if (sslParams != null) newClientBuilder.sslSocketFactory(sslParams.sSLSocketFactory, sslParams.trustManager);
             if (userCookies.size() > 0) OkHttpUtils.getInstance().getCookieJar().addCookies(userCookies);
             if (interceptors.size() > 0) {
                 for (Interceptor interceptor : interceptors) {

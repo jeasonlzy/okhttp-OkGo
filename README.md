@@ -29,13 +29,13 @@
 
    对于Eclipse不能运行项目的，提供了apk供直接运行
    
-### 或者点击下载Demo [okhttputils_v1.7.1.apk](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/okhttputils_v1.7.1.apk?raw=true)。
+### 或者点击下载Demo [okhttputils_v1.7.2.apk](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/okhttputils_v1.7.2.apk?raw=true)。
 
    本项目Demo的网络请求是我自己的服务器，有时候可能不稳定，网速比较慢时请耐心等待。。
 
  * 对于Android Studio的用户，可以选择添加:
 ```java
-    compile 'com.lzy.net:okhttputils:1.7.1'  //可以单独使用，不需要依赖下方的扩展包
+    compile 'com.lzy.net:okhttputils:1.7.2'  //可以单独使用，不需要依赖下方的扩展包
 	compile 'com.lzy.net:okhttpserver:1.0.1' //扩展了下载管理和上传管理，根据需要添加
 
 	compile 'com.lzy.net:okhttputils:+'  //版本号使用 + 可以自动引用最新版
@@ -46,16 +46,18 @@
     compile project(':okhttputils')
 	compile project(':okhttpserver')
 ```
-* 对于Eclipse的用户，可以选择添加 `/lib` 目录下的:
+* 对于Eclipse的用户，可以选择添加 `/jar` 目录下的:
 ```java
-	okhttputils-1.7.1.jar
+	okhttputils-1.7.2.jar
 	okhttpserver-1.0.1.jar
 ```
+* 如果是以jar包的形式引入`okhttpserver`,需要在清单文件中额外注册一个服务`<service android:name="com.lzy.okhttpserver.download.DownloadService"/>`
+* 如果只是用了`okhttputils`的jar,没有使用`okhttpserver`的jar,那么不需要注册上面的服务
 
 #### 其中的图片选择是我的另一个开源项目，完全仿微信的图片选择库，自带 矩形图片裁剪 和 圆形图片裁剪 功能，有需要的可以去下载使用，附上地址：[https://github.com/jeasonlzy0216/ImagePicker](https://github.com/jeasonlzy0216/ImagePicker)
 	
 ## 2.使用注意事项
- * `okhttputils`使用的`okhttp`的版本是最新的 3.2.0 版本，和以前的 2.x 的版本可能会存在冲突。
+ * `okhttputils`使用的`okhttp`的版本是最新的 3.4.1 版本，和以前的 2.x 的版本可能会存在冲突。
  * `okhttpserver`是对`okhttputils`的扩展，统一了下载管理和上传管理，对项目有需要做统一下载的可以考虑使用该扩展，不需要的可以直接使用`okhttputils`即可。
  * 对于缓存模式使用，需要与返回对象相关的所有`javaBean`必须实现`Serializable`接口，否者会报`NotSerializableException`。
  * 使用缓存时，如果不指定`cacheKey`，默认是用url带参数的全路径名为`cacheKey`。
@@ -72,7 +74,7 @@
 * 支持304缓存协议，扩展四种本地缓存模式,并且支持缓存时间控制
 * 支持301、302重定向
 * 支持链式调用
-* 支持可信证书和自签名证书的https的访问
+* 支持可信证书和自签名证书的https的访问,支持双向加密
 * 支持根据Tag取消请求
 * 支持自定义泛型Callback，自动根据泛型返回对象
 
@@ -113,28 +115,36 @@
         //必须调用初始化
         OkHttpUtils.init(this);
 
-        //以下都不是必须的，根据需要自行选择,一般来说只需要 debug,缓存相关,cookie相关的 就可以了
-        OkHttpUtils.getInstance()
+        //以下设置的所有参数是全局参数,同样的参数可以在请求的时候再设置一遍,那么对于该请求来讲,请求中的参数会覆盖全局参数
+        //好处是全局参数统一,特定请求可以特别定制参数
+        try {
+            //以下都不是必须的，根据需要自行选择,一般来说只需要 debug,缓存相关,cookie相关的 就可以了
+            OkHttpUtils.getInstance()
 
-                //打开该调试开关,控制台会使用 红色error 级别打印log,并不是错误,是为了显眼,不需要就不要加入该行
-                .debug("OkHttpUtils")
+                    //打开该调试开关,控制台会使用 红色error 级别打印log,并不是错误,是为了显眼,不需要就不要加入该行
+                    .debug("OkHttpUtils")
 
-                //如果使用默认的 60秒,以下三行也不需要传
-                .setConnectTimeout(OkHttpUtils.DEFAULT_MILLISECONDS)               //全局的连接超时时间
-                .setReadTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS)                  //全局的读取超时时间
-                .setWriteTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS)                 //全局的写入超时时间
+                    //如果使用默认的 60秒,以下三行也不需要传
+                    .setConnectTimeout(OkHttpUtils.DEFAULT_MILLISECONDS)  //全局的连接超时时间
+                    .setReadTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS)     //全局的读取超时时间
+                    .setWriteTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS)    //全局的写入超时时间
 
-                //可以全局统一设置缓存模式,默认就是Default,可以不传,具体其他模式看 github 介绍 https://github.com/jeasonlzy0216/
-                .setCacheMode(CacheMode.DEFAULT)
+                    //可以全局统一设置缓存模式,默认就是Default,可以不传,具体其他模式看 github 介绍 https://github.com/jeasonlzy0216/
+                    .setCacheMode(CacheMode.DEFAULT)
 
-                //可以全局统一设置缓存时间,默认永不过期,具体使用方法看 github 介绍
-                .setCacheTime(CacheEntity.CACHE_NEVER_EXPIRE)
+                    //可以全局统一设置缓存时间,默认永不过期,具体使用方法看 github 介绍
+                    .setCacheTime(CacheEntity.CACHE_NEVER_EXPIRE)
 
-                //如果不想让框架管理cookie,以下不需要
-//                .setCookieStore(new MemoryCookieStore())                           //cookie使用内存缓存（app退出后，cookie消失）
-                .setCookieStore(new PersistentCookieStore())                       //cookie持久化存储，如果cookie不过期，则一直有效
+                    //如果不想让框架管理cookie,以下不需要
+//                .setCookieStore(new MemoryCookieStore())                //cookie使用内存缓存（app退出后，cookie消失）
+                    .setCookieStore(new PersistentCookieStore())          //cookie持久化存储，如果cookie不过期，则一直有效
 
-                //可以添加全局拦截器,不会用的千万不要传,错误写法直接导致任何回调不执行
+                    //可以设置https的证书,以下几种方案根据需要自己设置,不需要不用设置
+//                    .setCertificates()                                  //方法一：信任所有证书
+//                    .setCertificates(getAssets().open("srca.cer"))      //方法二：也可以自己设置https证书
+//                    .setCertificates(getAssets().open("aaaa.bks"), "123456", getAssets().open("srca.cer"))//方法三：传入bks证书,密码,和cer证书,支持双向加密
+
+                    //可以添加全局拦截器,不会用的千万不要传,错误写法直接导致任何回调不执行
 //                .addInterceptor(new Interceptor() {
 //                    @Override
 //                    public Response intercept(Chain chain) throws IOException {
@@ -142,10 +152,12 @@
 //                    }
 //                })
 
-                //这两行同上,不需要就不要传
-                .addCommonHeaders(headers)                                         //设置全局公共头
-                .addCommonParams(params);                                          //设置全局公共参数
-
+                    //这两行同上,不需要就不要传
+                    .addCommonHeaders(headers)                                         //设置全局公共头
+                    .addCommonParams(params);                                          //设置全局公共参数
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 ```
 
@@ -255,7 +267,20 @@ OkHttpUtils.post(Urls.URL_TEXT_UPLOAD)//
 	});
 ```
 
-### 6.请求功能的所有配置讲解
+### 6.https请求(证书可以在全局初始化的时候设置,不用每次请求设置一遍)
+```java
+OkHttpUtils.get("https://kyfw.12306.cn/otn")//
+        .tag(this)//
+        .headers("Connection", "close")           //如果对于部分自签名的https访问不成功，需要加上该控制头
+        .headers("header1", "headerValue1")//
+        .params("param1", "paramValue1")//
+//      .setCertificates()                             //方法一：信任所有证书
+//      .setCertificates(getAssets().open("srca.cer")) //方法二：也可以设置https证书
+        //方法三：传入bks证书,密码,和cer证书,支持双向加密
+//      .setCertificates(getAssets().open("aaaa.bks"), "123456", getAssets().open("srca.cer"))
+        .execute(new HttpsCallBack(this));
+```
+### 7.请求功能的所有配置讲解
 
 以下代码包含了以下内容：
 
@@ -348,7 +373,7 @@ OkHttpUtils.get(Urls.URL_METHOD) // 请求方式和请求url, get请求不需要
 		}
     });
 ```
-### 7.取消请求
+### 8.取消请求
 每个请求前都设置了一个参数`tag`，取消则通过` OkHttpUtils.cancel(tag)`执行。
 例如：在Activity中，当Activity销毁取消请求，可以在onDestory里面统一取消。
 ```java
@@ -360,7 +385,7 @@ OkHttpUtils.get(Urls.URL_METHOD) // 请求方式和请求url, get请求不需要
 	    OkHttpUtils.getInstance().cancelTag(this);
 	}
 ```
-### 8.同步的请求
+### 9.同步的请求
 execute方法不传入callback即为同步的请求，返回`Response`对象，需要自己解析
 ```java
 	Response response = OkHttpUtils.get("http://www.baidu.com")//
@@ -369,7 +394,7 @@ execute方法不传入callback即为同步的请求，返回`Response`对象，�
 					                .params("bbb", "222")
 									.execute();
 ```
-### 9.参数的顺序
+### 10.参数的顺序
 添加header和param的方法各有三个地方,在提交的时候,他们是有顺序的,如果对提交顺序有需要的话,请注意这里
 
  * 第一个地方,全局初始化时,使用`OkHttpUtils.getInstance().addCommonHeaders()`,`OkHttpUtils.getInstance().addCommonParams()` 添加
@@ -461,7 +486,23 @@ execute方法不传入callback即为同步的请求，返回`Response`对象，�
 
 ###无论对于哪种缓存模式，都可以指定一个`cacheKey`，建议针对不同需要缓存的页面设置不同的`cacheKey`，如果相同，会导致数据覆盖。
 
-
-
+## 五、混淆
+```java
+    #okhttputils
+    -dontwarn com.lzy.okhttputils.**
+    -keep class com.lzy.okhttputils.**{*;}
+    
+    #okhttpserver
+    -dontwarn com.lzy.okhttpserver.**
+    -keep class com.lzy.okhttpserver.**{*;}
+    
+    #okhttp
+    -dontwarn okhttp3.**
+    -keep class okhttp3.**{*;}
+    
+    #okio
+    -dontwarn okio.**
+    -keep class okio.**{*;}
+```
 
 

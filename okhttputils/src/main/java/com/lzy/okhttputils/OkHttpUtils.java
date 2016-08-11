@@ -31,7 +31,6 @@ import javax.net.ssl.SSLSession;
 import okhttp3.Call;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okio.Buffer;
 
 /**
  * ================================================
@@ -44,6 +43,7 @@ import okio.Buffer;
  */
 public class OkHttpUtils {
     public static final int DEFAULT_MILLISECONDS = 60000; //默认的超时时间
+
     private static OkHttpUtils mInstance;                 //单例
     private Handler mDelivery;                            //用于在主线程执行的调度器
     private OkHttpClient.Builder okHttpClientBuilder;     //ok请求的客户端
@@ -164,16 +164,15 @@ public class OkHttpUtils {
 
     /** https的全局自签名证书 */
     public OkHttpUtils setCertificates(InputStream... certificates) {
-        okHttpClientBuilder.sslSocketFactory(HttpsUtils.getSslSocketFactory(certificates, null, null));
+        HttpsUtils.SSLParams sslParams = HttpsUtils.getSslSocketFactory(null, null, certificates);
+        okHttpClientBuilder.sslSocketFactory(sslParams.sSLSocketFactory, sslParams.trustManager);
         return this;
     }
 
-    /** https的全局自签名证书 */
-    public OkHttpUtils setCertificates(String... certificates) {
-        for (String certificate : certificates) {
-            InputStream inputStream = new Buffer().writeUtf8(certificate).inputStream();
-            setCertificates(inputStream);
-        }
+    /** https双向认证证书 */
+    public OkHttpUtils setCertificates(InputStream bksFile, String password, InputStream... certificates) {
+        HttpsUtils.SSLParams sslParams = HttpsUtils.getSslSocketFactory(bksFile, password, certificates);
+        okHttpClientBuilder.sslSocketFactory(sslParams.sSLSocketFactory, sslParams.trustManager);
         return this;
     }
 
