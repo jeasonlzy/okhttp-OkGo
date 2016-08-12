@@ -3,7 +3,6 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
-
     defaultConfig {
         applicationId "com.lzy.okhttpdemo"
         minSdkVersion 14
@@ -11,10 +10,36 @@ android {
         versionCode 21
         versionName "1.7.2"
     }
+    signingConfigs {
+        appkey {
+            keyAlias 'okhttputils'
+            keyPassword '111111'
+            storeFile file('/Users/jeasonlzy/Android/github/OkHttpUtils/appkey.jks')
+            storePassword '111111'
+        }
+    }
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable false
+            signingConfig signingConfigs.appkey
+        }
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable true
+            signingConfig signingConfigs.appkey
+        }
+    }
+    productFlavors {
+        miui {
+            proguardFile '/Users/jeasonlzy/Android/github/OkHttpUtils/app/proguard-rules.pro'
+            signingConfig signingConfigs.appkey
+        }
+        qihu360 {
+            proguardFile '/Users/jeasonlzy/Android/github/OkHttpUtils/app/proguard-rules.pro'
+            signingConfig signingConfigs.appkey
         }
     }
 }
@@ -36,15 +61,13 @@ task makeApk {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'org.jsoup:jsoup:1.9.2'
     compile 'com.github.bumptech.glide:glide:3.6.1'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.google.code.gson:gson:2.5'
     compile 'com.lzy.widget:imagepicker:0.3.2'
     compile 'com.lzy.widget:view-core:0.2.1'
-
-//    compile 'com.lzy.net:okhttputils:+'
-//    compile 'com.lzy.net:okhttpserver:+'
+    //    compile 'com.lzy.net:okhttputils:+'
+    //    compile 'com.lzy.net:okhttpserver:+'
     compile project(':okhttputils')
     compile project(':okhttpserver')
 }

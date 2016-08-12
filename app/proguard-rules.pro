@@ -16,6 +16,14 @@
 #   public *;
 #}
 
+#---------------------------------1.实体类---------------------------------
+
+-keep class com.lzy.okhttpdemo.Bean.** { *; }
+
+#-------------------------------------------------------------------------
+
+#---------------------------------2.第三方包-------------------------------
+
 #okhttputils
 -dontwarn com.lzy.okhttputils.**
 -keep class com.lzy.okhttputils.**{*;}
@@ -32,21 +40,101 @@
 -dontwarn okio.**
 -keep class okio.**{*;}
 
-#---------------------------------基本指令区----------------------------------
+#imagepicker
+-dontwarn com.lzy.imagepicker.**
+-keep class com.lzy.imagepicker.**{*;}
+
+#imagepicker
+-dontwarn com.lzy.widget.**
+-keep class com.lzy.widget.**{*;}
+
+#butterknife
+-keep class butterknife.** { *; }
+-dontwarn butterknife.internal.**
+-keep class **$$ViewBinder { *; }
+
+-keepclasseswithmembernames class * {
+    @butterknife.* <fields>;
+}
+
+-keepclasseswithmembernames class * {
+    @butterknife.* <methods>;
+}
+
+#gson
+-keep class sun.misc.Unsafe { *; }
+-keep class com.google.gson.stream.**{ *; }
+-keep class com.google.gson.examples.android.model.**{ *; }
+-keep class com.google.gson.**{ *;}
+
+#eventBus
+-keepattributes *Annotation*
+-keepclassmembers class ** {
+    @org.greenrobot.eventbus.Subscribe <methods>;
+}
+-keep enum org.greenrobot.eventbus.ThreadMode { *; }
+-keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
+    <init>(java.lang.Throwable);
+}
+-keepclassmembers class ** {
+    public void onEvent*(**);
+}
+
+#glide
+-keep public class * implements com.bumptech.glide.module.GlideModule
+-keep public enum com.bumptech.glide.load.resource.bitmap.ImageHeaderParser$** {
+  **[] $VALUES;
+  public *;
+}
+
+#log4j
+#-libraryjars log4j-1.2.17.jar
+-dontwarn org.apache.log4j.**
+-keep class  org.apache.log4j.** { *;}
+
+#------------------------------------------------------------------------
+
+#---------------------------------3.与js互相调用的类------------------------
+
+#-keepclasseswithmembers class com.demo.login.bean.ui.MainActivity$JSInterface {
+#      <methods>;
+#}
+
+#------------------------------------------------------------------------
+
+#---------------------------------4.反射相关的类和方法-----------------------
+
+
+#------------------------------------------------------------------------
+
+#---------------------------------基本指令区-------------------------------
+#代码混淆的压缩比例，值在0-7之间
 -optimizationpasses 5
+#混淆后类名都为小写
 -dontusemixedcaseclassnames
+#指定不去忽略非公共的库的类
 -dontskipnonpubliclibraryclasses
+#指定不去忽略非公共的库的类的成员
 -dontskipnonpubliclibraryclassmembers
+#不做预校验的操作
 -dontpreverify
+#生成原类名和混淆后的类名的映射文件
 -verbose
 -printmapping proguardMapping.txt
+#指定混淆是采用的算法
 -optimizations !code/simplification/cast,!field/*,!class/merging/*
+#不混淆Annotation
 -keepattributes *Annotation*,InnerClasses
+#不混淆泛型
 -keepattributes Signature
+#抛出异常时保留代码行号
 -keepattributes SourceFile,LineNumberTable
-#----------------------------------------------------------------------------
+#------------------------------------------------------------------------
 
-#---------------------------------默认保留区---------------------------------
+#-keep class XXXX   保留类名不变，也就是类名不混淆，而类中的成员名不保证。当然也可以是继承XXX类的所有类名不混淆
+#-keepclasseswithmembers class XXXX 保留类名和成员名,当然也可以是类中特定方法
+
+#---------------------------------默认保留区-------------------------------
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application
 -keep public class * extends android.app.Service
@@ -56,7 +144,17 @@
 -keep public class * extends android.preference.Preference
 -keep public class * extends android.view.View
 -keep public class com.android.vending.licensing.ILicensingService
+-keep public class * extends android.support.**
+-keep public class * extends android.app.Fragment
+-dontwarn android.support.**
 -keep class android.support.** {*;}
+
+#自定义控件不要混淆
+-keep public class * extends android.view.View {*;}
+#adapter不能混淆
+-keep public class * extends android.widget.BaseAdapter {*;}
+#CusorAdapter不混淆
+-keep public class * extends android.widget.CusorAdapter{*;}
 
 -keepclasseswithmembernames class * {
     native <methods>;
@@ -82,17 +180,13 @@
 -keep class * implements android.os.Parcelable {
   public static final android.os.Parcelable$Creator *;
 }
--keepclassmembers class * implements java.io.Serializable {
-    static final long serialVersionUID;
-    private static final java.io.ObjectStreamField[] serialPersistentFields;
-    private void writeObject(java.io.ObjectOutputStream);
-    private void readObject(java.io.ObjectInputStream);
-    java.lang.Object writeReplace();
-    java.lang.Object readResolve();
+-keep class * extends java.util.ListResourceBundle {
+    protected Object[][] getContents();
 }
--keep class **.R$* {
- *;
-}
+-keepnames class * implements java.io.Serializable
+-keepclassmembers class * implements java.io.Serializable {*;}
+
+-keep class **.R$* {*;}
 -keepclassmembers class * {
     void *(**On*Event);
 }
