@@ -68,19 +68,12 @@ artifacts {
     archives sourcesJar
 }
 
-//定义一个函数，target是生成jar包的文件名
-def makeJar(String target) {
-    exec {
-        executable "jar"   //调用jar
-        args "cvf", target
-        args "-C", "build/intermediates/classes/release"
-        args "", "."
-    }
-}
-
-//新建一个task,名为buildLib,依赖build(build是一个自带的task)
-task buildLib(dependsOn: build) {
-    makeJar("../jar/okhttpserver-" + version + ".jar")
+// 生成jar包
+task releaseJar(type: Copy) {
+    from( 'build/intermediates/bundles/release')
+    into( '../jar')
+    include('classes.jar')
+    rename('classes.jar', 'okhttpserver-' + version + '.jar')
 }
 
 Properties properties = new Properties()
