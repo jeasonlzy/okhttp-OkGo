@@ -14,7 +14,7 @@ android {
         appkey {
             keyAlias 'okhttputils'
             keyPassword '111111'
-            storeFile file('/Users/jeasonlzy/Android/github/OkHttpUtils/appkey.jks')
+            storeFile file('../appkey.jks')
             storePassword '111111'
         }
     }
