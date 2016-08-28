@@ -41,7 +41,7 @@ public abstract class BitmapDialogCallback extends BitmapCallback {
     }
 
     @Override
-    public void onAfter(boolean isFromCache, @Nullable Bitmap bitmap, Call call, @Nullable Response response, @Nullable Exception e) {
+    public void onAfter(@Nullable Bitmap bitmap, Call call, @Nullable Response response, @Nullable Exception e) {
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
         }

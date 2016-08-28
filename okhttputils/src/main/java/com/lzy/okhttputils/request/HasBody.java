@@ -31,4 +31,10 @@ public interface HasBody<R> {
     R params(String key, File file, String fileName);
 
     R params(String key, File file, String fileName, MediaType contentType);
+
+    R upString(String string);
+
+    R upJson(String json);
+
+    R upBytes(byte[] bs);
 }

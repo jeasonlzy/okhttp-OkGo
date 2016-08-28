@@ -128,15 +128,15 @@ public class FormUploadActivity extends BaseActivity {
         }
 
         @Override
-        public void onResponse(boolean isFromCache, T s, Request request, Response response) {
-            handleResponse(isFromCache, s, request, response);
+        public void onSuccess(T s, Request request, Response response) {
+            handleResponse(s, request, response);
             btnFormUpload.setText("上传完成");
         }
 
         @Override
-        public void onError(boolean isFromCache, Call call, @Nullable Response response, @Nullable Exception e) {
-            super.onError(isFromCache, call, response, e);
-            handleError(isFromCache, call, response);
+        public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+            super.onError(call, response, e);
+            handleError(call, response);
             btnFormUpload.setText("上传出错");
         }
 

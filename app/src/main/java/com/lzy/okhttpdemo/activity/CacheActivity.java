@@ -127,14 +127,29 @@ public class CacheActivity extends BaseActivity {
         }
 
         @Override
-        public void onResponse(boolean isFromCache, RequestInfo requestInfo, Request request, Response response) {
-            handleResponse(isFromCache, requestInfo, request, response);
+        public void onSuccess(RequestInfo requestInfo, Request request, Response response) {
+            requestState.setText("请求成功  是否来自缓存：false  请求方式：" + request.method() + "\n" + "url：" + request.url());
+            handleResponse(requestInfo, request, response);
         }
 
         @Override
-        public void onError(boolean isFromCache, Call call, @Nullable Response response, @Nullable Exception e) {
-            super.onError(isFromCache, call, response, e);
-            handleError(isFromCache, call, response);
+        public void onCacheSuccess(RequestInfo requestInfo, Request request, @Nullable Response response) {
+            requestState.setText("请求成功  是否来自缓存：true  请求方式：" + request.method() + "\n" + "url：" + request.url());
+            handleResponse(requestInfo, request, response);
+            responseHeader.setText("响应头可以根据 cacheKey 获取到，在此不演示！");
+        }
+
+        @Override
+        public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+            super.onError(call, response, e);
+            requestState.setText("请求失败  是否来自缓存：false  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
+            handleError(call, response);
+        }
+
+        @Override
+        public void onCacheError(Call call, @Nullable Response response, @Nullable Exception e) {
+            requestState.setText("请求失败  是否来自缓存：true  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
+            handleError(call, response);
         }
     }
 }

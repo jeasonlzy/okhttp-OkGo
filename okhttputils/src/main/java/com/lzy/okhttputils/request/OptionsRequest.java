@@ -1,5 +1,6 @@
 package com.lzy.okhttputils.request;
 
+import com.lzy.okhttputils.model.HttpHeaders;
 import com.lzy.okhttputils.utils.HttpUtils;
 import com.lzy.okhttputils.utils.OkLogger;
 
@@ -26,7 +27,7 @@ public class OptionsRequest extends BaseBodyRequest<OptionsRequest> {
     @Override
     protected Request generateRequest(RequestBody requestBody) {
         try {
-            headers.put("Content-Length", String.valueOf(requestBody.contentLength()));
+            headers.put(HttpHeaders.HEAD_KEY_CONTENT_LENGTH, String.valueOf(requestBody.contentLength()));
         } catch (IOException e) {
             OkLogger.e(e);
         }

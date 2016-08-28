@@ -153,7 +153,7 @@ public class OkhttpFragment extends Fragment implements AdapterView.OnItemClickL
 //            }
 //
 //            @Override
-//            public void onResponse(Call call, Response response) throws IOException {
+//            public void onSuccess(Call call, Response response) throws IOException {
 //                System.out.println("-----" + response.body().string());
 //            }
 //        });
@@ -171,7 +171,7 @@ public class OkhttpFragment extends Fragment implements AdapterView.OnItemClickL
 //            }
 //
 //            @Override
-//            public void onResponse(Call call, Response response) throws IOException {
+//            public void onSuccess(Call call, Response response) throws IOException {
 //                System.out.println("-----" + response.body().string());
 //            }
 //        });

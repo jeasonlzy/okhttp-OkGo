@@ -11,7 +11,6 @@ import com.lzy.okhttpdemo.callback.BitmapDialogCallback;
 import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
-import com.lzy.okhttputils.callback.BitmapCallback;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -46,15 +45,15 @@ public class BitmapRequestActivity extends BaseActivity {
                 .params("param1", "paramValue1")//
                 .execute(new BitmapDialogCallback(this) {
                     @Override
-                    public void onResponse(boolean isFromCache, Bitmap bitmap, Request request, Response response) {
-                        handleResponse(isFromCache, bitmap, request, response);
+                    public void onSuccess(Bitmap bitmap, Request request, Response response) {
+                        handleResponse(bitmap, request, response);
                         imageView.setImageBitmap(bitmap);
                     }
 
                     @Override
-                    public void onError(boolean isFromCache, Call call, @Nullable Response response, @Nullable Exception e) {
-                        super.onError(isFromCache, call, response, e);
-                        handleError(isFromCache, call, response);
+                    public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+                        super.onError(call, response, e);
+                        handleError(call, response);
                     }
                 });
     }

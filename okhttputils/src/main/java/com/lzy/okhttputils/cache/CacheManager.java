@@ -31,6 +31,12 @@ public enum CacheManager {
         }
     }
 
+    /** 返回带泛型的对象,注意必须确保泛型和对象对应才不会发生类型转换异常 */
+    @SuppressWarnings("unchecked")
+    public <T> CacheEntity<T> get(String key, Class<T> clazz) {
+        return (CacheEntity<T>) get(key);
+    }
+
     /**
      * 获取所有缓存
      *
@@ -52,11 +58,12 @@ public enum CacheManager {
      * @param entity 需要替换的的缓存
      * @return 被替换的缓存
      */
-    public CacheEntity<Object> replace(String key, CacheEntity<Object> entity) {
+    @SuppressWarnings("unchecked")
+    public <T> CacheEntity<T> replace(String key, CacheEntity<T> entity) {
         mLock.lock();
         try {
             entity.setKey(key);
-            cacheDao.replace(entity);
+            cacheDao.replace((CacheEntity<Object>) entity);
             return entity;
         } finally {
             mLock.unlock();

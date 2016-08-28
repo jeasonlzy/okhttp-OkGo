@@ -118,7 +118,7 @@ public class UploadTask<T> extends PriorityAsyncTask<Void, UploadInfo, UploadInf
         }
 
         @Override
-        public void onResponse(boolean isFromCache, T t, Request request, Response response) {
+        public void onSuccess(T t, Request request, Response response) {
         }
     }
 

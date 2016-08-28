@@ -25,6 +25,10 @@ public class HttpParams implements Serializable {
 
     private static final long serialVersionUID = 7369819159227055048L;
 
+    public static final MediaType MEDIA_TYPE_PLAIN = MediaType.parse("text/plain;charset=utf-8");
+    public static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json;charset=utf-8");
+    public static final MediaType MEDIA_TYPE_STREAM = MediaType.parse("application/octet-stream");
+
     /** 普通的键值对参数 */
     public LinkedHashMap<String, List<String>> urlParamsMap;
 
@@ -144,6 +148,7 @@ public class HttpParams implements Serializable {
 
     private MediaType guessMimeType(String path) {
         FileNameMap fileNameMap = URLConnection.getFileNameMap();
+        path = path.replace("#", "");   //解决文件名中含有#号异常的问题
         String contentType = fileNameMap.getContentTypeFor(path);
         if (contentType == null) {
             contentType = "application/octet-stream";

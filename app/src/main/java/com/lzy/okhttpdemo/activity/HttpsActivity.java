@@ -85,14 +85,14 @@ public class HttpsActivity extends BaseActivity {
         }
 
         @Override
-        public void onResponse(boolean isFromCache, String data, Request request, Response response) {
-            handleResponse(isFromCache, data, request, response);
+        public void onSuccess(String data, Request request, Response response) {
+            handleResponse(data, request, response);
         }
 
         @Override
-        public void onError(boolean isFromCache, Call call, @Nullable Response response, @Nullable Exception e) {
-            super.onError(isFromCache, call, response, e);
-            handleError(isFromCache, call, response);
+        public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+            super.onError(call, response, e);
+            handleError(call, response);
         }
     }
 }

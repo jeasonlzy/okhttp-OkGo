@@ -17,7 +17,6 @@ import com.lzy.okhttputils.callback.FileCallback;
 import com.lzy.okhttputils.request.BaseRequest;
 
 import java.io.File;
-import java.nio.ByteBuffer;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -69,8 +68,8 @@ public class FileDownloadActivity extends BaseActivity {
         }
 
         @Override
-        public void onResponse(boolean isFromCache, File file, Request request, Response response) {
-            handleResponse(isFromCache, file, request, response);
+        public void onSuccess(File file, Request request, Response response) {
+            handleResponse(file, request, response);
             btnFileDownload.setText("下载完成");
         }
 
@@ -89,9 +88,9 @@ public class FileDownloadActivity extends BaseActivity {
         }
 
         @Override
-        public void onError(boolean isFromCache, Call call, @Nullable Response response, @Nullable Exception e) {
-            super.onError(isFromCache, call, response, e);
-            handleError(isFromCache, call, response);
+        public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+            super.onError(call, response, e);
+            handleError(call, response);
             btnFileDownload.setText("下载出错");
         }
     }

@@ -52,7 +52,7 @@ public class PostTextActivity extends BaseActivity {
                 .tag(this)//
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
-                .postJson(jsonObject.toString())//
+                .upJson(jsonObject.toString())//
                 .execute(new TextCallBack<>(this, RequestInfo.class));
     }
 
@@ -62,7 +62,7 @@ public class PostTextActivity extends BaseActivity {
                 .tag(this)//
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
-                .postString("这是要上传的长文本数据！")//
+                .upString("这是要上传的长文本数据！")//
                 .execute(new TextCallBack<>(this, RequestInfo.class));
     }
 
@@ -72,7 +72,7 @@ public class PostTextActivity extends BaseActivity {
                 .tag(this)//
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
-                .postBytes("这是字节数据".getBytes())//
+                .upBytes("这是字节数据".getBytes())//
                 .execute(new TextCallBack<>(this, RequestInfo.class));
     }
 
@@ -83,14 +83,14 @@ public class PostTextActivity extends BaseActivity {
         }
 
         @Override
-        public void onResponse(boolean isFromCache, T data, Request request, Response response) {
-            handleResponse(isFromCache, data, request, response);
+        public void onSuccess(T data, Request request, Response response) {
+            handleResponse(data, request, response);
         }
 
         @Override
-        public void onError(boolean isFromCache, Call call, @Nullable Response response, @Nullable Exception e) {
-            super.onError(isFromCache, call, response, e);
-            handleError(isFromCache, call, response);
+        public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+            super.onError(call, response, e);
+            handleError(call, response);
         }
     }
 }

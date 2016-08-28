@@ -106,10 +106,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected <T> void handleResponse(boolean isFromCache, T data, Request request, @Nullable Response response) {
-        requestState.setText("请求成功  是否来自缓存：" + isFromCache + "  请求方式：" + request.method() + "\n" +
-                "url：" + request.url());
-
+    protected <T> void handleResponse(T data, Request request, @Nullable Response response) {
         Headers requestHeadersString = request.headers();
         Set<String> requestNames = requestHeadersString.names();
         StringBuilder sb = new StringBuilder();
@@ -164,18 +161,12 @@ public abstract class BaseActivity extends AppCompatActivity {
             for (String name : names) {
                 sb.append(name).append(" ： ").append(responseHeadersString.get(name)).append("\n");
             }
-        } else if (isFromCache) {
-            sb = new StringBuilder("响应头可以根据 cacheKey 获取到，在此不演示！");
         }
         responseHeader.setText(sb.toString());
     }
 
-    protected void handleError(boolean isFromCache, Call call, @Nullable Response response) {
-        Request request = call.request();
-        requestState.setText("请求失败  是否来自缓存：" + isFromCache + "  请求方式：" + request.method() + "\n" +
-                "url：" + request.url());
-
-        Headers requestHeadersString = request.headers();
+    protected void handleError(Call call, @Nullable Response response) {
+        Headers requestHeadersString = call.request().headers();
         Set<String> requestNames = requestHeadersString.names();
         StringBuilder sb = new StringBuilder();
         for (String name : requestNames) {

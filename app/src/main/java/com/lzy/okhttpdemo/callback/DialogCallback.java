@@ -53,8 +53,8 @@ public abstract class DialogCallback<T> extends JsonCallback<T> {
     }
 
     @Override
-    public void onAfter(boolean isFromCache, @Nullable T t, Call call, @Nullable Response response, @Nullable Exception e) {
-        super.onAfter(isFromCache, t, call, response, e);
+    public void onAfter(@Nullable T t, Call call, @Nullable Response response, @Nullable Exception e) {
+        super.onAfter(t, call, response, e);
         //网络请求结束后关闭对话框
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();

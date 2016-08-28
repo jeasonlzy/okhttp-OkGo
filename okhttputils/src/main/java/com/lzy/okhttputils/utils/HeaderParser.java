@@ -119,7 +119,7 @@ public class HeaderParser {
      * @param cacheEntity 缓存实体类
      * @param cacheMode   缓存模式
      */
-    public static <T> void addDefaultHeaders(BaseRequest request, CacheEntity<T> cacheEntity, CacheMode cacheMode) {
+    public static <T> void addCacheHeaders(BaseRequest request, CacheEntity<T> cacheEntity, CacheMode cacheMode) {
         //1. 按照标准的 http 协议，添加304相关请求头
         if (cacheEntity != null && cacheMode == CacheMode.DEFAULT) {
             HttpHeaders responseHeaders = cacheEntity.getResponseHeaders();
@@ -130,13 +130,5 @@ public class HeaderParser {
                 if (lastModified > 0) request.headers(HttpHeaders.HEAD_KEY_IF_MODIFIED_SINCE, HttpHeaders.formatMillisToGMT(lastModified));
             }
         }
-
-        // 2. 添加 Accept-Language
-        String acceptLanguage = HttpHeaders.getAcceptLanguage();
-        if (!TextUtils.isEmpty(acceptLanguage)) request.headers(HttpHeaders.HEAD_KEY_ACCEPT_LANGUAGE, acceptLanguage);
-
-        // 3. 添加 UserAgent
-        String userAgent = HttpHeaders.getUserAgent();
-        if (!TextUtils.isEmpty(userAgent)) request.headers(HttpHeaders.HEAD_KEY_USER_AGENT, userAgent);
     }
 }
