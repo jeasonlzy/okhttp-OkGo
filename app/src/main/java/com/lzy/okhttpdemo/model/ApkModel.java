@@ -1,16 +1,16 @@
-package com.lzy.okhttpdemo.Bean;
+package com.lzy.okhttpdemo.model;
 
 import java.io.Serializable;
 
-public class ApkInfo implements Serializable{
+public class ApkModel implements Serializable{
     private String name;
     private String url;
     private String iconUrl;
 
-    public ApkInfo() {
+    public ApkModel() {
     }
 
-    public ApkInfo(String name, String url, String iconUrl) {
+    public ApkModel(String name, String url, String iconUrl) {
         this.name = name;
         this.url = url;
         this.iconUrl = iconUrl;

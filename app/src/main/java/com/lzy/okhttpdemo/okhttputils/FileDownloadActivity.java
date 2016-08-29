@@ -1,4 +1,4 @@
-package com.lzy.okhttpdemo.activity;
+package com.lzy.okhttpdemo.okhttputils;
 
 import android.os.Bundle;
 import android.os.Environment;
@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.lzy.okhttpdemo.R;
+import com.lzy.okhttpdemo.base.BaseDetailActivity;
 import com.lzy.okhttpdemo.ui.NumberProgressBar;
 import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.Urls;
@@ -25,7 +26,7 @@ import okhttp3.Call;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class FileDownloadActivity extends BaseActivity {
+public class FileDownloadActivity extends BaseDetailActivity {
 
     @Bind(R.id.fileDownload) Button btnFileDownload;
     @Bind(R.id.downloadSize) TextView tvDownloadSize;

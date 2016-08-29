@@ -1,12 +1,13 @@
-package com.lzy.okhttpdemo.activity;
+package com.lzy.okhttpdemo.okhttputils;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
-import com.lzy.okhttpdemo.Bean.RequestInfo;
+import com.lzy.okhttpdemo.model.ServerModel;
 import com.lzy.okhttpdemo.R;
+import com.lzy.okhttpdemo.base.BaseDetailActivity;
 import com.lzy.okhttpdemo.callback.DialogCallback;
 import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.Urls;
@@ -22,7 +23,7 @@ import okhttp3.Call;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class PostTextActivity extends BaseActivity {
+public class PostTextActivity extends BaseDetailActivity {
 
     @Override
     protected void onActivityCreate(Bundle savedInstanceState) {
@@ -53,7 +54,7 @@ public class PostTextActivity extends BaseActivity {
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
                 .upJson(jsonObject.toString())//
-                .execute(new TextCallBack<>(this, RequestInfo.class));
+                .execute(new TextCallBack<>(this, ServerModel.class));
     }
 
     @OnClick(R.id.postString)
@@ -63,7 +64,7 @@ public class PostTextActivity extends BaseActivity {
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
                 .upString("这是要上传的长文本数据！")//
-                .execute(new TextCallBack<>(this, RequestInfo.class));
+                .execute(new TextCallBack<>(this, ServerModel.class));
     }
 
     @OnClick(R.id.postBytes)
@@ -73,7 +74,7 @@ public class PostTextActivity extends BaseActivity {
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
                 .upBytes("这是字节数据".getBytes())//
-                .execute(new TextCallBack<>(this, RequestInfo.class));
+                .execute(new TextCallBack<>(this, ServerModel.class));
     }
 
     private class TextCallBack<T> extends DialogCallback<T> {

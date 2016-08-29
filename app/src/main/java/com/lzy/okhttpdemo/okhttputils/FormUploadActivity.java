@@ -1,4 +1,4 @@
-package com.lzy.okhttpdemo.activity;
+package com.lzy.okhttpdemo.okhttputils;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,8 +13,9 @@ import android.widget.Toast;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
-import com.lzy.okhttpdemo.Bean.RequestInfo;
+import com.lzy.okhttpdemo.model.ServerModel;
 import com.lzy.okhttpdemo.R;
+import com.lzy.okhttpdemo.base.BaseDetailActivity;
 import com.lzy.okhttpdemo.callback.JsonCallback;
 import com.lzy.okhttpdemo.ui.NumberProgressBar;
 import com.lzy.okhttpdemo.utils.Constant;
@@ -33,7 +34,7 @@ import okhttp3.Call;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class FormUploadActivity extends BaseActivity {
+public class FormUploadActivity extends BaseDetailActivity {
 
     @Bind(R.id.formUpload) Button btnFormUpload;
     @Bind(R.id.downloadSize) TextView tvDownloadSize;
@@ -112,7 +113,7 @@ public class FormUploadActivity extends BaseActivity {
 //                .params("file2",new File("文件路径"))
 //                .params("file3",new File("文件路径"))
                 .addFileParams("file", files)           // 这种方式为同一个key，上传多个文件
-                .execute(new ProgressUpCallBack<>(this, RequestInfo.class));
+                .execute(new ProgressUpCallBack<>(this, ServerModel.class));
     }
 
     private class ProgressUpCallBack<T> extends JsonCallback<T> {

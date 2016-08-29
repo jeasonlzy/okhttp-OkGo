@@ -1,4 +1,4 @@
-package com.lzy.okhttpdemo.activity;
+package com.lzy.okhttpdemo.okhttputils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -6,8 +6,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
-import com.lzy.okhttpdemo.Bean.RequestInfo;
+import com.lzy.okhttpdemo.model.ServerModel;
 import com.lzy.okhttpdemo.R;
+import com.lzy.okhttpdemo.base.BaseDetailActivity;
 import com.lzy.okhttpdemo.callback.DialogCallback;
 import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.Urls;
@@ -24,7 +25,7 @@ import okhttp3.Call;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class CacheActivity extends BaseActivity {
+public class CacheActivity extends BaseDetailActivity {
 
     @Override
     protected void onActivityCreate(Bundle savedInstanceState) {
@@ -120,20 +121,20 @@ public class CacheActivity extends BaseActivity {
                 .execute(new CacheCallBack(this));
     }
 
-    private class CacheCallBack extends DialogCallback<RequestInfo> {
+    private class CacheCallBack extends DialogCallback<ServerModel> {
 
         public CacheCallBack(Activity activity) {
-            super(activity, RequestInfo.class);
+            super(activity, ServerModel.class);
         }
 
         @Override
-        public void onSuccess(RequestInfo requestInfo, Request request, Response response) {
+        public void onSuccess(ServerModel requestInfo, Request request, Response response) {
             requestState.setText("请求成功  是否来自缓存：false  请求方式：" + request.method() + "\n" + "url：" + request.url());
             handleResponse(requestInfo, request, response);
         }
 
         @Override
-        public void onCacheSuccess(RequestInfo requestInfo, Request request, @Nullable Response response) {
+        public void onCacheSuccess(ServerModel requestInfo, Request request, @Nullable Response response) {
             requestState.setText("请求成功  是否来自缓存：true  请求方式：" + request.method() + "\n" + "url：" + request.url());
             handleResponse(requestInfo, request, response);
             responseHeader.setText("响应头可以根据 cacheKey 获取到，在此不演示！");

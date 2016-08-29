@@ -1,4 +1,4 @@
-package com.lzy.okhttpdemo.activity;
+package com.lzy.okhttpdemo.okhttputils;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.lzy.okhttpdemo.R;
+import com.lzy.okhttpdemo.base.BaseDetailActivity;
 import com.lzy.okhttpdemo.callback.StringDialogCallback;
 import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttputils.OkHttpUtils;
@@ -16,7 +17,7 @@ import okhttp3.Call;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class HttpsActivity extends BaseActivity {
+public class HttpsActivity extends BaseDetailActivity {
 
     private static final String CER_12306 = "-----BEGIN CERTIFICATE-----\n" +
             "MIICmjCCAgOgAwIBAgIIbyZr5/jKH6QwDQYJKoZIhvcNAQEFBQAwRzELMAkGA1UEBhMCQ04xKTAn\n" +

@@ -1,11 +1,8 @@
-package com.lzy.okhttpdemo.fragment;
+package com.lzy.okhttpdemo.okhttpserver;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -20,6 +17,7 @@ import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.okhttpdemo.R;
+import com.lzy.okhttpdemo.base.BaseActivity;
 import com.lzy.okhttpdemo.ui.ProgressPieView;
 import com.lzy.okhttpdemo.utils.GlideImageLoader;
 import com.lzy.okhttpdemo.utils.Urls;
@@ -36,11 +34,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Response;
 
-public class UploadFragment extends Fragment implements ExecutorWithListener.OnAllTaskEndListener {
+public class UploadActivity extends BaseActivity implements ExecutorWithListener.OnAllTaskEndListener {
 
     @Bind(R.id.gridView) GridView gridView;
     @Bind(R.id.tvCorePoolSize) TextView tvCorePoolSize;
@@ -49,11 +46,10 @@ public class UploadFragment extends Fragment implements ExecutorWithListener.OnA
     private ArrayList<ImageItem> images;
     private UploadManager uploadManager;
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_upload, container, false);
-        ButterKnife.bind(this, view);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_upload);
 
         uploadManager = UploadManager.getInstance();
         sbCorePoolSize.setMax(3);
@@ -77,19 +73,18 @@ public class UploadFragment extends Fragment implements ExecutorWithListener.OnA
         //此行代码会导致上面的seekbar监听修改线程池数量无效，此处只是为了演示功能，实际使用时，
         //直接调用 UploadManager.getInstance(getContext()).getThreadPool().setCorePoolSize(progress); 即可生效
         uploadManager.getThreadPool().getExecutor().addOnAllTaskEndListener(this);
-        return view;
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    protected void onDestroy() {
+        super.onDestroy();
         //记得移除
         uploadManager.getThreadPool().getExecutor().removeOnAllTaskEndListener(this);
     }
 
     @Override
     public void onAllTaskEnd() {
-        Toast.makeText(getContext(), "所有上传任务完成", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "所有上传任务完成", Toast.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.select)
@@ -99,7 +94,7 @@ public class UploadFragment extends Fragment implements ExecutorWithListener.OnA
         imagePicker.setShowCamera(true);
         imagePicker.setSelectLimit(9);
         imagePicker.setCrop(false);
-        Intent intent = new Intent(getContext(), ImageGridActivity.class);
+        Intent intent = new Intent(getApplicationContext(), ImageGridActivity.class);
         startActivityForResult(intent, 100);
     }
 
@@ -129,7 +124,7 @@ public class UploadFragment extends Fragment implements ExecutorWithListener.OnA
                 MyAdapter adapter = new MyAdapter(images);
                 gridView.setAdapter(adapter);
             } else {
-                Toast.makeText(getContext(), "没有数据", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "没有数据", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -167,13 +162,13 @@ public class UploadFragment extends Fragment implements ExecutorWithListener.OnA
             int size = gridView.getWidth() / 3;
             ViewHolder holder;
             if (convertView == null) {
-                convertView = View.inflate(getContext(), R.layout.item_upload_manager, null);
+                convertView = View.inflate(getApplicationContext(), R.layout.item_upload_manager, null);
                 holder = new ViewHolder(convertView);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
-            imagePicker.getImageLoader().displayImage(getActivity(), getItem(position).path, holder.imageView, size, size);
+            imagePicker.getImageLoader().displayImage(UploadActivity.this, getItem(position).path, holder.imageView, size, size);
             return convertView;
         }
     }

@@ -14,26 +14,37 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activity.DownloadManagerActivity"/>
-        <activity android:name=".activity.DesActivity"/>
-        <activity android:name=".activity.MethodActivity"/>
-        <activity android:name=".activity.CustomRequestActivity"/>
-        <activity android:name=".activity.BitmapRequestActivity"/>
-        <activity android:name=".activity.PostTextActivity"/>
-        <activity android:name=".activity.FormUploadActivity"/>
-        <activity android:name=".activity.FileDownloadActivity"/>
-        <activity android:name=".activity.CacheActivity"/>
-        <activity android:name=".activity.HttpsActivity"/>
-        <activity android:name=".activity.SyncActivity"/>
-        <activity android:name=".activity.RedirectActivity"/>
-        <activity android:name=".activity.TestActivity"/>
+        <activity android:name=".okhttpserver.DownloadManagerActivity"/>
+        <activity android:name=".okhttpserver.DesActivity"/>
+        <activity android:name=".okhttputils.MethodActivity"/>
+        <activity android:name=".okhttputils.CustomRequestActivity"/>
+        <activity android:name=".okhttputils.BitmapRequestActivity"/>
+        <activity android:name=".okhttputils.PostTextActivity"/>
+        <activity android:name=".okhttputils.FormUploadActivity"/>
+        <activity android:name=".okhttputils.FileDownloadActivity"/>
+        <activity android:name=".okhttputils.CacheActivity"/>
+        <activity android:name=".okhttputils.HttpsActivity"/>
+        <activity android:name=".okhttputils.SyncActivity"/>
+        <activity android:name=".okhttputils.RedirectActivity"/>
+        <activity android:name=".okhttputils.TestActivity"/>
+        <activity
+            android:name=".okhttputils.OkHttpActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".okhttpserver.DownloadActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".okhttpserver.UploadActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

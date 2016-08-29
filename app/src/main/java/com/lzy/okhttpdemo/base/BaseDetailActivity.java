@@ -1,11 +1,9 @@
-package com.lzy.okhttpdemo.activity;
+package com.lzy.okhttpdemo.base;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -24,7 +22,7 @@ import okhttp3.Headers;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseDetailActivity extends BaseActivity {
 
     protected ActionBar actionBar;
     protected TextView requestState;
@@ -64,11 +62,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (actionBar != null) actionBar.setTitle(titleId);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends View> T findView(int id) {
-        return (T) rootContent.findViewById(id);
-    }
-
     @Override
     public View findViewById(int id) {
         return rootContent.findViewById(id);
@@ -94,16 +87,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void setContentView(View view, ViewGroup.LayoutParams params) {
         clearContentView();
         rootContent.addView(view, params);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:// 点击返回图标事件
-                finish();
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     protected <T> void handleResponse(T data, Request request, @Nullable Response response) {

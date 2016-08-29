@@ -1,4 +1,4 @@
-package com.lzy.okhttpdemo.activity;
+package com.lzy.okhttpdemo.okhttputils;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -12,8 +12,9 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
 
-import com.lzy.okhttpdemo.Bean.RequestInfo;
+import com.lzy.okhttpdemo.model.ServerModel;
 import com.lzy.okhttpdemo.R;
+import com.lzy.okhttpdemo.base.BaseDetailActivity;
 import com.lzy.okhttpdemo.callback.DialogCallback;
 import com.lzy.okhttpdemo.utils.ColorUtils;
 import com.lzy.okhttpdemo.utils.Constant;
@@ -28,7 +29,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class MethodActivity extends BaseActivity implements AdapterView.OnItemClickListener {
+public class MethodActivity extends BaseDetailActivity implements AdapterView.OnItemClickListener {
 
     @Bind(R.id.gridView) GridView gridView;
 
@@ -60,35 +61,35 @@ public class MethodActivity extends BaseActivity implements AdapterView.OnItemCl
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
-                        .execute(new MethodCallBack<>(this, RequestInfo.class));
+                        .execute(new MethodCallBack<>(this, ServerModel.class));
                 break;
             case 1:
                 OkHttpUtils.head(Urls.URL_METHOD)//
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
-                        .execute(new MethodCallBack<>(this, RequestInfo.class));
+                        .execute(new MethodCallBack<>(this, ServerModel.class));
                 break;
             case 2:
                 OkHttpUtils.options(Urls.URL_METHOD)//
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
-                        .execute(new MethodCallBack<>(this, RequestInfo.class));
+                        .execute(new MethodCallBack<>(this, ServerModel.class));
                 break;
             case 3:
                 OkHttpUtils.post(Urls.URL_METHOD)//
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
-                        .execute(new MethodCallBack<>(this, RequestInfo.class));
+                        .execute(new MethodCallBack<>(this, ServerModel.class));
                 break;
             case 4:
                 OkHttpUtils.put(Urls.URL_METHOD)//
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
-                        .execute(new MethodCallBack<>(this, RequestInfo.class));
+                        .execute(new MethodCallBack<>(this, ServerModel.class));
                 break;
             case 5:
                 OkHttpUtils.delete(Urls.URL_METHOD)//
@@ -96,7 +97,7 @@ public class MethodActivity extends BaseActivity implements AdapterView.OnItemCl
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
                         .requestBody(RequestBody.create(MediaType.parse("text/plain;charset=utf-8"), "这是要上传的数据"))//
-                        .execute(new MethodCallBack<>(this, RequestInfo.class));
+                        .execute(new MethodCallBack<>(this, ServerModel.class));
                 break;
         }
     }

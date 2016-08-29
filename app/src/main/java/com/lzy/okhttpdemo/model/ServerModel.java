@@ -1,4 +1,4 @@
-package com.lzy.okhttpdemo.Bean;
+package com.lzy.okhttpdemo.model;
 
 import java.io.Serializable;
 
@@ -11,7 +11,7 @@ import java.io.Serializable;
  * 修订历史：
  * ================================================
  */
-public class RequestInfo implements Serializable{
+public class ServerModel implements Serializable{
     public String method;
     public String ip;
     public String url;
@@ -44,7 +44,7 @@ public class RequestInfo implements Serializable{
 
     @Override
     public String toString() {
-        return "RequestInfo{" +
+        return "ServerModel{" +
                 "method='" + method + '\'' +
                 ", ip='" + ip + '\'' +
                 ", url='" + url + '\'' +

@@ -1,4 +1,4 @@
-package com.lzy.okhttpdemo.activity;
+package com.lzy.okhttpdemo.okhttpserver;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,7 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.lzy.okhttpdemo.Bean.ApkInfo;
+import com.lzy.okhttpdemo.model.ApkModel;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.utils.ApkUtils;
 import com.lzy.okhttpserver.download.DownloadInfo;
@@ -34,14 +34,14 @@ public class DesActivity extends AppCompatActivity implements View.OnClickListen
     private Button restart;
     private MyListener listener;
     private DownloadInfo downloadInfo;
-    private ApkInfo apk;
+    private ApkModel apk;
     private DownloadManager downloadManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download_details);
-        apk = (ApkInfo) getIntent().getSerializableExtra("apk");
+        apk = (ApkModel) getIntent().getSerializableExtra("apk");
         downloadManager = DownloadService.getDownloadManager();
 
         ImageView icon = (ImageView) findViewById(R.id.icon);

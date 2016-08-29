@@ -1,4 +1,4 @@
-package com.lzy.okhttpdemo.activity;
+package com.lzy.okhttpdemo.okhttpserver;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,7 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.lzy.okhttpdemo.Bean.ApkInfo;
+import com.lzy.okhttpdemo.model.ApkModel;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.ui.NumberProgressBar;
 import com.lzy.okhttpdemo.utils.ApkUtils;
@@ -119,7 +119,7 @@ public class DownloadManagerActivity extends AppCompatActivity implements View.O
             holder.refresh(downloadInfo);
 
             //对于非进度更新的ui放在这里，对于实时更新的进度ui，放在holder中
-            ApkInfo apk = (ApkInfo) AppCacheUtils.getInstance(DownloadManagerActivity.this).getObject(downloadInfo.getUrl());
+            ApkModel apk = (ApkModel) AppCacheUtils.getInstance(DownloadManagerActivity.this).getObject(downloadInfo.getUrl());
             if (apk != null) {
                 Glide.with(DownloadManagerActivity.this).load(apk.getIconUrl()).error(R.mipmap.ic_launcher).into(holder.icon);
                 holder.name.setText(apk.getName());

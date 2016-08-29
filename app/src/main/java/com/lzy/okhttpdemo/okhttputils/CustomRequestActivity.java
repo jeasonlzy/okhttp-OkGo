@@ -1,4 +1,4 @@
-package com.lzy.okhttpdemo.activity;
+package com.lzy.okhttpdemo.okhttputils;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -6,8 +6,9 @@ import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.google.gson.reflect.TypeToken;
-import com.lzy.okhttpdemo.Bean.RequestInfo;
+import com.lzy.okhttpdemo.model.ServerModel;
 import com.lzy.okhttpdemo.R;
+import com.lzy.okhttpdemo.base.BaseDetailActivity;
 import com.lzy.okhttpdemo.callback.DialogCallback;
 import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.Urls;
@@ -22,7 +23,7 @@ import okhttp3.Call;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class CustomRequestActivity extends BaseActivity {
+public class CustomRequestActivity extends BaseDetailActivity {
 
     @Override
     protected void onActivityCreate(Bundle savedInstanceState) {
@@ -44,7 +45,7 @@ public class CustomRequestActivity extends BaseActivity {
                 .tag(this)//
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
-                .execute(new CustomCallBack<>(this,RequestInfo.class));
+                .execute(new CustomCallBack<>(this,ServerModel.class));
     }
 
     @OnClick(R.id.requestJsonArray)
@@ -53,7 +54,7 @@ public class CustomRequestActivity extends BaseActivity {
                 .tag(this)//
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
-                .execute(new CustomCallBack<List<RequestInfo>>(this, new TypeToken<List<RequestInfo>>(){}.getType()));
+                .execute(new CustomCallBack<List<ServerModel>>(this, new TypeToken<List<ServerModel>>(){}.getType()));
     }
 
     private class CustomCallBack<T> extends DialogCallback<T> {

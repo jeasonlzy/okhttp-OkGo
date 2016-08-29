@@ -1,9 +1,10 @@
 package com.lzy.okhttputils.callback;
 
 import android.os.Environment;
-import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.lzy.okhttputils.OkHttpUtils;
+import com.lzy.okhttputils.utils.HttpUtils;
 import com.lzy.okhttputils.utils.OkLogger;
 
 import java.io.File;
@@ -26,20 +27,18 @@ public abstract class FileCallback extends AbsCallback<File> {
 
     public static final String DM_TARGET_FOLDER = File.separator + "download" + File.separator; //下载目标文件夹
 
-    /** 目标文件存储的文件夹路径 */
-    private String destFileDir;
-    /** 目标文件存储的文件名 */
-    private String destFileName;
+    private String destFileDir;     //目标文件存储的文件夹路径
+    private String destFileName;    //目标文件存储的文件名
+
+    public FileCallback() {
+        this(null);
+    }
 
     public FileCallback(String destFileName) {
         this(Environment.getExternalStorageDirectory() + DM_TARGET_FOLDER, destFileName);
     }
 
-    /**
-     * @param destFileDir  要保存的目标文件夹
-     * @param destFileName 要保存的文件名
-     */
-    public FileCallback(@NonNull String destFileDir, @NonNull String destFileName) {
+    public FileCallback(String destFileDir, String destFileName) {
         this.destFileDir = destFileDir;
         this.destFileName = destFileName;
     }
@@ -50,6 +49,9 @@ public abstract class FileCallback extends AbsCallback<File> {
     }
 
     private File saveFile(Response response) throws IOException {
+        if (TextUtils.isEmpty(destFileDir)) destFileDir = Environment.getExternalStorageDirectory() + DM_TARGET_FOLDER;
+        if (TextUtils.isEmpty(destFileName)) destFileName = HttpUtils.getNetFileName(response, response.request().url().toString());
+
         File dir = new File(destFileDir);
         if (!dir.exists()) dir.mkdirs();
         File file = new File(dir, destFileName);
@@ -105,17 +107,5 @@ public abstract class FileCallback extends AbsCallback<File> {
                 OkLogger.e(e);
             }
         }
-    }
-
-    /** 通过 ‘？’ 和 ‘/’ 判断文件名 */
-    private String getUrlFileName(String url) {
-        int index = url.lastIndexOf('?');
-        String filename;
-        if (index > 1) {
-            filename = url.substring(url.lastIndexOf('/') + 1, index);
-        } else {
-            filename = url.substring(url.lastIndexOf('/') + 1);
-        }
-        return filename;
     }
 }

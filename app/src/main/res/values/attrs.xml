@@ -1,20 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name="PagerSlidingTabStrip">
-        <attr name="pstsIndicatorColor" format="color"/>
-        <attr name="pstsUnderlineColor" format="color"/>
-        <attr name="pstsDividerColor" format="color"/>
-        <attr name="pstsIndicatorHeight" format="dimension"/>
-        <attr name="pstsUnderlineHeight" format="dimension"/>
-        <attr name="pstsDividerPadding" format="dimension"/>
-        <attr name="pstsTabPaddingLeftRight" format="dimension"/>
-        <attr name="pstsScrollOffset" format="dimension"/>
-        <attr name="pstsTabBackground" format="reference"/>
-        <attr name="pstsShouldExpand" format="boolean"/>
-        <attr name="pstsTextAllCaps" format="boolean"/>
-    </declare-styleable>
-
     <declare-styleable name="NumberProgressBar">
         <attr name="progress_current" format="integer"/>
         <attr name="progress_max" format="integer"/>
@@ -52,5 +38,28 @@
             <enum name="radial" value="0"/>
             <enum name="center" value="1"/>
         </attr>
+    </declare-styleable>
+
+    <declare-styleable name="SimpleViewBehavior">
+        <attr name="svb_dependOn" format="reference"/>
+        <attr name="svb_dependType">
+            <enum name="height" value="0"/>
+            <enum name="width" value="1"/>
+            <enum name="x" value="2"/>
+            <enum name="y" value="3"/>
+        </attr>
+        <attr name="svb_dependTargetX" format="reference|dimension"/>
+        <attr name="svb_dependTargetY" format="reference|dimension"/>
+        <attr name="svb_dependTargetWidth" format="reference|dimension"/>
+        <attr name="svb_dependTargetHeight" format="reference|dimension"/>
+        <attr name="svb_targetX" format="reference|dimension"/>
+        <attr name="svb_targetY" format="reference|dimension"/>
+        <attr name="svb_targetWidth" format="reference|dimension"/>
+        <attr name="svb_targetHeight" format="reference|dimension"/>
+        <attr name="svb_targetBackgroundColor" format="reference|color"/>
+        <attr name="svb_targetAlpha" format="float"/>
+        <attr name="svb_targetRotateX" format="float"/>
+        <attr name="svb_targetRotateY" format="float"/>
+        <attr name="svb_animation" format="reference"/>
     </declare-styleable>
 </resources>

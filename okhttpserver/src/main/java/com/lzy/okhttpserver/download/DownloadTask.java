@@ -6,7 +6,7 @@ import android.text.TextUtils;
 import com.lzy.okhttpserver.download.db.DownloadDBManager;
 import com.lzy.okhttpserver.listener.DownloadListener;
 import com.lzy.okhttpserver.task.PriorityAsyncTask;
-import com.lzy.okhttpserver.utils.ServerUtils;
+import com.lzy.okhttputils.utils.HttpUtils;
 import com.lzy.okhttputils.utils.OkLogger;
 
 import java.io.BufferedInputStream;
@@ -83,7 +83,7 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
 
         //如果是重新下载，需要删除临时文件
         if (isRestartTask) {
-            ServerUtils.deleteFile(mDownloadInfo.getTargetPath());
+            HttpUtils.deleteFile(mDownloadInfo.getTargetPath());
             mDownloadInfo.setProgress(0);
             mDownloadInfo.setDownloadLength(0);
             mDownloadInfo.setTotalLength(0);
@@ -125,7 +125,7 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
         String url = mDownloadInfo.getUrl();
         String fileName = mDownloadInfo.getFileName();
         if (TextUtils.isEmpty(fileName)) {
-            fileName = ServerUtils.getNetFileName(response, url);
+            fileName = HttpUtils.getNetFileName(response, url);
             mDownloadInfo.setFileName(fileName);
         }
         if (TextUtils.isEmpty(mDownloadInfo.getTargetPath())) {
