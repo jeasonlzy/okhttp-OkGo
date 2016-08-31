@@ -78,7 +78,7 @@ public class OkHttpActivity extends BaseActivity {
         @Override
         public void onClick(View v) {
             if (position == 0) startActivity(new Intent(OkHttpActivity.this, MethodActivity.class));
-            if (position == 1) startActivity(new Intent(OkHttpActivity.this, CustomRequestActivity.class));
+            if (position == 1) startActivity(new Intent(OkHttpActivity.this, JsonRequestActivity.class));
             if (position == 2) startActivity(new Intent(OkHttpActivity.this, BitmapRequestActivity.class));
             if (position == 3) startActivity(new Intent(OkHttpActivity.this, PostTextActivity.class));
             if (position == 4) startActivity(new Intent(OkHttpActivity.this, FormUploadActivity.class));

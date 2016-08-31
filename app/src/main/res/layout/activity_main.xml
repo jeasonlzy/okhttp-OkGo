@@ -2,6 +2,7 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
@@ -45,7 +46,8 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:listitem="@layout/item_main_list"/>
 
     <TextView
         android:id="@+id/toolbar_title"
@@ -56,9 +58,10 @@
         android:alpha="0"
         android:elevation="10dp"
         android:gravity="center_vertical"
-        android:text="OkHttpUtils"
+        android:text="OkHttpUtils-让网络请求更简单"
         android:textColor="@android:color/white"
         android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_behavior="@string/simple_view_behavior"
         app:svb_dependOn="@id/appbar"
         app:svb_dependType="y"

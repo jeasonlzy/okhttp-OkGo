@@ -2,6 +2,7 @@ package com.lzy.okhttpdemo.okhttpserver;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,9 +40,11 @@ import okhttp3.Response;
 
 public class UploadActivity extends BaseActivity implements ExecutorWithListener.OnAllTaskEndListener {
 
+    @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.gridView) GridView gridView;
     @Bind(R.id.tvCorePoolSize) TextView tvCorePoolSize;
     @Bind(R.id.sbCorePoolSize) SeekBar sbCorePoolSize;
+
     private ImagePicker imagePicker;
     private ArrayList<ImageItem> images;
     private UploadManager uploadManager;
@@ -50,6 +53,7 @@ public class UploadActivity extends BaseActivity implements ExecutorWithListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
+        initToolBar(toolbar, true, "上传管理");
 
         uploadManager = UploadManager.getInstance();
         sbCorePoolSize.setMax(3);

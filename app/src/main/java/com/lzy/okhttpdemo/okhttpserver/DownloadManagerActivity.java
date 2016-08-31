@@ -1,7 +1,7 @@
 package com.lzy.okhttpdemo.okhttpserver;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.format.Formatter;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +13,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.lzy.okhttpdemo.model.ApkModel;
 import com.lzy.okhttpdemo.R;
+import com.lzy.okhttpdemo.base.BaseActivity;
+import com.lzy.okhttpdemo.model.ApkModel;
 import com.lzy.okhttpdemo.ui.NumberProgressBar;
 import com.lzy.okhttpdemo.utils.ApkUtils;
 import com.lzy.okhttpdemo.utils.AppCacheUtils;
@@ -27,20 +28,25 @@ import com.lzy.okhttpserver.task.ExecutorWithListener;
 import java.io.File;
 import java.util.List;
 
-public class DownloadManagerActivity extends AppCompatActivity implements View.OnClickListener, ExecutorWithListener.OnAllTaskEndListener {
+import butterknife.Bind;
+
+public class DownloadManagerActivity extends BaseActivity implements View.OnClickListener, ExecutorWithListener.OnAllTaskEndListener {
 
     private List<DownloadInfo> allTask;
     private MyAdapter adapter;
     private DownloadManager downloadManager;
 
+    @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.listView) ListView listView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download_manager);
+        initToolBar(toolbar, true, "下载管理");
 
         downloadManager = DownloadService.getDownloadManager();
         allTask = downloadManager.getAllTask();
-        ListView listView = (ListView) findViewById(R.id.listView);
         adapter = new MyAdapter();
         listView.setAdapter(adapter);
 

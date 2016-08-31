@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.support.annotation.Nullable;
 import android.view.Window;
 
+import com.lzy.okhttputils.callback.StringCallback;
 import com.lzy.okhttputils.request.BaseRequest;
 
 import okhttp3.Call;
@@ -19,7 +20,7 @@ import okhttp3.Response;
  * 修订历史：
  * ================================================
  */
-public abstract class StringDialogCallback extends EncryptCallback<String> {
+public abstract class StringDialogCallback extends StringCallback {
 
     private ProgressDialog dialog;
 
@@ -29,11 +30,6 @@ public abstract class StringDialogCallback extends EncryptCallback<String> {
         dialog.setCanceledOnTouchOutside(false);
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         dialog.setMessage("请求网络中...");
-    }
-
-    @Override
-    public String parseNetworkResponse(Response response) throws Exception {
-        return response.body().string();
     }
 
     @Override

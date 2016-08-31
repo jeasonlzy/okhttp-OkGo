@@ -1,14 +1,13 @@
 package com.lzy.okhttpdemo.okhttputils;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
-import com.lzy.okhttpdemo.model.ServerModel;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.base.BaseDetailActivity;
 import com.lzy.okhttpdemo.callback.DialogCallback;
+import com.lzy.okhttpdemo.model.ServerModel;
 import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
@@ -54,7 +53,19 @@ public class PostTextActivity extends BaseDetailActivity {
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
                 .upJson(jsonObject.toString())//
-                .execute(new TextCallBack<>(this, ServerModel.class));
+                .execute(new DialogCallback<ServerModel>(this, ServerModel.class) {
+                    @Override
+                    public void onSuccess(ServerModel serverModel, Request request, @Nullable Response response) {
+                        handleResponse(serverModel, request, response);
+                    }
+
+                    @Override
+                    public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+                        super.onError(call, response, e);
+                        handleError(call, response);
+                    }
+
+                });
     }
 
     @OnClick(R.id.postString)
@@ -64,7 +75,19 @@ public class PostTextActivity extends BaseDetailActivity {
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
                 .upString("这是要上传的长文本数据！")//
-                .execute(new TextCallBack<>(this, ServerModel.class));
+                .execute(new DialogCallback<ServerModel>(this, ServerModel.class) {
+                    @Override
+                    public void onSuccess(ServerModel serverModel, Request request, @Nullable Response response) {
+                        handleResponse(serverModel, request, response);
+                    }
+
+                    @Override
+                    public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+                        super.onError(call, response, e);
+                        handleError(call, response);
+                    }
+
+                });
     }
 
     @OnClick(R.id.postBytes)
@@ -74,24 +97,18 @@ public class PostTextActivity extends BaseDetailActivity {
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
                 .upBytes("这是字节数据".getBytes())//
-                .execute(new TextCallBack<>(this, ServerModel.class));
-    }
+                .execute(new DialogCallback<ServerModel>(this, ServerModel.class) {
+                    @Override
+                    public void onSuccess(ServerModel serverModel, Request request, @Nullable Response response) {
+                        handleResponse(serverModel, request, response);
+                    }
 
-    private class TextCallBack<T> extends DialogCallback<T> {
+                    @Override
+                    public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+                        super.onError(call, response, e);
+                        handleError(call, response);
+                    }
 
-        public TextCallBack(Activity activity, Class<T> clazz) {
-            super(activity, clazz);
-        }
-
-        @Override
-        public void onSuccess(T data, Request request, Response response) {
-            handleResponse(data, request, response);
-        }
-
-        @Override
-        public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
-            super.onError(call, response, e);
-            handleError(call, response);
-        }
+                });
     }
 }

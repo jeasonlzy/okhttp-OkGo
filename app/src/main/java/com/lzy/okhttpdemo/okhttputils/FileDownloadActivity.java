@@ -1,7 +1,6 @@
 package com.lzy.okhttpdemo.okhttputils;
 
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.text.format.Formatter;
 import android.view.View;
@@ -54,45 +53,38 @@ public class FileDownloadActivity extends BaseDetailActivity {
                 .tag(this)//
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
-                .execute(new DownloadFileCallBack(Environment.getExternalStorageDirectory() + "/temp", "OkHttpUtils.apk"));
-    }
+                .execute(new FileCallback("OkHttpUtils.apk") {
+                    @Override
+                    public void onBefore(BaseRequest request) {
+                        btnFileDownload.setText("正在下载中");
+                    }
 
-    private class DownloadFileCallBack extends FileCallback {
+                    @Override
+                    public void onSuccess(File file, Request request, Response response) {
+                        handleResponse(file, request, response);
+                        btnFileDownload.setText("下载完成");
+                    }
 
-        public DownloadFileCallBack(String destFileDir, String destFileName) {
-            super(destFileDir, destFileName);
-        }
+                    @Override
+                    public void downloadProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
+                        System.out.println("downloadProgress -- " + totalSize + "  " + currentSize + "  " + progress + "  " + networkSpeed);
 
-        @Override
-        public void onBefore(BaseRequest request) {
-            btnFileDownload.setText("正在下载中");
-        }
+                        String downloadLength = Formatter.formatFileSize(getApplicationContext(), currentSize);
+                        String totalLength = Formatter.formatFileSize(getApplicationContext(), totalSize);
+                        tvDownloadSize.setText(downloadLength + "/" + totalLength);
+                        String netSpeed = Formatter.formatFileSize(getApplicationContext(), networkSpeed);
+                        tvNetSpeed.setText(netSpeed + "/S");
+                        tvProgress.setText((Math.round(progress * 10000) * 1.0f / 100) + "%");
+                        pbProgress.setMax(100);
+                        pbProgress.setProgress((int) (progress * 100));
+                    }
 
-        @Override
-        public void onSuccess(File file, Request request, Response response) {
-            handleResponse(file, request, response);
-            btnFileDownload.setText("下载完成");
-        }
-
-        @Override
-        public void downloadProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
-            System.out.println("downloadProgress -- " + totalSize + "  " + currentSize + "  " + progress + "  " + networkSpeed);
-
-            String downloadLength = Formatter.formatFileSize(getApplicationContext(), currentSize);
-            String totalLength = Formatter.formatFileSize(getApplicationContext(), totalSize);
-            tvDownloadSize.setText(downloadLength + "/" + totalLength);
-            String netSpeed = Formatter.formatFileSize(getApplicationContext(), networkSpeed);
-            tvNetSpeed.setText(netSpeed + "/S");
-            tvProgress.setText((Math.round(progress * 10000) * 1.0f / 100) + "%");
-            pbProgress.setMax(100);
-            pbProgress.setProgress((int) (progress * 100));
-        }
-
-        @Override
-        public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
-            super.onError(call, response, e);
-            handleError(call, response);
-            btnFileDownload.setText("下载出错");
-        }
+                    @Override
+                    public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+                        super.onError(call, response, e);
+                        handleError(call, response);
+                        btnFileDownload.setText("下载出错");
+                    }
+                });
     }
 }

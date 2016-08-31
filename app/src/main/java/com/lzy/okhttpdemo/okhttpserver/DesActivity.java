@@ -1,7 +1,7 @@
 package com.lzy.okhttpdemo.okhttpserver;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.format.Formatter;
 import android.view.View;
 import android.widget.Button;
@@ -11,8 +11,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.lzy.okhttpdemo.model.ApkModel;
 import com.lzy.okhttpdemo.R;
+import com.lzy.okhttpdemo.base.BaseActivity;
+import com.lzy.okhttpdemo.model.ApkModel;
 import com.lzy.okhttpdemo.utils.ApkUtils;
 import com.lzy.okhttpserver.download.DownloadInfo;
 import com.lzy.okhttpserver.download.DownloadManager;
@@ -23,15 +24,21 @@ import com.lzy.okhttputils.request.GetRequest;
 
 import java.io.File;
 
-public class DesActivity extends AppCompatActivity implements View.OnClickListener {
+import butterknife.Bind;
 
-    private TextView downloadSize;
-    private TextView tvProgress;
-    private TextView netSpeed;
-    private ProgressBar pbProgress;
-    private Button download;
-    private Button remove;
-    private Button restart;
+public class DesActivity extends BaseActivity implements View.OnClickListener {
+
+    @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.icon) ImageView icon;
+    @Bind(R.id.name) TextView name;
+    @Bind(R.id.downloadSize) TextView downloadSize;
+    @Bind(R.id.tvProgress) TextView tvProgress;
+    @Bind(R.id.netSpeed) TextView netSpeed;
+    @Bind(R.id.pbProgress) ProgressBar pbProgress;
+    @Bind(R.id.start) Button download;
+    @Bind(R.id.remove) Button remove;
+    @Bind(R.id.restart) Button restart;
+
     private MyListener listener;
     private DownloadInfo downloadInfo;
     private ApkModel apk;
@@ -41,18 +48,10 @@ public class DesActivity extends AppCompatActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download_details);
+        initToolBar(toolbar, true, "下载管理");
+
         apk = (ApkModel) getIntent().getSerializableExtra("apk");
         downloadManager = DownloadService.getDownloadManager();
-
-        ImageView icon = (ImageView) findViewById(R.id.icon);
-        TextView name = (TextView) findViewById(R.id.name);
-        downloadSize = (TextView) findViewById(R.id.downloadSize);
-        tvProgress = (TextView) findViewById(R.id.tvProgress);
-        netSpeed = (TextView) findViewById(R.id.netSpeed);
-        pbProgress = (ProgressBar) findViewById(R.id.pbProgress);
-        download = (Button) findViewById(R.id.start);
-        remove = (Button) findViewById(R.id.remove);
-        restart = (Button) findViewById(R.id.restart);
 
         Glide.with(this).load(apk.getIconUrl()).error(R.mipmap.ic_launcher).into(icon);
         name.setText(apk.getName());

@@ -1,6 +1,5 @@
 package com.lzy.okhttpdemo.okhttputils;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -54,7 +53,18 @@ public class HttpsActivity extends BaseDetailActivity {
                 .tag(this)//
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
-                .execute(new HttpsCallBack(this));
+                .execute(new StringDialogCallback(this) {
+                    @Override
+                    public void onSuccess(String data, Request request, Response response) {
+                        handleResponse(data, request, response);
+                    }
+
+                    @Override
+                    public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+                        super.onError(call, response, e);
+                        handleError(call, response);
+                    }
+                });
     }
 
     @OnClick(R.id.btn_https_request)
@@ -73,27 +83,20 @@ public class HttpsActivity extends BaseDetailActivity {
 
                     //方法四：传入bks证书,密码,和cer证书,支持双向加密
 //                    .setCertificates(getAssets().open("aaaa.bks"), "123456", getAssets().open("srca.cer"))
-                    .execute(new HttpsCallBack(this));
+                    .execute(new StringDialogCallback(this) {
+                        @Override
+                        public void onSuccess(String data, Request request, Response response) {
+                            handleResponse(data, request, response);
+                        }
+
+                        @Override
+                        public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+                            super.onError(call, response, e);
+                            handleError(call, response);
+                        }
+                    });
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    private class HttpsCallBack extends StringDialogCallback {
-
-        public HttpsCallBack(Activity activity) {
-            super(activity);
-        }
-
-        @Override
-        public void onSuccess(String data, Request request, Response response) {
-            handleResponse(data, request, response);
-        }
-
-        @Override
-        public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
-            super.onError(call, response, e);
-            handleError(call, response);
         }
     }
 }

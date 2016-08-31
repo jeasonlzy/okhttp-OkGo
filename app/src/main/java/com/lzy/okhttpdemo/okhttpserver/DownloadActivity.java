@@ -1,22 +1,26 @@
 package com.lzy.okhttpdemo.okhttpserver;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.lzy.okhttpdemo.model.ApkModel;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.base.BaseActivity;
+import com.lzy.okhttpdemo.base.BaseRecyclerAdapter;
+import com.lzy.okhttpdemo.base.DividerItemDecoration;
+import com.lzy.okhttpdemo.model.ApkModel;
 import com.lzy.okhttpdemo.utils.AppCacheUtils;
 import com.lzy.okhttpserver.download.DownloadManager;
 import com.lzy.okhttpserver.download.DownloadService;
@@ -26,23 +30,26 @@ import com.lzy.okhttputils.request.GetRequest;
 import java.util.ArrayList;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class DownloadActivity extends BaseActivity {
 
+    @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.targetFolder) TextView targetFolder;
     @Bind(R.id.tvCorePoolSize) TextView tvCorePoolSize;
     @Bind(R.id.sbCorePoolSize) SeekBar sbCorePoolSize;
-    @Bind(R.id.listView) ListView listView;
+    @Bind(R.id.recyclerView) RecyclerView recyclerView;
     @Bind(R.id.openManager) Button openManager;
 
     private ArrayList<ApkModel> apks;
-    private MyAdapter adapter;
     private DownloadManager downloadManager;
+    private MainAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download);
+        initToolBar(toolbar, true, "下载管理");
 
         initData();
         downloadManager = DownloadService.getDownloadManager();
@@ -66,17 +73,11 @@ public class DownloadActivity extends BaseActivity {
         });
         sbCorePoolSize.setProgress(3);
 
-        adapter = new MyAdapter();
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getApplicationContext(), DesActivity.class);
-                intent.putExtra("apk", apks.get(position));
-                startActivity(intent);
-            }
-        });
-        adapter.notifyDataSetChanged();
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        adapter = new MainAdapter(this);
+        recyclerView.setAdapter(adapter);
         openManager.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,66 +86,80 @@ public class DownloadActivity extends BaseActivity {
         });
     }
 
-    /** 当前Activity显示的回调 */
     @Override
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
         adapter.notifyDataSetChanged();
     }
 
-    private class MyAdapter extends BaseAdapter {
-        @Override
-        public int getCount() {
-            return apks.size();
+    private class MainAdapter extends BaseRecyclerAdapter<ApkModel, ViewHolder> {
+
+        public MainAdapter(Context context) {
+            super(context, apks);
         }
 
         @Override
-        public ApkModel getItem(int position) {
-            return apks.get(position);
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = inflater.inflate(R.layout.item_download_details, parent, false);
+            return new ViewHolder(view);
         }
 
         @Override
-        public long getItemId(int position) {
-            return position;
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            ApkModel apkModel = mDatas.get(position);
+            holder.bind(apkModel);
+        }
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        @Bind(R.id.name) TextView name;
+        @Bind(R.id.icon) ImageView icon;
+        @Bind(R.id.download) Button download;
+
+        private ApkModel apkModel;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
         }
 
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                convertView = View.inflate(getApplicationContext(), R.layout.item_download_details, null);
-            }
-            final ApkModel apk = getItem(position);
-            TextView name = (TextView) convertView.findViewById(R.id.name);
-            ImageView icon = (ImageView) convertView.findViewById(R.id.icon);
-            final Button download = (Button) convertView.findViewById(R.id.download);
-            if (downloadManager.getDownloadInfo(apk.getUrl()) != null) {
+        public void bind(ApkModel apkModel) {
+            this.apkModel = apkModel;
+            if (downloadManager.getDownloadInfo(apkModel.getUrl()) != null) {
                 download.setText("已在队列");
                 download.setEnabled(false);
             } else {
                 download.setText("下载");
                 download.setEnabled(true);
             }
-            name.setText(apk.getName());
-            Glide.with(getApplicationContext()).load(apk.getIconUrl()).error(R.mipmap.ic_launcher).into(icon);
-            download.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (downloadManager.getDownloadInfo(apk.getUrl()) != null) {
-                        Toast.makeText(getApplicationContext(), "任务已经在下载列表中", Toast.LENGTH_SHORT).show();
-                    } else {
-                        GetRequest request = OkHttpUtils.get(apk.getUrl())//
-                                .headers("headerKey1", "headerValue1")//
-                                .headers("headerKey2", "headerValue2")//
-                                .params("paramKey1", "paramValue1")//
-                                .params("paramKey2", "paramValue2");
-                        downloadManager.addTask(apk.getUrl(), request, null);
-                        AppCacheUtils.getInstance(getApplicationContext()).put(apk.getUrl(), apk);
-                        download.setText("已在队列");
-                        download.setEnabled(false);
-                    }
+            name.setText(apkModel.getName());
+            Glide.with(getApplicationContext()).load(apkModel.getIconUrl()).error(R.mipmap.ic_launcher).into(icon);
+            download.setOnClickListener(this);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (v.getId() == R.id.download) {
+                if (downloadManager.getDownloadInfo(apkModel.getUrl()) != null) {
+                    Toast.makeText(getApplicationContext(), "任务已经在下载列表中", Toast.LENGTH_SHORT).show();
+                } else {
+                    GetRequest request = OkHttpUtils.get(apkModel.getUrl())//
+                            .headers("headerKey1", "headerValue1")//
+                            .headers("headerKey2", "headerValue2")//
+                            .params("paramKey1", "paramValue1")//
+                            .params("paramKey2", "paramValue2");
+                    downloadManager.addTask(apkModel.getUrl(), request, null);
+                    AppCacheUtils.getInstance(getApplicationContext()).put(apkModel.getUrl(), apkModel);
+                    download.setText("已在队列");
+                    download.setEnabled(false);
                 }
-            });
-            return convertView;
+            } else {
+                Intent intent = new Intent(getApplicationContext(), DesActivity.class);
+                intent.putExtra("apk", apkModel);
+                startActivity(intent);
+            }
         }
     }
 

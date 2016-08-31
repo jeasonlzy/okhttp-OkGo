@@ -1,6 +1,5 @@
 package com.lzy.okhttpdemo.okhttputils;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,10 +12,10 @@ import android.widget.Toast;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
-import com.lzy.okhttpdemo.model.ServerModel;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.base.BaseDetailActivity;
 import com.lzy.okhttpdemo.callback.JsonCallback;
+import com.lzy.okhttpdemo.model.ServerModel;
 import com.lzy.okhttpdemo.ui.NumberProgressBar;
 import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.GlideImageLoader;
@@ -113,46 +112,39 @@ public class FormUploadActivity extends BaseDetailActivity {
 //                .params("file2",new File("文件路径"))
 //                .params("file3",new File("文件路径"))
                 .addFileParams("file", files)           // 这种方式为同一个key，上传多个文件
-                .execute(new ProgressUpCallBack<>(this, ServerModel.class));
-    }
+                .execute(new JsonCallback<ServerModel>(ServerModel.class) {
+                    @Override
+                    public void onBefore(BaseRequest request) {
+                        super.onBefore(request);
+                        btnFormUpload.setText("正在上传中...");
+                    }
 
-    private class ProgressUpCallBack<T> extends JsonCallback<T> {
+                    @Override
+                    public void onSuccess(ServerModel model, Request request, Response response) {
+                        handleResponse(model, request, response);
+                        btnFormUpload.setText("上传完成");
+                    }
 
-        public ProgressUpCallBack(Activity activity, Class<T> clazz) {
-            super(clazz);
-        }
+                    @Override
+                    public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+                        super.onError(call, response, e);
+                        handleError(call, response);
+                        btnFormUpload.setText("上传出错");
+                    }
 
-        @Override
-        public void onBefore(BaseRequest request) {
-            super.onBefore(request);
-            btnFormUpload.setText("正在上传中...");
-        }
+                    @Override
+                    public void upProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
+                        System.out.println("upProgress -- " + totalSize + "  " + currentSize + "  " + progress + "  " + networkSpeed);
 
-        @Override
-        public void onSuccess(T s, Request request, Response response) {
-            handleResponse(s, request, response);
-            btnFormUpload.setText("上传完成");
-        }
-
-        @Override
-        public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
-            super.onError(call, response, e);
-            handleError(call, response);
-            btnFormUpload.setText("上传出错");
-        }
-
-        @Override
-        public void upProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
-            System.out.println("upProgress -- " + totalSize + "  " + currentSize + "  " + progress + "  " + networkSpeed);
-
-            String downloadLength = Formatter.formatFileSize(getApplicationContext(), currentSize);
-            String totalLength = Formatter.formatFileSize(getApplicationContext(), totalSize);
-            tvDownloadSize.setText(downloadLength + "/" + totalLength);
-            String netSpeed = Formatter.formatFileSize(getApplicationContext(), networkSpeed);
-            tvNetSpeed.setText(netSpeed + "/S");
-            tvProgress.setText((Math.round(progress * 10000) * 1.0f / 100) + "%");
-            pbProgress.setMax(100);
-            pbProgress.setProgress((int) (progress * 100));
-        }
+                        String downloadLength = Formatter.formatFileSize(getApplicationContext(), currentSize);
+                        String totalLength = Formatter.formatFileSize(getApplicationContext(), totalSize);
+                        tvDownloadSize.setText(downloadLength + "/" + totalLength);
+                        String netSpeed = Formatter.formatFileSize(getApplicationContext(), networkSpeed);
+                        tvNetSpeed.setText(netSpeed + "/S");
+                        tvProgress.setText((Math.round(progress * 10000) * 1.0f / 100) + "%");
+                        pbProgress.setMax(100);
+                        pbProgress.setProgress((int) (progress * 100));
+                    }
+                });
     }
 }

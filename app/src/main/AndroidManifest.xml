@@ -23,10 +23,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".okhttpserver.DownloadManagerActivity"/>
-        <activity android:name=".okhttpserver.DesActivity"/>
+
         <activity android:name=".okhttputils.MethodActivity"/>
-        <activity android:name=".okhttputils.CustomRequestActivity"/>
+        <activity android:name=".okhttputils.JsonRequestActivity"/>
         <activity android:name=".okhttputils.BitmapRequestActivity"/>
         <activity android:name=".okhttputils.PostTextActivity"/>
         <activity android:name=".okhttputils.FormUploadActivity"/>
@@ -37,7 +36,19 @@
         <activity android:name=".okhttputils.RedirectActivity"/>
         <activity android:name=".okhttputils.TestActivity"/>
         <activity
+            android:name=".cache.CacheDemoActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".WebActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
             android:name=".okhttputils.OkHttpActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".okhttpserver.DownloadManagerActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".okhttpserver.DesActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".okhttpserver.DownloadActivity"
