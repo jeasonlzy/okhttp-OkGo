@@ -9,9 +9,6 @@ import android.view.Window;
 import com.lzy.okhttputils.callback.BitmapCallback;
 import com.lzy.okhttputils.request.BaseRequest;
 
-import okhttp3.Call;
-import okhttp3.Response;
-
 /**
  * ================================================
  * 作    者：廖子尧
@@ -41,7 +38,7 @@ public abstract class BitmapDialogCallback extends BitmapCallback {
     }
 
     @Override
-    public void onAfter(@Nullable Bitmap bitmap, Call call, @Nullable Response response, @Nullable Exception e) {
+    public void onAfter(@Nullable Bitmap bitmap, @Nullable Exception e) {
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
         }

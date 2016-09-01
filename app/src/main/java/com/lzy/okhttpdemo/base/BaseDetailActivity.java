@@ -2,7 +2,6 @@ package com.lzy.okhttpdemo.base;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,6 @@ import java.util.Set;
 
 import okhttp3.Call;
 import okhttp3.Headers;
-import okhttp3.Request;
 import okhttp3.Response;
 
 public abstract class BaseDetailActivity extends BaseActivity {
@@ -89,8 +87,8 @@ public abstract class BaseDetailActivity extends BaseActivity {
         rootContent.addView(view, params);
     }
 
-    protected <T> void handleResponse(T data, Request request, @Nullable Response response) {
-        Headers requestHeadersString = request.headers();
+    protected <T> void handleResponse(T data, Call call, Response response) {
+        Headers requestHeadersString = call.request().headers();
         Set<String> requestNames = requestHeadersString.names();
         StringBuilder sb = new StringBuilder();
         for (String name : requestNames) {
@@ -144,11 +142,13 @@ public abstract class BaseDetailActivity extends BaseActivity {
             for (String name : names) {
                 sb.append(name).append(" ： ").append(responseHeadersString.get(name)).append("\n");
             }
+            responseHeader.setText(sb.toString());
+        } else {
+            responseHeader.setText("--");
         }
-        responseHeader.setText(sb.toString());
     }
 
-    protected void handleError(Call call, @Nullable Response response) {
+    protected void handleError(Call call, Response response) {
         Headers requestHeadersString = call.request().headers();
         Set<String> requestNames = requestHeadersString.names();
         StringBuilder sb = new StringBuilder();

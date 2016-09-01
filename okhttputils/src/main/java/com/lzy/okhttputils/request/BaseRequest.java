@@ -501,17 +501,16 @@ public abstract class BaseRequest<R extends BaseRequest> {
             @Override
             public void run() {
                 if (isFromCache) {
-                    callback.onCacheError(call, response, e);           //缓存失败回调 （UI线程）
+                    callback.onCacheError(call, e);           //缓存失败回调 （UI线程）
                     if (cacheMode == CacheMode.DEFAULT || cacheMode == CacheMode.REQUEST_FAILED_READ_CACHE) {
-                        callback.onAfter(null, call, response, e);      //请求结束回调 （UI线程）
+                        callback.onAfter(null, e);      //请求结束回调 （UI线程）
                     }
                 } else {
                     callback.onError(call, response, e);                //请求失败回调 （UI线程）
                     if (cacheMode != CacheMode.REQUEST_FAILED_READ_CACHE) {
-                        callback.onAfter(null, call, response, e);      //请求结束回调 （UI线程）
+                        callback.onAfter(null, e);      //请求结束回调 （UI线程）
                     }
                 }
-
             }
         });
 
@@ -539,13 +538,13 @@ public abstract class BaseRequest<R extends BaseRequest> {
             @Override
             public void run() {
                 if (isFromCache) {
-                    callback.onCacheSuccess(t, call.request(), response);   //缓存成功回调 （UI线程）
+                    callback.onCacheSuccess(t, call);   //缓存成功回调 （UI线程）
                     if (cacheMode == CacheMode.DEFAULT || cacheMode == CacheMode.REQUEST_FAILED_READ_CACHE || cacheMode == CacheMode.IF_NONE_CACHE_REQUEST) {
-                        callback.onAfter(t, call, response, null);          //请求结束回调 （UI线程）
+                        callback.onAfter(t, null);          //请求结束回调 （UI线程）
                     }
                 } else {
-                    callback.onSuccess(t, call.request(), response);        //请求成功回调 （UI线程）
-                    callback.onAfter(t, call, response, null);              //请求结束回调 （UI线程）
+                    callback.onSuccess(t, call, response);        //请求成功回调 （UI线程）
+                    callback.onAfter(t, null);              //请求结束回调 （UI线程）
                 }
             }
         });

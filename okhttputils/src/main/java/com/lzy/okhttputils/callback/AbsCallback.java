@@ -8,7 +8,6 @@ import com.lzy.okhttputils.request.BaseRequest;
 import java.io.IOException;
 
 import okhttp3.Call;
-import okhttp3.Request;
 import okhttp3.Response;
 
 /**
@@ -55,23 +54,23 @@ public abstract class AbsCallback<T> {
     }
 
     /** 对返回数据进行操作的回调， UI线程 */
-    public abstract void onSuccess(T t, Request request, @Nullable Response response);
+    public abstract void onSuccess(T t, Call call, Response response);
 
     /** 缓存成功的回调,UI线程 */
-    public void onCacheSuccess(T t, Request request, @Nullable Response response) {
+    public void onCacheSuccess(T t, Call call) {
     }
 
     /** 请求失败，响应错误，数据解析错误等，都会回调该方法， UI线程 */
-    public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
-        if (e != null) e.printStackTrace();
+    public void onError(Call call, Response response, Exception e) {
+        e.printStackTrace();
     }
 
     /** 缓存失败的回调,UI线程 */
-    public void onCacheError(Call call, @Nullable Response response, @Nullable Exception e) {
+    public void onCacheError(Call call, Exception e) {
     }
 
     /** 请求网络结束后，UI线程 */
-    public void onAfter(@Nullable T t, Call call, @Nullable Response response, @Nullable Exception e) {
+    public void onAfter(@Nullable T t, @Nullable Exception e) {
     }
 
     /**
@@ -104,7 +103,7 @@ public abstract class AbsCallback<T> {
         }
 
         @Override
-        public void onSuccess(Object data, Request request, Response response) {
+        public void onSuccess(Object data, Call call, Response response) {
         }
     };
 }

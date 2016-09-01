@@ -1,7 +1,6 @@
 package com.lzy.okhttpdemo.okhttputils;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.lzy.okhttpdemo.R;
@@ -13,7 +12,6 @@ import com.lzy.okhttputils.OkHttpUtils;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Call;
-import okhttp3.Request;
 import okhttp3.Response;
 
 public class HttpsActivity extends BaseDetailActivity {
@@ -55,12 +53,12 @@ public class HttpsActivity extends BaseDetailActivity {
                 .params("param1", "paramValue1")//
                 .execute(new StringDialogCallback(this) {
                     @Override
-                    public void onSuccess(String data, Request request, Response response) {
-                        handleResponse(data, request, response);
+                    public void onSuccess(String data, Call call, Response response) {
+                        handleResponse(data, call, response);
                     }
 
                     @Override
-                    public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+                    public void onError(Call call, Response response, Exception e) {
                         super.onError(call, response, e);
                         handleError(call, response);
                     }
@@ -85,12 +83,12 @@ public class HttpsActivity extends BaseDetailActivity {
 //                    .setCertificates(getAssets().open("aaaa.bks"), "123456", getAssets().open("srca.cer"))
                     .execute(new StringDialogCallback(this) {
                         @Override
-                        public void onSuccess(String data, Request request, Response response) {
-                            handleResponse(data, request, response);
+                        public void onSuccess(String data, Call call, Response response) {
+                            handleResponse(data, call, response);
                         }
 
                         @Override
-                        public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+                        public void onError(Call call, Response response, Exception e) {
                             super.onError(call, response, e);
                             handleError(call, response);
                         }

@@ -8,7 +8,7 @@ import com.lzy.okhttputils.callback.AbsCallback;
 
 import java.io.IOException;
 
-import okhttp3.Request;
+import okhttp3.Call;
 import okhttp3.Response;
 
 /**
@@ -118,7 +118,7 @@ public class UploadTask<T> extends PriorityAsyncTask<Void, UploadInfo, UploadInf
         }
 
         @Override
-        public void onSuccess(T t, Request request, Response response) {
+        public void onSuccess(T t, Call call, Response response) {
         }
     }
 

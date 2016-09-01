@@ -22,7 +22,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Call;
-import okhttp3.Request;
 import okhttp3.Response;
 
 public class FileDownloadActivity extends BaseDetailActivity {
@@ -60,8 +59,8 @@ public class FileDownloadActivity extends BaseDetailActivity {
                     }
 
                     @Override
-                    public void onSuccess(File file, Request request, Response response) {
-                        handleResponse(file, request, response);
+                    public void onSuccess(File file, Call call, Response response) {
+                        handleResponse(file, call, response);
                         btnFileDownload.setText("下载完成");
                     }
 

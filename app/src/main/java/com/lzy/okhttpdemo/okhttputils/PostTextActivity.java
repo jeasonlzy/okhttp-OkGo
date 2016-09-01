@@ -1,7 +1,6 @@
 package com.lzy.okhttpdemo.okhttputils;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.lzy.okhttpdemo.R;
@@ -19,7 +18,6 @@ import java.util.HashMap;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Call;
-import okhttp3.Request;
 import okhttp3.Response;
 
 public class PostTextActivity extends BaseDetailActivity {
@@ -55,12 +53,12 @@ public class PostTextActivity extends BaseDetailActivity {
                 .upJson(jsonObject.toString())//
                 .execute(new DialogCallback<ServerModel>(this, ServerModel.class) {
                     @Override
-                    public void onSuccess(ServerModel serverModel, Request request, @Nullable Response response) {
-                        handleResponse(serverModel, request, response);
+                    public void onSuccess(ServerModel serverModel, Call call, Response response) {
+                        handleResponse(serverModel, call, response);
                     }
 
                     @Override
-                    public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+                    public void onError(Call call, Response response, Exception e) {
                         super.onError(call, response, e);
                         handleError(call, response);
                     }
@@ -77,12 +75,12 @@ public class PostTextActivity extends BaseDetailActivity {
                 .upString("这是要上传的长文本数据！")//
                 .execute(new DialogCallback<ServerModel>(this, ServerModel.class) {
                     @Override
-                    public void onSuccess(ServerModel serverModel, Request request, @Nullable Response response) {
-                        handleResponse(serverModel, request, response);
+                    public void onSuccess(ServerModel serverModel, Call call, Response response) {
+                        handleResponse(serverModel, call, response);
                     }
 
                     @Override
-                    public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+                    public void onError(Call call, Response response, Exception e) {
                         super.onError(call, response, e);
                         handleError(call, response);
                     }
@@ -99,12 +97,12 @@ public class PostTextActivity extends BaseDetailActivity {
                 .upBytes("这是字节数据".getBytes())//
                 .execute(new DialogCallback<ServerModel>(this, ServerModel.class) {
                     @Override
-                    public void onSuccess(ServerModel serverModel, Request request, @Nullable Response response) {
-                        handleResponse(serverModel, request, response);
+                    public void onSuccess(ServerModel serverModel, Call call, Response response) {
+                        handleResponse(serverModel, call, response);
                     }
 
                     @Override
-                    public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+                    public void onError(Call call, Response response, Exception e) {
                         super.onError(call, response, e);
                         handleError(call, response);
                     }

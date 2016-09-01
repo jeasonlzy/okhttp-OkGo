@@ -2,7 +2,6 @@ package com.lzy.okhttpdemo.okhttputils;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.text.format.Formatter;
 import android.view.View;
 import android.widget.Button;
@@ -18,7 +17,7 @@ import com.lzy.okhttpdemo.callback.JsonCallback;
 import com.lzy.okhttpdemo.model.ServerModel;
 import com.lzy.okhttpdemo.ui.NumberProgressBar;
 import com.lzy.okhttpdemo.utils.Constant;
-import com.lzy.okhttpdemo.utils.GlideImageLoader;
+import com.lzy.okhttpdemo.utils.PicassoImageLoader;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
 import com.lzy.okhttputils.request.BaseRequest;
@@ -30,7 +29,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Call;
-import okhttp3.Request;
 import okhttp3.Response;
 
 public class FormUploadActivity extends BaseDetailActivity {
@@ -61,7 +59,7 @@ public class FormUploadActivity extends BaseDetailActivity {
     @OnClick(R.id.selectImage)
     public void selectImage(View view) {
         ImagePicker imagePicker = ImagePicker.getInstance();
-        imagePicker.setImageLoader(new GlideImageLoader());
+        imagePicker.setImageLoader(new PicassoImageLoader());
         imagePicker.setMultiMode(true);   //多选
         imagePicker.setShowCamera(true);  //显示拍照按钮
         imagePicker.setSelectLimit(9);    //最多选择9张
@@ -120,13 +118,13 @@ public class FormUploadActivity extends BaseDetailActivity {
                     }
 
                     @Override
-                    public void onSuccess(ServerModel model, Request request, Response response) {
-                        handleResponse(model, request, response);
+                    public void onSuccess(ServerModel model, Call call, Response response) {
+                        handleResponse(model, call, response);
                         btnFormUpload.setText("上传完成");
                     }
 
                     @Override
-                    public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+                    public void onError(Call call, Response response, Exception e) {
                         super.onError(call, response, e);
                         handleError(call, response);
                         btnFormUpload.setText("上传出错");

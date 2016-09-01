@@ -9,9 +9,6 @@ import com.lzy.okhttputils.request.BaseRequest;
 
 import java.lang.reflect.Type;
 
-import okhttp3.Call;
-import okhttp3.Response;
-
 /**
  * ================================================
  * 作    者：廖子尧
@@ -53,8 +50,8 @@ public abstract class DialogCallback<T> extends JsonCallback<T> {
     }
 
     @Override
-    public void onAfter(@Nullable T t, Call call, @Nullable Response response, @Nullable Exception e) {
-        super.onAfter(t, call, response, e);
+    public void onAfter(@Nullable T t, @Nullable Exception e) {
+        super.onAfter(t, e);
         //网络请求结束后关闭对话框
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();

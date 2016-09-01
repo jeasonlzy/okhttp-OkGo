@@ -1,6 +1,5 @@
 package com.lzy.okhttpdemo.cache;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -10,9 +9,11 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.lzy.ninegrid.NineGridView;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.WebActivity;
 import com.lzy.okhttpdemo.base.BaseActivity;
+import com.lzy.okhttpdemo.utils.PicassoImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,38 +33,41 @@ public class CacheDemoActivity extends BaseActivity {
         setContentView(R.layout.activity_cache_demo);
         initToolBar(toolbar, true, "缓存演示");
 
-        ArrayList<Fragment> fragments = new ArrayList<>();
-        ArrayList<String> strings = new ArrayList<>();
-        strings.add("第一页");
-        strings.add("第二页");
-        strings.add("第三页");
-        fragments.add(TabFragment.newInstance("第一页"));
-        fragments.add(TabFragment.newInstance("第二页"));
-        fragments.add(TabFragment.newInstance("第三页"));
-        MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager(), fragments, strings);
+        NineGridView.setImageLoader(new PicassoImageLoader());
+
+        ArrayList<TabFragment> fragments = new ArrayList<>();
+        TabFragment fragment1 = TabFragment.newInstance();
+        fragment1.setTitle("国内最新");
+        fragments.add(fragment1);
+        TabFragment fragment2 = TabFragment.newInstance();
+        fragment2.setTitle("游戏焦点");
+        fragments.add(fragment2);
+        TabFragment fragment3 = TabFragment.newInstance();
+        fragment3.setTitle("娱乐焦点");
+        fragments.add(fragment3);
+        MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager(), fragments);
         viewPager.setAdapter(adapter);
+        viewPager.setOffscreenPageLimit(fragments.size());
         tab.setupWithViewPager(viewPager);
     }
 
     @OnClick(R.id.fab)
     public void fab(View view) {
-        startActivity(new Intent(this, WebActivity.class));
+        WebActivity.runActivity(this, "我的Github,欢迎star", "https://github.com/jeasonlzy0216");
     }
 
     public class MyPagerAdapter extends FragmentPagerAdapter {
 
-        private List<Fragment> fragments;
-        private ArrayList<String> strings;
+        private List<TabFragment> fragments;
 
-        public MyPagerAdapter(FragmentManager fm, List<Fragment> fragments, ArrayList<String> strings) {
+        public MyPagerAdapter(FragmentManager fm, List<TabFragment> fragments) {
             super(fm);
             this.fragments = fragments;
-            this.strings = strings;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return strings.get(position);
+            return fragments.get(position).getTitle();
         }
 
         @Override

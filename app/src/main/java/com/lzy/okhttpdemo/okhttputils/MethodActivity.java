@@ -2,7 +2,6 @@ package com.lzy.okhttpdemo.okhttputils;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +23,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import okhttp3.Call;
 import okhttp3.MediaType;
-import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
@@ -62,12 +60,12 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .params("param1", "paramValue1")//
                         .execute(new DialogCallback<ServerModel>(this, ServerModel.class) {
                             @Override
-                            public void onSuccess(ServerModel serverModel, Request request, @Nullable Response response) {
-                                handleResponse(serverModel, request, response);
+                            public void onSuccess(ServerModel serverModel, Call call, Response response) {
+                                handleResponse(serverModel, call, response);
                             }
 
                             @Override
-                            public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+                            public void onError(Call call, Response response, Exception e) {
                                 super.onError(call, response, e);
                                 handleError(call, response);
                             }
@@ -80,12 +78,12 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .params("param1", "paramValue1")//
                         .execute(new DialogCallback<ServerModel>(this, ServerModel.class) {
                             @Override
-                            public void onSuccess(ServerModel serverModel, Request request, @Nullable Response response) {
-                                handleResponse(serverModel, request, response);
+                            public void onSuccess(ServerModel serverModel, Call call, Response response) {
+                                handleResponse(serverModel, call, response);
                             }
 
                             @Override
-                            public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+                            public void onError(Call call, Response response, Exception e) {
                                 super.onError(call, response, e);
                                 handleError(call, response);
                             }
@@ -98,12 +96,12 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .params("param1", "paramValue1")//
                         .execute(new DialogCallback<ServerModel>(this, ServerModel.class) {
                             @Override
-                            public void onSuccess(ServerModel serverModel, Request request, @Nullable Response response) {
-                                handleResponse(serverModel, request, response);
+                            public void onSuccess(ServerModel serverModel, Call call, Response response) {
+                                handleResponse(serverModel, call, response);
                             }
 
                             @Override
-                            public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+                            public void onError(Call call, Response response, Exception e) {
                                 super.onError(call, response, e);
                                 handleError(call, response);
                             }
@@ -116,12 +114,12 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .params("param1", "paramValue1")//
                         .execute(new DialogCallback<ServerModel>(this, ServerModel.class) {
                             @Override
-                            public void onSuccess(ServerModel serverModel, Request request, @Nullable Response response) {
-                                handleResponse(serverModel, request, response);
+                            public void onSuccess(ServerModel serverModel, Call call, Response response) {
+                                handleResponse(serverModel, call, response);
                             }
 
                             @Override
-                            public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+                            public void onError(Call call, Response response, Exception e) {
                                 super.onError(call, response, e);
                                 handleError(call, response);
                             }
@@ -134,12 +132,12 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .params("param1", "paramValue1")//
                         .execute(new DialogCallback<ServerModel>(this, ServerModel.class) {
                             @Override
-                            public void onSuccess(ServerModel serverModel, Request request, @Nullable Response response) {
-                                handleResponse(serverModel, request, response);
+                            public void onSuccess(ServerModel serverModel, Call call, Response response) {
+                                handleResponse(serverModel, call, response);
                             }
 
                             @Override
-                            public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+                            public void onError(Call call, Response response, Exception e) {
                                 super.onError(call, response, e);
                                 handleError(call, response);
                             }
@@ -153,12 +151,12 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .requestBody(RequestBody.create(MediaType.parse("text/plain;charset=utf-8"), "这是要上传的数据"))//
                         .execute(new DialogCallback<ServerModel>(this, ServerModel.class) {
                             @Override
-                            public void onSuccess(ServerModel serverModel, Request request, @Nullable Response response) {
-                                handleResponse(serverModel, request, response);
+                            public void onSuccess(ServerModel serverModel, Call call, Response response) {
+                                handleResponse(serverModel, call, response);
                             }
 
                             @Override
-                            public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+                            public void onError(Call call, Response response, Exception e) {
                                 super.onError(call, response, e);
                                 handleError(call, response);
                             }

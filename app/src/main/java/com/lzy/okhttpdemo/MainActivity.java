@@ -45,7 +45,7 @@ public class MainActivity extends BaseActivity {
 
     @OnClick(R.id.fab)
     public void fab(View view) {
-        startActivity(new Intent(this, WebActivity.class));
+        WebActivity.runActivity(this, "我的Github,欢迎star", "https://github.com/jeasonlzy0216");
     }
 
     private void initData() {

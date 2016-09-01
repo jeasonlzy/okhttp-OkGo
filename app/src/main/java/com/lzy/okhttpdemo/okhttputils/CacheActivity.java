@@ -3,13 +3,12 @@ package com.lzy.okhttpdemo.okhttputils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.View;
 
-import com.lzy.okhttpdemo.model.ServerModel;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.base.BaseDetailActivity;
 import com.lzy.okhttpdemo.callback.DialogCallback;
+import com.lzy.okhttpdemo.model.ServerModel;
 import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
@@ -22,7 +21,6 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Call;
-import okhttp3.Request;
 import okhttp3.Response;
 
 public class CacheActivity extends BaseDetailActivity {
@@ -128,29 +126,28 @@ public class CacheActivity extends BaseDetailActivity {
         }
 
         @Override
-        public void onSuccess(ServerModel requestInfo, Request request, Response response) {
-            requestState.setText("请求成功  是否来自缓存：false  请求方式：" + request.method() + "\n" + "url：" + request.url());
-            handleResponse(requestInfo, request, response);
+        public void onSuccess(ServerModel requestInfo, Call call, Response response) {
+            requestState.setText("请求成功  是否来自缓存：false  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
+            handleResponse(requestInfo, call, response);
         }
 
         @Override
-        public void onCacheSuccess(ServerModel requestInfo, Request request, @Nullable Response response) {
-            requestState.setText("请求成功  是否来自缓存：true  请求方式：" + request.method() + "\n" + "url：" + request.url());
-            handleResponse(requestInfo, request, response);
-            responseHeader.setText("响应头可以根据 cacheKey 获取到，在此不演示！");
+        public void onCacheSuccess(ServerModel requestInfo, Call call) {
+            requestState.setText("请求成功  是否来自缓存：true  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
+            handleResponse(requestInfo, call, null);
         }
 
         @Override
-        public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+        public void onError(Call call, Response response, Exception e) {
             super.onError(call, response, e);
             requestState.setText("请求失败  是否来自缓存：false  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
             handleError(call, response);
         }
 
         @Override
-        public void onCacheError(Call call, @Nullable Response response, @Nullable Exception e) {
+        public void onCacheError(Call call, Exception e) {
             requestState.setText("请求失败  是否来自缓存：true  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
-            handleError(call, response);
+            handleError(call, null);
         }
     }
 }

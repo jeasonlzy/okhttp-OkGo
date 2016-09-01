@@ -8,9 +8,6 @@ import android.view.Window;
 import com.lzy.okhttputils.callback.StringCallback;
 import com.lzy.okhttputils.request.BaseRequest;
 
-import okhttp3.Call;
-import okhttp3.Response;
-
 /**
  * ================================================
  * 作    者：jeasonlzy（廖子尧）
@@ -42,8 +39,8 @@ public abstract class StringDialogCallback extends StringCallback {
     }
 
     @Override
-    public void onAfter(@Nullable String s, Call call, Response response, @Nullable Exception e) {
-        super.onAfter(s, call, response, e);
+    public void onAfter(@Nullable String s, @Nullable Exception e) {
+        super.onAfter(s, e);
         //网络请求结束后关闭对话框
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();

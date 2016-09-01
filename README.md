@@ -189,7 +189,7 @@ OkHttpUtils.get(Urls.URL_METHOD)     // 请求方式和请求url
 	.cacheMode(CacheMode.DEFAULT)    // 缓存模式，详细请看缓存介绍
 	.execute(new JsonCallback<RequestInfo>(RequestInfo.class) {
 	    @Override
-	    public void onResponse(boolean isFromCache, RequestInfo requestInfo, Request request, @Nullable Response response) {
+	    public void onResponse(boolean isFromCache, RequestInfo requestInfo, Request request, Response response) {
 			// requestInfo 对象即为所需要的结果对象
 	    }
 	});
@@ -200,7 +200,7 @@ OkHttpUtils.get(Urls.URL_IMAGE)//
 	.tag(this)//
 	.execute(new BitmapCallback() {
 	    @Override
-	    public void onResponse(boolean isFromCache, Bitmap bitmap, Request request, @Nullable Response response) {
+	    public void onResponse(boolean isFromCache, Bitmap bitmap, Request request, Response response) {
 		    // bitmap 即为返回的图片数据
 	    }
 	});
@@ -211,7 +211,7 @@ OkHttpUtils.get(Urls.URL_DOWNLOAD)//
 	.tag(this)//
 	.execute(new FileCallback("/sdcard/temp/", "file.jpg") {  //文件下载时，需要指定下载的文件目录和文件名
 	    @Override
-	    public void onResponse(boolean isFromCache, File file, Request request, @Nullable Response response) {
+	    public void onResponse(boolean isFromCache, File file, Request request, Response response) {
 		    // file 即为文件数据，文件保存在指定目录
 	    }
 	    
@@ -229,7 +229,7 @@ OkHttpUtils.post(Urls.URL_TEXT_UPLOAD)//
 	.postString("这是要上传的长文本数据！")//
 	.execute(new StringCallback() {
 	    @Override
-	    public void onResponse(boolean isFromCache, String s, Request request, @Nullable Response response) {
+	    public void onResponse(boolean isFromCache, String s, Request request, Response response) {
 			//上传成功
 	    }
 	    
@@ -255,7 +255,7 @@ OkHttpUtils.post(Urls.URL_TEXT_UPLOAD)//
 	.postJson(jsonObject.toString())//
 	.execute(new StringCallback() {
 	    @Override
-	    public void onResponse(boolean isFromCache, String s, Request request, @Nullable Response response) {
+	    public void onResponse(boolean isFromCache, String s, Request request, Response response) {
 			//上传成功
 	    }
 	    
@@ -330,7 +330,7 @@ OkHttpUtils.get(Urls.URL_METHOD) // 请求方式和请求url, get请求不需要
 		}
 	
 		@Override
-		public void onResponse(boolean isFromCache, RequestInfo requestInfo, Request request, @Nullable Response response) {
+		public void onResponse(boolean isFromCache, RequestInfo requestInfo, Request request, Response response) {
 		    // UI 线程，请求成功后回调
 		    // isFromCache 表示当前回调是否来自于缓存
 		    // requestInfo 返回泛型约定的实体类型参数
@@ -339,7 +339,7 @@ OkHttpUtils.get(Urls.URL_METHOD) // 请求方式和请求url, get请求不需要
 		}
 	
 		@Override
-		public void onError(boolean isFromCache, Call call, @Nullable Response response, @Nullable Exception e) {
+		public void onError(boolean isFromCache, Call call, Response response, Exception e) {
 		    // UI 线程，请求失败后回调
 		    // isFromCache 表示当前回调是否来自于缓存
 		    // call        本次网络的请求对象，可以根据该对象拿到 request
@@ -348,7 +348,7 @@ OkHttpUtils.get(Urls.URL_METHOD) // 请求方式和请求url, get请求不需要
 		}
 	
 		@Override
-		public void onAfter(boolean isFromCache, @Nullable RequestInfo requestInfo, Call call, @Nullable Response response, @Nullable Exception e) {
+		public void onAfter(boolean isFromCache, RequestInfo requestInfo, Call call, Response response, Exception e) {
 		    // UI 线程，请求结束后回调，无论网络请求成功还是失败，都会调用，可以用于关闭显示对话框
 		    // isFromCache 表示当前回调是否来自于缓存
 		    // requestInfo 返回泛型约定的实体类型参数，如果网络请求失败，该对象为　null

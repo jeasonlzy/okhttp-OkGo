@@ -1,5 +1,7 @@
 package com.lzy.okhttpdemo;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -14,15 +16,27 @@ import butterknife.Bind;
 
 public class WebActivity extends BaseActivity {
 
+    public final static String URL = "url";
+    public final static String TITLE = "title";
+
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.pb) ProgressBar pb;
     @Bind(R.id.webView) WebView webView;
+
+    public static void runActivity(Context context, String title, String url) {
+        Intent intent = new Intent(context, WebActivity.class);
+        intent.putExtra(URL, url);
+        intent.putExtra(TITLE, title);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web);
-        initToolBar(toolbar, true, "我的Github,欢迎star");
+        String url = getIntent().getStringExtra(URL);
+        String title = getIntent().getStringExtra(TITLE);
+        initToolBar(toolbar, true, title);
 
         pb.setMax(100);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -44,6 +58,6 @@ public class WebActivity extends BaseActivity {
                 return true;
             }
         });
-        webView.loadUrl("https://github.com/jeasonlzy0216");
+        webView.loadUrl(url);
     }
 }

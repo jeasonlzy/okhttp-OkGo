@@ -21,4 +21,7 @@ public class Urls {
     public static final String URL_TEXT_UPLOAD = SERVER + "uploadString";
     public static final String URL_DOWNLOAD = SERVER + "download";
     public static final String URL_REDIRECT = SERVER + "redirect";
+
+    public static final String NEWS = "http://apis.baidu.com/showapi_open_bus/channel_news/search_news";
+    public static final String APIKEY = "593e074aa96b18276fbe1aec8992f398";
 }

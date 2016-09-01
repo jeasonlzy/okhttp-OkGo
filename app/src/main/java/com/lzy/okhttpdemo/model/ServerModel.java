@@ -12,6 +12,8 @@ import java.io.Serializable;
  * ================================================
  */
 public class ServerModel implements Serializable{
+    private static final long serialVersionUID = -828322761336296999L;
+
     public String method;
     public String ip;
     public String url;
@@ -20,6 +22,8 @@ public class ServerModel implements Serializable{
     public Author author;
 
     public class Author implements Serializable{
+        private static final long serialVersionUID = 2701611773813762723L;
+
         public String name;
         public String fullname;
         public String github;

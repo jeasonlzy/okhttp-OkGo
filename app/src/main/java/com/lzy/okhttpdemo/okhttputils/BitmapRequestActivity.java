@@ -17,7 +17,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Call;
-import okhttp3.Request;
 import okhttp3.Response;
 
 public class BitmapRequestActivity extends BaseDetailActivity {
@@ -46,13 +45,13 @@ public class BitmapRequestActivity extends BaseDetailActivity {
                 .params("param1", "paramValue1")//
                 .execute(new BitmapDialogCallback(this) {
                     @Override
-                    public void onSuccess(Bitmap bitmap, Request request, Response response) {
-                        handleResponse(bitmap, request, response);
+                    public void onSuccess(Bitmap bitmap, Call call, Response response) {
+                        handleResponse(bitmap, call, response);
                         imageView.setImageBitmap(bitmap);
                     }
 
                     @Override
-                    public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
+                    public void onError(Call call, Response response, Exception e) {
                         super.onError(call, response, e);
                         handleError(call, response);
                     }

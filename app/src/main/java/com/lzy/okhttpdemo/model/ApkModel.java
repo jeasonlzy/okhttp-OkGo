@@ -3,6 +3,8 @@ package com.lzy.okhttpdemo.model;
 import java.io.Serializable;
 
 public class ApkModel implements Serializable{
+    private static final long serialVersionUID = 2072893447591548402L;
+
     private String name;
     private String url;
     private String iconUrl;
