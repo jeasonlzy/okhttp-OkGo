@@ -8,7 +8,6 @@ import android.widget.Toast;
 
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.base.BaseDetailActivity;
-import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
 
@@ -41,7 +40,7 @@ public class SyncActivity extends BaseDetailActivity {
     protected void onActivityCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_sync);
         ButterKnife.bind(this);
-        setTitle(Constant.getData().get(8)[0]);
+        setTitle("同步请求");
     }
 
     @Override

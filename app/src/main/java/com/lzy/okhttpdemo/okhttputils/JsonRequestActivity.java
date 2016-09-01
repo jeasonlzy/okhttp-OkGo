@@ -8,7 +8,6 @@ import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.base.BaseDetailActivity;
 import com.lzy.okhttpdemo.callback.DialogCallback;
 import com.lzy.okhttpdemo.model.ServerModel;
-import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
 
@@ -25,7 +24,7 @@ public class JsonRequestActivity extends BaseDetailActivity {
     protected void onActivityCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_custom_request);
         ButterKnife.bind(this);
-        actionBar.setTitle(Constant.getData().get(1)[0]);
+        actionBar.setTitle("自动解析Json对象");
     }
 
     @Override

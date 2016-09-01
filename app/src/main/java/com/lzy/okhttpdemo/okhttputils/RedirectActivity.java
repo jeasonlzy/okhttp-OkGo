@@ -6,7 +6,6 @@ import android.view.View;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.base.BaseDetailActivity;
 import com.lzy.okhttpdemo.callback.StringDialogCallback;
-import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
 
@@ -21,7 +20,7 @@ public class RedirectActivity extends BaseDetailActivity {
     protected void onActivityCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_redirect);
         ButterKnife.bind(this);
-        setTitle(Constant.getData().get(9)[0]);
+        setTitle("301重定向");
     }
 
     @Override

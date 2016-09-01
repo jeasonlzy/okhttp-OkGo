@@ -16,7 +16,6 @@ import com.lzy.okhttpdemo.base.BaseDetailActivity;
 import com.lzy.okhttpdemo.callback.JsonCallback;
 import com.lzy.okhttpdemo.model.ServerModel;
 import com.lzy.okhttpdemo.ui.NumberProgressBar;
-import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.PicassoImageLoader;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
@@ -46,7 +45,7 @@ public class FormUploadActivity extends BaseDetailActivity {
     protected void onActivityCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_form_upload);
         ButterKnife.bind(this);
-        setTitle(Constant.getData().get(4)[0]);
+        setTitle("文件上传");
     }
 
     @Override

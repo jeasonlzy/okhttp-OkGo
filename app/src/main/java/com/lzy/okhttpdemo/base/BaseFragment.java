@@ -18,7 +18,7 @@ import android.view.ViewGroup;
  */
 public abstract class BaseFragment extends Fragment {
 
-    public String fragmentTitle;                //fragment标题
+    protected String fragmentTitle;             //fragment标题
     private boolean isVisible;                  //是否可见状态
     private boolean isPrepared;                 //标志位，View已经初始化完成。
     private boolean isFirstLoad = true;         //是否第一次加载

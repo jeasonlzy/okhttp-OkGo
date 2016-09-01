@@ -9,7 +9,6 @@ import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.base.BaseDetailActivity;
 import com.lzy.okhttpdemo.callback.DialogCallback;
 import com.lzy.okhttpdemo.model.ServerModel;
-import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
 import com.lzy.okhttputils.cache.CacheEntity;
@@ -29,7 +28,7 @@ public class CacheActivity extends BaseDetailActivity {
     protected void onActivityCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_cache);
         ButterKnife.bind(this);
-        setTitle(Constant.getData().get(6)[0]);
+        setTitle("网络缓存基本用法");
     }
 
     @Override
@@ -127,27 +126,27 @@ public class CacheActivity extends BaseDetailActivity {
 
         @Override
         public void onSuccess(ServerModel requestInfo, Call call, Response response) {
-            requestState.setText("请求成功  是否来自缓存：false  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
             handleResponse(requestInfo, call, response);
+            requestState.setText("请求成功  是否来自缓存：false  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
         }
 
         @Override
         public void onCacheSuccess(ServerModel requestInfo, Call call) {
-            requestState.setText("请求成功  是否来自缓存：true  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
             handleResponse(requestInfo, call, null);
+            requestState.setText("请求成功  是否来自缓存：true  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
         }
 
         @Override
         public void onError(Call call, Response response, Exception e) {
             super.onError(call, response, e);
-            requestState.setText("请求失败  是否来自缓存：false  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
             handleError(call, response);
+            requestState.setText("请求失败  是否来自缓存：false  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
         }
 
         @Override
         public void onCacheError(Call call, Exception e) {
-            requestState.setText("请求失败  是否来自缓存：true  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
             handleError(call, null);
+            requestState.setText("请求失败  是否来自缓存：true  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
         }
     }
 }

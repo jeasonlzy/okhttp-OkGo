@@ -6,12 +6,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.lzy.ninegrid.ImageInfo;
 import com.lzy.ninegrid.NineGridView;
+import com.lzy.ninegrid.preview.NineGridViewClickAdapter;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.WebActivity;
 import com.lzy.okhttpdemo.base.BaseRecyclerAdapter;
 import com.lzy.okhttpdemo.model.NewsModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -65,21 +68,21 @@ public class NewsAdapter extends BaseRecyclerAdapter<NewsModel.ContentList, News
             pubDate.setText(item.pubDate);
             source.setText(item.source);
 
-//            ArrayList<ImageInfo> imageInfo = new ArrayList<>();
-//            List<NewsModel.NewsImage> images = item.imageurls;
-//            if (images != null) {
-//                for (NewsModel.NewsImage image : images) {
-//                    ImageInfo info = new ImageInfo();
-//                    info.setThumbnailUrl(image.url);
-//                    info.setBigImageUrl(image.url);
-//                    imageInfo.add(info);
-//                }
-//            }
-//            nineGrid.setAdapter(new NineGridViewClickAdapter(mContext, imageInfo));
+            ArrayList<ImageInfo> imageInfo = new ArrayList<>();
+            List<NewsModel.NewsImage> images = item.imageurls;
+            if (images != null) {
+                for (NewsModel.NewsImage image : images) {
+                    ImageInfo info = new ImageInfo();
+                    info.setThumbnailUrl(image.url);
+                    info.setBigImageUrl(image.url);
+                    imageInfo.add(info);
+                }
+            }
+            nineGrid.setAdapter(new NineGridViewClickAdapter(mContext, imageInfo));
 
-//            if (images != null && images.size() == 1) {
-//                nineGrid.setSingleImageRatio(images.get(0).width * 1.0f / images.get(0).height);
-//            }
+            if (images != null && images.size() == 1) {
+                nineGrid.setSingleImageRatio(images.get(0).width * 1.0f / images.get(0).height);
+            }
 
             itemView.setOnClickListener(this);
         }

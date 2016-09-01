@@ -6,7 +6,6 @@ import android.view.View;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.base.BaseDetailActivity;
 import com.lzy.okhttpdemo.callback.StringDialogCallback;
-import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttputils.OkHttpUtils;
 
 import butterknife.ButterKnife;
@@ -35,7 +34,7 @@ public class HttpsActivity extends BaseDetailActivity {
     protected void onActivityCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_https);
         ButterKnife.bind(this);
-        setTitle(Constant.getData().get(7)[0]);
+        setTitle("支持https请求");
     }
 
     @Override

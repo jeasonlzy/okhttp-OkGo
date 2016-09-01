@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.base.BaseDetailActivity;
 import com.lzy.okhttpdemo.ui.NumberProgressBar;
-import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
 import com.lzy.okhttputils.callback.FileCallback;
@@ -36,7 +35,7 @@ public class FileDownloadActivity extends BaseDetailActivity {
     protected void onActivityCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_file_download);
         ButterKnife.bind(this);
-        setTitle(Constant.getData().get(5)[0]);
+        setTitle("文件下载");
     }
 
     @Override

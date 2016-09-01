@@ -31,18 +31,18 @@ public class CacheDemoActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cache_demo);
-        initToolBar(toolbar, true, "缓存演示");
+        initToolBar(toolbar, true, "强大的缓存");
 
         NineGridView.setImageLoader(new PicassoImageLoader());
 
-        ArrayList<TabFragment> fragments = new ArrayList<>();
-        TabFragment fragment1 = TabFragment.newInstance();
+        ArrayList<NewsTabFragment> fragments = new ArrayList<>();
+        NewsTabFragment fragment1 = NewsTabFragment.newInstance();
         fragment1.setTitle("国内最新");
         fragments.add(fragment1);
-        TabFragment fragment2 = TabFragment.newInstance();
+        NewsTabFragment fragment2 = NewsTabFragment.newInstance();
         fragment2.setTitle("游戏焦点");
         fragments.add(fragment2);
-        TabFragment fragment3 = TabFragment.newInstance();
+        NewsTabFragment fragment3 = NewsTabFragment.newInstance();
         fragment3.setTitle("娱乐焦点");
         fragments.add(fragment3);
         MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager(), fragments);
@@ -58,9 +58,9 @@ public class CacheDemoActivity extends BaseActivity {
 
     public class MyPagerAdapter extends FragmentPagerAdapter {
 
-        private List<TabFragment> fragments;
+        private List<NewsTabFragment> fragments;
 
-        public MyPagerAdapter(FragmentManager fm, List<TabFragment> fragments) {
+        public MyPagerAdapter(FragmentManager fm, List<NewsTabFragment> fragments) {
             super(fm);
             this.fragments = fragments;
         }

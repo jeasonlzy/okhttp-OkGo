@@ -15,7 +15,6 @@ import com.lzy.okhttpdemo.base.BaseDetailActivity;
 import com.lzy.okhttpdemo.callback.DialogCallback;
 import com.lzy.okhttpdemo.model.ServerModel;
 import com.lzy.okhttpdemo.utils.ColorUtils;
-import com.lzy.okhttpdemo.utils.Constant;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
 
@@ -38,7 +37,7 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
         setContentView(R.layout.activity_method);
         ButterKnife.bind(this);
 
-        setTitle(Constant.getData().get(0)[0]);
+        setTitle("请求方法演示");
         gridView.setAdapter(new MyAdapter());
         gridView.setOnItemClickListener(this);
     }

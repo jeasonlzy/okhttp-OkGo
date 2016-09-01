@@ -25,18 +25,17 @@ import butterknife.ButterKnife;
 import okhttp3.Call;
 import okhttp3.Response;
 
-public class TabFragment extends BaseFragment {
+public class NewsTabFragment extends BaseFragment {
 
     @Bind(R.id.recyclerView) RecyclerView recyclerView;
 
-    private String title;
     private Context context;
     private int currentPage;
     private NewsAdapter newsAdapter;
     private List<NewsModel.ContentList> mData;
 
-    public static TabFragment newInstance() {
-        return new TabFragment();
+    public static NewsTabFragment newInstance() {
+        return new NewsTabFragment();
     }
 
     @Override
@@ -64,9 +63,9 @@ public class TabFragment extends BaseFragment {
 
     private void refreshData() {
         OkHttpUtils.get(Urls.NEWS)//
-                .params("channelName", title)//
+                .params("channelName", fragmentTitle)//
                 .params("page", String.valueOf(1))              //初始化或者下拉刷新,默认加载第一页
-                .cacheKey("TabFragment_" + title)               //由于该fragment会被复用,必须保证key唯一,否则数据会发生覆盖
+                .cacheKey("TabFragment_" + fragmentTitle)       //由于该fragment会被复用,必须保证key唯一,否则数据会发生覆盖
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)  //缓存模式先使用缓存,然后使用网络数据
                 .execute(new NewsCallback<NewsModel>(NewsModel.class) {
                     @Override
@@ -97,7 +96,7 @@ public class TabFragment extends BaseFragment {
 
     private void loadMoreData() {
         OkHttpUtils.get(Urls.NEWS)//
-                .params("channelName", title)//
+                .params("channelName", fragmentTitle)//
                 .params("page", String.valueOf(currentPage + 1)) //上拉加载更多
                 .cacheMode(CacheMode.NO_CACHE)                   //上拉不需要缓存
                 .execute(new NewsCallback<NewsModel>(NewsModel.class) {
