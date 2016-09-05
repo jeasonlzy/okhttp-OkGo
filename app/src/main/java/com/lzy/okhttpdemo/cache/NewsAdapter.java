@@ -23,24 +23,26 @@ import java.util.List;
  * 修订历史：
  * ================================================
  */
-public class NewsAdapter extends BaseQuickAdapter<NewsModel.ContentList> implements View.OnClickListener {
-
-    private NewsModel.ContentList contentList;
+public class NewsAdapter extends BaseQuickAdapter<NewsModel.ContentList> {
 
     public NewsAdapter(List<NewsModel.ContentList> data) {
         super(R.layout.item_news, data);
     }
 
     @Override
-    protected void convert(BaseViewHolder baseViewHolder, NewsModel.ContentList contentList) {
-        this.contentList = contentList;
+    protected void convert(BaseViewHolder baseViewHolder, final NewsModel.ContentList contentList) {
         baseViewHolder.setText(R.id.title, contentList.title)//
                 .setText(R.id.desc, contentList.desc)//
                 .setText(R.id.pubDate, contentList.pubDate)//
                 .setText(R.id.source, contentList.source);
 
         View view = baseViewHolder.getConvertView();
-        view.setOnClickListener(this);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WebActivity.runActivity(mContext, contentList.title, contentList.link);
+            }
+        });
 
         NineGridView nineGrid = baseViewHolder.getView(R.id.nineGrid);
         ArrayList<ImageInfo> imageInfo = new ArrayList<>();
@@ -58,10 +60,5 @@ public class NewsAdapter extends BaseQuickAdapter<NewsModel.ContentList> impleme
         if (images != null && images.size() == 1) {
             nineGrid.setSingleImageRatio(images.get(0).width * 1.0f / images.get(0).height);
         }
-    }
-
-    @Override
-    public void onClick(View v) {
-        WebActivity.runActivity(mContext, contentList.title, contentList.link);
     }
 }
