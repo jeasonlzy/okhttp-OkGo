@@ -360,7 +360,7 @@ OkHttpUtils.get(Urls.URL_METHOD) // 请求方式和请求url, get请求不需要
         }
 	
 		@Override
-		public void onSuccess(ServerModel ServerModel, Call call, Response response) {
+		public void onSuccess(ServerModel serverModel, Call call, Response response) {
 		    // UI 线程，请求成功后回调
 		    // ServerModel 返回泛型约定的实体类型参数
 		    // call        本次网络的请求信息，如果需要查看请求头或请求参数可以从此对象获取
