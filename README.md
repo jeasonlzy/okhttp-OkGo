@@ -178,34 +178,32 @@ callback一共有以下 10 个回调,除`onSuccess`必须实现以外,其余均�
  * onAfter():网络请求结束的回调,无论成功失败一定会执行
  * upProgress():上传进度的回调
  * downloadProgress():下载进度的回调
- 
-#### 无缓存模式,请求成功调用顺序(upProgress只在有请求体的情况下回调)
-> onBefore(UI线程) -> upProgress(UI线程) -> parseNetworkResponse(子线程) -> downloadProgress(UI线程) -> onSuccess(UI线程) -> onAfter(UI线程)
-
-#### 无缓存模式,请求失败调用顺序
-> onBefore(UI线程) -> onError(UI线程) -> onAfter(UI线程)
 
 ### Callback回调具有如下顺序,虽然顺序写的很复杂,但是理解后,是很简单,并且合情合理的
-#### 1.无缓存模式 CacheMode.NO_CACHE
+#### 1).无缓存模式 CacheMode.NO_CACHE
 > 网络请求成功  onBefore -> parseNetworkResponse -> onSuccess -> onAfter<br>
 > 网络请求失败  onBefore -> parseNetworkFail     -> onError   -> onAfter<br>
-#### 2.默认缓存模式,遵循304头 CacheMode.DEFAULT
- * 网络请求成功,服务端返回非304  onBefore -> parseNetworkResponse -> onSuccess -> onAfter<br>
- * 网络请求成功服务端返回304    onBefore -> onCacheSuccess       -> onAfter<br>
- * 网络请求失败               onBefore -> parseNetworkFail     -> onError   -> onAfter<br>
-#### 3.请求网络失败后读取缓存 CacheMode.REQUEST_FAILED_READ_CACHE
- * 网络请求成功,不读取缓存    onBefore -> parseNetworkResponse -> onSuccess -> onAfter<br>
- * 网络请求失败,读取缓存成功  onBefore -> parseNetworkFail -> onError -> onCacheSuccess -> onAfter<br>
- * 网络请求失败,读取缓存失败  onBefore -> parseNetworkFail -> onError -> onCacheError   -> onAfter<br>
-#### 4.如果缓存不存在才请求网络，否则使用缓存 CacheMode.IF_NONE_CACHE_REQUEST
- * 已经有缓存,不请求网络  onBefore -> onCacheSuccess -> onAfter<br>
- * 没有缓存请求网络成功   onBefore -> onCacheError   -> parseNetworkResponse -> onSuccess -> onAfter<br>
- * 没有缓存请求网络失败   onBefore -> onCacheError   -> parseNetworkFail     -> onError   -> onAfter<br>
-#### 5.先使用缓存，不管是否存在，仍然请求网络 CacheMode.FIRST_CACHE_THEN_REQUEST
- * 无缓存时,网络请求成功  onBefore -> onCacheError   -> parseNetworkResponse -> onSuccess -> onAfter<br>
- * 无缓存时,网络请求失败  onBefore -> onCacheError   -> parseNetworkFail     -> onError   -> onAfter<br>
- * 有缓存时,网络请求成功  onBefore -> onCacheSuccess -> parseNetworkResponse -> onSuccess -> onAfter<br>
- * 有缓存时,网络请求失败  onBefore -> onCacheSuccess -> parseNetworkFail     -> onError   -> onAfter<br>
+
+#### 2).默认缓存模式,遵循304头 CacheMode.DEFAULT
+> 网络请求成功,服务端返回非304  onBefore -> parseNetworkResponse -> onSuccess -> onAfter<br>
+> 网络请求成功服务端返回304    onBefore -> onCacheSuccess       -> onAfter<br>
+> 网络请求失败               onBefore -> parseNetworkFail     -> onError   -> onAfter<br>
+ 
+#### 3).请求网络失败后读取缓存 CacheMode.REQUEST_FAILED_READ_CACHE
+> 网络请求成功,不读取缓存    onBefore -> parseNetworkResponse -> onSuccess -> onAfter<br>
+> 网络请求失败,读取缓存成功  onBefore -> parseNetworkFail -> onError -> onCacheSuccess -> onAfter<br>
+> 网络请求失败,读取缓存失败  onBefore -> parseNetworkFail -> onError -> onCacheError   -> onAfter<br>
+
+#### 4).如果缓存不存在才请求网络，否则使用缓存 CacheMode.IF_NONE_CACHE_REQUEST
+> 已经有缓存,不请求网络  onBefore -> onCacheSuccess -> onAfter<br>
+> 没有缓存请求网络成功   onBefore -> onCacheError   -> parseNetworkResponse -> onSuccess -> onAfter<br>
+> 没有缓存请求网络失败   onBefore -> onCacheError   -> parseNetworkFail     -> onError   -> onAfter<br>
+
+#### 5).先使用缓存，不管是否存在，仍然请求网络 CacheMode.FIRST_CACHE_THEN_REQUEST
+> 无缓存时,网络请求成功  onBefore -> onCacheError   -> parseNetworkResponse -> onSuccess -> onAfter<br>
+> 无缓存时,网络请求失败  onBefore -> onCacheError   -> parseNetworkFail     -> onError   -> onAfter<br>
+> 有缓存时,网络请求成功  onBefore -> onCacheSuccess -> parseNetworkResponse -> onSuccess -> onAfter<br>
+> 有缓存时,网络请求失败  onBefore -> onCacheSuccess -> parseNetworkFail     -> onError   -> onAfter<br>
 
 ### 1.基本的网络请求
 ```java
