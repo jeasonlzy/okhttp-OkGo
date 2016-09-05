@@ -13,7 +13,7 @@ import com.lzy.ninegrid.NineGridView;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.WebActivity;
 import com.lzy.okhttpdemo.base.BaseActivity;
-import com.lzy.okhttpdemo.utils.PicassoImageLoader;
+import com.lzy.okhttpdemo.utils.GlideImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ public class CacheDemoActivity extends BaseActivity {
         setContentView(R.layout.activity_cache_demo);
         initToolBar(toolbar, true, "强大的缓存");
 
-        NineGridView.setImageLoader(new PicassoImageLoader());
+        NineGridView.setImageLoader(new GlideImageLoader());
 
         ArrayList<NewsTabFragment> fragments = new ArrayList<>();
         NewsTabFragment fragment1 = NewsTabFragment.newInstance();

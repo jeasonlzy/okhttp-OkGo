@@ -20,7 +20,7 @@ import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.base.BaseActivity;
 import com.lzy.okhttpdemo.ui.ProgressPieView;
-import com.lzy.okhttpdemo.utils.PicassoImageLoader;
+import com.lzy.okhttpdemo.utils.GlideImageLoader;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttpserver.download.DownloadManager;
 import com.lzy.okhttpserver.listener.UploadListener;
@@ -94,7 +94,7 @@ public class UploadActivity extends BaseActivity implements ExecutorWithListener
     @OnClick(R.id.select)
     public void select(View view) {
         imagePicker = ImagePicker.getInstance();
-        imagePicker.setImageLoader(new PicassoImageLoader());
+        imagePicker.setImageLoader(new GlideImageLoader());
         imagePicker.setShowCamera(true);
         imagePicker.setSelectLimit(9);
         imagePicker.setCrop(false);

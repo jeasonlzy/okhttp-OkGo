@@ -16,7 +16,7 @@ import com.lzy.okhttpdemo.base.BaseDetailActivity;
 import com.lzy.okhttpdemo.callback.JsonCallback;
 import com.lzy.okhttpdemo.model.ServerModel;
 import com.lzy.okhttpdemo.ui.NumberProgressBar;
-import com.lzy.okhttpdemo.utils.PicassoImageLoader;
+import com.lzy.okhttpdemo.utils.GlideImageLoader;
 import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
 import com.lzy.okhttputils.request.BaseRequest;
@@ -58,7 +58,7 @@ public class FormUploadActivity extends BaseDetailActivity {
     @OnClick(R.id.selectImage)
     public void selectImage(View view) {
         ImagePicker imagePicker = ImagePicker.getInstance();
-        imagePicker.setImageLoader(new PicassoImageLoader());
+        imagePicker.setImageLoader(new GlideImageLoader());
         imagePicker.setMultiMode(true);   //多选
         imagePicker.setShowCamera(true);  //显示拍照按钮
         imagePicker.setSelectLimit(9);    //最多选择9张

@@ -109,7 +109,7 @@ public class HttpUtils {
     public static String getNetFileName(Response response, String url) {
         String fileName = getHeaderFileName(response);
         if (TextUtils.isEmpty(fileName)) fileName = getUrlFileName(url);
-        if (TextUtils.isEmpty(fileName)) fileName = "default";
+        if (TextUtils.isEmpty(fileName)) fileName = "nofilename";
         return fileName;
     }
 

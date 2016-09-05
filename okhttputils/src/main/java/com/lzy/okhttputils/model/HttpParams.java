@@ -29,6 +29,8 @@ public class HttpParams implements Serializable {
     public static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json;charset=utf-8");
     public static final MediaType MEDIA_TYPE_STREAM = MediaType.parse("application/octet-stream");
 
+    public static final boolean IS_REPLACE = true;
+
     /** 普通的键值对参数 */
     public LinkedHashMap<String, List<String>> urlParamsMap;
 
@@ -41,7 +43,7 @@ public class HttpParams implements Serializable {
 
     public HttpParams(String key, String value) {
         init();
-        put(key, value);
+        put(key, value, IS_REPLACE);
     }
 
     public HttpParams(String key, File file) {
@@ -62,19 +64,28 @@ public class HttpParams implements Serializable {
     }
 
     public void put(Map<String, String> params) {
+        put(params, IS_REPLACE);
+    }
+
+    public void put(Map<String, String> params, boolean isReplace) {
         if (params == null || params.isEmpty()) return;
         for (Map.Entry<String, String> entry : params.entrySet()) {
-            put(entry.getKey(), entry.getValue());
+            put(entry.getKey(), entry.getValue(), isReplace);
         }
     }
 
     public void put(String key, String value) {
+        put(key, value, IS_REPLACE);
+    }
+
+    public void put(String key, String value, boolean isReplace) {
         if (key != null && value != null) {
             List<String> urlValues = urlParamsMap.get(key);
             if (urlValues == null) {
                 urlValues = new ArrayList<>();
                 urlParamsMap.put(key, urlValues);
             }
+            if (isReplace) urlValues.clear();
             urlValues.add(value);
         }
     }
@@ -82,7 +93,7 @@ public class HttpParams implements Serializable {
     public void putUrlParams(String key, List<String> values) {
         if (key != null && values != null && !values.isEmpty()) {
             for (String value : values) {
-                put(key, value);
+                put(key, value, false);
             }
         }
     }
@@ -168,14 +179,6 @@ public class HttpParams implements Serializable {
             this.fileName = fileName;
             this.contentType = contentType;
             this.fileSize = file.length();
-        }
-
-        public String getFileName() {
-            if (fileName != null) {
-                return fileName;
-            } else {
-                return "nofilename";
-            }
         }
 
         @Override

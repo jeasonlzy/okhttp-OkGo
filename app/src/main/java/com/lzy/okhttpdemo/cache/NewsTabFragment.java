@@ -1,8 +1,11 @@
 package com.lzy.okhttpdemo.cache;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.base.BaseFragment;
 import com.lzy.okhttpdemo.model.NewsModel;
@@ -17,22 +21,20 @@ import com.lzy.okhttpdemo.utils.Urls;
 import com.lzy.okhttputils.OkHttpUtils;
 import com.lzy.okhttputils.cache.CacheMode;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import okhttp3.Call;
 import okhttp3.Response;
 
-public class NewsTabFragment extends BaseFragment {
+public class NewsTabFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, BaseQuickAdapter.RequestLoadMoreListener {
 
     @Bind(R.id.recyclerView) RecyclerView recyclerView;
+    @Bind(R.id.refreshLayout) SwipeRefreshLayout refreshLayout;
 
     private Context context;
     private int currentPage;
     private NewsAdapter newsAdapter;
-    private List<NewsModel.ContentList> mData;
+    private boolean isInitCache = false;
 
     public static NewsTabFragment newInstance() {
         return new NewsTabFragment();
@@ -53,15 +55,25 @@ public class NewsTabFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        mData = new ArrayList<>();
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        newsAdapter = new NewsAdapter(context);
+        newsAdapter = new NewsAdapter(null);
+        newsAdapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
+        newsAdapter.isFirstOnly(false);
         recyclerView.setAdapter(newsAdapter);
-        refreshData();
+
+        refreshLayout.setColorSchemeColors(Color.RED, Color.BLUE, Color.GREEN);
+        refreshLayout.setOnRefreshListener(this);
+        newsAdapter.setOnLoadMoreListener(this);
+
+        //开启loading,获取数据
+        setRefreshing(true);
+        onRefresh();
     }
 
-    private void refreshData() {
+    /** 下拉刷新 */
+    @Override
+    public void onRefresh() {
         OkHttpUtils.get(Urls.NEWS)//
                 .params("channelName", fragmentTitle)//
                 .params("page", String.valueOf(1))              //初始化或者下拉刷新,默认加载第一页
@@ -71,13 +83,17 @@ public class NewsTabFragment extends BaseFragment {
                     @Override
                     public void onSuccess(NewsModel newsModel, Call call, Response response) {
                         currentPage = newsModel.pagebean.currentPage;
-                        refreshView(true, newsModel.pagebean.contentlist);
+                        newsAdapter.setNewData(newsModel.pagebean.contentlist);
                     }
 
                     @Override
                     public void onCacheSuccess(NewsModel newsModel, Call call) {
-                        //一般来说,缓存回调成功和网络回调成功做的事情是一样的,所以这里直接回调onSuccess
-                        onSuccess(newsModel, call, null);
+                        //一般来说,只需呀第一次初始化界面的时候需要使用缓存刷新界面,以后不需要,所以用一个变量标识
+                        if (!isInitCache) {
+                            //一般来说,缓存回调成功和网络回调成功做的事情是一样的,所以这里直接回调onSuccess
+                            onSuccess(newsModel, call, null);
+                            isInitCache = true;
+                        }
                     }
 
                     @Override
@@ -91,10 +107,21 @@ public class NewsTabFragment extends BaseFragment {
                         //网络请求失败的回调,一般会弹个Toast
                         showToast(e.getMessage());
                     }
+
+                    @Override
+                    public void onAfter(@Nullable NewsModel newsModel, @Nullable Exception e) {
+                        super.onAfter(newsModel, e);
+                        //可能需要移除之前添加的布局
+                        newsAdapter.removeAllFooterView();
+                        //最后调用结束刷新的方法
+                        setRefreshing(false);
+                    }
                 });
     }
 
-    private void loadMoreData() {
+    /** 上拉加载 */
+    @Override
+    public void onLoadMoreRequested() {
         OkHttpUtils.get(Urls.NEWS)//
                 .params("channelName", fragmentTitle)//
                 .params("page", String.valueOf(currentPage + 1)) //上拉加载更多
@@ -103,25 +130,36 @@ public class NewsTabFragment extends BaseFragment {
                     @Override
                     public void onSuccess(NewsModel newsModel, Call call, Response response) {
                         currentPage = newsModel.pagebean.currentPage;
-                        refreshView(false, newsModel.pagebean.contentlist);
+                        newsAdapter.addData(newsModel.pagebean.contentlist);
+                        //显示没有更多数据
+                        if (newsModel.pagebean.allPages == currentPage) {
+                            newsAdapter.loadComplete();         //加载完成
+                            View noDataView = inflater.inflate(R.layout.item_no_data, (ViewGroup) recyclerView.getParent(), false);
+                            newsAdapter.addFooterView(noDataView);
+                        }
                     }
 
                     @Override
                     public void onError(Call call, Response response, Exception e) {
                         super.onError(call, response, e);
+                        //显示数据加载失败,点击重试
+                        newsAdapter.showLoadMoreFailedView();
                         //网络请求失败的回调,一般会弹个Toast
                         showToast(e.getMessage());
                     }
                 });
     }
 
-    private void refreshView(boolean isClear, List<NewsModel.ContentList> contentlist) {
-        if (isClear) mData.clear();
-        mData.addAll(contentlist);
-        newsAdapter.updateItems(mData);
-    }
-
     public void showToast(String msg) {
         Snackbar.make(recyclerView, msg, Snackbar.LENGTH_SHORT).show();
+    }
+
+    public void setRefreshing(final boolean refreshing) {
+        refreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                refreshLayout.setRefreshing(refreshing);
+            }
+        });
     }
 }

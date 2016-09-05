@@ -22,9 +22,11 @@ public abstract class BaseFragment extends Fragment {
     private boolean isVisible;                  //是否可见状态
     private boolean isPrepared;                 //标志位，View已经初始化完成。
     private boolean isFirstLoad = true;         //是否第一次加载
+    protected LayoutInflater inflater;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        this.inflater = inflater;
         isFirstLoad = true;
         View view = initView(inflater, container, savedInstanceState);
         isPrepared = true;

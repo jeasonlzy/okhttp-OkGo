@@ -1,24 +1,18 @@
 package com.lzy.okhttpdemo.cache;
 
-import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.lzy.ninegrid.ImageInfo;
 import com.lzy.ninegrid.NineGridView;
 import com.lzy.ninegrid.preview.NineGridViewClickAdapter;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.WebActivity;
-import com.lzy.okhttpdemo.base.BaseRecyclerAdapter;
 import com.lzy.okhttpdemo.model.NewsModel;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
 
 /**
  * ================================================
@@ -29,67 +23,45 @@ import butterknife.ButterKnife;
  * 修订历史：
  * ================================================
  */
-public class NewsAdapter extends BaseRecyclerAdapter<NewsModel.ContentList, NewsAdapter.TestViewHolder> {
+public class NewsAdapter extends BaseQuickAdapter<NewsModel.ContentList> implements View.OnClickListener {
 
-    public NewsAdapter(Context context) {
-        super(context);
+    private NewsModel.ContentList contentList;
+
+    public NewsAdapter(List<NewsModel.ContentList> data) {
+        super(R.layout.item_news, data);
     }
 
     @Override
-    public TestViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.item_news, parent, false);
-        return new TestViewHolder(view);
+    protected void convert(BaseViewHolder baseViewHolder, NewsModel.ContentList contentList) {
+        this.contentList = contentList;
+        baseViewHolder.setText(R.id.title, contentList.title)//
+                .setText(R.id.desc, contentList.desc)//
+                .setText(R.id.pubDate, contentList.pubDate)//
+                .setText(R.id.source, contentList.source);
+
+        View view = baseViewHolder.getConvertView();
+        view.setOnClickListener(this);
+
+        NineGridView nineGrid = baseViewHolder.getView(R.id.nineGrid);
+        ArrayList<ImageInfo> imageInfo = new ArrayList<>();
+        List<NewsModel.NewsImage> images = contentList.imageurls;
+        if (images != null) {
+            for (NewsModel.NewsImage image : images) {
+                ImageInfo info = new ImageInfo();
+                info.setThumbnailUrl(image.url);
+                info.setBigImageUrl(image.url);
+                imageInfo.add(info);
+            }
+        }
+        nineGrid.setAdapter(new NineGridViewClickAdapter(mContext, imageInfo));
+
+        if (images != null && images.size() == 1) {
+            nineGrid.setSingleImageRatio(images.get(0).width * 1.0f / images.get(0).height);
+        }
     }
 
     @Override
-    public void onBindViewHolder(TestViewHolder holder, int position) {
-        holder.bind(mDatas.get(position));
-    }
-
-    public class TestViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-        @Bind(R.id.title) TextView title;
-        @Bind(R.id.nineGrid) NineGridView nineGrid;
-        @Bind(R.id.desc) TextView desc;
-        @Bind(R.id.pubDate) TextView pubDate;
-        @Bind(R.id.source) TextView source;
-
-        private NewsModel.ContentList item;
-
-        public TestViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-        }
-
-        public void bind(NewsModel.ContentList item) {
-            this.item = item;
-            title.setText(item.title);
-            desc.setText(item.desc);
-            pubDate.setText(item.pubDate);
-            source.setText(item.source);
-
-            ArrayList<ImageInfo> imageInfo = new ArrayList<>();
-            List<NewsModel.NewsImage> images = item.imageurls;
-            if (images != null) {
-                for (NewsModel.NewsImage image : images) {
-                    ImageInfo info = new ImageInfo();
-                    info.setThumbnailUrl(image.url);
-                    info.setBigImageUrl(image.url);
-                    imageInfo.add(info);
-                }
-            }
-            nineGrid.setAdapter(new NineGridViewClickAdapter(mContext, imageInfo));
-
-            if (images != null && images.size() == 1) {
-                nineGrid.setSingleImageRatio(images.get(0).width * 1.0f / images.get(0).height);
-            }
-
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            WebActivity.runActivity(mContext, item.title, item.link);
-        }
+    public void onClick(View v) {
+        WebActivity.runActivity(mContext, contentList.title, contentList.link);
     }
 }

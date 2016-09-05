@@ -20,6 +20,7 @@ import com.lzy.okhttpdemo.utils.AnimHelper;
  * 修订历史：
  * ================================================
  */
+@SuppressWarnings("unused")
 public class TranslateUpDownBehavior extends FloatingActionButton.Behavior {
 
     private boolean isAnimating = false;
@@ -32,11 +33,11 @@ public class TranslateUpDownBehavior extends FloatingActionButton.Behavior {
     public static TranslateUpDownBehavior form(View view) {
         ViewGroup.LayoutParams params = view.getLayoutParams();
         if (params == null || !(params instanceof CoordinatorLayout.LayoutParams)) {
-            throw new IllegalArgumentException("这个View不是CoordinatorLayout的子View");
+            throw new IllegalArgumentException("parent must be CoordinatorLayout");
         }
         CoordinatorLayout.Behavior behavior = ((CoordinatorLayout.LayoutParams) params).getBehavior();
         if (!(behavior instanceof TranslateUpDownBehavior)) {
-            throw new IllegalArgumentException("这个View的behavior不是TranslateUpDownBehavior");
+            throw new IllegalArgumentException("the behavior must be TranslateUpDownBehavior");
         }
         return (TranslateUpDownBehavior) behavior;
     }

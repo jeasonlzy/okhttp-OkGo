@@ -188,13 +188,25 @@ public abstract class BaseRequest<R extends BaseRequest> {
 
     @SuppressWarnings("unchecked")
     public R params(Map<String, String> params) {
-        this.params.put(params);
+        params(params, HttpParams.IS_REPLACE);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public R params(Map<String, String> params, boolean isReplace) {
+        this.params.put(params, isReplace);
         return (R) this;
     }
 
     @SuppressWarnings("unchecked")
     public R params(String key, String value) {
-        params.put(key, value);
+        params(key, value, HttpParams.IS_REPLACE);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public R params(String key, String value, boolean isReplace) {
+        params.put(key, value, isReplace);
         return (R) this;
     }
 

@@ -29,14 +29,14 @@
 
    对于Eclipse不能运行项目的，提供了apk供直接运行
    
-### 或者点击下载Demo [okhttputils_v1.7.2.apk](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/okhttputils_v1.7.2.apk?raw=true)。
+### 或者点击下载Demo [okhttputils_v1.8.0.apk](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/okhttputils_v1.8.0.apk?raw=true)。
 
    本项目Demo的网络请求是我自己的服务器，有时候可能不稳定，网速比较慢时请耐心等待。。
 
  * 对于Android Studio的用户，可以选择添加:
 ```java
-    compile 'com.lzy.net:okhttputils:1.7.2'  //可以单独使用，不需要依赖下方的扩展包
-	compile 'com.lzy.net:okhttpserver:1.0.1' //扩展了下载管理和上传管理，根据需要添加
+    compile 'com.lzy.net:okhttputils:1.8.0'  //可以单独使用，不需要依赖下方的扩展包
+	compile 'com.lzy.net:okhttpserver:1.0.2' //扩展了下载管理和上传管理，根据需要添加
 
 	compile 'com.lzy.net:okhttputils:+'  //版本号使用 + 可以自动引用最新版
 	compile 'com.lzy.net:okhttpserver:+' //版本号使用 + 可以自动引用最新版
@@ -48,13 +48,14 @@
 ```
 * 对于Eclipse的用户，可以选择添加 `/jar` 目录下的:
 ```java
-	okhttputils-1.7.2.jar
-	okhttpserver-1.0.1.jar
+	okhttputils-1.8.0.jar
+	okhttpserver-1.0.2.jar
 ```
 * 如果是以jar包的形式引入`okhttpserver`,需要在清单文件中额外注册一个服务`<service android:name="com.lzy.okhttpserver.download.DownloadService"/>`
 * 如果只是用了`okhttputils`的jar,没有使用`okhttpserver`的jar,那么不需要注册上面的服务
 
 #### 其中的图片选择是我的另一个开源项目，完全仿微信的图片选择库，自带 矩形图片裁剪 和 圆形图片裁剪 功能，有需要的可以去下载使用，附上地址：[https://github.com/jeasonlzy0216/ImagePicker](https://github.com/jeasonlzy0216/ImagePicker)
+#### 其中的九宫格控件也是我的开源项目,类似QQ空间，微信朋友圈，微博主页等，展示图片的九宫格控件，自动根据图片的数量确定图片大小和控件大小，使用Adapter模式设置图片，对外提供接口回调，使用接口加载图片,支持任意的图片加载框架,如 Glide,ImageLoader,Fresco,xUtils3,Picasso 等，支持点击图片全屏预览大图。附上地址：[https://github.com/jeasonlzy0216/NineGridView](https://github.com/jeasonlzy0216/NineGridView)
 	
 ## 2.使用注意事项
  * `okhttputils`使用的`okhttp`的版本是最新的 3.4.1 版本，和以前的 2.x 的版本可能会存在冲突。
@@ -74,7 +75,7 @@
 * 支持304缓存协议，扩展四种本地缓存模式,并且支持缓存时间控制
 * 支持301、302重定向
 * 支持链式调用
-* 支持可信证书和自签名证书的https的访问,支持双向加密
+* 支持可信证书和自签名证书的https的访问,支持双向认证
 * 支持根据Tag取消请求
 * 支持自定义泛型Callback，自动根据泛型返回对象
 
@@ -163,23 +164,48 @@
 
 ## 二、普通请求
 
-#### 0.写在开始的话,`callback`回调默认只需要复写`onResponse`,并不代表所有的回调都只走这一个,实际开发中,错误回调并没有成功回调使用频繁,所以`callback`的失败回调`onError`并没有声明为抽象的,如果有需要,请自行复写,不要再问我为什么回调没有执行啊,既然`onResponse`没有执行,那么一定是出错了回调了`onError`
+#### 0.写在开始的话,`callback`回调默认只需要复写`onSuccess`,并不代表所有的回调都只走这一个,实际开发中,错误回调并没有成功回调使用频繁,所以`callback`的失败回调`onError`并没有声明为抽象的,如果有需要,请自行复写,不要再问我为什么回调没有执行啊,既然`onSuccess`没有执行,那么一定是出错了回调了`onError`
 
-callback一共有以下 7 个回调,除`onResponse`必须实现以外,其余均可以按需实现,每个方法参数详细说明,请看下面第6点:
+callback一共有以下 10 个回调,除`onSuccess`必须实现以外,其余均可以按需实现,每个方法参数详细说明,请看下面第6点:
 
  * parseNetworkResponse():解析网络返回的数据回调
+ * parseNetworkFail():解析网络失败的数据回调
  * onBefore():网络请求真正执行前回调
- * onResponse():网络请求成功的回调
+ * onSuccess():网络请求成功的回调
+ * onCacheSuccess():缓存读取成功的回调
  * onError():网络请求失败的回调
+ * onCacheError():网络缓存读取失败的回调
  * onAfter():网络请求结束的回调,无论成功失败一定会执行
  * upProgress():上传进度的回调
  * downloadProgress():下载进度的回调
  
 #### 无缓存模式,请求成功调用顺序(upProgress只在有请求体的情况下回调)
-> onBefore(UI线程) -> upProgress(UI线程) -> parseNetworkResponse(子线程) -> downloadProgress(UI线程) -> onResponse(UI线程) -> onAfter(UI线程)
+> onBefore(UI线程) -> upProgress(UI线程) -> parseNetworkResponse(子线程) -> downloadProgress(UI线程) -> onSuccess(UI线程) -> onAfter(UI线程)
 
 #### 无缓存模式,请求失败调用顺序
 > onBefore(UI线程) -> onError(UI线程) -> onAfter(UI线程)
+
+### Callback回调具有如下顺序,虽然顺序写的很复杂,但是理解后,是很简单,并且合情合理的
+#### 1.无缓存模式 CacheMode.NO_CACHE
+> 网络请求成功  onBefore -> parseNetworkResponse -> onSuccess -> onAfter<br>
+> 网络请求失败  onBefore -> parseNetworkFail     -> onError   -> onAfter<br>
+#### 2.默认缓存模式,遵循304头 CacheMode.DEFAULT
+ * 网络请求成功,服务端返回非304  onBefore -> parseNetworkResponse -> onSuccess -> onAfter<br>
+ * 网络请求成功服务端返回304    onBefore -> onCacheSuccess       -> onAfter<br>
+ * 网络请求失败               onBefore -> parseNetworkFail     -> onError   -> onAfter<br>
+#### 3.请求网络失败后读取缓存 CacheMode.REQUEST_FAILED_READ_CACHE
+ * 网络请求成功,不读取缓存    onBefore -> parseNetworkResponse -> onSuccess -> onAfter<br>
+ * 网络请求失败,读取缓存成功  onBefore -> parseNetworkFail -> onError -> onCacheSuccess -> onAfter<br>
+ * 网络请求失败,读取缓存失败  onBefore -> parseNetworkFail -> onError -> onCacheError   -> onAfter<br>
+#### 4.如果缓存不存在才请求网络，否则使用缓存 CacheMode.IF_NONE_CACHE_REQUEST
+ * 已经有缓存,不请求网络  onBefore -> onCacheSuccess -> onAfter<br>
+ * 没有缓存请求网络成功   onBefore -> onCacheError   -> parseNetworkResponse -> onSuccess -> onAfter<br>
+ * 没有缓存请求网络失败   onBefore -> onCacheError   -> parseNetworkFail     -> onError   -> onAfter<br>
+#### 5.先使用缓存，不管是否存在，仍然请求网络 CacheMode.FIRST_CACHE_THEN_REQUEST
+ * 无缓存时,网络请求成功  onBefore -> onCacheError   -> parseNetworkResponse -> onSuccess -> onAfter<br>
+ * 无缓存时,网络请求失败  onBefore -> onCacheError   -> parseNetworkFail     -> onError   -> onAfter<br>
+ * 有缓存时,网络请求成功  onBefore -> onCacheSuccess -> parseNetworkResponse -> onSuccess -> onAfter<br>
+ * 有缓存时,网络请求失败  onBefore -> onCacheSuccess -> parseNetworkFail     -> onError   -> onAfter<br>
 
 ### 1.基本的网络请求
 ```java
@@ -187,11 +213,11 @@ OkHttpUtils.get(Urls.URL_METHOD)     // 请求方式和请求url
 	.tag(this)                       // 请求的 tag, 主要用于取消对应的请求
 	.cacheKey("cacheKey")            // 设置当前请求的缓存key,建议每个不同功能的请求设置一个
 	.cacheMode(CacheMode.DEFAULT)    // 缓存模式，详细请看缓存介绍
-	.execute(new JsonCallback<RequestInfo>(RequestInfo.class) {
-	    @Override
-	    public void onResponse(boolean isFromCache, RequestInfo requestInfo, Request request, Response response) {
-			// requestInfo 对象即为所需要的结果对象
-	    }
+	.execute(new StringCallback() {
+		@Override
+		public void onSuccess(String s, Call call, Response response) {
+		    // s 即为所需要的结果
+		}
 	});
 ```
 ### 2.请求 Bitmap 对象
@@ -200,7 +226,7 @@ OkHttpUtils.get(Urls.URL_IMAGE)//
 	.tag(this)//
 	.execute(new BitmapCallback() {
 	    @Override
-	    public void onResponse(boolean isFromCache, Bitmap bitmap, Request request, Response response) {
+	    public void onSuccess(Bitmap bitmap, Call call, Response response) {
 		    // bitmap 即为返回的图片数据
 	    }
 	});
@@ -209,9 +235,9 @@ OkHttpUtils.get(Urls.URL_IMAGE)//
 ```java
 OkHttpUtils.get(Urls.URL_DOWNLOAD)//
 	.tag(this)//
-	.execute(new FileCallback("/sdcard/temp/", "file.jpg") {  //文件下载时，需要指定下载的文件目录和文件名
+	.execute(new FileCallback("file.jpg") {  //文件下载时，需要指定下载的文件目录和文件名
 	    @Override
-	    public void onResponse(boolean isFromCache, File file, Request request, Response response) {
+	    public void onSuccess(File file, Call call, Response response) {
 		    // file 即为文件数据，文件保存在指定目录
 	    }
 	    
@@ -226,10 +252,10 @@ OkHttpUtils.get(Urls.URL_DOWNLOAD)//
 ```java
 OkHttpUtils.post(Urls.URL_TEXT_UPLOAD)//
 	.tag(this)//
-	.postString("这是要上传的长文本数据！")//
+	.upString("这是要上传的长文本数据！")//
 	.execute(new StringCallback() {
 	    @Override
-	    public void onResponse(boolean isFromCache, String s, Request request, Response response) {
+	    public void onSuccess(String s, Call call, Response response) {
 			//上传成功
 	    }
 	    
@@ -252,10 +278,10 @@ JSONObject jsonObject = new JSONObject(params);
         
 OkHttpUtils.post(Urls.URL_TEXT_UPLOAD)//
 	.tag(this)//
-	.postJson(jsonObject.toString())//
+	.upJson(jsonObject.toString())//
 	.execute(new StringCallback() {
 	    @Override
-	    public void onResponse(boolean isFromCache, String s, Request request, Response response) {
+	    public void onSuccess(String s, Call call, Response response) {
 			//上传成功
 	    }
 	    
@@ -300,21 +326,21 @@ OkHttpUtils.get(Urls.URL_METHOD) // 请求方式和请求url, get请求不需要
     .cacheTime(5000)         // 缓存的过期时间,单位毫秒
     .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST) // 缓存模式，详细请看第四部分，缓存介绍
     .setCertificates(getAssets().open("srca.cer")) // 自签名https的证书，可变参数，可以设置多个
-	.addInterceptor(interceptor)            // 添加自定义拦截器
+    .addInterceptor(interceptor)            // 添加自定义拦截器
     .headers("header1", "headerValue1")     // 添加请求头参数
     .headers("header2", "headerValue2")     // 支持多请求头参数同时添加
     .params("param1", "paramValue1")        // 添加请求参数
     .params("param2", "paramValue2")        // 支持多请求参数同时添加
     .params("file1", new File("filepath1")) // 可以添加文件上传
     .params("file2", new File("filepath2")) // 支持多文件同时添加上传
-	.addUrlParams("key", List<String> values) 									//这里支持一个key传多个参数
-	.addFileParams("key", List<File> files)										//这里支持一个key传多个文件
-	.addFileWrapperParams("key", List<HttpParams.FileWrapper> fileWrappers)		//这里支持一个key传多个文件
-	.addCookie("aaa", "bbb")				// 这里可以传递自己想传的Cookie
-    .addCookie(cookie)						// 可以自己构建cookie
-    .addCookies(cookies)					// 可以一次传递批量的cookie
-     //这里给出的泛型为 RequestInfo，同时传递一个泛型的 class对象，即可自动将数据结果转成对象返回
-    .execute(new DialogCallback<RequestInfo>(this, RequestInfo.class) {
+	.addUrlParams("key", List<String> values) //这里支持一个key传多个参数
+	.addFileParams("key", List<File> files)	//这里支持一个key传多个文件
+	.addFileWrapperParams("key", List<HttpParams.FileWrapper> fileWrappers)//这里支持一个key传多个文件
+	.addCookie("aaa", "bbb")	// 这里可以传递自己想传的Cookie
+    .addCookie(cookie)			// 可以自己构建cookie
+    .addCookies(cookies)		// 可以一次传递批量的cookie
+     //这里给出的泛型为 ServerModel，同时传递一个泛型的 class对象，即可自动将数据结果转成对象返回
+    .execute(new DialogCallback<ServerModel>(this, ServerModel.class) {
 		@Override
 		public void onBefore(BaseRequest request) {
 		    // UI线程 请求网络之前调用
@@ -322,39 +348,54 @@ OkHttpUtils.get(Urls.URL_METHOD) // 请求方式和请求url, get请求不需要
 		}
 	
 		@Override
-		public RequestInfo parseNetworkResponse(Response response) throws Exception{
+		public ServerModel parseNetworkResponse(Response response) throws Exception{
 		    // 子线程，可以做耗时操作
-		    // 根据传递进来的 response 对象，把数据解析成需要的 RequestInfo 类型并返回
-			// 可以根据自己的需要，抛出异常，在onError中处理
+		    // 根据传递进来的 response 对象，把数据解析成需要的 ServerModel 类型并返回
+		    // 可以根据自己的需要，抛出异常，在onError中处理
 		    return null;
 		}
+		
+		@Override
+        public void parseNetworkFail(Call call, IOException e) {
+            // 子线程，可以做耗时操作
+        	// 用于网络错误时在子线程中执行数据耗时操作,子类可以根据自己的需要重写此方法
+        }
 	
 		@Override
-		public void onResponse(boolean isFromCache, RequestInfo requestInfo, Request request, Response response) {
+		public void onSuccess(ServerModel ServerModel, Call call, Response response) {
 		    // UI 线程，请求成功后回调
-		    // isFromCache 表示当前回调是否来自于缓存
-		    // requestInfo 返回泛型约定的实体类型参数
-		    // request     本次网络的请求信息，如果需要查看请求头或请求参数可以从此对象获取
-		    // response    本次网络访问的结果对象，包含了响应头，响应码等，如果数据来自于缓存，该对象为null
+		    // ServerModel 返回泛型约定的实体类型参数
+		    // call        本次网络的请求信息，如果需要查看请求头或请求参数可以从此对象获取
+		    // response    本次网络访问的结果对象，包含了响应头，响应码等		
+		}
+		
+		@Override
+		public void onCacheSuccess(ServerModel serverModel, Call call) {
+		    // UI 线程，缓存读取成功后回调
+		    // serverModel 返回泛型约定的实体类型参数
+		    // call        本次网络的请求信息
 		}
 	
 		@Override
-		public void onError(boolean isFromCache, Call call, Response response, Exception e) {
+		public void onError(onSuccessCall call, Response response, Exception e) {
 		    // UI 线程，请求失败后回调
-		    // isFromCache 表示当前回调是否来自于缓存
 		    // call        本次网络的请求对象，可以根据该对象拿到 request
-		    // response    本次网络访问的结果对象，包含了响应头，响应码等，如果网络异常 或者数据来自于缓存，该对象为null
-		    // e           本次网络访问的异常信息，如果服务器内部发生了错误，响应码为 400~599之间，该异常为 null
+		    // response    本次网络访问的结果对象，包含了响应头，响应码等		    
+		    // e           本次网络访问的异常信息，如果服务器内部发生了错误，响应码为 404,或大于等于500
 		}
 	
 		@Override
-		public void onAfter(boolean isFromCache, RequestInfo requestInfo, Call call, Response response, Exception e) {
+		public void onCacheError(Call call, Exception e) {
+		    // UI 线程，读取缓存失败后回调
+			// call        本次网络的请求对象，可以根据该对象拿到 request
+		    // e           本次网络访问的异常信息，如果服务器内部发生了错误，响应码为 404,或大于等于500
+		}
+	
+		@Override
+		public void onAfter(ServerModel serverModel, Exception e) {
 		    // UI 线程，请求结束后回调，无论网络请求成功还是失败，都会调用，可以用于关闭显示对话框
-		    // isFromCache 表示当前回调是否来自于缓存
-		    // requestInfo 返回泛型约定的实体类型参数，如果网络请求失败，该对象为　null
-		    // call        本次网络的请求对象，可以根据该对象拿到 request
-		    // response    本次网络访问的结果对象，包含了响应头，响应码等，如果网络异常 或者数据来自于缓存，该对象为null
-		    // e           本次网络访问的异常信息，如果服务器内部发生了错误，响应码为 400~599之间，该异常为 null
+		    // ServerModel 返回泛型约定的实体类型参数，如果网络请求失败，该对象为　null
+		    // e           本次网络访问的异常信息，如果服务器内部发生了错误，响应码为 404,或大于等于500
 		}
 	
 		@Override
@@ -437,7 +478,7 @@ execute方法不传入callback即为同步的请求，返回`Response`对象，�
             .headers("HKFFF", "HVFFF")//
             .params("PKEEE", "PVEEE")//
             .params("PKFFF", "PVFFF")//
-            .execute(new MethodCallBack<>(this, RequestInfo.class));
+            .execute(new MethodCallBack<>(this, ServerModel.class));
 ```
  
  那么,最终执行请求的参数的添加顺序为
@@ -459,9 +500,7 @@ execute方法不传入callback即为同步的请求，返回`Response`对象，�
 ###该网络框架的核心使用方法即为`Callback`的继承使用，详细请看 Demo 源码中`callback`包下的代码。
 因为不同的项目需求，可能对数据格式进行了不同的封装，于是在 Demo 中的进行了详细的代码示例，以下是详细介绍：
 
- * `CommonCallback`:继承自`AbsCallback`,主要作用是做全局共同请求参数的添加，同样也可以在第一步全局配置的时候设置，效果一样。
- * `EncryptCallback`：继承自`CommonCallback`,主要功能是做 Url 参数加密，对每个请求的参数进行编码，防止拦截数据包，篡改数据。
- * `JsonCallback`：继承自`EncryptCallback`,一般来说，服务器返回的响应码都包含 code，msg，data 三部分，在此根据自己的业务需要完成相应的逻辑判断，并对数据进行解析，可以使用 `Gson` 或者 `fastjson`，将解析的对象返回。
+ * `JsonCallback`：继承自`AbsCallback`,一般来说，服务器返回的响应码都包含 code，msg，data 三部分，在此根据自己的业务需要完成相应的逻辑判断，并对数据进行解析，可以使用 `Gson` 或者 `fastjson`，将解析的对象返回。
  * `DialogCallback`：继承自`JsonCallback`,对需要在网络请求的时候显示对话框，使用该回调。
  * `StringDialogCallback`：继承自`EncryptCallback`,如果网络返回的数据只是纯文本，使用该回调
  * `BitmapDialogCallback` ：继承自`BitmapCallback`,如果网络返回的是Bitmap对象，使用该回调
@@ -480,9 +519,9 @@ execute方法不传入callback即为同步的请求，返回`Response`对象，�
 
  * `NO_CACHE`: 不使用缓存,该模式下,`cacheKey`,`cacheTime` 参数均无效
  * `DEFAULT`: 按照HTTP协议的默认缓存规则，例如有304响应头时缓存
- * `REQUEST_FAILED_READ_CACHE`：先请求网络，如果请求网络失败，则读取缓存，如果读取缓存失败，本次请求失败。该缓存模式的使用，会根据实际情况，导致`onResponse`,`onError`,`onAfter`三个方法调用不只一次，具体请在三个方法返回的参数中进行判断。
+ * `REQUEST_FAILED_READ_CACHE`：先请求网络，如果请求网络失败，则读取缓存，如果读取缓存失败，本次请求失败。该缓存模式的使用，会根据实际情况，导致`onSuccess`,`onError`,`onAfter`三个方法调用不只一次，具体请在三个方法返回的参数中进行判断。
  * `IF_NONE_CACHE_REQUEST`：如果缓存不存在才请求网络，否则使用缓存。
- * `FIRST_CACHE_THEN_REQUEST`：先使用缓存，不管是否存在，仍然请求网络，如果网络顺利，会导致`onResponse`方法执行两次，第一次`isFromCache`为true，第二次`isFromCache`为false。使用时根据实际情况，对`onResponse`,`onError`,`onAfter`三个方法进行具体判断。
+ * `FIRST_CACHE_THEN_REQUEST`：先使用缓存，不管是否存在，仍然请求网络，如果网络顺利，会导致`onSuccess`方法执行两次，第一次`isFromCache`为true，第二次`isFromCache`为false。使用时根据实际情况，对`onSuccess`,`onError`,`onAfter`三个方法进行具体判断。
 
 ###无论对于哪种缓存模式，都可以指定一个`cacheKey`，建议针对不同需要缓存的页面设置不同的`cacheKey`，如果相同，会导致数据覆盖。
 
