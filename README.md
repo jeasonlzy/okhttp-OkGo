@@ -375,7 +375,7 @@ OkHttpUtils.get(Urls.URL_METHOD) // 请求方式和请求url, get请求不需要
 		}
 	
 		@Override
-		public void onError(onSuccessCall call, Response response, Exception e) {
+		public void onError(Call call, Response response, Exception e) {
 		    // UI 线程，请求失败后回调
 		    // call        本次网络的请求对象，可以根据该对象拿到 request
 		    // response    本次网络访问的结果对象，包含了响应头，响应码等		    
@@ -513,13 +513,13 @@ execute方法不传入callback即为同步的请求，返回`Response`对象，�
 
 对于`DEFAULT`缓存模式,超时时间是无效的,因为该模式是完全遵循标准的http协议的,缓存时间是依靠服务端响应头来控制,所以客户端的cacheTime参数无效
 
-目前提供了五种`CacheMode`缓存模式,每种缓存模式都可以指定对应的`CacheTime`
+目前提供了五种`CacheMode`缓存模式,每种缓存模式都可以指定对应的`CacheTime`,不同的模式会有不同的方法回调顺序,详细请看上面第二部分的callback执行顺序
 
  * `NO_CACHE`: 不使用缓存,该模式下,`cacheKey`,`cacheTime` 参数均无效
- * `DEFAULT`: 按照HTTP协议的默认缓存规则，例如有304响应头时缓存
- * `REQUEST_FAILED_READ_CACHE`：先请求网络，如果请求网络失败，则读取缓存，如果读取缓存失败，本次请求失败。该缓存模式的使用，会根据实际情况，导致`onSuccess`,`onError`,`onAfter`三个方法调用不只一次，具体请在三个方法返回的参数中进行判断。
+ * `DEFAULT`: 按照HTTP协议的默认缓存规则，例如有304响应头时缓存。
+ * `REQUEST_FAILED_READ_CACHE`：先请求网络，如果请求网络失败，则读取缓存，如果读取缓存失败，本次请求失败。
  * `IF_NONE_CACHE_REQUEST`：如果缓存不存在才请求网络，否则使用缓存。
- * `FIRST_CACHE_THEN_REQUEST`：先使用缓存，不管是否存在，仍然请求网络，如果网络顺利，会导致`onSuccess`方法执行两次，第一次`isFromCache`为true，第二次`isFromCache`为false。使用时根据实际情况，对`onSuccess`,`onError`,`onAfter`三个方法进行具体判断。
+ * `FIRST_CACHE_THEN_REQUEST`：先使用缓存，不管是否存在，仍然请求网络。
 
 ###无论对于哪种缓存模式，都可以指定一个`cacheKey`，建议针对不同需要缓存的页面设置不同的`cacheKey`，如果相同，会导致数据覆盖。
 
