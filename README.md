@@ -1,3 +1,5 @@
+ ![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/logo3.png)
+
 # OkHttpUtils
 
 ### 封装了okhttp的网络框架，支持大文件上传下载，上传进度回调，下载进度回调，表单上传（多文件和多参数一起上传），链式调用，可以自定义返回对象，支持Https和自签名证书，支持cookie自动管理，支持四种缓存模式缓存网络数据，支持301、302重定向，扩展了统一的上传管理和下载管理功能
@@ -16,7 +18,9 @@
  * 本群旨在为使用我的github项目的人提供方便，如果遇到问题欢迎在群里提问。个人能力也有限，希望一起学习一起进步。
 
 ## 演示
- ![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo1.png)![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo2.gif)![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo3.gif)![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo4.gif)![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo5.gif)
+
+
+ ![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo7.gif)![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo8.gif)![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo11.gif)![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo9.gif)![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo10.gif)![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo12.gif)
 
 
 ## 1.用法
