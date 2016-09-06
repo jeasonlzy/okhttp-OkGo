@@ -1,4 +1,4 @@
- ![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/logo3.png)
+ ![image](https://github.com/jeasonlzy0216/Screenshots/blob/master/okhttputils/logo3.png)
 
 # OkHttpUtils
 
@@ -20,7 +20,7 @@
 ## 演示
 
 
- ![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo7.gif)![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo8.gif)![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo11.gif)![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo9.gif)![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo10.gif)![image](http://7xss53.com2.z0.glb.clouddn.com/okhttputils/demo12.gif)
+ ![image](https://github.com/jeasonlzy0216/Screenshots/blob/master/okhttputils/demo7.gif)![image](https://github.com/jeasonlzy0216/Screenshots/blob/master/okhttputils/demo8.gif)![image](https://github.com/jeasonlzy0216/Screenshots/blob/master/okhttputils/demo11.gif)![image](https://github.com/jeasonlzy0216/Screenshots/blob/master/okhttputils/demo9.gif)![image](https://github.com/jeasonlzy0216/Screenshots/blob/master/okhttputils/demo10.gif)![image](https://github.com/jeasonlzy0216/Screenshots/blob/master/okhttputils/demo12.gif)
 
 
 ## 1.用法
