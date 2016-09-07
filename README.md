@@ -53,8 +53,11 @@
 	okhttputils-1.8.0.jar
 	okhttpserver-1.0.2.jar
 ```
-* 如果是以jar包的形式引入`okhttpserver`,需要在清单文件中额外注册一个服务`<service android:name="com.lzy.okhttpserver.download.DownloadService"/>`
-* 如果只是用了`okhttputils`的jar,没有使用`okhttpserver`的jar,那么不需要注册上面的服务
+ * 如果是以jar包的形式引入`okhttpserver`,需要在清单文件中额外注册一个服务
+```java
+    <service android:name="com.lzy.okhttpserver.download.DownloadService"/>
+```
+ * 如果只是用了`okhttputils`的jar,没有使用`okhttpserver`的jar,那么不需要注册上面的服务
 
 #### 其中的图片选择是我的另一个开源项目，完全仿微信的图片选择库，自带 矩形图片裁剪 和 圆形图片裁剪 功能，有需要的可以去下载使用，附上地址：[https://github.com/jeasonlzy0216/ImagePicker](https://github.com/jeasonlzy0216/ImagePicker)
 #### 其中的九宫格控件也是我的开源项目,类似QQ空间，微信朋友圈，微博主页等，展示图片的九宫格控件，自动根据图片的数量确定图片大小和控件大小，使用Adapter模式设置图片，对外提供接口回调，使用接口加载图片,支持任意的图片加载框架,如 Glide,ImageLoader,Fresco,xUtils3,Picasso 等，支持点击图片全屏预览大图。附上地址：[https://github.com/jeasonlzy0216/NineGridView](https://github.com/jeasonlzy0216/NineGridView)
