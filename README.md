@@ -41,16 +41,14 @@
 ```java
     compile 'com.lzy.net:okhttputils:1.8.0'  //可以单独使用，不需要依赖下方的扩展包
 	compile 'com.lzy.net:okhttpserver:1.0.2' //扩展了下载管理和上传管理，根据需要添加
-
+    
+    或者
+    
 	compile 'com.lzy.net:okhttputils:+'  //版本号使用 + 可以自动引用最新版
 	compile 'com.lzy.net:okhttpserver:+' //版本号使用 + 可以自动引用最新版
 ```
- * 或者使用
-```java
-    compile project(':okhttputils')
-	compile project(':okhttpserver')
-```
-* 对于Eclipse的用户，可以选择添加 `/jar` 目录下的:
+
+ * 对于Eclipse的用户，可以选择添加 `/jar` 目录下的:
 ```java
 	okhttputils-1.8.0.jar
 	okhttpserver-1.0.2.jar
