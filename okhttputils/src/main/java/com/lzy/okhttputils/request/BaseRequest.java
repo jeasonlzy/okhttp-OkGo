@@ -387,7 +387,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
 
         //请求之前获取缓存信息，添加缓存头和其他的公共头
         if (cacheKey == null) cacheKey = HttpUtils.createUrlFromParams(baseUrl, params.urlParamsMap);
-        if (cacheMode == null) cacheMode = CacheMode.DEFAULT;
+        if (cacheMode == null) cacheMode = CacheMode.NO_CACHE;
         //无缓存模式,不需要进入缓存逻辑
         CacheEntity<T> cacheEntity = null;
         if (cacheMode != CacheMode.NO_CACHE) {
@@ -472,9 +472,10 @@ public abstract class BaseRequest<R extends BaseRequest> {
 
                 try {
                     T data = (T) mCallback.parseNetworkResponse(response);
-                    sendSuccessResultCallback(false, data, call, response, mCallback);
                     //网络请求成功，保存缓存数据
                     handleCache(response.headers(), data);
+                    //网络请求成功回调
+                    sendSuccessResultCallback(false, data, call, response, mCallback);
                 } catch (Exception e) {
                     //一般为服务器响应成功，但是数据解析错误
                     sendFailResultCallback(false, call, response, e, mCallback);

@@ -2,10 +2,8 @@ package com.lzy.okhttpdemo.okhttputils;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.base.BaseActivity;
