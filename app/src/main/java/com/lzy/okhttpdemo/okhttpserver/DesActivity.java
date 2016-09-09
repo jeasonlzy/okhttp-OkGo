@@ -87,7 +87,7 @@ public class DesActivity extends BaseActivity implements View.OnClickListener {
         downloadInfo = downloadManager.getDownloadInfo(apk.getUrl());
         if (v.getId() == download.getId()) {
             if (downloadInfo == null) {
-                GetRequest request = OkHttpUtils.get(downloadInfo.getUrl())//
+                GetRequest request = OkHttpUtils.get(apk.getUrl())//
                         .headers("headerKey1", "headerValue1")//
                         .headers("headerKey2", "headerValue2")//
                         .params("paramKey1", "paramValue1")//
