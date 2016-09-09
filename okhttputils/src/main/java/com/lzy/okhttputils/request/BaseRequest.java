@@ -64,7 +64,6 @@ public abstract class BaseRequest<R extends BaseRequest> {
     protected List<Cookie> userCookies = new ArrayList<>();         //用户手动添加的Cookie
 
     private AbsCallback mCallback;
-    private CacheManager cacheManager;
     private HttpUrl httpUrl;
     private Request mRequest;
 
@@ -73,7 +72,6 @@ public abstract class BaseRequest<R extends BaseRequest> {
         baseUrl = url;
         httpUrl = HttpUrl.parse(url);
         OkHttpUtils okHttpUtils = OkHttpUtils.getInstance();
-        cacheManager = CacheManager.INSTANCE;
         //默认添加 Accept-Language
         String acceptLanguage = HttpHeaders.getAcceptLanguage();
         if (!TextUtils.isEmpty(acceptLanguage)) headers(HttpHeaders.HEAD_KEY_ACCEPT_LANGUAGE, acceptLanguage);
@@ -393,7 +391,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
         //无缓存模式,不需要进入缓存逻辑
         CacheEntity<T> cacheEntity = null;
         if (cacheMode != CacheMode.NO_CACHE) {
-            cacheEntity = (CacheEntity<T>) cacheManager.get(cacheKey);
+            cacheEntity = (CacheEntity<T>) CacheManager.INSTANCE.get(cacheKey);
             //检查缓存的有效时间,判断缓存是否已经过期
             if (cacheEntity != null && cacheEntity.checkExpire(cacheMode, cacheTime, System.currentTimeMillis())) {
                 cacheEntity.setExpire(true);
@@ -499,10 +497,10 @@ public abstract class BaseRequest<R extends BaseRequest> {
         CacheEntity<T> cache = HeaderParser.createCacheEntity(headers, data, cacheMode, cacheKey);
         if (cache == null) {
             //服务器不需要缓存，移除本地缓存
-            cacheManager.remove(cacheKey);
+            CacheManager.INSTANCE.remove(cacheKey);
         } else {
             //缓存命中，更新缓存
-            cacheManager.replace(cacheKey, (CacheEntity<Object>) cache);
+            CacheManager.INSTANCE.replace(cacheKey, (CacheEntity<Object>) cache);
         }
     }
 
@@ -528,7 +526,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
 
         //不同的缓存模式，可能会导致该失败进入两次，一次缓存失败，一次网络请求失败
         if (!isFromCache && cacheMode == CacheMode.REQUEST_FAILED_READ_CACHE) {
-            CacheEntity<T> cacheEntity = (CacheEntity<T>) cacheManager.get(cacheKey);
+            CacheEntity<T> cacheEntity = (CacheEntity<T>) CacheManager.INSTANCE.get(cacheKey);
             if (cacheEntity != null && !cacheEntity.isExpire()) {
                 T data = cacheEntity.getData();
                 HttpHeaders headers = cacheEntity.getResponseHeaders();
