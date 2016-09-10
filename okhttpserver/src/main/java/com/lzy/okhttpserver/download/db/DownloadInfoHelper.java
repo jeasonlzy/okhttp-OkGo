@@ -4,8 +4,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.lzy.okhttpserver.download.DownloadInfo;
-import com.lzy.okhttputils.OkHttpUtils;
-import com.lzy.okhttputils.utils.OkLogger;
+import com.lzy.okhttpgo.OkHttpGo;
+import com.lzy.okhttpgo.utils.OkLogger;
 
 /**
  * ================================================
@@ -18,8 +18,8 @@ import com.lzy.okhttputils.utils.OkLogger;
  */
 public class DownloadInfoHelper extends SQLiteOpenHelper {
 
-    private static final String DB_CACHE_NAME = "okhttputils_server.db";
-    public static final int DB_CACHE_VERSION = 2;
+    private static final String DB_CACHE_NAME = "okhttpgo_server.db";
+    public static final int DB_CACHE_VERSION = 3;
     public static final String TABLE_NAME = "download_table";
 
     //四条sql语句
@@ -41,7 +41,7 @@ public class DownloadInfoHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_UNIQUE_INDEX = "DROP INDEX cache_unique_index";
 
     public DownloadInfoHelper() {
-        super(OkHttpUtils.getContext(), DB_CACHE_NAME, null, DB_CACHE_VERSION);
+        super(OkHttpGo.getContext(), DB_CACHE_NAME, null, DB_CACHE_VERSION);
     }
 
     @Override

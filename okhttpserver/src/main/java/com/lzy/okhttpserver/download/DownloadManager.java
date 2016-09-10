@@ -7,7 +7,7 @@ import android.text.TextUtils;
 import com.lzy.okhttpserver.download.db.DownloadDBManager;
 import com.lzy.okhttpserver.listener.DownloadListener;
 import com.lzy.okhttpserver.task.ExecutorWithListener;
-import com.lzy.okhttputils.request.BaseRequest;
+import com.lzy.okhttpgo.request.BaseRequest;
 
 import java.io.File;
 import java.util.ArrayList;

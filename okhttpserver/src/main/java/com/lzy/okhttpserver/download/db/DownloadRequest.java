@@ -1,15 +1,15 @@
 package com.lzy.okhttpserver.download.db;
 
-import com.lzy.okhttputils.cache.CacheMode;
-import com.lzy.okhttputils.model.HttpHeaders;
-import com.lzy.okhttputils.model.HttpParams;
-import com.lzy.okhttputils.request.BaseRequest;
-import com.lzy.okhttputils.request.DeleteRequest;
-import com.lzy.okhttputils.request.GetRequest;
-import com.lzy.okhttputils.request.HeadRequest;
-import com.lzy.okhttputils.request.OptionsRequest;
-import com.lzy.okhttputils.request.PostRequest;
-import com.lzy.okhttputils.request.PutRequest;
+import com.lzy.okhttpgo.cache.CacheMode;
+import com.lzy.okhttpgo.model.HttpHeaders;
+import com.lzy.okhttpgo.model.HttpParams;
+import com.lzy.okhttpgo.request.BaseRequest;
+import com.lzy.okhttpgo.request.DeleteRequest;
+import com.lzy.okhttpgo.request.GetRequest;
+import com.lzy.okhttpgo.request.HeadRequest;
+import com.lzy.okhttpgo.request.OptionsRequest;
+import com.lzy.okhttpgo.request.PostRequest;
+import com.lzy.okhttpgo.request.PutRequest;
 
 import java.io.Serializable;
 

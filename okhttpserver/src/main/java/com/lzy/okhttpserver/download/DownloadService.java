@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import com.lzy.okhttputils.OkHttpUtils;
+import com.lzy.okhttpgo.OkHttpGo;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ public class DownloadService extends Service {
 
     /** start 方式开启服务，保存全局的下载管理对象 */
     public static DownloadManager getDownloadManager() {
-        Context context = OkHttpUtils.getContext();
+        Context context = OkHttpGo.getContext();
         if (!DownloadService.isServiceRunning(context)) context.startService(new Intent(context, DownloadService.class));
         if (DownloadService.DOWNLOAD_MANAGER == null) DownloadService.DOWNLOAD_MANAGER = DownloadManager.getInstance();
         return DOWNLOAD_MANAGER;

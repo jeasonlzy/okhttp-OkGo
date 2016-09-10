@@ -58,7 +58,7 @@
         android:alpha="0"
         android:elevation="10dp"
         android:gravity="center_vertical"
-        android:text="OkHttpUtils-让网络请求更简单"
+        android:text="OkHttpGo-让网络请求更简单"
         android:textColor="@android:color/white"
         android:textSize="20sp"
         android:textStyle="bold"

@@ -2,7 +2,7 @@ package com.lzy.okhttpserver.upload;
 
 import com.lzy.okhttpserver.download.DownloadInfo;
 import com.lzy.okhttpserver.listener.UploadListener;
-import com.lzy.okhttputils.request.BaseBodyRequest;
+import com.lzy.okhttpgo.request.BaseBodyRequest;
 
 /**
  * ================================================

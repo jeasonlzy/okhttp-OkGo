@@ -17,10 +17,10 @@ import com.lzy.okhttpdemo.base.DividerItemDecoration;
 import com.lzy.okhttpdemo.cache.CacheDemoActivity;
 import com.lzy.okhttpdemo.okhttpserver.DownloadActivity;
 import com.lzy.okhttpdemo.okhttpserver.UploadActivity;
-import com.lzy.okhttpdemo.okhttputils.FileDownloadActivity;
-import com.lzy.okhttpdemo.okhttputils.FormUploadActivity;
-import com.lzy.okhttpdemo.okhttputils.JsonRequestActivity;
-import com.lzy.okhttpdemo.okhttputils.OkHttpActivity;
+import com.lzy.okhttpdemo.okhttpgo.FileDownloadActivity;
+import com.lzy.okhttpdemo.okhttpgo.FormUploadActivity;
+import com.lzy.okhttpdemo.okhttpgo.JsonRequestActivity;
+import com.lzy.okhttpdemo.okhttpgo.OkHttpActivity;
 
 import java.util.ArrayList;
 
@@ -55,12 +55,12 @@ public class MainActivity extends BaseActivity {
         items = new ArrayList<>();
         OkHttpModel model1 = new OkHttpModel();
         model1.title = "";
-        model1.des = "下面是OkHttpUtils包的使用方法";
+        model1.des = "下面是OkHttpGo包的使用方法";
         model1.type = 1;
         items.add(model1);
 
         OkHttpModel model2 = new OkHttpModel();
-        model2.title = "基本功能(OkHttpUtils)";
+        model2.title = "基本功能(OkHttpGo)";
         model2.des = "1.GET，HEAD，OPTIONS，POST，PUT，DELETE 请求方法演示\n" +
                 "2.请求服务器返回bitmap对象\n" +
                 "3.支持https请求\n" +
@@ -96,7 +96,7 @@ public class MainActivity extends BaseActivity {
 
         OkHttpModel model6 = new OkHttpModel();
         model6.title = "强大的缓存示例 -- 先联网获取数据,然后断开网络再进试试";
-        model6.des = "1.OkHttpUtils的强大的缓存功能,让你代码无需关心数据来源,专注于业务逻辑的实现\n" +
+        model6.des = "1.OkHttpGo的强大的缓存功能,让你代码无需关心数据来源,专注于业务逻辑的实现\n" +
                 "2.共有五种缓存模式满足你各种使用场景\n" +
                 "3.支持自定义缓存过期时间";
         model6.type = 0;
@@ -110,16 +110,16 @@ public class MainActivity extends BaseActivity {
 
         OkHttpModel model8 = new OkHttpModel();
         model8.title = "下载管理(OkHttpServer)";
-        model8.des = "1.这个属于OkHttpServer依赖中的功能,并不属于OkHttpUtils\n" +
-                "2.这个包维护较少,一般情况下,不做特殊的下载管理功能,OkHttpUtils完全可以胜任\n" +
-                "3.相比OkHttpUtils主要是多了断点下载和下载状态的管理";
+        model8.des = "1.这个属于OkHttpServer依赖中的功能,并不属于OkHttpGo\n" +
+                "2.这个包维护较少,一般情况下,不做特殊的下载管理功能,OkHttpGo完全可以胜任\n" +
+                "3.相比OkHttpGo主要是多了断点下载和下载状态的管理";
         model8.type = 0;
         items.add(model8);
 
         OkHttpModel model9 = new OkHttpModel();
         model9.title = "上传管理(OkHttpServer)";
         model9.des = "1.这个同上,也属于OkHttpServer依赖中的功能\n" +
-                "2.同样该包的功能OkHttpUtils完全可以胜任\n" +
+                "2.同样该包的功能OkHttpGo完全可以胜任\n" +
                 "3.上传只是简单上传管理,不支持断点上传或者分片上传";
         model9.type = 0;
         items.add(model9);

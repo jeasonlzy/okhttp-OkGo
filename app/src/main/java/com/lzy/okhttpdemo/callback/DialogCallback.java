@@ -5,7 +5,7 @@ import android.app.ProgressDialog;
 import android.support.annotation.Nullable;
 import android.view.Window;
 
-import com.lzy.okhttputils.request.BaseRequest;
+import com.lzy.okhttpgo.request.BaseRequest;
 
 import java.lang.reflect.Type;
 

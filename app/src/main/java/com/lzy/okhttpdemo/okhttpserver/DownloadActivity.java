@@ -24,8 +24,8 @@ import com.lzy.okhttpdemo.model.ApkModel;
 import com.lzy.okhttpdemo.utils.AppCacheUtils;
 import com.lzy.okhttpserver.download.DownloadManager;
 import com.lzy.okhttpserver.download.DownloadService;
-import com.lzy.okhttputils.OkHttpUtils;
-import com.lzy.okhttputils.request.GetRequest;
+import com.lzy.okhttpgo.OkHttpGo;
+import com.lzy.okhttpgo.request.GetRequest;
 
 import java.util.ArrayList;
 
@@ -145,7 +145,7 @@ public class DownloadActivity extends BaseActivity {
                 if (downloadManager.getDownloadInfo(apkModel.getUrl()) != null) {
                     Toast.makeText(getApplicationContext(), "任务已经在下载列表中", Toast.LENGTH_SHORT).show();
                 } else {
-                    GetRequest request = OkHttpUtils.get(apkModel.getUrl())//
+                    GetRequest request = OkHttpGo.get(apkModel.getUrl())//
                             .headers("headerKey1", "headerValue1")//
                             .headers("headerKey2", "headerValue2")//
                             .params("paramKey1", "paramValue1")//

@@ -27,8 +27,8 @@ import com.lzy.okhttpserver.listener.UploadListener;
 import com.lzy.okhttpserver.task.ExecutorWithListener;
 import com.lzy.okhttpserver.upload.UploadInfo;
 import com.lzy.okhttpserver.upload.UploadManager;
-import com.lzy.okhttputils.OkHttpUtils;
-import com.lzy.okhttputils.request.PostRequest;
+import com.lzy.okhttpgo.OkHttpGo;
+import com.lzy.okhttpgo.request.PostRequest;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -108,7 +108,7 @@ public class UploadActivity extends BaseActivity implements ExecutorWithListener
             for (int i = 0; i < images.size(); i++) {
                 MyUploadListener listener = new MyUploadListener();
                 listener.setUserTag(gridView.getChildAt(i));
-                PostRequest postRequest = OkHttpUtils.post(Urls.URL_FORM_UPLOAD)//
+                PostRequest postRequest = OkHttpGo.post(Urls.URL_FORM_UPLOAD)//
                         .headers("headerKey1", "headerValue1")//
                         .headers("headerKey2", "headerValue2")//
                         .params("paramKey1", "paramValue1")//

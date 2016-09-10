@@ -6,8 +6,8 @@ import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
 import android.view.Window;
 
-import com.lzy.okhttputils.callback.BitmapCallback;
-import com.lzy.okhttputils.request.BaseRequest;
+import com.lzy.okhttpgo.callback.BitmapCallback;
+import com.lzy.okhttpgo.request.BaseRequest;
 
 /**
  * ================================================

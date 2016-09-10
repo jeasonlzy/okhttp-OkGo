@@ -3,8 +3,8 @@ package com.lzy.okhttpdemo.callback;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
-import com.lzy.okhttputils.callback.AbsCallback;
-import com.lzy.okhttputils.request.BaseRequest;
+import com.lzy.okhttpgo.callback.AbsCallback;
+import com.lzy.okhttpgo.request.BaseRequest;
 
 import org.json.JSONObject;
 

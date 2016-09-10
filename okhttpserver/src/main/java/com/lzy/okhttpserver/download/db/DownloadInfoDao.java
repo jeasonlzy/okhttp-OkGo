@@ -4,7 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 
 import com.lzy.okhttpserver.download.DownloadInfo;
-import com.lzy.okhttputils.cache.DataBaseDao;
+import com.lzy.okhttpgo.cache.DataBaseDao;
 
 import java.util.List;
 

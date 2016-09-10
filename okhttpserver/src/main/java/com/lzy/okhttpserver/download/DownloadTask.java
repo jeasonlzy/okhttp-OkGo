@@ -6,8 +6,8 @@ import android.text.TextUtils;
 import com.lzy.okhttpserver.download.db.DownloadDBManager;
 import com.lzy.okhttpserver.listener.DownloadListener;
 import com.lzy.okhttpserver.task.PriorityAsyncTask;
-import com.lzy.okhttputils.utils.HttpUtils;
-import com.lzy.okhttputils.utils.OkLogger;
+import com.lzy.okhttpgo.utils.HttpUtils;
+import com.lzy.okhttpgo.utils.OkLogger;
 
 import java.io.BufferedInputStream;
 import java.io.File;

@@ -5,8 +5,8 @@ import android.app.ProgressDialog;
 import android.support.annotation.Nullable;
 import android.view.Window;
 
-import com.lzy.okhttputils.callback.StringCallback;
-import com.lzy.okhttputils.request.BaseRequest;
+import com.lzy.okhttpgo.callback.StringCallback;
+import com.lzy.okhttpgo.request.BaseRequest;
 
 /**
  * ================================================

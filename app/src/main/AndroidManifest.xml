@@ -24,17 +24,17 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".okhttputils.MethodActivity"/>
-        <activity android:name=".okhttputils.JsonRequestActivity"/>
-        <activity android:name=".okhttputils.BitmapRequestActivity"/>
-        <activity android:name=".okhttputils.PostTextActivity"/>
-        <activity android:name=".okhttputils.FormUploadActivity"/>
-        <activity android:name=".okhttputils.FileDownloadActivity"/>
-        <activity android:name=".okhttputils.CacheActivity"/>
-        <activity android:name=".okhttputils.HttpsActivity"/>
-        <activity android:name=".okhttputils.SyncActivity"/>
-        <activity android:name=".okhttputils.RedirectActivity"/>
-        <activity android:name=".okhttputils.TestActivity"/>
+        <activity android:name=".okhttpgo.MethodActivity"/>
+        <activity android:name=".okhttpgo.JsonRequestActivity"/>
+        <activity android:name=".okhttpgo.BitmapRequestActivity"/>
+        <activity android:name=".okhttpgo.PostTextActivity"/>
+        <activity android:name=".okhttpgo.FormUploadActivity"/>
+        <activity android:name=".okhttpgo.FileDownloadActivity"/>
+        <activity android:name=".okhttpgo.CacheActivity"/>
+        <activity android:name=".okhttpgo.HttpsActivity"/>
+        <activity android:name=".okhttpgo.SyncActivity"/>
+        <activity android:name=".okhttpgo.RedirectActivity"/>
+        <activity android:name=".okhttpgo.TestActivity"/>
         <activity
             android:name=".cache.CacheDemoActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
@@ -42,7 +42,7 @@
             android:name=".WebActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".okhttputils.OkHttpActivity"
+            android:name=".okhttpgo.OkHttpActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".okhttpserver.DownloadManagerActivity"

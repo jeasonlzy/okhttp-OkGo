@@ -3,8 +3,8 @@ apply plugin: 'com.jfrog.bintray'
 
 version = "1.0.2"              // 数据仓库依赖第三部分
 
-def siteUrl = 'https://github.com/jeasonlzy0216/OkHttpUtils'
-def gitUrl = 'https://github.com/jeasonlzy0216/OkHttpUtils.git'
+def siteUrl = 'https://github.com/jeasonlzy0216/OkHttpGo'
+def gitUrl = 'https://github.com/jeasonlzy0216/OkHttpGo.git'
 group = "com.lzy.net"       // 数据仓库依赖第一部分
 
 install {

@@ -18,8 +18,8 @@ import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.base.BaseFragment;
 import com.lzy.okhttpdemo.model.NewsModel;
 import com.lzy.okhttpdemo.utils.Urls;
-import com.lzy.okhttputils.OkHttpUtils;
-import com.lzy.okhttputils.cache.CacheMode;
+import com.lzy.okhttpgo.OkHttpGo;
+import com.lzy.okhttpgo.cache.CacheMode;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -74,7 +74,7 @@ public class NewsTabFragment extends BaseFragment implements SwipeRefreshLayout.
     /** 下拉刷新 */
     @Override
     public void onRefresh() {
-        OkHttpUtils.get(Urls.NEWS)//
+        OkHttpGo.get(Urls.NEWS)//
                 .params("channelName", fragmentTitle)//
                 .params("page", String.valueOf(1))              //初始化或者下拉刷新,默认加载第一页
                 .cacheKey("TabFragment_" + fragmentTitle)       //由于该fragment会被复用,必须保证key唯一,否则数据会发生覆盖
@@ -122,7 +122,7 @@ public class NewsTabFragment extends BaseFragment implements SwipeRefreshLayout.
     /** 上拉加载 */
     @Override
     public void onLoadMoreRequested() {
-        OkHttpUtils.get(Urls.NEWS)//
+        OkHttpGo.get(Urls.NEWS)//
                 .params("channelName", fragmentTitle)//
                 .params("page", String.valueOf(currentPage + 1)) //上拉加载更多
                 .cacheMode(CacheMode.NO_CACHE)                   //上拉不需要缓存

@@ -4,7 +4,7 @@ import android.os.Message;
 
 import com.lzy.okhttpserver.listener.UploadListener;
 import com.lzy.okhttpserver.task.PriorityAsyncTask;
-import com.lzy.okhttputils.callback.AbsCallback;
+import com.lzy.okhttpgo.callback.AbsCallback;
 
 import java.io.IOException;
 

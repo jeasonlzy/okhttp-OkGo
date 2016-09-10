@@ -16,7 +16,7 @@ android {
     }
     signingConfigs {
         appkey {
-            keyAlias 'okhttputils'
+            keyAlias 'okhttpgo'
             keyPassword '111111'
             storeFile file('../appkey.jks')
             storePassword '111111'
@@ -38,11 +38,11 @@ android {
     }
     productFlavors {
         miui {
-            proguardFile '/Users/jeasonlzy/Android/github/OkHttpUtils/app/proguard-rules.pro'
+            proguardFile './proguard-rules.pro'
             signingConfig signingConfigs.appkey
         }
         qihu360 {
-            proguardFile '/Users/jeasonlzy/Android/github/OkHttpUtils/app/proguard-rules.pro'
+            proguardFile './proguard-rules.pro'
             signingConfig signingConfigs.appkey
         }
     }
@@ -51,7 +51,7 @@ android {
 task makeApk {
     doLast {
         def versionName = android.defaultConfig.versionName
-        def appName = "okhttputils_v${versionName}.apk"
+        def appName = "okhttpgo_v${versionName}.apk"
         copy {
             from "./build/outputs/apk/app-miui-debug.apk"
             into "../"
@@ -73,13 +73,11 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.google.code.gson:gson:2.5'
-
     compile 'com.lzy.widget:ninegridview:0.2.0'
     compile 'com.lzy.widget:imagepicker:0.3.2'
     compile 'com.lzy.widget:view-core:0.2.1'
-
     //    compile 'com.lzy.net:okhttputils:+'
     //    compile 'com.lzy.net:okhttpserver:+'
-    compile project(':okhttputils')
+    compile project(':okhttpgo')
     compile project(':okhttpserver')
 }

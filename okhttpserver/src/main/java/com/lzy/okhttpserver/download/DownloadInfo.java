@@ -6,8 +6,8 @@ import android.support.annotation.NonNull;
 
 import com.lzy.okhttpserver.download.db.DownloadRequest;
 import com.lzy.okhttpserver.listener.DownloadListener;
-import com.lzy.okhttputils.request.BaseRequest;
-import com.lzy.okhttputils.utils.OkLogger;
+import com.lzy.okhttpgo.request.BaseRequest;
+import com.lzy.okhttpgo.utils.OkLogger;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

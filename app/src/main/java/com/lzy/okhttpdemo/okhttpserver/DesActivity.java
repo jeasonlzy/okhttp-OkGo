@@ -19,8 +19,8 @@ import com.lzy.okhttpserver.download.DownloadInfo;
 import com.lzy.okhttpserver.download.DownloadManager;
 import com.lzy.okhttpserver.download.DownloadService;
 import com.lzy.okhttpserver.listener.DownloadListener;
-import com.lzy.okhttputils.OkHttpUtils;
-import com.lzy.okhttputils.request.GetRequest;
+import com.lzy.okhttpgo.OkHttpGo;
+import com.lzy.okhttpgo.request.GetRequest;
 
 import java.io.File;
 
@@ -87,7 +87,7 @@ public class DesActivity extends BaseActivity implements View.OnClickListener {
         downloadInfo = downloadManager.getDownloadInfo(apk.getUrl());
         if (v.getId() == download.getId()) {
             if (downloadInfo == null) {
-                GetRequest request = OkHttpUtils.get(apk.getUrl())//
+                GetRequest request = OkHttpGo.get(apk.getUrl())//
                         .headers("headerKey1", "headerValue1")//
                         .headers("headerKey2", "headerValue2")//
                         .params("paramKey1", "paramValue1")//

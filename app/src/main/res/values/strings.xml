@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">OkHttpUtils</string>
+    <string name="app_name">OkHttpGo</string>
 
     <string name="simple_view_behavior">com.lzy.okhttpdemo.ui.SimpleViewBehavior</string>
     <string name="translate_up_down_behavior">com.lzy.okhttpdemo.ui.TranslateUpDownBehavior</string>

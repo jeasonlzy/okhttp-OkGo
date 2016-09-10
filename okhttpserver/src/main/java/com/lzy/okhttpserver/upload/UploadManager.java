@@ -3,9 +3,9 @@ package com.lzy.okhttpserver.upload;
 import android.support.annotation.NonNull;
 
 import com.lzy.okhttpserver.listener.UploadListener;
-import com.lzy.okhttputils.OkHttpUtils;
-import com.lzy.okhttputils.request.BaseBodyRequest;
-import com.lzy.okhttputils.request.PostRequest;
+import com.lzy.okhttpgo.OkHttpGo;
+import com.lzy.okhttpgo.request.BaseBodyRequest;
+import com.lzy.okhttpgo.request.PostRequest;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -54,7 +54,7 @@ public class UploadManager {
     /** 添加一个上传任务,默认使用post请求 */
     @Deprecated
     public <T> void addTask(String url, @NonNull File resource, @NonNull String key, UploadListener<T> listener) {
-        PostRequest request = OkHttpUtils.post(url).params(key, resource);
+        PostRequest request = OkHttpGo.post(url).params(key, resource);
         addTask(url, request, listener);
     }
 
