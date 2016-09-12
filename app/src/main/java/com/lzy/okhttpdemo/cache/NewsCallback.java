@@ -53,7 +53,7 @@ public abstract class NewsCallback<T> extends AbsCallback<T> {
      * 实际使用中,自己服务器返回的数据格式和上面网站肯定不一样,所以以下是参考代码,根据实际情况自己改写
      */
     @Override
-    public T parseNetworkResponse(Response response) throws Exception {
+    public T convertSuccess(Response response) throws Exception {
         String responseData = response.body().string();
         if (TextUtils.isEmpty(responseData)) return null;
 

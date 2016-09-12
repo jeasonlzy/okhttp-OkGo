@@ -21,12 +21,12 @@ public class GetRequest extends BaseRequest<GetRequest> {
     }
 
     @Override
-    protected RequestBody generateRequestBody() {
+    public RequestBody generateRequestBody() {
         return null;
     }
 
     @Override
-    protected Request generateRequest(RequestBody requestBody) {
+    public Request generateRequest(RequestBody requestBody) {
         Request.Builder requestBuilder = HttpUtils.appendHeaders(headers);
         url = HttpUtils.createUrlFromParams(baseUrl, params.urlParamsMap);
         return requestBuilder.get().url(url).tag(tag).build();

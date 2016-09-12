@@ -21,12 +21,12 @@ public class HeadRequest extends BaseRequest<HeadRequest> {
     }
 
     @Override
-    protected RequestBody generateRequestBody() {
+    public RequestBody generateRequestBody() {
         return null;
     }
 
     @Override
-    protected Request generateRequest(RequestBody requestBody) {
+    public Request generateRequest(RequestBody requestBody) {
         Request.Builder requestBuilder = HttpUtils.appendHeaders(headers);
         url = HttpUtils.createUrlFromParams(baseUrl, params.urlParamsMap);
         return requestBuilder.head().url(url).tag(tag).build();

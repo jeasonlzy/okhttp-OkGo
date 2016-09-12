@@ -103,7 +103,7 @@ public abstract class BaseBodyRequest<R extends BaseBodyRequest> extends BaseReq
     }
 
     @Override
-    protected RequestBody generateRequestBody() {
+    public RequestBody generateRequestBody() {
         if (requestBody != null) return requestBody;                                           //自定义的请求体
         if (string != null && mediaType != null) return RequestBody.create(mediaType, string); //post上传字符串数据
         if (json != null && mediaType != null) return RequestBody.create(mediaType, json);     //post上传json数据

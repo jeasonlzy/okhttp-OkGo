@@ -25,7 +25,7 @@ public class PostRequest extends BaseBodyRequest<PostRequest> {
     }
 
     @Override
-    protected Request generateRequest(RequestBody requestBody) {
+    public Request generateRequest(RequestBody requestBody) {
         try {
             headers.put(HttpHeaders.HEAD_KEY_CONTENT_LENGTH, String.valueOf(requestBody.contentLength()));
         } catch (IOException e) {

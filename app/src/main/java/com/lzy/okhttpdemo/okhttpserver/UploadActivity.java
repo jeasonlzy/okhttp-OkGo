@@ -246,7 +246,7 @@ public class UploadActivity extends BaseActivity implements ExecutorWithListener
 
         @Override
         public String parseNetworkResponse(Response response) throws Exception {
-            Log.e("MyUploadListener", "parseNetworkResponse");
+            Log.e("MyUploadListener", "convertSuccess");
             return response.body().string();
         }
     }

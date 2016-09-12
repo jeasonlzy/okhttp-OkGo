@@ -1,20 +1,28 @@
 package com.lzy.okhttpgo.callback;
 
+import com.lzy.okhttpgo.convert.StringConvert;
+
 import okhttp3.Response;
 
 /**
  * ================================================
  * 作    者：廖子尧
  * 版    本：1.0
- * 创建日期：2016/1/12
+ * 创建日期：2016/9/11
  * 描    述：返回字符串类型的数据
  * 修订历史：
  * ================================================
  */
 public abstract class StringCallback extends AbsCallback<String> {
 
+    private final StringConvert convert;
+
+    public StringCallback() {
+        convert = new StringConvert();
+    }
+
     @Override
-    public String parseNetworkResponse(Response response) throws Exception {
-        return response.body().string();
+    public String convertSuccess(Response response) throws Exception {
+        return convert.convertSuccess(response);
     }
 }
