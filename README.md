@@ -33,14 +33,14 @@
 
    对于Eclipse不能运行项目的，提供了apk供直接运行
    
-### 或者点击下载Demo [okhttputils_v1.8.0.apk](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/okhttputils_v1.8.0.apk?raw=true)。
+### 或者点击下载Demo [okhttputils_v1.8.1.apk](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/okhttputils_v1.8.1.apk?raw=true)。
 
    本项目Demo的网络请求是我自己的服务器，有时候可能不稳定，网速比较慢时请耐心等待。。
 
  * 对于Android Studio的用户，可以选择添加:
 ```java
-    compile 'com.lzy.net:okhttputils:1.8.0'  //可以单独使用，不需要依赖下方的扩展包
-	compile 'com.lzy.net:okhttpserver:1.0.2' //扩展了下载管理和上传管理，根据需要添加
+    compile 'com.lzy.net:okhttputils:1.8.1'  //可以单独使用，不需要依赖下方的扩展包
+	compile 'com.lzy.net:okhttpserver:1.0.3' //扩展了下载管理和上传管理，根据需要添加
     
     或者
     
@@ -50,8 +50,8 @@
 
  * 对于Eclipse的用户，可以选择添加 `/jar` 目录下的:
 ```java
-	okhttputils-1.8.0.jar
-	okhttpserver-1.0.2.jar
+	okhttputils-1.8.1.jar
+	okhttpserver-1.0.3.jar
 ```
  * 如果是以jar包的形式引入`okhttpserver`,需要在清单文件中额外注册一个服务
 ```java

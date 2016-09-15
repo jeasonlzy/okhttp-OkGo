@@ -1,7 +1,7 @@
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
-version = "1.0.2"              // 数据仓库依赖第三部分
+version = "1.0.3"              // 数据仓库依赖第三部分
 
 def siteUrl = 'https://github.com/jeasonlzy0216/OkHttpUtils'
 def gitUrl = 'https://github.com/jeasonlzy0216/OkHttpUtils.git'
