@@ -440,7 +440,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
             public void onFailure(Call call, IOException e) {
                 mCallback.parseNetworkFail(call, e);
                 //请求失败，一般为url地址错误，网络错误等,并且过滤用户主动取消的网络请求
-                if (!"Canceled".equals(e.getMessage())) {
+                if (!call.isCanceled()) {
                     sendFailResultCallback(false, call, null, e, mCallback);
                 }
             }
