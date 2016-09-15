@@ -76,7 +76,7 @@ public class NewsTabFragment extends BaseFragment implements SwipeRefreshLayout.
     public void onRefresh() {
         OkHttpUtils.get(Urls.NEWS)//
                 .params("channelName", fragmentTitle)//
-                .params("page", String.valueOf(1))              //初始化或者下拉刷新,默认加载第一页
+                .params("page", 1)                              //初始化或者下拉刷新,默认加载第一页
                 .cacheKey("TabFragment_" + fragmentTitle)       //由于该fragment会被复用,必须保证key唯一,否则数据会发生覆盖
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)  //缓存模式先使用缓存,然后使用网络数据
                 .execute(new NewsCallback<NewsModel>(NewsModel.class) {
@@ -124,8 +124,8 @@ public class NewsTabFragment extends BaseFragment implements SwipeRefreshLayout.
     public void onLoadMoreRequested() {
         OkHttpUtils.get(Urls.NEWS)//
                 .params("channelName", fragmentTitle)//
-                .params("page", String.valueOf(currentPage + 1)) //上拉加载更多
-                .cacheMode(CacheMode.NO_CACHE)                   //上拉不需要缓存
+                .params("page", currentPage + 1)     //上拉加载更多
+                .cacheMode(CacheMode.NO_CACHE)       //上拉不需要缓存
                 .execute(new NewsCallback<NewsModel>(NewsModel.class) {
                     @Override
                     public void onSuccess(NewsModel newsModel, Call call, Response response) {

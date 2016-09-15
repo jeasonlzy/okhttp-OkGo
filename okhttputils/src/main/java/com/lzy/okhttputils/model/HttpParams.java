@@ -63,22 +63,70 @@ public class HttpParams implements Serializable {
         }
     }
 
-    public void put(Map<String, String> params) {
-        put(params, IS_REPLACE);
-    }
-
-    public void put(Map<String, String> params, boolean isReplace) {
+    public void put(Map<String, String> params, boolean... isReplace) {
         if (params == null || params.isEmpty()) return;
         for (Map.Entry<String, String> entry : params.entrySet()) {
             put(entry.getKey(), entry.getValue(), isReplace);
         }
     }
 
-    public void put(String key, String value) {
-        put(key, value, IS_REPLACE);
+    public void put(String key, String value, boolean... isReplace) {
+        if (isReplace != null && isReplace.length > 0) {
+            put(key, String.valueOf(value), isReplace[0]);
+        } else {
+            put(key, String.valueOf(value), IS_REPLACE);
+        }
     }
 
-    public void put(String key, String value, boolean isReplace) {
+    public void put(String key, int value, boolean... isReplace) {
+        if (isReplace != null && isReplace.length > 0) {
+            put(key, String.valueOf(value), isReplace[0]);
+        } else {
+            put(key, String.valueOf(value), IS_REPLACE);
+        }
+    }
+
+    public void put(String key, long value, boolean... isReplace) {
+        if (isReplace != null && isReplace.length > 0) {
+            put(key, String.valueOf(value), isReplace[0]);
+        } else {
+            put(key, String.valueOf(value), IS_REPLACE);
+        }
+    }
+
+    public void put(String key, float value, boolean... isReplace) {
+        if (isReplace != null && isReplace.length > 0) {
+            put(key, String.valueOf(value), isReplace[0]);
+        } else {
+            put(key, String.valueOf(value), IS_REPLACE);
+        }
+    }
+
+    public void put(String key, double value, boolean... isReplace) {
+        if (isReplace != null && isReplace.length > 0) {
+            put(key, String.valueOf(value), isReplace[0]);
+        } else {
+            put(key, String.valueOf(value), IS_REPLACE);
+        }
+    }
+
+    public void put(String key, char value, boolean... isReplace) {
+        if (isReplace != null && isReplace.length > 0) {
+            put(key, String.valueOf(value), isReplace[0]);
+        } else {
+            put(key, String.valueOf(value), IS_REPLACE);
+        }
+    }
+
+    public void put(String key, boolean value, boolean... isReplace) {
+        if (isReplace != null && isReplace.length > 0) {
+            put(key, String.valueOf(value), isReplace[0]);
+        } else {
+            put(key, String.valueOf(value), IS_REPLACE);
+        }
+    }
+
+    private void put(String key, String value, boolean isReplace) {
         if (key != null && value != null) {
             List<String> urlValues = urlParamsMap.get(key);
             if (urlValues == null) {
