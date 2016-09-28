@@ -11,10 +11,10 @@ import com.lzy.okhttpdemo.base.BaseActivity;
 import com.lzy.okhttpdemo.callback.JsonConvert;
 import com.lzy.okhttpdemo.model.ServerModel;
 import com.lzy.okhttpgo.OkHttpGo;
+import com.lzy.okhttpgo.adapter.Call;
 import com.lzy.okhttpgo.convert.BitmapConvert;
 import com.lzy.okhttpgo.convert.FileConvert;
 import com.lzy.okhttpgo.convert.StringConvert;
-import com.lzy.okhttpgo.adapter.Call;
 import com.lzy.okrx.RxAdapter;
 
 import java.io.File;
@@ -53,7 +53,6 @@ public class TestActivity extends BaseActivity {
 
             Observable<ServerModel> observable = OkHttpGo.get("").getCall(JsonConvert.<ServerModel>create(), RxAdapter.<ServerModel>create());
 
-
             OkHttpGo.post("")//
                     .headers("aaa", "bbb")//
                     .params("aaa", "bbb")//
@@ -78,10 +77,6 @@ public class TestActivity extends BaseActivity {
 
                         }
                     });
-
-
-
-
 
         } catch (Exception e) {
             e.printStackTrace();
