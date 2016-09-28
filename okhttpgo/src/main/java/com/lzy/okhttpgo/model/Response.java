@@ -1,4 +1,4 @@
-package com.lzy.okhttpgo.rx;
+package com.lzy.okhttpgo.model;
 
 import okhttp3.Headers;
 

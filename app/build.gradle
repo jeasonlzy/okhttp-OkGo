@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
-def buildSdkVersion = 23
-def buildToolVersion = "23.0.3"
-def supportVersion = "23.4.0"
+def buildSdkVersion = 24
+def buildToolVersion = "24.0.2"
+def supportVersion = "24.2.1"
 
 android {
     compileSdkVersion buildSdkVersion
@@ -10,7 +10,7 @@ android {
     defaultConfig {
         applicationId "com.lzy.okhttpdemo"
         minSdkVersion 14
-        targetSdkVersion 22
+        targetSdkVersion 24
         versionCode 22
         versionName "1.8.0"
     }
@@ -80,4 +80,5 @@ dependencies {
     //    compile 'com.lzy.net:okhttpserver:+'
     compile project(':okhttpgo')
     compile project(':okhttpserver')
+    compile project(':okrx')
 }

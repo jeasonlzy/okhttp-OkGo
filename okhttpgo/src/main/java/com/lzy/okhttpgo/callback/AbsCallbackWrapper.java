@@ -1,5 +1,6 @@
 package com.lzy.okhttpgo.callback;
 
+import okhttp3.Call;
 import okhttp3.Response;
 
 /**
@@ -15,5 +16,9 @@ public class AbsCallbackWrapper<T> extends AbsCallback<T> {
     @Override
     public T convertSuccess(Response value) throws Exception {
         return (T) value;
+    }
+
+    @Override
+    public void onSuccess(T t, Call call, Response response) {
     }
 }

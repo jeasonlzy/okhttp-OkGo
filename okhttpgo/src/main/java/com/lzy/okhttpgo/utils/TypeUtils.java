@@ -1,19 +1,4 @@
-/*
- * Copyright (C) 2008 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package com.lzy.okhttpgo.rx;
+package com.lzy.okhttpgo.utils;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -30,14 +15,24 @@ import java.util.NoSuchElementException;
 import okhttp3.ResponseBody;
 import okio.Buffer;
 
+/**
+ * ================================================
+ * 作    者：Retrofit
+ * 版    本：1.0
+ * 创建日期：2016/9/11
+ * 描    述：取自Retrofit的工具类
+ * 修订历史：
+ * ================================================
+ */
 public class TypeUtils {
-    static final Type[] EMPTY_TYPE_ARRAY = new Type[0];
+
+    public static final Type[] EMPTY_TYPE_ARRAY = new Type[0];
 
     private TypeUtils() {
         // No instances.
     }
 
-    static Class<?> getRawType(Type type) {
+    public static Class<?> getRawType(Type type) {
         if (type == null) throw new NullPointerException("type == null");
 
         if (type instanceof Class<?>) {
@@ -70,7 +65,7 @@ public class TypeUtils {
     }
 
     /** Returns true if {@code a} and {@code b} are equal. */
-    static boolean equals(Type a, Type b) {
+    public static boolean equals(Type a, Type b) {
         if (a == b) {
             return true; // Also handles (a == null && b == null).
 
@@ -111,7 +106,7 @@ public class TypeUtils {
      * IntegerSet}, the result for when supertype is {@code Set.class} is {@code Set<Integer>} and the
      * result when the supertype is {@code Collection.class} is {@code Collection<Integer>}.
      */
-    static Type getGenericSupertype(Type context, Class<?> rawType, Class<?> toResolve) {
+    public static Type getGenericSupertype(Type context, Class<?> rawType, Class<?> toResolve) {
         if (toResolve == rawType) return context;
 
         // We skip searching through interfaces if unknown is an interface.
@@ -154,11 +149,11 @@ public class TypeUtils {
         return a == b || (a != null && a.equals(b));
     }
 
-    static int hashCodeOrZero(Object o) {
+    public static int hashCodeOrZero(Object o) {
         return o != null ? o.hashCode() : 0;
     }
 
-    static String typeToString(Type type) {
+    public static String typeToString(Type type) {
         return type instanceof Class ? ((Class<?>) type).getName() : type.toString();
     }
 
@@ -169,12 +164,12 @@ public class TypeUtils {
      *
      * @param supertype a superclass of, or interface implemented by, this.
      */
-    static Type getSupertype(Type context, Class<?> contextRawType, Class<?> supertype) {
+    public static Type getSupertype(Type context, Class<?> contextRawType, Class<?> supertype) {
         if (!supertype.isAssignableFrom(contextRawType)) throw new IllegalArgumentException();
         return resolve(context, contextRawType, getGenericSupertype(context, contextRawType, supertype));
     }
 
-    static Type resolve(Type context, Class<?> contextRawType, Type toResolve) {
+    public static Type resolve(Type context, Class<?> contextRawType, Type toResolve) {
         // This implementation is made a little more complicated in an attempt to avoid object-creation.
         while (true) {
             if (toResolve instanceof TypeVariable) {
@@ -255,19 +250,19 @@ public class TypeUtils {
         return unknown;
     }
 
-    /** 判断是否传入泛型*/
+    /** 判断是否传入泛型 */
     private static Class<?> declaringClassOf(TypeVariable<?> typeVariable) {
         GenericDeclaration genericDeclaration = typeVariable.getGenericDeclaration();
         return genericDeclaration instanceof Class ? (Class<?>) genericDeclaration : null;
     }
 
-    static void checkNotPrimitive(Type type) {
+    public static void checkNotPrimitive(Type type) {
         if (type instanceof Class<?> && ((Class<?>) type).isPrimitive()) {
             throw new IllegalArgumentException();
         }
     }
 
-    static <T> T checkNotNull(T object, String message) {
+    public static <T> T checkNotNull(T object, String message) {
         if (object == null) {
             throw new NullPointerException(message);
         }
@@ -275,7 +270,7 @@ public class TypeUtils {
     }
 
     /** Returns true if {@code annotations} contains an instance of {@code cls}. */
-    static boolean isAnnotationPresent(Annotation[] annotations, Class<? extends Annotation> cls) {
+    public static boolean isAnnotationPresent(Annotation[] annotations, Class<? extends Annotation> cls) {
         for (Annotation annotation : annotations) {
             if (cls.isInstance(annotation)) {
                 return true;
@@ -284,13 +279,13 @@ public class TypeUtils {
         return false;
     }
 
-    static ResponseBody buffer(final ResponseBody body) throws IOException {
+    public static ResponseBody buffer(final ResponseBody body) throws IOException {
         Buffer buffer = new Buffer();
         body.source().readAll(buffer);
         return ResponseBody.create(body.contentType(), body.contentLength(), buffer);
     }
 
-    static <T> void validateServiceInterface(Class<T> service) {
+    public static <T> void validateServiceInterface(Class<T> service) {
         if (!service.isInterface()) {
             throw new IllegalArgumentException("API declarations must be interfaces.");
         }
@@ -302,7 +297,7 @@ public class TypeUtils {
         }
     }
 
-    static Type getParameterUpperBound(int index, ParameterizedType type) {
+    public static Type getParameterUpperBound(int index, ParameterizedType type) {
         Type[] types = type.getActualTypeArguments();
         if (index < 0 || index >= types.length) {
             throw new IllegalArgumentException("Index " + index + " not in range [0," + types.length + ") for " + type);
@@ -314,7 +309,7 @@ public class TypeUtils {
         return paramType;
     }
 
-    static boolean hasUnresolvableType(Type type) {
+    public static boolean hasUnresolvableType(Type type) {
         if (type instanceof Class<?>) {
             return false;
         }
@@ -340,8 +335,8 @@ public class TypeUtils {
         throw new IllegalArgumentException("Expected a Class, ParameterizedType, or " + "GenericArrayType, but <" + type + "> is of type " + className);
     }
 
-    /** 获取泛型参数的泛型*/
-    static Type getCallResponseType(Type returnType) {
+    /** 获取泛型参数的泛型 */
+    public static Type getCallResponseType(Type returnType) {
         if (!(returnType instanceof ParameterizedType)) {
             throw new IllegalArgumentException("Call return type must be parameterized as Call<Foo> or Call<? extends Foo>");
         }

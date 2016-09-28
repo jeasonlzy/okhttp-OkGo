@@ -20,14 +20,9 @@ import com.lzy.okhttpgo.request.HeadRequest;
 import com.lzy.okhttpgo.request.OptionsRequest;
 import com.lzy.okhttpgo.request.PostRequest;
 import com.lzy.okhttpgo.request.PutRequest;
-import com.lzy.okhttpgo.rx.CallAdapter;
-import com.lzy.okhttpgo.convert.Converter;
 import com.lzy.okhttpgo.utils.OkLogger;
 
 import java.io.InputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
@@ -36,8 +31,6 @@ import javax.net.ssl.SSLSession;
 import okhttp3.Call;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 
 /**
  * ================================================
@@ -60,9 +53,6 @@ public class OkHttpGo {
     private long mCacheTime = CacheEntity.CACHE_NEVER_EXPIRE;   //全局缓存过期时间,默认永不过期
     private static Application context;                         //全局上下文
     private CookieJarImpl cookieJar;                            //全局 Cookie 实例
-
-    private List<Converter.Factory> converterFactories;
-    private List<CallAdapter.Factory> adapterFactories;
 
     private OkHttpGo() {
         okHttpClientBuilder = new OkHttpClient.Builder();
@@ -269,22 +259,6 @@ public class OkHttpGo {
         return this;
     }
 
-    public List<Converter.Factory> getConverterFactories() {
-        return converterFactories;
-    }
-
-    public void setConverterFactories(List<Converter.Factory> converterFactories) {
-        this.converterFactories = converterFactories;
-    }
-
-    public List<CallAdapter.Factory> getAdapterFactories() {
-        return adapterFactories;
-    }
-
-    public void setAdapterFactories(List<CallAdapter.Factory> adapterFactories) {
-        this.adapterFactories = adapterFactories;
-    }
-
     /** 根据Tag取消请求 */
     public void cancelTag(Object tag) {
         for (Call call : getOkHttpClient().dispatcher().queuedCalls()) {
@@ -297,68 +271,5 @@ public class OkHttpGo {
                 call.cancel();
             }
         }
-    }
-
-
-    /** 从 AdapterFactories 中找到合适的 CallAdapter */
-    public CallAdapter<?> callAdapter(Type returnType, Annotation[] annotations) {
-        return nextCallAdapter(null, returnType, annotations);
-    }
-
-    public CallAdapter<?> nextCallAdapter(CallAdapter.Factory skipPast, Type returnType, Annotation[] annotations) {
-        int start = adapterFactories.indexOf(skipPast) + 1;
-        for (int i = start, count = adapterFactories.size(); i < count; i++) {
-            CallAdapter<?> adapter = adapterFactories.get(i).get(returnType, annotations, this);
-            if (adapter != null) {
-                return adapter;
-            }
-        }
-        throw new IllegalArgumentException("找不到adapter");
-    }
-
-    /** 从 converterFactories 中找到合适的 Converter */
-    public <T> Converter<T, RequestBody> requestBodyConverter(Type type, Annotation[] parameterAnnotations, Annotation[] methodAnnotations) {
-        return nextRequestBodyConverter(null, type, parameterAnnotations, methodAnnotations);
-    }
-
-    public <T> Converter<T, RequestBody> nextRequestBodyConverter(Converter.Factory skipPast, Type type, Annotation[] parameterAnnotations, Annotation[] methodAnnotations) {
-        int start = converterFactories.indexOf(skipPast) + 1;
-        for (int i = start, count = converterFactories.size(); i < count; i++) {
-            Converter.Factory factory = converterFactories.get(i);
-            Converter<?, RequestBody> converter = factory.requestBodyConverter(type, parameterAnnotations, methodAnnotations, this);
-            if (converter != null) {
-                //noinspection unchecked
-                return (Converter<T, RequestBody>) converter;
-            }
-        }
-        throw new IllegalArgumentException("找不到Converter");
-    }
-
-    /** 从 converterFactories 中找到合适的 Converter */
-    public <T> Converter<ResponseBody, T> responseBodyConverter(Type type, Annotation[] annotations) {
-        return nextResponseBodyConverter(null, type, annotations);
-    }
-
-    public <T> Converter<ResponseBody, T> nextResponseBodyConverter(Converter.Factory skipPast, Type type, Annotation[] annotations) {
-        int start = converterFactories.indexOf(skipPast) + 1;
-        for (int i = start, count = converterFactories.size(); i < count; i++) {
-            Converter<ResponseBody, ?> converter = converterFactories.get(i).responseBodyConverter(type, annotations, this);
-            if (converter != null) {
-                //noinspection unchecked
-                return (Converter<ResponseBody, T>) converter;
-            }
-        }
-        throw new IllegalArgumentException("找不到Converter");
-    }
-
-    public <T> Converter<T, String> stringConverter(Type type, Annotation[] annotations) {
-        for (int i = 0, count = converterFactories.size(); i < count; i++) {
-            Converter<?, String> converter = converterFactories.get(i).stringConverter(type, annotations, this);
-            if (converter != null) {
-                //noinspection unchecked
-                return (Converter<T, String>) converter;
-            }
-        }
-        return (Converter<T, String>) BuiltInConverters.ToStringConverter.INSTANCE;
     }
 }

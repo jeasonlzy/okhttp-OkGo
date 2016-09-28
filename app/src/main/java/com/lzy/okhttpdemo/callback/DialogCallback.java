@@ -7,8 +7,6 @@ import android.view.Window;
 
 import com.lzy.okhttpgo.request.BaseRequest;
 
-import java.lang.reflect.Type;
-
 /**
  * ================================================
  * 作    者：廖子尧
@@ -30,13 +28,8 @@ public abstract class DialogCallback<T> extends JsonCallback<T> {
         dialog.setMessage("请求网络中...");
     }
 
-    public DialogCallback(Activity activity, Class<T> clazz) {
-        super(clazz);
-        initDialog(activity);
-    }
-
-    public DialogCallback(Activity activity, Type type) {
-        super(type);
+    public DialogCallback(Activity activity) {
+        super();
         initDialog(activity);
     }
 

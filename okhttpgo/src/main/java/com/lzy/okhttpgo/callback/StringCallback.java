@@ -15,14 +15,8 @@ import okhttp3.Response;
  */
 public abstract class StringCallback extends AbsCallback<String> {
 
-    private final StringConvert convert;
-
-    public StringCallback() {
-        convert = new StringConvert();
-    }
-
     @Override
     public String convertSuccess(Response response) throws Exception {
-        return convert.convertSuccess(response);
+        return StringConvert.create().convertSuccess(response);
     }
 }

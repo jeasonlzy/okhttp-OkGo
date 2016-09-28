@@ -4,6 +4,10 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.lzy.okhttpgo.OkHttpGo;
+import com.lzy.okhttpgo.adapter.CacheCall;
+import com.lzy.okhttpgo.adapter.Call;
+import com.lzy.okhttpgo.adapter.CallAdapter;
+import com.lzy.okhttpgo.adapter.DefaultCallAdapter;
 import com.lzy.okhttpgo.cache.CacheEntity;
 import com.lzy.okhttpgo.cache.CacheMode;
 import com.lzy.okhttpgo.callback.AbsCallback;
@@ -11,9 +15,8 @@ import com.lzy.okhttpgo.convert.Converter;
 import com.lzy.okhttpgo.https.HttpsUtils;
 import com.lzy.okhttpgo.model.HttpHeaders;
 import com.lzy.okhttpgo.model.HttpParams;
-import com.lzy.okhttpgo.rx.CacheCall;
-import com.lzy.okhttpgo.rx.Call;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -383,11 +386,16 @@ public abstract class BaseRequest<R extends BaseRequest> {
     /** Rx支持,获取同步call对象 */
     public <T> Call<T> getCall(Converter<T> converter) {
         mConverter = converter;
-        return new CacheCall<>(this);
+        return DefaultCallAdapter.<Call<T>>create().adapt(new CacheCall(this));
+    }
+
+    /** Rx支持,获取同步call对象 */
+    public <T, E> E getCall(Converter<T> converter, CallAdapter<E> adapter) {
+        return adapter.adapt(getCall(converter));
     }
 
     /** 普通调用，阻塞方法，同步请求执行 */
-    public Response execute() throws Exception {
+    public Response execute() throws IOException {
         return getCall().execute();
     }
 

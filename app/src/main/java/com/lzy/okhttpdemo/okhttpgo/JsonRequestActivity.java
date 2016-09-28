@@ -3,7 +3,6 @@ package com.lzy.okhttpdemo.okhttpgo;
 import android.os.Bundle;
 import android.view.View;
 
-import com.google.gson.reflect.TypeToken;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.base.BaseDetailActivity;
 import com.lzy.okhttpdemo.callback.DialogCallback;
@@ -43,7 +42,7 @@ public class JsonRequestActivity extends BaseDetailActivity {
                 .tag(this)//
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
-                .execute(new DialogCallback<ServerModel>(this, ServerModel.class) {
+                .execute(new DialogCallback<ServerModel>(this) {
                     @Override
                     public void onSuccess(ServerModel serverModel, Call call, Response response) {
                         handleResponse(serverModel, call, response);
@@ -66,7 +65,7 @@ public class JsonRequestActivity extends BaseDetailActivity {
                 .tag(this)//
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
-                .execute(new DialogCallback<List<ServerModel>>(this, new TypeToken<List<ServerModel>>() {}.getType()) {
+                .execute(new DialogCallback<List<ServerModel>>(this) {
                     @Override
                     public void onSuccess(List<ServerModel> serverModels, Call call, Response response) {
                         handleResponse(serverModels, call, response);

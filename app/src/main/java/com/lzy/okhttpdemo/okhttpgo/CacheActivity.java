@@ -121,7 +121,7 @@ public class CacheActivity extends BaseDetailActivity {
     private class CacheCallBack extends DialogCallback<ServerModel> {
 
         public CacheCallBack(Activity activity) {
-            super(activity, ServerModel.class);
+            super(activity);
         }
 
         @Override

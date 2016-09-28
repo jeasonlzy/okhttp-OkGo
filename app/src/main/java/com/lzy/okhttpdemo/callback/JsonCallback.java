@@ -3,8 +3,6 @@ package com.lzy.okhttpdemo.callback;
 import com.lzy.okhttpgo.callback.AbsCallback;
 import com.lzy.okhttpgo.request.BaseRequest;
 
-import java.lang.reflect.Type;
-
 import okhttp3.Response;
 
 /**
@@ -26,24 +24,6 @@ import okhttp3.Response;
  */
 public abstract class JsonCallback<T> extends AbsCallback<T> {
 
-    public Class<T> clazz;
-    public Type type;
-
-    /**
-     * 传class,直接返回解析生成的对象
-     */
-    public JsonCallback(Class<T> clazz) {
-        this.clazz = clazz;
-    }
-
-    /**
-     * 对于需要返回集合类型的,可以传type
-     * type = new TypeToken<List<你的数据类型>>(){}.getType()
-     */
-    public JsonCallback(Type type) {
-        this.type = type;
-    }
-
     @Override
     public void onBefore(BaseRequest request) {
         super.onBefore(request);
@@ -60,6 +40,6 @@ public abstract class JsonCallback<T> extends AbsCallback<T> {
      */
     @Override
     public T convertSuccess(Response response) throws Exception {
-        return new JsonConvert<>(this).convertSuccess(response);
+        return JsonConvert.<T>create().convertSuccess(response);
     }
 }

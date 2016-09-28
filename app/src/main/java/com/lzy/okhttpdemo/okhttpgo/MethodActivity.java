@@ -57,7 +57,7 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
-                        .execute(new DialogCallback<ServerModel>(this, ServerModel.class) {
+                        .execute(new DialogCallback<ServerModel>(this) {
                             @Override
                             public void onSuccess(ServerModel serverModel, Call call, Response response) {
                                 handleResponse(serverModel, call, response);
@@ -75,7 +75,7 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
-                        .execute(new DialogCallback<ServerModel>(this, ServerModel.class) {
+                        .execute(new DialogCallback<ServerModel>(this) {
                             @Override
                             public void onSuccess(ServerModel serverModel, Call call, Response response) {
                                 handleResponse(serverModel, call, response);
@@ -93,7 +93,7 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
-                        .execute(new DialogCallback<ServerModel>(this, ServerModel.class) {
+                        .execute(new DialogCallback<ServerModel>(this) {
                             @Override
                             public void onSuccess(ServerModel serverModel, Call call, Response response) {
                                 handleResponse(serverModel, call, response);
@@ -111,7 +111,7 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
-                        .execute(new DialogCallback<ServerModel>(this, ServerModel.class) {
+                        .execute(new DialogCallback<ServerModel>(this) {
                             @Override
                             public void onSuccess(ServerModel serverModel, Call call, Response response) {
                                 handleResponse(serverModel, call, response);
@@ -129,7 +129,7 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
-                        .execute(new DialogCallback<ServerModel>(this, ServerModel.class) {
+                        .execute(new DialogCallback<ServerModel>(this) {
                             @Override
                             public void onSuccess(ServerModel serverModel, Call call, Response response) {
                                 handleResponse(serverModel, call, response);
@@ -148,7 +148,7 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
                         .requestBody(RequestBody.create(MediaType.parse("text/plain;charset=utf-8"), "这是要上传的数据"))//
-                        .execute(new DialogCallback<ServerModel>(this, ServerModel.class) {
+                        .execute(new DialogCallback<ServerModel>(this) {
                             @Override
                             public void onSuccess(ServerModel serverModel, Call call, Response response) {
                                 handleResponse(serverModel, call, response);

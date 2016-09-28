@@ -6,24 +6,26 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.google.gson.reflect.TypeToken;
 import com.lzy.okhttpdemo.R;
 import com.lzy.okhttpdemo.base.BaseActivity;
-import com.lzy.okhttpdemo.callback.JsonCallback;
 import com.lzy.okhttpdemo.callback.JsonConvert;
 import com.lzy.okhttpdemo.model.ServerModel;
 import com.lzy.okhttpgo.OkHttpGo;
-import com.lzy.okhttpgo.callback.AbsCallback;
-import com.lzy.okhttpgo.callback.BitmapCallback;
 import com.lzy.okhttpgo.convert.BitmapConvert;
-import com.lzy.okhttpgo.rx.Call;
-import com.lzy.okhttpgo.rx.Response;
+import com.lzy.okhttpgo.convert.FileConvert;
+import com.lzy.okhttpgo.convert.StringConvert;
+import com.lzy.okhttpgo.adapter.Call;
+import com.lzy.okrx.RxAdapter;
 
+import java.io.File;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Observable;
+import rx.functions.Action1;
+import rx.functions.Func1;
 
 public class TestActivity extends BaseActivity {
 
@@ -42,21 +44,48 @@ public class TestActivity extends BaseActivity {
     public void btn1(View view) {
 
         try {
-            Call<ServerModel> call = OkHttpGo.get("").getCall(new JsonConvert<>(ServerModel.class));
 
-            Call<Object> call1 = OkHttpGo.get("").getCall(new JsonConvert<>(new TypeToken<List<ServerModel>>() {}.getType()));
+            Call<String> stringCall = OkHttpGo.get("").getCall(StringConvert.create());
+            Call<Bitmap> bitmapCall = OkHttpGo.get("").getCall(BitmapConvert.create());
+            Call<File> fileCall = OkHttpGo.get("").getCall(new FileConvert());
+            Call<ServerModel> serverModelCall = OkHttpGo.get("").getCall(JsonConvert.<ServerModel>create());
+            Call<List<ServerModel>> listCall = OkHttpGo.get("").getCall(JsonConvert.<List<ServerModel>>create());
+
+            Observable<ServerModel> observable = OkHttpGo.get("").getCall(JsonConvert.<ServerModel>create(), RxAdapter.<ServerModel>create());
+
+
+            OkHttpGo.post("")//
+                    .headers("aaa", "bbb")//
+                    .params("aaa", "bbb")//
+                    .params("aaa", "bbb")//
+                    .params("aaa", new File("sdf"))//
+                    .getCall(JsonConvert.<ServerModel>create(), RxAdapter.<ServerModel>create())//
+                    .map(new Func1<ServerModel, ServerModel>() {
+                        @Override
+                        public ServerModel call(ServerModel serverModel) {
+                            return null;
+                        }
+                    })//
+                    .doOnNext(new Action1<ServerModel>() {
+                        @Override
+                        public void call(ServerModel serverModel) {
+
+                        }
+                    })//
+                    .subscribe(new Action1<ServerModel>() {
+                        @Override
+                        public void call(ServerModel serverModel) {
+
+                        }
+                    });
+
+
+
+
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        Call<ServerModel> call = OkHttpGo.get("")//
-                .tag(this)//
-                .params("", "")//
-                .createAdapter(ServerModel.class);
-        call.enqueue(new CacheCallback() {
-
-        });
     }
 
     @OnClick(R.id.btn2)

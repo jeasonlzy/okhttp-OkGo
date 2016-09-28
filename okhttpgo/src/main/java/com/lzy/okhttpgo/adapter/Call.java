@@ -1,6 +1,7 @@
-package com.lzy.okhttpgo.rx;
+package com.lzy.okhttpgo.adapter;
 
 import com.lzy.okhttpgo.callback.AbsCallback;
+import com.lzy.okhttpgo.model.Response;
 
 /**
  * ================================================

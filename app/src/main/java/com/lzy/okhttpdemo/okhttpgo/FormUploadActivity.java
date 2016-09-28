@@ -109,7 +109,7 @@ public class FormUploadActivity extends BaseDetailActivity {
 //                .params("file2",new File("文件路径"))
 //                .params("file3",new File("文件路径"))
                 .addFileParams("file", files)           // 这种方式为同一个key，上传多个文件
-                .execute(new JsonCallback<ServerModel>(ServerModel.class) {
+                .execute(new JsonCallback<ServerModel>() {
                     @Override
                     public void onBefore(BaseRequest request) {
                         super.onBefore(request);

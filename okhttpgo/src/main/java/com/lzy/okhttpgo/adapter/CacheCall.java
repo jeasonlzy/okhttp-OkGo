@@ -1,4 +1,4 @@
-package com.lzy.okhttpgo.rx;
+package com.lzy.okhttpgo.adapter;
 
 import android.graphics.Bitmap;
 
@@ -10,6 +10,7 @@ import com.lzy.okhttpgo.callback.AbsCallback;
 import com.lzy.okhttpgo.callback.AbsCallbackWrapper;
 import com.lzy.okhttpgo.exception.OkHttpException;
 import com.lzy.okhttpgo.model.HttpHeaders;
+import com.lzy.okhttpgo.model.Response;
 import com.lzy.okhttpgo.request.BaseRequest;
 import com.lzy.okhttpgo.utils.HeaderParser;
 import com.lzy.okhttpgo.utils.HttpUtils;
@@ -40,6 +41,7 @@ public class CacheCall<T> implements Call<T> {
         this.baseRequest = baseRequest;
     }
 
+    @Override
     public void execute(AbsCallback<T> callback) {
 
         synchronized (this) {

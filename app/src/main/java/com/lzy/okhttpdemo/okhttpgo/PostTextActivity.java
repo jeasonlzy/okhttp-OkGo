@@ -50,7 +50,7 @@ public class PostTextActivity extends BaseDetailActivity {
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
                 .upJson(jsonObject.toString())//
-                .execute(new DialogCallback<ServerModel>(this, ServerModel.class) {
+                .execute(new DialogCallback<ServerModel>(this) {
                     @Override
                     public void onSuccess(ServerModel serverModel, Call call, Response response) {
                         handleResponse(serverModel, call, response);
@@ -72,7 +72,7 @@ public class PostTextActivity extends BaseDetailActivity {
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
                 .upString("这是要上传的长文本数据！")//
-                .execute(new DialogCallback<ServerModel>(this, ServerModel.class) {
+                .execute(new DialogCallback<ServerModel>(this) {
                     @Override
                     public void onSuccess(ServerModel serverModel, Call call, Response response) {
                         handleResponse(serverModel, call, response);
@@ -94,7 +94,7 @@ public class PostTextActivity extends BaseDetailActivity {
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
                 .upBytes("这是字节数据".getBytes())//
-                .execute(new DialogCallback<ServerModel>(this, ServerModel.class) {
+                .execute(new DialogCallback<ServerModel>(this) {
                     @Override
                     public void onSuccess(ServerModel serverModel, Call call, Response response) {
                         handleResponse(serverModel, call, response);
