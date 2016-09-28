@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".okhttpserver.DownloadActivity">
+    tools:context=".okserver.DownloadActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"

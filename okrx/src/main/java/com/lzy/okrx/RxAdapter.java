@@ -1,7 +1,7 @@
 package com.lzy.okrx;
 
-import com.lzy.okhttpgo.adapter.Call;
-import com.lzy.okhttpgo.adapter.CallAdapter;
+import com.lzy.okgo.adapter.Call;
+import com.lzy.okgo.adapter.CallAdapter;
 
 import rx.Observable;
 

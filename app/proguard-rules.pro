@@ -28,9 +28,9 @@
 -dontwarn com.lzy.okhttputils.**
 -keep class com.lzy.okhttputils.**{*;}
 
-#okhttpserver
--dontwarn com.lzy.okhttpserver.**
--keep class com.lzy.okhttpserver.**{*;}
+#okserver
+-dontwarn okserver.**
+-keep class okserver.**{*;}
 
 #okhttp
 -dontwarn okhttp3.**

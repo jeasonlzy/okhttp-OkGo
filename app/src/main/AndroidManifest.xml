@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.lzy.okhttpdemo"
+<manifest package="com.lzy.demo"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -8,14 +8,14 @@
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
 
     <application
-        android:name=".GApp"
+        android:name="com.lzy.demo.GApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="com.lzy.demo.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -24,37 +24,37 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".okhttpgo.MethodActivity"/>
-        <activity android:name=".okhttpgo.JsonRequestActivity"/>
-        <activity android:name=".okhttpgo.BitmapRequestActivity"/>
-        <activity android:name=".okhttpgo.PostTextActivity"/>
-        <activity android:name=".okhttpgo.FormUploadActivity"/>
-        <activity android:name=".okhttpgo.FileDownloadActivity"/>
-        <activity android:name=".okhttpgo.CacheActivity"/>
-        <activity android:name=".okhttpgo.HttpsActivity"/>
-        <activity android:name=".okhttpgo.SyncActivity"/>
-        <activity android:name=".okhttpgo.RedirectActivity"/>
-        <activity android:name=".okhttpgo.TestActivity"/>
+        <activity android:name="com.lzy.demo.okgo.MethodActivity"/>
+        <activity android:name="com.lzy.demo.okgo.JsonRequestActivity"/>
+        <activity android:name="com.lzy.demo.okgo.BitmapRequestActivity"/>
+        <activity android:name="com.lzy.demo.okgo.PostTextActivity"/>
+        <activity android:name="com.lzy.demo.okgo.FormUploadActivity"/>
+        <activity android:name="com.lzy.demo.okgo.FileDownloadActivity"/>
+        <activity android:name="com.lzy.demo.okgo.CacheActivity"/>
+        <activity android:name="com.lzy.demo.okgo.HttpsActivity"/>
+        <activity android:name="com.lzy.demo.okgo.SyncActivity"/>
+        <activity android:name="com.lzy.demo.okgo.RedirectActivity"/>
+        <activity android:name="com.lzy.demo.okgo.TestActivity"/>
         <activity
-            android:name=".cache.CacheDemoActivity"
+            android:name="com.lzy.demo.cache.CacheDemoActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".WebActivity"
+            android:name="com.lzy.demo.WebActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".okhttpgo.OkHttpActivity"
+            android:name="com.lzy.demo.okgo.OkHttpActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".okhttpserver.DownloadManagerActivity"
+            android:name="com.lzy.demo.okserver.DownloadManagerActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".okhttpserver.DesActivity"
+            android:name="com.lzy.demo.okserver.DesActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".okhttpserver.DownloadActivity"
+            android:name="com.lzy.demo.okserver.DownloadActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".okhttpserver.UploadActivity"
+            android:name="com.lzy.demo.okserver.UploadActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 

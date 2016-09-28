@@ -21,7 +21,7 @@
             android:layout_height="match_parent"
             android:background="#A000"/>
 
-        <com.lzy.okhttpdemo.ui.ProgressPieView
+        <com.lzy.demo.ui.ProgressPieView
             android:id="@+id/civ"
             android:layout_width="60dp"
             android:layout_height="60dp"

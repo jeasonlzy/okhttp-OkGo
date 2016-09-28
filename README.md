@@ -1,6 +1,6 @@
- ![image](https://github.com/jeasonlzy0216/Screenshots/blob/master/okhttputils/logo3.png)
+ ![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/logo3.png)
 
-# OkHttpUtils
+# OkGo
 
 ### 封装了okhttp的网络框架，支持大文件上传下载，上传进度回调，下载进度回调，表单上传（多文件和多参数一起上传），链式调用，可以自定义返回对象，支持Https和自签名证书，支持cookie自动管理，支持四种缓存模式缓存网络数据，支持301、302重定向，扩展了统一的上传管理和下载管理功能
 
@@ -20,7 +20,7 @@
 ## 演示
 
 
- ![image](https://github.com/jeasonlzy0216/Screenshots/blob/master/okhttputils/demo7.gif)![image](https://github.com/jeasonlzy0216/Screenshots/blob/master/okhttputils/demo8.gif)![image](https://github.com/jeasonlzy0216/Screenshots/blob/master/okhttputils/demo11.gif)![image](https://github.com/jeasonlzy0216/Screenshots/blob/master/okhttputils/demo9.gif)![image](https://github.com/jeasonlzy0216/Screenshots/blob/master/okhttputils/demo10.gif)![image](https://github.com/jeasonlzy0216/Screenshots/blob/master/okhttputils/demo12.gif)
+ ![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo7.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo8.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo11.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo9.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo10.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo12.gif)
 
 
 ## 1.用法
@@ -33,43 +33,43 @@
 
    对于Eclipse不能运行项目的，提供了apk供直接运行
    
-### 或者点击下载Demo [okhttputils_v1.8.1.apk](https://github.com/jeasonlzy0216/OkHttpUtils/blob/master/okhttputils_v1.8.1.apk?raw=true)。
+### 或者点击下载Demo [okgo_v1.8.1.apk](https://github.com/jeasonlzy/OkGo/blob/master/okgo_v1.8.1.apk?raw=true)。
 
    本项目Demo的网络请求是我自己的服务器，有时候可能不稳定，网速比较慢时请耐心等待。。
 
  * 对于Android Studio的用户，可以选择添加:
 ```java
-    compile 'com.lzy.net:okhttputils:1.8.1'  //可以单独使用，不需要依赖下方的扩展包
-	compile 'com.lzy.net:okhttpserver:1.0.3' //扩展了下载管理和上传管理，根据需要添加
+    compile 'com.lzy.net:okgo:1.8.1'  //可以单独使用，不需要依赖下方的扩展包
+	compile 'com.lzy.net:okserver:1.0.3' //扩展了下载管理和上传管理，根据需要添加
     
     或者
     
-	compile 'com.lzy.net:okhttputils:+'  //版本号使用 + 可以自动引用最新版
-	compile 'com.lzy.net:okhttpserver:+' //版本号使用 + 可以自动引用最新版
+	compile 'com.lzy.net:okgo:+'  //版本号使用 + 可以自动引用最新版
+	compile 'com.lzy.net:okserver:+' //版本号使用 + 可以自动引用最新版
 ```
 
  * 对于Eclipse的用户，可以选择添加 `/jar` 目录下的:
 ```java
-	okhttputils-1.8.1.jar
-	okhttpserver-1.0.3.jar
+	okgo-1.8.1.jar
+	okserver-1.0.3.jar
 ```
- * 如果是以jar包的形式引入`okhttpserver`,需要在清单文件中额外注册一个服务
+ * 如果是以jar包的形式引入`okserver`,需要在清单文件中额外注册一个服务
 ```java
-    <service android:name="com.lzy.okhttpserver.download.DownloadService"/>
+    <service android:name="com.lzy.okserver.download.DownloadService"/>
 ```
- * 如果只是用了`okhttputils`的jar,没有使用`okhttpserver`的jar,那么不需要注册上面的服务
+ * 如果只是用了`okgo`的jar,没有使用`okserver`的jar,那么不需要注册上面的服务
 
-#### 其中的图片选择是我的另一个开源项目，完全仿微信的图片选择库，自带 矩形图片裁剪 和 圆形图片裁剪 功能，有需要的可以去下载使用，附上地址：[https://github.com/jeasonlzy0216/ImagePicker](https://github.com/jeasonlzy0216/ImagePicker)
-#### 其中的九宫格控件也是我的开源项目,类似QQ空间，微信朋友圈，微博主页等，展示图片的九宫格控件，自动根据图片的数量确定图片大小和控件大小，使用Adapter模式设置图片，对外提供接口回调，使用接口加载图片,支持任意的图片加载框架,如 Glide,ImageLoader,Fresco,xUtils3,Picasso 等，支持点击图片全屏预览大图。附上地址：[https://github.com/jeasonlzy0216/NineGridView](https://github.com/jeasonlzy0216/NineGridView)
+#### 其中的图片选择是我的另一个开源项目，完全仿微信的图片选择库，自带 矩形图片裁剪 和 圆形图片裁剪 功能，有需要的可以去下载使用，附上地址：[https://github.com/jeasonlzy/ImagePicker](https://github.com/jeasonlzy/ImagePicker)
+#### 其中的九宫格控件也是我的开源项目,类似QQ空间，微信朋友圈，微博主页等，展示图片的九宫格控件，自动根据图片的数量确定图片大小和控件大小，使用Adapter模式设置图片，对外提供接口回调，使用接口加载图片,支持任意的图片加载框架,如 Glide,ImageLoader,Fresco,xUtils3,Picasso 等，支持点击图片全屏预览大图。附上地址：[https://github.com/jeasonlzy/NineGridView](https://github.com/jeasonlzy/NineGridView)
 	
 ## 2.使用注意事项
- * `okhttputils`使用的`okhttp`的版本是最新的 3.4.1 版本，和以前的 2.x 的版本可能会存在冲突。
- * `okhttpserver`是对`okhttputils`的扩展，统一了下载管理和上传管理，对项目有需要做统一下载的可以考虑使用该扩展，不需要的可以直接使用`okhttputils`即可。
+ * `okgo`使用的`okhttp`的版本是最新的 3.4.1 版本，和以前的 2.x 的版本可能会存在冲突。
+ * `okserver`是对`okgo`的扩展，统一了下载管理和上传管理，对项目有需要做统一下载的可以考虑使用该扩展，不需要的可以直接使用`okgo`即可。
  * 对于缓存模式使用，需要与返回对象相关的所有`javaBean`必须实现`Serializable`接口，否者会报`NotSerializableException`。
  * 使用缓存时，如果不指定`cacheKey`，默认是用url带参数的全路径名为`cacheKey`。
- * 使用该网络框架时，必须要在 Application 中做初始化 `OkHttpUtils.init(this);`。
+ * 使用该网络框架时，必须要在 Application 中做初始化 `OkGo.init(this);`。
 
-## 3.OkHttpUtils 目前支持
+## 3.OkGo 目前支持
 * 一般的 get,post,put,delete,head,options请求
 * 基于Post的大文本数据上传
 * 多文件和多参数统一的表单上传
@@ -84,10 +84,10 @@
 * 支持根据Tag取消请求
 * 支持自定义泛型Callback，自动根据泛型返回对象
 
-## 4.OkHttpServer 扩展功能
+## 4.OkServer 扩展功能
 
 ### 4.1 统一的文件下载管理(DownloadManager)：
- * 结合OkHttpUtils的request进行网络请求,支持与OkHttpUtils保持相同的全局公共参数,同时支持请求传递参数
+ * 结合OkGo的request进行网络请求,支持与OkGo保持相同的全局公共参数,同时支持请求传递参数
  * 支持断点下载，支持突然断网,强杀进程后,断点依然有效
  * 支持 下载 暂停 等待 停止 出错 完成 六种下载状态
  * 所有下载任务按照taskKey区分,切记不同的任务必须使用不一样的key,否者断点会发生覆盖
@@ -97,7 +97,7 @@
  * 下载管理使用了服务提高线程优先级，避免后台下载时被系统回收
  
 ### 4.2 统一的文件上传管理(UploadManager)
- * 结合OkHttpUtils的request进行网络请求,支持与OkHttpUtils保持相同的全局公共参数,同时支持请求传递参数
+ * 结合OkGo的request进行网络请求,支持与OkGo保持相同的全局公共参数,同时支持请求传递参数
  * 上传只能使用`Post`, `Put`, `Delete`, `Options` 这四种请求,不支持`Get`, `Head`
  * 该上传管理为简单管理，不支持断点续传或分片上传，只是简单的将所有上传任务使用线程池进行了统一管理
  * 默认同时上传数量为1个,该数列可以在代码中配置修改
@@ -119,23 +119,23 @@
         //-----------------------------------------------------------------------------------//
 
         //必须调用初始化
-        OkHttpUtils.init(this);
+        OkGo.init(this);
 
         //以下设置的所有参数是全局参数,同样的参数可以在请求的时候再设置一遍,那么对于该请求来讲,请求中的参数会覆盖全局参数
         //好处是全局参数统一,特定请求可以特别定制参数
         try {
             //以下都不是必须的，根据需要自行选择,一般来说只需要 debug,缓存相关,cookie相关的 就可以了
-            OkHttpUtils.getInstance()
+            OkGo.getInstance()
 
                     //打开该调试开关,控制台会使用 红色error 级别打印log,并不是错误,是为了显眼,不需要就不要加入该行
-                    .debug("OkHttpUtils")
+                    .debug("OkGo")
 
                     //如果使用默认的 60秒,以下三行也不需要传
-                    .setConnectTimeout(OkHttpUtils.DEFAULT_MILLISECONDS)  //全局的连接超时时间
-                    .setReadTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS)     //全局的读取超时时间
-                    .setWriteTimeOut(OkHttpUtils.DEFAULT_MILLISECONDS)    //全局的写入超时时间
+                    .setConnectTimeout(OkGo.DEFAULT_MILLISECONDS)  //全局的连接超时时间
+                    .setReadTimeOut(OkGo.DEFAULT_MILLISECONDS)     //全局的读取超时时间
+                    .setWriteTimeOut(OkGo.DEFAULT_MILLISECONDS)    //全局的写入超时时间
 
-                    //可以全局统一设置缓存模式,默认是不使用缓存,可以不传,具体其他模式看 github 介绍 https://github.com/jeasonlzy0216/
+                    //可以全局统一设置缓存模式,默认是不使用缓存,可以不传,具体其他模式看 github 介绍 https://github.com/jeasonlzy/
                     .setCacheMode(CacheMode.NO_CACHE)
 
                     //可以全局统一设置缓存时间,默认永不过期,具体使用方法看 github 介绍
@@ -212,7 +212,7 @@ callback一共有以下 10 个回调,除`onSuccess`必须实现以外,其余均�
 
 ### 1.基本的网络请求
 ```java
-OkHttpUtils.get(Urls.URL_METHOD)     // 请求方式和请求url
+OkGo.get(Urls.URL_METHOD)     // 请求方式和请求url
 	.tag(this)                       // 请求的 tag, 主要用于取消对应的请求
 	.cacheKey("cacheKey")            // 设置当前请求的缓存key,建议每个不同功能的请求设置一个
 	.cacheMode(CacheMode.DEFAULT)    // 缓存模式，详细请看缓存介绍
@@ -225,7 +225,7 @@ OkHttpUtils.get(Urls.URL_METHOD)     // 请求方式和请求url
 ```
 ### 2.请求 Bitmap 对象
 ```java
-OkHttpUtils.get(Urls.URL_IMAGE)//
+OkGo.get(Urls.URL_IMAGE)//
 	.tag(this)//
 	.execute(new BitmapCallback() {
 	    @Override
@@ -236,7 +236,7 @@ OkHttpUtils.get(Urls.URL_IMAGE)//
 ```
 ### 3.请求 文件下载
 ```java
-OkHttpUtils.get(Urls.URL_DOWNLOAD)//
+OkGo.get(Urls.URL_DOWNLOAD)//
 	.tag(this)//
 	.execute(new FileCallback("file.jpg") {  //文件下载时，需要指定下载的文件目录和文件名
 	    @Override
@@ -253,7 +253,7 @@ OkHttpUtils.get(Urls.URL_DOWNLOAD)//
 ### 4.普通Post，直接上传String类型的文本
 一般此种用法用于与服务器约定的数据格式，当使用该方法时，params中的参数设置是无效的，所有参数均需要通过需要上传的文本中指定，此外，额外指定的header参数仍然保持有效。
 ```java
-OkHttpUtils.post(Urls.URL_TEXT_UPLOAD)//
+OkGo.post(Urls.URL_TEXT_UPLOAD)//
 	.tag(this)//
 	.upString("这是要上传的长文本数据！")//
 	.execute(new StringCallback() {
@@ -279,7 +279,7 @@ params.put("key3", "也可以使用三方工具将对象转成json字符串");
 params.put("key4", "其实你怎么高兴怎么写都行");
 JSONObject jsonObject = new JSONObject(params);
         
-OkHttpUtils.post(Urls.URL_TEXT_UPLOAD)//
+OkGo.post(Urls.URL_TEXT_UPLOAD)//
 	.tag(this)//
 	.upJson(jsonObject.toString())//
 	.execute(new StringCallback() {
@@ -298,7 +298,7 @@ OkHttpUtils.post(Urls.URL_TEXT_UPLOAD)//
 
 ### 6.https请求(证书可以在全局初始化的时候设置,不用每次请求设置一遍)
 ```java
-OkHttpUtils.get("https://kyfw.12306.cn/otn")//
+OkGo.get("https://kyfw.12306.cn/otn")//
         .tag(this)//
         .headers("Connection", "close")           //如果对于部分自签名的https访问不成功，需要加上该控制头
         .headers("header1", "headerValue1")//
@@ -321,7 +321,7 @@ OkHttpUtils.get("https://kyfw.12306.cn/otn")//
  * Cookie一般情况下只需要在初始化的时候调用`setCookieStore`即可实现cookie的自动管理，如果特殊业务需要，需要手动额外向服务器传递自定义的cookie，可以在每次请求的时候调用`addCookie`方法，该方法提供了3个重载形式，可以根据自己的需要选择使用。
 
 ```java
-OkHttpUtils.get(Urls.URL_METHOD) // 请求方式和请求url, get请求不需要拼接参数，支持get，post，put，delete，head，options请求
+OkGo.get(Urls.URL_METHOD) // 请求方式和请求url, get请求不需要拼接参数，支持get，post，put，delete，head，options请求
     .tag(this)               // 请求的 tag, 主要用于取消对应的请求
     .connTimeOut(10000)      // 设置当前请求的连接超时时间
     .readTimeOut(10000)      // 设置当前请求的读取超时时间
@@ -419,7 +419,7 @@ OkHttpUtils.get(Urls.URL_METHOD) // 请求方式和请求url, get请求不需要
     });
 ```
 ### 8.取消请求
-每个请求前都设置了一个参数`tag`，取消则通过` OkHttpUtils.cancel(tag)`执行。
+每个请求前都设置了一个参数`tag`，取消则通过` OkGo.cancel(tag)`执行。
 例如：在Activity中，当Activity销毁取消请求，可以在onDestory里面统一取消。
 ```java
 	@Override
@@ -427,13 +427,13 @@ OkHttpUtils.get(Urls.URL_METHOD) // 请求方式和请求url, get请求不需要
 	    super.onDestroy();
 
 		//根据 Tag 取消请求
-	    OkHttpUtils.getInstance().cancelTag(this);
+	    OkGo.getInstance().cancelTag(this);
 	}
 ```
 ### 9.同步的请求
 execute方法不传入callback即为同步的请求，返回`Response`对象，需要自己解析
 ```java
-	Response response = OkHttpUtils.get("http://www.baidu.com")//
+	Response response = OkGo.get("http://www.baidu.com")//
 					                .tag(this)//
 					                .headers("aaa", "111")//
 					                .params("bbb", "222")
@@ -442,7 +442,7 @@ execute方法不传入callback即为同步的请求，返回`Response`对象，�
 ### 10.参数的顺序
 添加header和param的方法各有三个地方,在提交的时候,他们是有顺序的,如果对提交顺序有需要的话,请注意这里
 
- * 第一个地方,全局初始化时,使用`OkHttpUtils.getInstance().addCommonHeaders()`,`OkHttpUtils.getInstance().addCommonParams()` 添加
+ * 第一个地方,全局初始化时,使用`OkGo.getInstance().addCommonHeaders()`,`OkGo.getInstance().addCommonParams()` 添加
 
 ```java
     HttpHeaders headers = new HttpHeaders();
@@ -452,7 +452,7 @@ execute方法不传入callback即为同步的请求，返回`Response`对象，�
     params.put("PKAAA", "PVAAA"); 
     params.put("PKBBB", "PVBBB");
     
-    OkHttpUtils.getInstance()
+    OkGo.getInstance()
                .addCommonHeaders(headers) //设置全局公共头
                .addCommonParams(params);  //设置全局公共参数
 ```
@@ -476,7 +476,7 @@ execute方法不传入callback即为同步的请求，返回`Response`对象，�
  * 第三个地方,执行网络请求的时候添加
 
 ```java
-    OkHttpUtils.get(Urls.URL_METHOD)//
+    OkGo.get(Urls.URL_METHOD)//
             .tag(this)//
             .headers("HKEEE", "HVEEE")//
             .headers("HKFFF", "HVFFF")//
@@ -531,13 +531,13 @@ execute方法不传入callback即为同步的请求，返回`Response`对象，�
 
 ## 五、混淆
 ```java
-    #okhttputils
-    -dontwarn com.lzy.okhttputils.**
-    -keep class com.lzy.okhttputils.**{*;}
+    #okgo
+    -dontwarn com.lzy.okgo.**
+    -keep class com.lzy.okgo.**{*;}
     
-    #okhttpserver
-    -dontwarn com.lzy.okhttpserver.**
-    -keep class com.lzy.okhttpserver.**{*;}
+    #okserver
+    -dontwarn com.lzy.okserver.**
+    -keep class com.lzy.okserver.**{*;}
     
     #okhttp
     -dontwarn okhttp3.**

@@ -22,5 +22,5 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'io.reactivex:rxjava:1.1.10'
     compile 'io.reactivex:rxandroid:1.2.1'
-    compile project(':okhttpgo')
+    compile project(':okgo')
 }
