@@ -10,9 +10,9 @@ android {
     defaultConfig {
         applicationId "com.lzy.okhttpdemo"
         minSdkVersion 14
-        targetSdkVersion 24
-        versionCode 22
-        versionName "1.8.0"
+        targetSdkVersion 22
+        versionCode 23
+        versionName "1.8.1"
     }
     signingConfigs {
         appkey {

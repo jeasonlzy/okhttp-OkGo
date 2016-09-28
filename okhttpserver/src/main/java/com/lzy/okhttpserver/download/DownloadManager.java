@@ -163,11 +163,16 @@ public class DownloadManager {
 
     /** 删除一个任务,会删除下载文件 */
     public void removeTask(String taskKey) {
+        removeTask(taskKey, false);
+    }
+
+    /** 删除一个任务,会删除下载文件 */
+    public void removeTask(String taskKey, boolean isDeleteFile) {
         final DownloadInfo downloadInfo = getDownloadInfo(taskKey);
         if (downloadInfo == null) return;
         pauseTask(taskKey);                         //暂停任务
         removeTaskByKey(taskKey);                   //移除任务
-        deleteFile(downloadInfo.getTargetPath());   //删除文件
+        if (isDeleteFile) deleteFile(downloadInfo.getTargetPath());   //删除文件
         DownloadDBManager.INSTANCE.delete(taskKey);            //清除数据库
     }
 
