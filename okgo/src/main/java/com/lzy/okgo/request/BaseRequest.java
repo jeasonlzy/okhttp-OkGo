@@ -427,6 +427,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
     @SuppressWarnings("unchecked")
     public <T> void execute(AbsCallback<T> callback) {
         mCallback = callback;
+        mConverter = callback;
         new CacheCall<T>(this).execute(callback);
     }
 }

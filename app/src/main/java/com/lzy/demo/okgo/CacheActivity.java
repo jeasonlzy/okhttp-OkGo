@@ -5,12 +5,13 @@ import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.View;
 
-import com.lzy.okgo.OkGo;
 import com.lzy.demo.R;
 import com.lzy.demo.base.BaseDetailActivity;
 import com.lzy.demo.callback.DialogCallback;
+import com.lzy.demo.model.LzyResponse;
 import com.lzy.demo.model.ServerModel;
 import com.lzy.demo.utils.Urls;
+import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.cache.CacheManager;
 import com.lzy.okgo.cache.CacheMode;
@@ -118,21 +119,21 @@ public class CacheActivity extends BaseDetailActivity {
                 .execute(new CacheCallBack(this));
     }
 
-    private class CacheCallBack extends DialogCallback<ServerModel> {
+    private class CacheCallBack extends DialogCallback<LzyResponse<ServerModel>> {
 
         public CacheCallBack(Activity activity) {
             super(activity);
         }
 
         @Override
-        public void onSuccess(ServerModel requestInfo, Call call, Response response) {
-            handleResponse(requestInfo, call, response);
+        public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
+            handleResponse(responseData.data, call, response);
             requestState.setText("请求成功  是否来自缓存：false  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
         }
 
         @Override
-        public void onCacheSuccess(ServerModel requestInfo, Call call) {
-            handleResponse(requestInfo, call, null);
+        public void onCacheSuccess(LzyResponse<ServerModel> responseData, Call call) {
+            handleResponse(responseData.data, call, null);
             requestState.setText("请求成功  是否来自缓存：true  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
         }
 

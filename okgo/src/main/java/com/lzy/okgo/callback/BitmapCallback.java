@@ -19,6 +19,8 @@ public abstract class BitmapCallback extends AbsCallback<Bitmap> {
 
     @Override
     public Bitmap convertSuccess(Response response) throws Exception {
-        return BitmapConvert.create().convertSuccess(response);
+        Bitmap bitmap = BitmapConvert.create().convertSuccess(response);
+        response.close();
+        return bitmap;
     }
 }

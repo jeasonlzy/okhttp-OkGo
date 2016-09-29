@@ -1,14 +1,10 @@
 package com.lzy.demo.cache;
 
-import android.text.TextUtils;
-
-import com.google.gson.Gson;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.request.BaseRequest;
 
-import org.json.JSONObject;
-
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 import okhttp3.Response;
@@ -24,24 +20,6 @@ import okhttp3.Response;
  */
 public abstract class NewsCallback<T> extends AbsCallback<T> {
 
-    private Class<T> clazz;
-    private Type type;
-
-    /**
-     * 传class,直接返回解析生成的对象
-     */
-    public NewsCallback(Class<T> clazz) {
-        this.clazz = clazz;
-    }
-
-    /**
-     * 对于需要返回集合类型的,可以传type
-     * type = new TypeToken<List<你的数据类型>>(){}.getType()
-     */
-    public NewsCallback(Type type) {
-        this.type = type;
-    }
-
     @Override
     public void onBefore(BaseRequest request) {
         //缓存演示代码所有请求需要添加 apikey
@@ -54,22 +32,15 @@ public abstract class NewsCallback<T> extends AbsCallback<T> {
      */
     @Override
     public T convertSuccess(Response response) throws Exception {
-        String responseData = response.body().string();
-        if (TextUtils.isEmpty(responseData)) return null;
-
-        /**
-         * 一般来说，服务器返回的响应码都包含 code，msg，data 三部分，在此根据自己的业务需要完成相应的逻辑判断
-         * 以下只是一个示例，具体业务具体实现
-         */
-        JSONObject jsonObject = new JSONObject(responseData);
-        final String msg = jsonObject.optString("showapi_res_error", "");
-        final int code = jsonObject.optInt("showapi_res_code", 0);
-        String data = jsonObject.optString("showapi_res_body", "");
-        if (code == 0) {
-            if (clazz == String.class) return (T) data;
-            if (clazz != null) return new Gson().fromJson(data, clazz);
-            if (type != null) return new Gson().fromJson(data, type);
-        }
-        throw new IllegalStateException(msg);
+        //以下代码是通过泛型解析实际参数,泛型必须传
+        NewsConvert<T> convert = NewsConvert.create();
+        Type genType = getClass().getGenericSuperclass();
+        Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+        Type type = params[0];
+        if (!(type instanceof ParameterizedType)) throw new IllegalStateException("没有填写泛型参数");
+        convert.setType((ParameterizedType) type);
+        T t = convert.convertSuccess(response);
+        response.close();
+        return t;
     }
 }

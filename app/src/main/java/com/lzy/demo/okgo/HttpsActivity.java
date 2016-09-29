@@ -46,7 +46,7 @@ public class HttpsActivity extends BaseDetailActivity {
 
     @OnClick(R.id.btn_none_https_request)
     public void btn_none_https_request(View view) {
-        OkGo.get("https://github.com/jeasonlzy0216")//
+        OkGo.get("https://github.com/jeasonlzy")//
                 .tag(this)//
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
@@ -75,7 +75,7 @@ public class HttpsActivity extends BaseDetailActivity {
                     .headers("header1", "headerValue1")//
                     .params("param1", "paramValue1")//
 //                    .setCertificates(new Buffer().writeUtf8(CER_12306).inputStream())  //方法一：设置自签名网站的证书（选一种即可）
-                    .setCertificates(getAssets().open("srca.cer"))                     //方法二：也可以设置https证书（选一种即可）
+                    .setCertificates(getAssets().open("srca.cer"))                       //方法二：也可以设置https证书（选一种即可）
 //                    .setCertificates()                                                 //方法三：信任所有证书（选一种即可）
 
                     //方法四：传入bks证书,密码,和cer证书,支持双向加密

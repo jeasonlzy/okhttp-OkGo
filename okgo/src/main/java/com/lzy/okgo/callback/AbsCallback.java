@@ -66,6 +66,7 @@ public abstract class AbsCallback<T> implements Converter<T> {
 
     /** 请求网络结束后，UI线程 */
     public void onAfter(@Nullable T t, @Nullable Exception e) {
+        if (e != null) e.printStackTrace();
     }
 
     /**

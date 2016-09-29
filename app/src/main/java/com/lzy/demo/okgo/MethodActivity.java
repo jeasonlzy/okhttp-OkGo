@@ -10,13 +10,15 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
 
-import com.lzy.okgo.OkGo;
 import com.lzy.demo.R;
 import com.lzy.demo.base.BaseDetailActivity;
 import com.lzy.demo.callback.DialogCallback;
+import com.lzy.demo.callback.StringDialogCallback;
+import com.lzy.demo.model.LzyResponse;
 import com.lzy.demo.model.ServerModel;
 import com.lzy.demo.utils.ColorUtils;
 import com.lzy.demo.utils.Urls;
+import com.lzy.okgo.OkGo;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -30,7 +32,7 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
     @Bind(R.id.gridView) GridView gridView;
 
     private String[] methods = {"GET", "HEAD\n只有请求头", "OPTIONS\n获取服务器支持的HTTP请求方式",//
-            "POST", "PUT\n用法同POST主要用于创建资源", "DELETE\n与PUT对应主要用于删除资源"};
+                                "POST", "PUT\n用法同POST主要用于创建资源", "DELETE\n与PUT对应主要用于删除资源"};
 
     @Override
     protected void onActivityCreate(Bundle savedInstanceState) {
@@ -57,10 +59,10 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
-                        .execute(new DialogCallback<ServerModel>(this) {
+                        .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                             @Override
-                            public void onSuccess(ServerModel serverModel, Call call, Response response) {
-                                handleResponse(serverModel, call, response);
+                            public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
+                                handleResponse(responseData.data, call, response);
                             }
 
                             @Override
@@ -75,10 +77,10 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
-                        .execute(new DialogCallback<ServerModel>(this) {
+                        .execute(new StringDialogCallback(this) {
                             @Override
-                            public void onSuccess(ServerModel serverModel, Call call, Response response) {
-                                handleResponse(serverModel, call, response);
+                            public void onSuccess(String s, Call call, Response response) {
+                                handleResponse(s, call, response);
                             }
 
                             @Override
@@ -93,10 +95,10 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
-                        .execute(new DialogCallback<ServerModel>(this) {
+                        .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                             @Override
-                            public void onSuccess(ServerModel serverModel, Call call, Response response) {
-                                handleResponse(serverModel, call, response);
+                            public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
+                                handleResponse(responseData.data, call, response);
                             }
 
                             @Override
@@ -111,10 +113,10 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
-                        .execute(new DialogCallback<ServerModel>(this) {
+                        .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                             @Override
-                            public void onSuccess(ServerModel serverModel, Call call, Response response) {
-                                handleResponse(serverModel, call, response);
+                            public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
+                                handleResponse(responseData.data, call, response);
                             }
 
                             @Override
@@ -129,10 +131,10 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
-                        .execute(new DialogCallback<ServerModel>(this) {
+                        .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                             @Override
-                            public void onSuccess(ServerModel serverModel, Call call, Response response) {
-                                handleResponse(serverModel, call, response);
+                            public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
+                                handleResponse(responseData.data, call, response);
                             }
 
                             @Override
@@ -148,10 +150,10 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
                         .requestBody(RequestBody.create(MediaType.parse("text/plain;charset=utf-8"), "这是要上传的数据"))//
-                        .execute(new DialogCallback<ServerModel>(this) {
+                        .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                             @Override
-                            public void onSuccess(ServerModel serverModel, Call call, Response response) {
-                                handleResponse(serverModel, call, response);
+                            public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
+                                handleResponse(responseData.data, call, response);
                             }
 
                             @Override

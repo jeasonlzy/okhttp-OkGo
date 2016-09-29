@@ -3,6 +3,9 @@ package com.lzy.demo.callback;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.request.BaseRequest;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+
 import okhttp3.Response;
 
 /**
@@ -40,6 +43,15 @@ public abstract class JsonCallback<T> extends AbsCallback<T> {
      */
     @Override
     public T convertSuccess(Response response) throws Exception {
-        return JsonConvert.<T>create().convertSuccess(response);
+        //以下代码是通过泛型解析实际参数,泛型必须传
+        JsonConvert<T> convert = JsonConvert.create();
+        Type genType = getClass().getGenericSuperclass();
+        Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+        Type type = params[0];
+        if (!(type instanceof ParameterizedType)) throw new IllegalStateException("没有填写泛型参数");
+        convert.setType((ParameterizedType) type);
+        T t = convert.convertSuccess(response);
+        response.close();
+        return t;
     }
 }

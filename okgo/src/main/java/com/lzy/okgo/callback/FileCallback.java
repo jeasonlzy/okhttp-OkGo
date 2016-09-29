@@ -36,6 +36,8 @@ public abstract class FileCallback extends AbsCallback<File> {
 
     @Override
     public File convertSuccess(Response response) throws Exception {
-        return convert.convertSuccess(response);
+        File file = convert.convertSuccess(response);
+        response.close();
+        return file;
     }
 }

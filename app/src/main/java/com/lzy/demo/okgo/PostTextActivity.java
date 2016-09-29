@@ -3,12 +3,13 @@ package com.lzy.demo.okgo;
 import android.os.Bundle;
 import android.view.View;
 
-import com.lzy.okgo.OkGo;
 import com.lzy.demo.R;
 import com.lzy.demo.base.BaseDetailActivity;
 import com.lzy.demo.callback.DialogCallback;
+import com.lzy.demo.model.LzyResponse;
 import com.lzy.demo.model.ServerModel;
 import com.lzy.demo.utils.Urls;
+import com.lzy.okgo.OkGo;
 
 import org.json.JSONObject;
 
@@ -50,10 +51,10 @@ public class PostTextActivity extends BaseDetailActivity {
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
                 .upJson(jsonObject.toString())//
-                .execute(new DialogCallback<ServerModel>(this) {
+                .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                     @Override
-                    public void onSuccess(ServerModel serverModel, Call call, Response response) {
-                        handleResponse(serverModel, call, response);
+                    public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
+                        handleResponse(responseData.data, call, response);
                     }
 
                     @Override
@@ -72,10 +73,10 @@ public class PostTextActivity extends BaseDetailActivity {
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
                 .upString("这是要上传的长文本数据！")//
-                .execute(new DialogCallback<ServerModel>(this) {
+                .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                     @Override
-                    public void onSuccess(ServerModel serverModel, Call call, Response response) {
-                        handleResponse(serverModel, call, response);
+                    public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
+                        handleResponse(responseData.data, call, response);
                     }
 
                     @Override
@@ -94,10 +95,10 @@ public class PostTextActivity extends BaseDetailActivity {
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
                 .upBytes("这是字节数据".getBytes())//
-                .execute(new DialogCallback<ServerModel>(this) {
+                .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                     @Override
-                    public void onSuccess(ServerModel serverModel, Call call, Response response) {
-                        handleResponse(serverModel, call, response);
+                    public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
+                        handleResponse(responseData.data, call, response);
                     }
 
                     @Override

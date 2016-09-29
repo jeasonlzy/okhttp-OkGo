@@ -40,7 +40,7 @@ public class GlideImageLoader implements ImageLoader, NineGridView.ImageLoader {
     @Override
     public void displayImage(Activity activity, String path, ImageView imageView, int width, int height) {
         Glide.with(activity).load(new File(path))//
-                .placeholder(R.drawable.ic_default_image)//
+//                .placeholder(R.drawable.ic_default_image)//
                 .error(R.drawable.ic_default_image)//
                 .diskCacheStrategy(DiskCacheStrategy.ALL)//
                 .into(imageView);

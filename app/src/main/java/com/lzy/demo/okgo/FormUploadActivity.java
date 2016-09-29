@@ -8,17 +8,18 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.lzy.imagepicker.ImagePicker;
-import com.lzy.imagepicker.bean.ImageItem;
-import com.lzy.imagepicker.ui.ImageGridActivity;
-import com.lzy.okgo.OkGo;
 import com.lzy.demo.R;
 import com.lzy.demo.base.BaseDetailActivity;
 import com.lzy.demo.callback.JsonCallback;
+import com.lzy.demo.model.LzyResponse;
 import com.lzy.demo.model.ServerModel;
 import com.lzy.demo.ui.NumberProgressBar;
 import com.lzy.demo.utils.GlideImageLoader;
 import com.lzy.demo.utils.Urls;
+import com.lzy.imagepicker.ImagePicker;
+import com.lzy.imagepicker.bean.ImageItem;
+import com.lzy.imagepicker.ui.ImageGridActivity;
+import com.lzy.okgo.OkGo;
 import com.lzy.okgo.request.BaseRequest;
 
 import java.io.File;
@@ -109,7 +110,7 @@ public class FormUploadActivity extends BaseDetailActivity {
 //                .params("file2",new File("文件路径"))
 //                .params("file3",new File("文件路径"))
                 .addFileParams("file", files)           // 这种方式为同一个key，上传多个文件
-                .execute(new JsonCallback<ServerModel>() {
+                .execute(new JsonCallback<LzyResponse<ServerModel>>() {
                     @Override
                     public void onBefore(BaseRequest request) {
                         super.onBefore(request);
@@ -117,8 +118,8 @@ public class FormUploadActivity extends BaseDetailActivity {
                     }
 
                     @Override
-                    public void onSuccess(ServerModel model, Call call, Response response) {
-                        handleResponse(model, call, response);
+                    public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
+                        handleResponse(responseData.data, call, response);
                         btnFormUpload.setText("上传完成");
                     }
 

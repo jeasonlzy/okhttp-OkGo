@@ -6,6 +6,7 @@ import android.view.View;
 import com.lzy.demo.R;
 import com.lzy.demo.base.BaseDetailActivity;
 import com.lzy.demo.callback.DialogCallback;
+import com.lzy.demo.model.LzyResponse;
 import com.lzy.demo.model.ServerModel;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
@@ -42,10 +43,10 @@ public class JsonRequestActivity extends BaseDetailActivity {
                 .tag(this)//
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
-                .execute(new DialogCallback<ServerModel>(this) {
+                .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                     @Override
-                    public void onSuccess(ServerModel serverModel, Call call, Response response) {
-                        handleResponse(serverModel, call, response);
+                    public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
+                        handleResponse(responseData.data, call, response);
                     }
 
                     @Override
@@ -65,10 +66,10 @@ public class JsonRequestActivity extends BaseDetailActivity {
                 .tag(this)//
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
-                .execute(new DialogCallback<List<ServerModel>>(this) {
+                .execute(new DialogCallback<LzyResponse<List<ServerModel>>>(this) {
                     @Override
-                    public void onSuccess(List<ServerModel> serverModels, Call call, Response response) {
-                        handleResponse(serverModels, call, response);
+                    public void onSuccess(LzyResponse<List<ServerModel>> responseData, Call call, Response response) {
+                        handleResponse(responseData.data, call, response);
                     }
 
                     @Override

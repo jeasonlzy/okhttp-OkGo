@@ -22,33 +22,31 @@ import okhttp3.Response;
  */
 public class JsonConvert<T> implements Converter<T> {
 
+    private ParameterizedType type;
+
     public static <T> JsonConvert<T> create() {
         return new JsonConvert<>();
     }
 
     @Override
     public T convertSuccess(Response response) throws Exception {
-        Type genType = getClass().getGenericSuperclass();
-        Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-        Type type = params[0];
-        if (!(type instanceof ParameterizedType)) throw new IllegalStateException("没有填写泛型参数");
-
-        Type[] args = ((ParameterizedType) type).getActualTypeArguments();
-        if (args == null || args.length == 0) throw new IllegalStateException("没有填写泛型参数");
-
         JsonReader jsonReader = new JsonReader(response.body().charStream());
 
+        Type rawType = type.getRawType();
+
         //无数据类型
-        if (args[0] == Void.class) {
+        if (rawType == Void.class) {
             SimpleResponse baseWbgResponse = Convert.fromJson(jsonReader, SimpleResponse.class);
+            //noinspection unchecked
             return (T) baseWbgResponse.toLzyResponse();
         }
 
         //有数据类型
-        if (args[0] == LzyResponse.class) {
+        if (rawType == LzyResponse.class) {
             LzyResponse lzyResponse = Convert.fromJson(jsonReader, type);
             int code = lzyResponse.code;
             if (code == 0) {
+                //noinspection unchecked
                 return (T) lzyResponse;
             } else if (code == 104) {
                 //比如：用户授权信息无效，在此实现相应的逻辑，弹出对话或者跳转到其他页面等,该抛出错误，会在onError中回调。
@@ -67,5 +65,9 @@ public class JsonConvert<T> implements Converter<T> {
             }
         }
         throw new IllegalStateException("基类错误无法解析!");
+    }
+
+    public void setType(ParameterizedType type) {
+        this.type = type;
     }
 }
