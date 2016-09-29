@@ -13,6 +13,7 @@ import java.util.List;
  * ================================================
  */
 public class NewsModel implements Serializable {
+
     private static final long serialVersionUID = 6753210234564872868L;
 
     public PageBean pagebean;
