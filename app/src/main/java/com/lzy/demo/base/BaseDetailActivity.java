@@ -88,16 +88,21 @@ public abstract class BaseDetailActivity extends BaseActivity {
     }
 
     protected <T> void handleResponse(T data, Call call, Response response) {
-        requestState.setText("请求成功  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
+        StringBuilder sb;
+        if (call != null) {
+            requestState.setText("请求成功  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
 
-        Headers requestHeadersString = call.request().headers();
-        Set<String> requestNames = requestHeadersString.names();
-        StringBuilder sb = new StringBuilder();
-        for (String name : requestNames) {
-            sb.append(name).append(" ： ").append(requestHeadersString.get(name)).append("\n");
+            Headers requestHeadersString = call.request().headers();
+            Set<String> requestNames = requestHeadersString.names();
+            sb = new StringBuilder();
+            for (String name : requestNames) {
+                sb.append(name).append(" ： ").append(requestHeadersString.get(name)).append("\n");
+            }
+            requestHeaders.setText(sb.toString());
+        } else {
+            requestState.setText("--");
+            requestHeaders.setText("--");
         }
-        requestHeaders.setText(sb.toString());
-
         if (data == null) {
             responseData.setText("--");
         } else {
@@ -151,15 +156,21 @@ public abstract class BaseDetailActivity extends BaseActivity {
     }
 
     protected void handleError(Call call, Response response) {
-        requestState.setText("请求失败  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
+        StringBuilder sb;
+        if (call != null) {
+            requestState.setText("请求失败  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
 
-        Headers requestHeadersString = call.request().headers();
-        Set<String> requestNames = requestHeadersString.names();
-        StringBuilder sb = new StringBuilder();
-        for (String name : requestNames) {
-            sb.append(name).append(" ： ").append(requestHeadersString.get(name)).append("\n");
+            Headers requestHeadersString = call.request().headers();
+            Set<String> requestNames = requestHeadersString.names();
+            sb = new StringBuilder();
+            for (String name : requestNames) {
+                sb.append(name).append(" ： ").append(requestHeadersString.get(name)).append("\n");
+            }
+            requestHeaders.setText(sb.toString());
+        } else {
+            requestState.setText("--");
+            requestHeaders.setText("--");
         }
-        requestHeaders.setText(sb.toString());
 
         responseData.setText("--");
         if (response != null) {

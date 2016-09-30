@@ -1,5 +1,6 @@
 package com.lzy.demo.base;
 
+import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,9 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
-import com.lzy.imagepicker.view.SystemBarTintManager;
 import com.lzy.demo.R;
+import com.lzy.imagepicker.view.SystemBarTintManager;
 
 import butterknife.ButterKnife;
 
@@ -122,5 +124,27 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void initToolBar(Toolbar toolbar, boolean homeAsUpEnabled, int resTitle) {
         initToolBar(toolbar, homeAsUpEnabled, getString(resTitle));
+    }
+
+    public void showToast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    private ProgressDialog dialog;
+
+    public void showLoading() {
+        if (dialog != null && dialog.isShowing()) return;
+        dialog = new ProgressDialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setMessage("请求网络中...");
+        dialog.show();
+    }
+
+    public void dismissLoading() {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
     }
 }

@@ -43,13 +43,13 @@ public abstract class JsonCallback<T> extends AbsCallback<T> {
      */
     @Override
     public T convertSuccess(Response response) throws Exception {
+
         //以下代码是通过泛型解析实际参数,泛型必须传
-        JsonConvert<T> convert = JsonConvert.create();
         Type genType = getClass().getGenericSuperclass();
         Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-        Type type = params[0];
-        if (!(type instanceof ParameterizedType)) throw new IllegalStateException("没有填写泛型参数");
-        convert.setType((ParameterizedType) type);
+
+        JsonConvert<T> convert = new JsonConvert<>();
+        convert.setType(params[0]);
         T t = convert.convertSuccess(response);
         response.close();
         return t;

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/commonRequest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start|center_vertical"
+        android:text="1.基本get,post等请求"
+        android:textAllCaps="false"/>
+
+    <Button
+        android:id="@+id/retrofitRequest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start|center_vertical"
+        android:text="2.类似Retrofit使用Api请求"
+        android:textAllCaps="false"/>
+
+    <Button
+        android:id="@+id/jsonRequest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start|center_vertical"
+        android:text="3.使用JsonCallback解析JavaBean"
+        android:textAllCaps="false"/>
+
+    <Button
+        android:id="@+id/jsonArrayRequest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start|center_vertical"
+        android:text="4.使用JsonCallback解析List&lt;JavaBean&gt;"
+        android:textAllCaps="false"/>
+
+    <Button
+        android:id="@+id/upString"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start|center_vertical"
+        android:text="5.post上传string文本"
+        android:textAllCaps="false"/>
+
+    <Button
+        android:id="@+id/upJson"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start|center_vertical"
+        android:text="6.post上传json数据"
+        android:textAllCaps="false"/>
+
+</LinearLayout>

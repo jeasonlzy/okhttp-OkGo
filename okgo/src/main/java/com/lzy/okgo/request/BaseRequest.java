@@ -410,11 +410,12 @@ public abstract class BaseRequest<R extends BaseRequest> {
     /** Rx支持,获取同步call对象 */
     public <T> Call<T> getCall(Converter<T> converter) {
         mConverter = converter;
-        return DefaultCallAdapter.<Call<T>>create().adapt(new CacheCall(this));
+        return DefaultCallAdapter.<T>create().adapt(new CacheCall<T>(this));
     }
 
     /** Rx支持,获取同步call对象 */
     public <T, E> E getCall(Converter<T> converter, CallAdapter<E> adapter) {
+        mConverter = converter;
         return adapter.adapt(getCall(converter));
     }
 

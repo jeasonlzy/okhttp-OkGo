@@ -279,4 +279,14 @@ public class CacheCall<T> implements Call<T> {
     public boolean isCanceled() {
         return canceled;
     }
+
+    @Override
+    public Call<T> clone() {
+        return new CacheCall<>(baseRequest);
+    }
+
+    @Override
+    public BaseRequest getBaseRequest() {
+        return baseRequest;
+    }
 }

@@ -22,17 +22,24 @@ import okhttp3.Response;
  */
 public class JsonConvert<T> implements Converter<T> {
 
-    private ParameterizedType type;
+    private Type type;
 
-    public static <T> JsonConvert<T> create() {
-        return new JsonConvert<>();
+    public void setType(Type type) {
+        this.type = type;
     }
 
     @Override
     public T convertSuccess(Response response) throws Exception {
         JsonReader jsonReader = new JsonReader(response.body().charStream());
 
-        Type rawType = type.getRawType();
+        if (type == null) {
+            //以下代码是通过泛型解析实际参数,泛型必须传
+            Type genType = getClass().getGenericSuperclass();
+            Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+            type = params[0];
+        }
+        if (!(type instanceof ParameterizedType)) throw new IllegalStateException("没有填写泛型参数");
+        Type rawType = ((ParameterizedType) type).getRawType();
 
         //无数据类型
         if (rawType == Void.class) {
@@ -65,9 +72,5 @@ public class JsonConvert<T> implements Converter<T> {
             }
         }
         throw new IllegalStateException("基类错误无法解析!");
-    }
-
-    public void setType(ParameterizedType type) {
-        this.type = type;
     }
 }

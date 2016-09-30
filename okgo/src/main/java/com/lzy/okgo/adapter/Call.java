@@ -2,6 +2,7 @@ package com.lzy.okgo.adapter;
 
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.Response;
+import com.lzy.okgo.request.BaseRequest;
 
 /**
  * ================================================
@@ -27,4 +28,8 @@ public interface Call<T> {
 
     /** 是否取消 */
     boolean isCanceled();
+
+    Call<T> clone();
+
+    BaseRequest getBaseRequest();
 }
