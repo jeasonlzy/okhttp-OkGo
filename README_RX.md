@@ -1,4 +1,4 @@
- ![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/logo3.png)
+ ![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/logo4.jpg)
 
 # OkGo - Rx扩展
 
