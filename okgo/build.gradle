@@ -5,10 +5,10 @@ android {
     buildToolsVersion "24.0.2"
 
     defaultConfig {
-        minSdkVersion 8
-        targetSdkVersion 22
-        versionCode 17
-        versionName "1.8.1"
+        minSdkVersion 9
+        targetSdkVersion 24
+        versionCode 20
+        versionName "2.0.0"
     }
 }
 
@@ -18,4 +18,4 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
 }
 
-//apply from: 'bintray.gradle'
+//apply from: 'bintray.gradle'、

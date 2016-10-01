@@ -11,8 +11,8 @@ android {
         applicationId "com.lzy.demo"
         minSdkVersion 14
         targetSdkVersion 24
-        versionCode 23
-        versionName "1.8.1"
+        versionCode 20
+        versionName "2.0.0"
     }
     signingConfigs {
         appkey {

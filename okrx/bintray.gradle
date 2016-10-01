@@ -1,7 +1,7 @@
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
-version = "2.0.0"              // 数据仓库依赖第三部分
+version = "0.1.0"              // 数据仓库依赖第三部分
 
 def siteUrl = 'https://github.com/jeasonlzy/OkGo'
 def gitUrl = 'https://github.com/jeasonlzy/OkGo.git'
@@ -12,7 +12,7 @@ install {
         pom {
             project {
                 packaging 'aar'
-                name 'OkGo For Android'     // 项目描述
+                name 'OkRx For Android'     // 项目描述
                 url siteUrl
                 licenses {
                     license {
@@ -59,7 +59,7 @@ javadoc {
         author true
         version true
         links "http://docs.oracle.com/javase/7/docs/api"
-        title 'OkGo For Android'   // 文档标题
+        title 'OkRx For Android'   // 文档标题
     }
 }
 
@@ -73,7 +73,7 @@ task releaseJar(type: Copy) {
     from( 'build/intermediates/bundles/release')
     into( '../jar')
     include('classes.jar')
-    rename('classes.jar', 'okgo-' + version + '.jar')
+    rename('classes.jar', 'okrx-' + version + '.jar')
 }
 
 Properties properties = new Properties()
@@ -84,7 +84,7 @@ bintray {
     configurations = ['archives']
     pkg {
         repo = "maven"
-        name = "okgo"             // 数据仓库依赖第二部分
+        name = "okrx"             // 数据仓库依赖第二部分
         websiteUrl = siteUrl
         vcsUrl = gitUrl
         licenses = ["Apache-2.0"]
