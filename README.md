@@ -1,8 +1,8 @@
- ![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/logo3.png)
+ ![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/logo4.jpg)
 
 # OkGo
 
-### 封装了okhttp的网络框架，支持大文件上传下载，上传进度回调，下载进度回调，表单上传（多文件和多参数一起上传），链式调用，可以自定义返回对象，支持Https和自签名证书，支持cookie自动管理，支持四种缓存模式缓存网络数据，支持301、302重定向，扩展了统一的上传管理和下载管理功能
+### OkHttpUtils2.0升级后改名OKGo, 封装了okhttp的网络框架，支持大文件上传下载，上传进度回调，下载进度回调，表单上传（多文件和多参数一起上传），链式调用，可以自定义返回对象，支持Https和自签名证书，支持cookie自动管理，支持四种缓存模式缓存网络数据，支持301、302重定向，扩展了统一的上传管理和下载管理功能
 
 该项目参考了以下项目：
 
@@ -33,25 +33,27 @@
 
    对于Eclipse不能运行项目的，提供了apk供直接运行
    
-### 或者点击下载Demo [okgo_v1.8.1.apk](https://github.com/jeasonlzy/OkGo/blob/master/okgo_v1.8.1.apk?raw=true)。
+### 或者点击下载Demo [okgo_v2.0.0.apk](https://github.com/jeasonlzy/OkGo/blob/master/okgo_v2.0.0.apk?raw=true)。
 
    本项目Demo的网络请求是我自己的服务器，有时候可能不稳定，网速比较慢时请耐心等待。。
 
  * 对于Android Studio的用户，可以选择添加:
 ```java
-    compile 'com.lzy.net:okgo:1.8.1'  //可以单独使用，不需要依赖下方的扩展包
-	compile 'com.lzy.net:okserver:1.0.3' //扩展了下载管理和上传管理，根据需要添加
+    compile 'com.lzy.net:okgo:2.0.0'        //可以单独使用，不需要依赖下方的扩展包
+    compile 'com.lzy.net:okrx:0.1.0'        //RxJava扩展支持
+	compile 'com.lzy.net:okserver:1.1.0'    //扩展了下载管理和上传管理，根据需要添加
     
     或者
     
-	compile 'com.lzy.net:okgo:+'  //版本号使用 + 可以自动引用最新版
-	compile 'com.lzy.net:okserver:+' //版本号使用 + 可以自动引用最新版
+	compile 'com.lzy.net:okgo:+'        //版本号使用 + 可以自动引用最新版
+	compile 'com.lzy.net:okrx:+'        //版本号使用 + 可以自动引用最新版
+	compile 'com.lzy.net:okserver:+'    //版本号使用 + 可以自动引用最新版
 ```
 
  * 对于Eclipse的用户，可以选择添加 `/jar` 目录下的:
 ```java
-	okgo-1.8.1.jar
-	okserver-1.0.3.jar
+	okgo-2.0.0.jar
+	okserver-1.1.0.jar
 ```
  * 如果是以jar包的形式引入`okserver`,需要在清单文件中额外注册一个服务
 ```java
@@ -84,9 +86,16 @@
 * 支持根据Tag取消请求
 * 支持自定义泛型Callback，自动根据泛型返回对象
 
-## 4.OkServer 扩展功能
+## 4.OkRx扩功能,详细使用方法点击这里:[OkRx使用文档](https://github.com/jeasonlzy/OkHttpUtils/blob/master/README_RX.md)
+* 完美结合RxJava
+* 比Retrofit更简单方便
+* 网络请求和RxJava调用,一条链点到底
+* 支持Json数据的自动解析转换
+* OkGo包含的所有请求功能,OkRx全部支持
 
-### 4.1 统一的文件下载管理(DownloadManager)：
+## 5.OkServer 扩展功能
+
+### 5.1 统一的文件下载管理(DownloadManager)：
  * 结合OkGo的request进行网络请求,支持与OkGo保持相同的全局公共参数,同时支持请求传递参数
  * 支持断点下载，支持突然断网,强杀进程后,断点依然有效
  * 支持 下载 暂停 等待 停止 出错 完成 六种下载状态
@@ -96,7 +105,7 @@
  * 下载文件名可以自己定义,也可以不传,框架自动解析响应头或者url地址获得文件名,如果都没获取到,使用default作为文件名
  * 下载管理使用了服务提高线程优先级，避免后台下载时被系统回收
  
-### 4.2 统一的文件上传管理(UploadManager)
+### 5.2 统一的文件上传管理(UploadManager)
  * 结合OkGo的request进行网络请求,支持与OkGo保持相同的全局公共参数,同时支持请求传递参数
  * 上传只能使用`Post`, `Put`, `Delete`, `Options` 这四种请求,不支持`Get`, `Head`
  * 该上传管理为简单管理，不支持断点续传或分片上传，只是简单的将所有上传任务使用线程池进行了统一管理
