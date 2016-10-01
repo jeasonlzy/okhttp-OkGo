@@ -2,7 +2,7 @@
 
 # OkGo
 
-### OkHttpUtils2.0升级后改名OKGo, 封装了okhttp的网络框架，支持大文件上传下载，上传进度回调，下载进度回调，表单上传（多文件和多参数一起上传），链式调用，可以自定义返回对象，支持Https和自签名证书，支持cookie自动管理，支持四种缓存模式缓存网络数据，支持301、302重定向，扩展了统一的上传管理和下载管理功能
+### OkHttpUtils2.0升级后改名OKGo, 全新完美支持RxJava。该库是封装了okhttp的网络框架，支持大文件上传下载，上传进度回调，下载进度回调，表单上传（多文件和多参数一起上传），链式调用，可以自定义返回对象，支持Https和自签名证书，支持cookie自动管理，支持四种缓存模式缓存网络数据，支持301、302重定向，扩展了统一的上传管理和下载管理功能
 
 该项目参考了以下项目：
 
@@ -40,8 +40,8 @@
  * 对于Android Studio的用户，可以选择添加:
 ```java
     compile 'com.lzy.net:okgo:2.0.0'        //可以单独使用，不需要依赖下方的扩展包
-    compile 'com.lzy.net:okrx:0.1.0'        //RxJava扩展支持
-	compile 'com.lzy.net:okserver:1.1.0'    //扩展了下载管理和上传管理，根据需要添加
+    compile 'com.lzy.net:okrx:0.1.0'        //RxJava扩展支持，根据需要添加
+	compile 'com.lzy.net:okserver:1.1.0'    //下载管理和上传管理扩展，根据需要添加
     
     或者
     
@@ -53,6 +53,7 @@
  * 对于Eclipse的用户，可以选择添加 `/jar` 目录下的:
 ```java
 	okgo-2.0.0.jar
+	okrx-0.1.0.jar
 	okserver-1.1.0.jar
 ```
  * 如果是以jar包的形式引入`okserver`,需要在清单文件中额外注册一个服务
@@ -86,7 +87,8 @@
 * 支持根据Tag取消请求
 * 支持自定义泛型Callback，自动根据泛型返回对象
 
-## 4.OkRx扩功能,详细使用方法点击这里:[OkRx使用文档](https://github.com/jeasonlzy/OkHttpUtils/blob/master/README_RX.md)
+## 4.OkRx扩功能
+#详细使用方法点击这里:   [OkRx使用文档](https://github.com/jeasonlzy/OkGO/blob/master/README_RX.md)
 * 完美结合RxJava
 * 比Retrofit更简单方便
 * 网络请求和RxJava调用,一条链点到底
@@ -182,8 +184,8 @@
 
 callback一共有以下 10 个回调,除`onSuccess`必须实现以外,其余均可以按需实现,每个方法参数详细说明,请看下面第6点:
 
- * parseNetworkResponse():解析网络返回的数据回调
- * parseNetworkFail():解析网络失败的数据回调
+ * convertSuccess():解析网络返回的数据回调
+ * parseError():解析网络失败的数据回调
  * onBefore():网络请求真正执行前回调
  * onSuccess():网络请求成功的回调
  * onCacheSuccess():缓存读取成功的回调
@@ -195,29 +197,29 @@ callback一共有以下 10 个回调,除`onSuccess`必须实现以外,其余均�
 
 ### Callback回调具有如下顺序,虽然顺序写的很复杂,但是理解后,是很简单,并且合情合理的
 #### 1).无缓存模式 CacheMode.NO_CACHE
-> 网络请求成功  onBefore -> parseNetworkResponse -> onSuccess -> onAfter<br>
-> 网络请求失败  onBefore -> parseNetworkFail     -> onError   -> onAfter<br>
+> 网络请求成功  onBefore -> convertSuccess -> onSuccess -> onAfter<br>
+> 网络请求失败  onBefore -> parseError     -> onError   -> onAfter<br>
 
 #### 2).默认缓存模式,遵循304头 CacheMode.DEFAULT
-> 网络请求成功,服务端返回非304  onBefore -> parseNetworkResponse -> onSuccess -> onAfter<br>
+> 网络请求成功,服务端返回非304  onBefore -> convertSuccess -> onSuccess -> onAfter<br>
 > 网络请求成功服务端返回304    onBefore -> onCacheSuccess       -> onAfter<br>
-> 网络请求失败               onBefore -> parseNetworkFail     -> onError   -> onAfter<br>
+> 网络请求失败               onBefore -> parseError     -> onError   -> onAfter<br>
  
 #### 3).请求网络失败后读取缓存 CacheMode.REQUEST_FAILED_READ_CACHE
-> 网络请求成功,不读取缓存    onBefore -> parseNetworkResponse -> onSuccess -> onAfter<br>
-> 网络请求失败,读取缓存成功  onBefore -> parseNetworkFail -> onError -> onCacheSuccess -> onAfter<br>
-> 网络请求失败,读取缓存失败  onBefore -> parseNetworkFail -> onError -> onCacheError   -> onAfter<br>
+> 网络请求成功,不读取缓存    onBefore -> convertSuccess -> onSuccess -> onAfter<br>
+> 网络请求失败,读取缓存成功  onBefore -> parseError -> onError -> onCacheSuccess -> onAfter<br>
+> 网络请求失败,读取缓存失败  onBefore -> parseError -> onError -> onCacheError   -> onAfter<br>
 
 #### 4).如果缓存不存在才请求网络，否则使用缓存 CacheMode.IF_NONE_CACHE_REQUEST
 > 已经有缓存,不请求网络  onBefore -> onCacheSuccess -> onAfter<br>
-> 没有缓存请求网络成功   onBefore -> onCacheError   -> parseNetworkResponse -> onSuccess -> onAfter<br>
-> 没有缓存请求网络失败   onBefore -> onCacheError   -> parseNetworkFail     -> onError   -> onAfter<br>
+> 没有缓存请求网络成功   onBefore -> onCacheError   -> convertSuccess -> onSuccess -> onAfter<br>
+> 没有缓存请求网络失败   onBefore -> onCacheError   -> parseError     -> onError   -> onAfter<br>
 
 #### 5).先使用缓存，不管是否存在，仍然请求网络 CacheMode.FIRST_CACHE_THEN_REQUEST
-> 无缓存时,网络请求成功  onBefore -> onCacheError   -> parseNetworkResponse -> onSuccess -> onAfter<br>
-> 无缓存时,网络请求失败  onBefore -> onCacheError   -> parseNetworkFail     -> onError   -> onAfter<br>
-> 有缓存时,网络请求成功  onBefore -> onCacheSuccess -> parseNetworkResponse -> onSuccess -> onAfter<br>
-> 有缓存时,网络请求失败  onBefore -> onCacheSuccess -> parseNetworkFail     -> onError   -> onAfter<br>
+> 无缓存时,网络请求成功  onBefore -> onCacheError   -> convertSuccess -> onSuccess -> onAfter<br>
+> 无缓存时,网络请求失败  onBefore -> onCacheError   -> parseError     -> onError   -> onAfter<br>
+> 有缓存时,网络请求成功  onBefore -> onCacheSuccess -> convertSuccess -> onSuccess -> onAfter<br>
+> 有缓存时,网络请求失败  onBefore -> onCacheSuccess -> parseError     -> onError   -> onAfter<br>
 
 ### 1.基本的网络请求
 ```java
@@ -353,7 +355,7 @@ OkGo.get(Urls.URL_METHOD) // 请求方式和请求url, get请求不需要拼接�
     .addCookie(cookie)			// 可以自己构建cookie
     .addCookies(cookies)		// 可以一次传递批量的cookie
      //这里给出的泛型为 ServerModel，同时传递一个泛型的 class对象，即可自动将数据结果转成对象返回
-    .execute(new DialogCallback<ServerModel>(this, ServerModel.class) {
+    .execute(new DialogCallback<ServerModel>(this) {
 		@Override
 		public void onBefore(BaseRequest request) {
 		    // UI线程 请求网络之前调用
@@ -361,7 +363,7 @@ OkGo.get(Urls.URL_METHOD) // 请求方式和请求url, get请求不需要拼接�
 		}
 	
 		@Override
-		public ServerModel parseNetworkResponse(Response response) throws Exception{
+		public ServerModel convertSuccess(Response response) throws Exception{
 		    // 子线程，可以做耗时操作
 		    // 根据传递进来的 response 对象，把数据解析成需要的 ServerModel 类型并返回
 		    // 可以根据自己的需要，抛出异常，在onError中处理
@@ -369,7 +371,7 @@ OkGo.get(Urls.URL_METHOD) // 请求方式和请求url, get请求不需要拼接�
 		}
 		
 		@Override
-        public void parseNetworkFail(Call call, IOException e) {
+        public void parseError(Call call, IOException e) {
             // 子线程，可以做耗时操作
         	// 用于网络错误时在子线程中执行数据耗时操作,子类可以根据自己的需要重写此方法
         }
@@ -543,6 +545,10 @@ execute方法不传入callback即为同步的请求，返回`Response`对象，�
     #okgo
     -dontwarn com.lzy.okgo.**
     -keep class com.lzy.okgo.**{*;}
+    
+    #okrx
+    -dontwarn com.lzy.okrx.**
+    -keep class com.lzy.okrx.**{*;}
     
     #okserver
     -dontwarn com.lzy.okserver.**

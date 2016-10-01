@@ -22,5 +22,8 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'io.reactivex:rxjava:1.2.0'
     compile 'io.reactivex:rxandroid:1.2.1'
+//    compile 'com.lzy.net:okgo:2.0.0'
     compile project(':okgo')
 }
+
+//apply from: 'bintray.gradle'

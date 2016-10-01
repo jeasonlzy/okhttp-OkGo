@@ -16,6 +16,12 @@
 * 支持Json数据的自动解析转换
 * OkGo包含的所有请求功能,OkRx全部支持
 
+目前使用的`RxJava`版本如下
+```java
+    compile 'io.reactivex:rxjava:1.2.0'
+    compile 'io.reactivex:rxandroid:1.2.1'
+```
+
 ## 一.用法
 ### 0.最开始的配置
  `OkRx` 是 `OkGo` 的扩展,所以要想使用OkRx,那么请先按照OkGo的配置文档,做相应的初始化。

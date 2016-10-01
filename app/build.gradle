@@ -76,9 +76,10 @@ dependencies {
     compile 'com.lzy.widget:ninegridview:0.2.0'
     compile 'com.lzy.widget:imagepicker:0.3.2'
     compile 'com.lzy.widget:view-core:0.2.1'
-    //    compile 'com.lzy.net:okgo:+'
-    //    compile 'com.lzy.net:okserver:+'
+    //    compile 'com.lzy.net:okgo:2.0.0'
+    //    compile 'com.lzy.net:okrx:0.1.0'
+    //    compile 'com.lzy.net:okserver:1.1.0'
     compile project(':okgo')
-    compile project(':okserver')
     compile project(':okrx')
+    compile project(':okserver')
 }
