@@ -1,8 +1,8 @@
  ![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/logo3.png)
 
-# OkGo
+# OkGo - Rx扩展
 
-### Rx扩展,可以方便的和`RxJava`联用,如果你熟悉`Retrofit`,那么这个框架和`Retrofit`使用方式很像
+### 可以方便的和`RxJava`联用,如果你熟悉`Retrofit`,那么这个框架和`Retrofit`使用方式很像
 
 ## 联系方式
  * 邮箱地址： liaojeason@126.com
@@ -24,7 +24,7 @@
 
 ## 一.用法
 ### 0.最开始的配置
- `OkRx` 是 `OkGo` 的扩展,所以要想使用OkRx,那么请先按照OkGo的配置文档,做相应的初始化。
+ `OkRx` 是 `OkGo` 的扩展,所以要想使用`OkRx`,那么请先按照`OkGo`的配置文档,做相应的初始化。
  
 ### 1.在gradle中添加一行依赖
 ```java
@@ -37,46 +37,50 @@
 
 ### 2.调用请求代码
    我们还是像正常使用OkGo的方式一样,传入我们需要请求的Url,和我们需要的参数,那么最关键的一行就是最后调用`getCall()`这个方法。
-   这里传入的两个参数进行一下说明:
-   第一个参数是`Convert`对象,表示需要将服务器返回的数据流解析成什么对象,这里我们先用最简单的`String`做转换,`StringConvert`对象也是库中内置的转换器。
-   第二个参数是`Adapter`对象,表示需要将解析的结果用什么对象包装,该参数可以省略不写,那么默认是`Call<T>`这个对象包装,当然,我们要使用Rx的调用,使用这个肯定是不行的,所以我们传入OkRx扩展的`RxAdapter`对象,同样他需要一个泛型,该泛型必须和`Convert`的泛型一致,否则就发生了类型转换异常。
+   
+> 这里传入的两个参数进行一下说明:
+
+ * 第一个参数是`Convert`对象,表示需要将服务器返回的数据流解析成什么对象,这里我们先用最简单的`String`做转换,`StringConvert`对象也是库中内置的转换器。
+ * 第二个参数是`Adapter`对象,表示需要将解析的结果用什么对象包装,该参数可以省略不写,那么默认是`Call<T>`这个对象包装,当然,我们要使用Rx的调用,使用这个肯定是不行的,所以我们传入OkRx扩展的`RxAdapter`对象,同样他需要一个泛型,该泛型必须和`Convert`的泛型一致,否则就发生了类型转换异常。
+   
    以上两个参数具体的注意事项我们后续详细再说。
 ```java
-     Observable<String> call = OkGo.post(Urls.URL_METHOD)//
-                                        .headers("aaa", "111")//
-                                        .params("bbb", "222")//
-                                        .getCall(StringConvert.create(), RxAdapter.<String>create());
+ Observable<String> call = OkGo.post(Urls.URL_METHOD)//
+                                    .headers("aaa", "111")//
+                                    .params("bbb", "222")//
+                                    .getCall(StringConvert.create(), RxAdapter.<String>create());
 ```
 
 ### 3.调用Rx转换代码
-   现在我们已经获取了`Observable`对象了,熟悉Rxjava的你难道还不会使用了吗,以下是简单的在请求前弹出loading,结束后展示信息的代码。
+   现在我们已经获取了`Observable`对象了,熟悉`RxJava`的你难道还不会使用了吗,以下是简单的在请求前弹出loading,结束后展示信息的代码。
 ```java
-    call.doOnSubscribe(new Action0() {
-            @Override
-            public void call() {
-                showLoading();  //开始请求前显示对话框
-            }
-        })//
-        .observeOn(AndroidSchedulers.mainThread())//切换到主线程
-        .subscribe(new Action1<String>() {
-            @Override
-            public void call(String s) {
-                dismissLoading();               //请求成功,关闭对话框
-                handleResponse(s, null, null);
-            }
-        }, new Action1<Throwable>() {
-            @Override
-            public void call(Throwable throwable) {
-                throwable.printStackTrace();
-                dismissLoading();       //请求失败
-                showToast("请求失败");
-                handleError(null, null);
-            }
-        });
+call.doOnSubscribe(new Action0() {
+        @Override
+        public void call() {
+            showLoading();  //开始请求前显示对话框
+        }
+    })//
+    .observeOn(AndroidSchedulers.mainThread())//切换到主线程
+    .subscribe(new Action1<String>() {
+        @Override
+        public void call(String s) {
+            dismissLoading();               //请求成功,关闭对话框
+            handleResponse(s, null, null);
+        }
+    }, new Action1<Throwable>() {
+        @Override
+        public void call(Throwable throwable) {
+            throwable.printStackTrace();
+            dismissLoading();       //请求失败
+            showToast("请求失败");
+            handleError(null, null);
+        }
+    });
 ```
     
- ### 4.代码整合
+### 4.代码整合
  上面的调用是不是很简单,有人可能觉得链试代码太长,没关系,我们完全可以像Retrofit一样,自己写一个`ServerApi`类,这里面管理了所有的接口请求和参数,只是OkGo并不是采用的注解和反射实现的,而是通过传参来实现,相信对你你来讲,这样的方式更加直观。我们再将调用配合上`lambda`表达式,那么最后的结果是这样的:
+ 
  这样的请求方式有没有惊艳到你!!
 ```java
     OkGo.post(Urls.URL_METHOD)//
@@ -98,8 +102,7 @@
         });
 ```
 
- ### 5。其他请求
- 
+### 5。其他请求 
 * 如果你想请求`String`,那么将第`2`步中的`getCall`方法,就是你想要的。
 ```java
     getCall(StringConvert.create(), RxAdapter.<String>create())
@@ -127,12 +130,12 @@
 推荐对每一个网络请求的`Subscription`对象都交由统一的`CompositeSubscription`去管理,在界面销毁或者需要取消的地方调用。
 例如：在Activity中，当Activity销毁取消请求，可以在onDestory里面统一取消。
 ```java
-	@Override
-	protected void onDestroy() {
-	    super.onDestroy();
+@Override
+protected void onDestroy() {
+    super.onDestroy();
 
-		unSubscribe();
-	}
+    unSubscribe();
+}
 ```
  
 ## 三、自定义Convert使用

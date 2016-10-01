@@ -1,14 +1,15 @@
  ![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/logo4.jpg)
 
-# OkGo
+# OkGo - `OkHttpUtils-2.0.0` 升级后改名 `OKGo`,全新完美支持`RxJava`
 
-### OkHttpUtils-2.0.0 升级后改名 OKGo, 全新完美支持RxJava。该库是封装了okhttp的网络框架，支持大文件上传下载，上传进度回调，下载进度回调，表单上传（多文件和多参数一起上传），链式调用，可以自定义返回对象，支持Https和自签名证书，支持cookie自动管理，支持四种缓存模式缓存网络数据，支持301、302重定向，扩展了统一的上传管理和下载管理功能
+### 该库是封装了okhttp的网络框架，可以与RxJava完美结合，支持大文件上传下载，上传进度回调，下载进度回调，表单上传（多文件和多参数一起上传），链式调用，可以自定义返回对象，支持Https和自签名证书，支持cookie自动管理，支持四种缓存模式缓存网络数据，支持301、302重定向，扩展了统一的上传管理和下载管理功能
 
 该项目参考了以下项目：
 
  * [https://github.com/hongyangAndroid/okhttp-utils](https://github.com/hongyangAndroid/okhttp-utils)  
  * [https://github.com/yanzhenjie/NoHttp](https://github.com/Y0LANDA/NoHttp) 
  * [https://github.com/wyouflf/xUtils](https://github.com/wyouflf/xUtils) 
+ * [https://github.com/square/retrofit](https://github.com/square/retrofit)
 
 在此特别感谢上述作者，喜欢原作的可以去使用原项目。同时欢迎大家下载体验本项目，如果使用过程中遇到什么问题，欢迎反馈。
 
@@ -67,6 +68,7 @@
 	
 ## 2.使用注意事项
  * `okgo`使用的`okhttp`的版本是最新的 3.4.1 版本，和以前的 2.x 的版本可能会存在冲突。
+ * `okrx`是基于`RxJava`和`RxAndroid`的扩展,如果不需要可以不必引入
  * `okserver`是对`okgo`的扩展，统一了下载管理和上传管理，对项目有需要做统一下载的可以考虑使用该扩展，不需要的可以直接使用`okgo`即可。
  * 对于缓存模式使用，需要与返回对象相关的所有`javaBean`必须实现`Serializable`接口，否者会报`NotSerializableException`。
  * 使用缓存时，如果不指定`cacheKey`，默认是用url带参数的全路径名为`cacheKey`。
@@ -87,7 +89,7 @@
 * 支持根据Tag取消请求
 * 支持自定义泛型Callback，自动根据泛型返回对象
 
-## 4.OkRx扩功能
+## 4.OkRx 扩展功能
 #详细使用方法点击这里:   [OkRx使用文档](https://github.com/jeasonlzy/OkGO/blob/master/README_RX.md)
 * 完美结合RxJava
 * 比Retrofit更简单方便
