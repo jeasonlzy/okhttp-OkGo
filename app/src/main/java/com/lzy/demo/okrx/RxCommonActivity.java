@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.lzy.demo.R;
-import com.lzy.demo.base.BaseDetailActivity;
+import com.lzy.demo.base.BaseRxDetailActivity;
 import com.lzy.demo.callback.JsonConvert;
 import com.lzy.demo.model.LzyResponse;
 import com.lzy.demo.model.ServerModel;
@@ -20,12 +20,13 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func1;
 
-public class RxCommonActivity extends BaseDetailActivity {
+public class RxCommonActivity extends BaseRxDetailActivity {
 
     @Override
     protected void onActivityCreate(Bundle savedInstanceState) {
@@ -34,9 +35,16 @@ public class RxCommonActivity extends BaseDetailActivity {
         setTitle("OkRx基本请求");
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //Activity销毁时，取消网络请求
+        unSubscribe();
+    }
+
     @OnClick(R.id.commonRequest)
     public void commonRequest(View view) {
-        OkGo.post(Urls.URL_METHOD)//
+        Subscription subscription = OkGo.post(Urls.URL_METHOD)//
                 .headers("aaa", "111")//
                 .params("bbb", "222")//
                 .getCall(StringConvert.create(), RxAdapter.<String>create())//以上为产生请求事件,请求默认发生在IO线程
@@ -62,11 +70,12 @@ public class RxCommonActivity extends BaseDetailActivity {
                         handleError(null, null);
                     }
                 });
+        addSubscribe(subscription);
     }
 
     @OnClick(R.id.retrofitRequest)
     public void retrofitRequest(View view) {
-        ServerApi.getServerModel("aaa", "bbb")//
+        Subscription subscription = ServerApi.getServerModel("aaa", "bbb")//
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
@@ -95,11 +104,12 @@ public class RxCommonActivity extends BaseDetailActivity {
                         handleError(null, null);
                     }
                 });
+        addSubscribe(subscription);
     }
 
     @OnClick(R.id.jsonRequest)
     public void jsonRequest(View view) {
-        OkGo.post(Urls.URL_JSONOBJECT)//
+        Subscription subscription = OkGo.post(Urls.URL_JSONOBJECT)//
                 .headers("aaa", "111")//
                 .params("bbb", "222")//一定要注意这里的写法,JsonConvert最后的大括号千万不能忘记
                 .getCall(new JsonConvert<LzyResponse<ServerModel>>() {}, RxAdapter.<LzyResponse<ServerModel>>create())//
@@ -131,11 +141,12 @@ public class RxCommonActivity extends BaseDetailActivity {
                         handleError(null, null);
                     }
                 });
+        addSubscribe(subscription);
     }
 
     @OnClick(R.id.jsonArrayRequest)
     public void jsonArrayRequest(View view) {
-        ServerApi.getServerListModel("aaa", "bbb")//
+        Subscription subscription = ServerApi.getServerListModel("aaa", "bbb")//
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
@@ -164,12 +175,12 @@ public class RxCommonActivity extends BaseDetailActivity {
                         handleError(null, null);
                     }
                 });
+        addSubscribe(subscription);
     }
 
     @OnClick(R.id.upString)
     public void upString(View view) {
-        OkGo.post(Urls.URL_TEXT_UPLOAD)//
-                .tag(this)//
+        Subscription subscription = OkGo.post(Urls.URL_TEXT_UPLOAD)//
                 .headers("bbb", "222")//
                 .upString("上传的文本。。。")//
                 .getCall(StringConvert.create(), RxAdapter.<String>create())//以上为产生请求事件,请求默认发生在IO线程
@@ -195,6 +206,7 @@ public class RxCommonActivity extends BaseDetailActivity {
                         handleError(null, null);
                     }
                 });
+        addSubscribe(subscription);
     }
 
     @OnClick(R.id.upJson)
@@ -206,8 +218,7 @@ public class RxCommonActivity extends BaseDetailActivity {
         params.put("key4", "其实你怎么高兴怎么写都行");
         JSONObject jsonObject = new JSONObject(params);
 
-        OkGo.post(Urls.URL_TEXT_UPLOAD)//
-                .tag(this)//
+        Subscription subscription = OkGo.post(Urls.URL_TEXT_UPLOAD)//
                 .headers("bbb", "222")//
                 .upJson(jsonObject.toString())//
                 .getCall(StringConvert.create(), RxAdapter.<String>create())//以上为产生请求事件,请求默认发生在IO线程
@@ -233,5 +244,6 @@ public class RxCommonActivity extends BaseDetailActivity {
                         handleError(null, null);
                     }
                 });
+        addSubscribe(subscription);
     }
 }

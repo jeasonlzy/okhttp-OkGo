@@ -34,7 +34,6 @@
         <activity android:name=".okgo.SyncActivity"/>
         <activity android:name=".okgo.RedirectActivity"/>
         <activity android:name=".okgo.TestActivity"/>
-
         <activity
             android:name=".cache.CacheDemoActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
@@ -56,11 +55,14 @@
         <activity
             android:name=".okserver.UploadActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-
-        <activity android:name=".okrx.RxCommonActivity"/>
+        <!--Rx相关-->
         <activity
             android:name=".okrx.RxActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".okrx.RxCommonActivity"/>
+        <activity android:name=".okrx.RxBitmapActivity"/>
+        <activity android:name=".okrx.RxFileDownloadActivity"/>
+        <activity android:name=".okrx.RxFormUploadActivity"/>
     </application>
 
 </manifest>

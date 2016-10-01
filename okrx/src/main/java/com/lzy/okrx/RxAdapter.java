@@ -36,7 +36,14 @@ public class RxAdapter<T> implements CallAdapter<Observable<T>> {
     @Override
     public <R> Observable<T> adapt(Call<R> call) {
         return Observable.create(new CallOnSubscribe<>((Call<T>) call)) //强转,本质，T 与 R 是同一个泛型
-                .subscribeOn(Schedulers.io())//
+                .subscribeOn(Schedulers.io())   //IO线程订阅网络请求
+//                .map(new Func1<Response<T>, T>() {
+//                    @Override
+//                    public T call(Response<T> tResponse) {
+//                        return tResponse.body();
+//                    }
+//                });
+                //感觉用上面的map操作也可以完成,但是Retrofit是这么实现的,目前并不清楚具体好处在哪
                 .lift(OperatorMapResponseToBodyOrError.<T>instance());
     }
 
@@ -68,6 +75,7 @@ public class RxAdapter<T> implements CallAdapter<Observable<T>> {
             this.subscriber = subscriber;
         }
 
+        /** 生产事件,将同步请求转化为Rx的事件 */
         @Override
         public void request(long n) {
             if (n < 0) throw new IllegalArgumentException("n < 0: " + n);

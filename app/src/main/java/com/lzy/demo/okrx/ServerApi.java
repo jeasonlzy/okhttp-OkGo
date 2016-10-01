@@ -9,6 +9,7 @@ import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.convert.BitmapConvert;
 import com.lzy.okgo.convert.FileConvert;
+import com.lzy.okgo.convert.StringConvert;
 import com.lzy.okrx.RxAdapter;
 
 import java.io.File;
@@ -27,6 +28,13 @@ import rx.Observable;
  */
 public class ServerApi {
 
+    public static Observable<String> getString(String header, String param) {
+        return OkGo.post(Urls.URL_METHOD)//
+                .headers("aaa", header)//
+                .params("bbb", param)//
+                .getCall(StringConvert.create(), RxAdapter.<String>create());
+    }
+
     public static Observable<LzyResponse<ServerModel>> getServerModel(String header, String param) {
         return OkGo.post(Urls.URL_JSONOBJECT)//
                 .headers("aaa", header)//
@@ -42,14 +50,14 @@ public class ServerApi {
     }
 
     public static Observable<Bitmap> getBitmap(String header, String param) {
-        return OkGo.post(Urls.URL_METHOD)//
+        return OkGo.post(Urls.URL_IMAGE)//
                 .headers("aaa", header)//
                 .params("bbb", param)//
                 .getCall(BitmapConvert.create(), RxAdapter.<Bitmap>create());
     }
 
     public static Observable<File> getFile(String header, String param) {
-        return OkGo.post(Urls.URL_METHOD)//
+        return OkGo.post(Urls.URL_DOWNLOAD)//
                 .headers("aaa", header)//
                 .params("bbb", param)//
                 .getCall(new FileConvert(), RxAdapter.<File>create());
