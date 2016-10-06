@@ -30,7 +30,7 @@ public class RxActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recycler_view);
+        setContentView(R.layout.activity_recycler_view1);
         initToolBar(toolbar, true, "OkRx使用示例");
 
         initData();
