@@ -30,7 +30,7 @@ public class OkHttpActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recycler_view1);
+        setContentView(R.layout.activity_recycler);
         initToolBar(toolbar, true, "OkGo功能介绍");
 
         initData();

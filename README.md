@@ -1,6 +1,6 @@
  ![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/logo4.jpg)
 
-# OkGo - `OkHttpUtils-2.0.0` 升级后改名 `OKGo`,全新完美支持`RxJava`
+# OkGo - `OkHttpUtils-2.0.0` 升级后改名 `OkGo`,全新完美支持`RxJava`
 
 ### 该库是封装了okhttp的网络框架，可以与RxJava完美结合，支持大文件上传下载，上传进度回调，下载进度回调，表单上传（多文件和多参数一起上传），链式调用，可以自定义返回对象，支持Https和自签名证书，支持cookie自动管理，支持四种缓存模式缓存网络数据，支持301、302重定向，扩展了统一的上传管理和下载管理功能
 
@@ -21,7 +21,7 @@
 ## 演示
 
 
- ![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo7.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo8.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo11.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo9.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo10.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo12.gif)
+ ![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo13.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo8.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo11.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo9.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo10.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo12.gif)
 
 
 ## 1.用法
