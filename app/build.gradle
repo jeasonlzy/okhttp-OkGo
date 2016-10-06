@@ -73,7 +73,7 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.google.code.gson:gson:2.5'
-    compile 'com.lzy.widget:ninegridview:0.2.0'
+    compile 'com.lzy.widget:ninegridview:0.2.1'
     compile 'com.lzy.widget:imagepicker:0.3.2'
     compile 'com.lzy.widget:view-core:0.2.1'
     //    compile 'com.lzy.net:okgo:2.0.0'
