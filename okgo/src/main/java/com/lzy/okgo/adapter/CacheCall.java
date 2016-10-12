@@ -36,6 +36,8 @@ public class CacheCall<T> implements Call<T> {
     private boolean executed;
     private BaseRequest baseRequest;
     private okhttp3.Call rawCall;
+    private CacheEntity<T> cacheEntity;
+    private AbsCallback<T> mCallback;
 
     public CacheCall(BaseRequest baseRequest) {
         this.baseRequest = baseRequest;
@@ -48,18 +50,17 @@ public class CacheCall<T> implements Call<T> {
             if (executed) throw new IllegalStateException("Already executed.");
             executed = true;
         }
-        if (callback == null) callback = new AbsCallbackWrapper<>();
+        mCallback = callback;
+        if (mCallback == null) mCallback = new AbsCallbackWrapper<>();
 
         //请求执行前UI线程调用
-        callback.onBefore(baseRequest);
-
+        mCallback.onBefore(baseRequest);
         //请求之前获取缓存信息，添加缓存头和其他的公共头
         if (baseRequest.getCacheKey() == null)
             baseRequest.setCacheKey(HttpUtils.createUrlFromParams(baseRequest.getBaseUrl(), baseRequest.getParams().urlParamsMap));
         if (baseRequest.getCacheMode() == null) baseRequest.setCacheMode(CacheMode.NO_CACHE);
 
         //无缓存模式,不需要进入缓存逻辑
-        CacheEntity<T> cacheEntity = null;
         final CacheMode cacheMode = baseRequest.getCacheMode();
         if (cacheMode != CacheMode.NO_CACHE) {
             //noinspection unchecked
@@ -82,13 +83,13 @@ public class CacheCall<T> implements Call<T> {
                 HttpHeaders headers = cacheEntity.getResponseHeaders();
                 if (data == null || headers == null) {
                     //由于没有序列化等原因,可能导致数据为空
-                    sendFailResultCallback(true, rawCall, null, OkGoException.INSTANCE("没有获取到缓存,或者缓存已经过期!"), callback);
+                    sendFailResultCallback(true, rawCall, null, OkGoException.INSTANCE("没有获取到缓存,或者缓存已经过期!"));
                 } else {
-                    sendSuccessResultCallback(true, data, rawCall, null, callback);
+                    sendSuccessResultCallback(true, data, rawCall, null);
                     return;//获取缓存成功,不请求网络
                 }
             } else {
-                sendFailResultCallback(true, rawCall, null, OkGoException.INSTANCE("没有获取到缓存,或者缓存已经过期!"), callback);
+                sendFailResultCallback(true, rawCall, null, OkGoException.INSTANCE("没有获取到缓存,或者缓存已经过期!"));
             }
         } else if (cacheMode == CacheMode.FIRST_CACHE_THEN_REQUEST) {
             //先使用缓存，不管是否存在，仍然请求网络
@@ -97,17 +98,14 @@ public class CacheCall<T> implements Call<T> {
                 HttpHeaders headers = cacheEntity.getResponseHeaders();
                 if (data == null || headers == null) {
                     //由于没有序列化等原因,可能导致数据为空
-                    sendFailResultCallback(true, rawCall, null, OkGoException.INSTANCE("没有获取到缓存,或者缓存已经过期!"), callback);
+                    sendFailResultCallback(true, rawCall, null, OkGoException.INSTANCE("没有获取到缓存,或者缓存已经过期!"));
                 } else {
-                    sendSuccessResultCallback(true, data, rawCall, null, callback);
+                    sendSuccessResultCallback(true, data, rawCall, null);
                 }
             } else {
-                sendFailResultCallback(true, rawCall, null, OkGoException.INSTANCE("没有获取到缓存,或者缓存已经过期!"), callback);
+                sendFailResultCallback(true, rawCall, null, OkGoException.INSTANCE("没有获取到缓存,或者缓存已经过期!"));
             }
         }
-
-        final CacheEntity<T> finalCacheEntity = cacheEntity;
-        final AbsCallback<T> finalCallback = callback;
 
         if (canceled) {
             rawCall.cancel();
@@ -115,10 +113,10 @@ public class CacheCall<T> implements Call<T> {
         rawCall.enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(okhttp3.Call call, IOException e) {
-                finalCallback.parseError(call, e);
+                mCallback.parseError(call, e);
                 //请求失败，一般为url地址错误，网络错误等,并且过滤用户主动取消的网络请求
                 if (!call.isCanceled()) {
-                    sendFailResultCallback(false, call, null, e, finalCallback);
+                    sendFailResultCallback(false, call, null, e);
                 }
             }
 
@@ -127,23 +125,23 @@ public class CacheCall<T> implements Call<T> {
                 int responseCode = response.code();
                 //304缓存数据
                 if (responseCode == 304 && cacheMode == CacheMode.DEFAULT) {
-                    if (finalCacheEntity == null) {
-                        sendFailResultCallback(true, call, response, OkGoException.INSTANCE("服务器响应码304，但是客户端没有缓存！"), finalCallback);
+                    if (cacheEntity == null) {
+                        sendFailResultCallback(true, call, response, OkGoException.INSTANCE("服务器响应码304，但是客户端没有缓存！"));
                     } else {
-                        T data = finalCacheEntity.getData();
-                        HttpHeaders headers = finalCacheEntity.getResponseHeaders();
+                        T data = cacheEntity.getData();
+                        HttpHeaders headers = cacheEntity.getResponseHeaders();
                         if (data == null || headers == null) {
                             //由于没有序列化等原因,可能导致数据为空
-                            sendFailResultCallback(true, call, response, OkGoException.INSTANCE("没有获取到缓存,或者缓存已经过期!"), finalCallback);
+                            sendFailResultCallback(true, call, response, OkGoException.INSTANCE("没有获取到缓存,或者缓存已经过期!"));
                         } else {
-                            sendSuccessResultCallback(true, data, call, response, finalCallback);
+                            sendSuccessResultCallback(true, data, call, response);
                         }
                     }
                     return;
                 }
                 //响应失败，一般为服务器内部错误，或者找不到页面等
                 if (responseCode == 404 || responseCode >= 500) {
-                    sendFailResultCallback(false, call, response, OkGoException.INSTANCE("服务器数据异常!"), finalCallback);
+                    sendFailResultCallback(false, call, response, OkGoException.INSTANCE("服务器数据异常!"));
                     return;
                 }
 
@@ -153,10 +151,10 @@ public class CacheCall<T> implements Call<T> {
                     //网络请求成功，保存缓存数据
                     handleCache(response.headers(), data);
                     //网络请求成功回调
-                    sendSuccessResultCallback(false, data, call, response, finalCallback);
+                    sendSuccessResultCallback(false, data, call, response);
                 } catch (Exception e) {
                     //一般为服务器响应成功，但是数据解析错误
-                    sendFailResultCallback(false, call, response, e, finalCallback);
+                    sendFailResultCallback(false, call, response, e);
                 }
             }
         });
@@ -185,21 +183,21 @@ public class CacheCall<T> implements Call<T> {
 
     /** 失败回调，发送到主线程 */
     @SuppressWarnings("unchecked")
-    private void sendFailResultCallback(final boolean isFromCache, final okhttp3.Call call, final okhttp3.Response response, final Exception e, final AbsCallback<T> callback) {
+    private void sendFailResultCallback(final boolean isFromCache, final okhttp3.Call call, final okhttp3.Response response, final Exception e) {
         final CacheMode cacheMode = baseRequest.getCacheMode();
 
         OkGo.getInstance().getDelivery().post(new Runnable() {
             @Override
             public void run() {
                 if (isFromCache) {
-                    callback.onCacheError(call, e);             //缓存失败回调 （UI线程）
+                    mCallback.onCacheError(call, e);             //缓存失败回调 （UI线程）
                     if (cacheMode == CacheMode.DEFAULT || cacheMode == CacheMode.REQUEST_FAILED_READ_CACHE) {
-                        callback.onAfter(null, e);              //请求结束回调 （UI线程）
+                        mCallback.onAfter(null, e);              //请求结束回调 （UI线程）
                     }
                 } else {
-                    callback.onError(call, response, e);        //请求失败回调 （UI线程）
+                    mCallback.onError(call, response, e);        //请求失败回调 （UI线程）
                     if (cacheMode != CacheMode.REQUEST_FAILED_READ_CACHE) {
-                        callback.onAfter(null, e);              //请求结束回调 （UI线程）
+                        mCallback.onAfter(null, e);              //请求结束回调 （UI线程）
                     }
                 }
             }
@@ -207,37 +205,36 @@ public class CacheCall<T> implements Call<T> {
 
         //不同的缓存模式，可能会导致该失败进入两次，一次缓存失败，一次网络请求失败
         if (!isFromCache && cacheMode == CacheMode.REQUEST_FAILED_READ_CACHE) {
-            CacheEntity<T> cacheEntity = (CacheEntity<T>) CacheManager.INSTANCE.get(baseRequest.getCacheKey());
             if (cacheEntity != null && !cacheEntity.isExpire()) {
                 T data = cacheEntity.getData();
                 HttpHeaders headers = cacheEntity.getResponseHeaders();
                 if (data == null || headers == null) {
                     //由于没有序列化等原因,可能导致数据为空
-                    sendFailResultCallback(true, call, response, OkGoException.INSTANCE("没有获取到缓存,或者缓存已经过期!"), callback);
+                    sendFailResultCallback(true, call, response, OkGoException.INSTANCE("没有获取到缓存,或者缓存已经过期!"));
                 } else {
-                    sendSuccessResultCallback(true, data, call, response, callback);
+                    sendSuccessResultCallback(true, data, call, response);
                 }
             } else {
-                sendFailResultCallback(true, call, response, OkGoException.INSTANCE("没有获取到缓存,或者缓存已经过期!"), callback);
+                sendFailResultCallback(true, call, response, OkGoException.INSTANCE("没有获取到缓存,或者缓存已经过期!"));
             }
         }
     }
 
     /** 成功回调，发送到主线程 */
-    private void sendSuccessResultCallback(final boolean isFromCache, final T t, final okhttp3.Call call, final okhttp3.Response response, final AbsCallback<T> callback) {
+    private void sendSuccessResultCallback(final boolean isFromCache, final T t, final okhttp3.Call call, final okhttp3.Response response) {
         final CacheMode cacheMode = baseRequest.getCacheMode();
 
         OkGo.getInstance().getDelivery().post(new Runnable() {
             @Override
             public void run() {
                 if (isFromCache) {
-                    callback.onCacheSuccess(t, call);           //缓存成功回调 （UI线程）
+                    mCallback.onCacheSuccess(t, call);           //缓存成功回调 （UI线程）
                     if (cacheMode == CacheMode.DEFAULT || cacheMode == CacheMode.REQUEST_FAILED_READ_CACHE || cacheMode == CacheMode.IF_NONE_CACHE_REQUEST) {
-                        callback.onAfter(t, null);              //请求结束回调 （UI线程）
+                        mCallback.onAfter(t, null);              //请求结束回调 （UI线程）
                     }
                 } else {
-                    callback.onSuccess(t, call, response);      //请求成功回调 （UI线程）
-                    callback.onAfter(t, null);                  //请求结束回调 （UI线程）
+                    mCallback.onSuccess(t, call, response);      //请求成功回调 （UI线程）
+                    mCallback.onAfter(t, null);                  //请求结束回调 （UI线程）
                 }
             }
         });
