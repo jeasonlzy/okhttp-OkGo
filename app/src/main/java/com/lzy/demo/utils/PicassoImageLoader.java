@@ -26,10 +26,10 @@ public class PicassoImageLoader implements ImageLoader, NineGridView.ImageLoader
 
     @Override
     public void displayImage(Activity activity, String path, ImageView imageView, int width, int height) {
-        Picasso.with(activity)                           //配置上下文
-                .load(Uri.fromFile(new File(path)))      //设置图片路径(fix #8,文件名包含%符号 无法识别和显示)
-                .error(R.mipmap.default_image)           //设置错误图片
-                .placeholder(R.mipmap.default_image)     //设置占位图片
+        Picasso.with(activity)                                  //配置上下文
+                .load(Uri.fromFile(new File(path)))             //设置图片路径(fix #8,文件名包含%符号 无法识别和显示)
+                .error(R.drawable.ic_default_color)             //设置错误图片
+                .placeholder(R.drawable.ic_default_color)       //设置占位图片
                 .into(imageView);
     }
 
@@ -40,8 +40,8 @@ public class PicassoImageLoader implements ImageLoader, NineGridView.ImageLoader
     @Override
     public void onDisplayImage(Context context, ImageView imageView, String url) {
         Picasso.with(context).load(url)//
-                .placeholder(R.drawable.ic_default_image)//
-                .error(R.drawable.ic_default_image)//
+                .placeholder(R.drawable.ic_default_color)//
+                .error(R.drawable.ic_default_color)//
                 .into(imageView);
     }
 

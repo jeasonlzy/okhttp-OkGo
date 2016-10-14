@@ -1,8 +1,8 @@
  ![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/logo4.jpg)
 
-# OkGo - `OkHttpUtils-2.0.0` 升级后改名 `OKGo`,全新完美支持`RxJava`
+# OkGo - `OkHttpUtils-2.0.0` 升级后改名 `OkGo`,全新完美支持`RxJava`
 
-### 该库是封装了okhttp的网络框架，可以与RxJava完美结合，支持大文件上传下载，上传进度回调，下载进度回调，表单上传（多文件和多参数一起上传），链式调用，可以自定义返回对象，支持Https和自签名证书，支持cookie自动管理，支持四种缓存模式缓存网络数据，支持301、302重定向，扩展了统一的上传管理和下载管理功能
+### 该库是封装了okhttp的网络框架，可以与RxJava完美结合，比Retrofit更简单易用。支持大文件上传下载，上传进度回调，下载进度回调，表单上传（多文件和多参数一起上传），链式调用，可以自定义返回对象，支持Https和自签名证书，支持cookie自动管理，支持四种缓存模式缓存网络数据，支持301、302重定向，扩展了统一的上传管理和下载管理功能
 
 该项目参考了以下项目：
 
@@ -21,7 +21,7 @@
 ## 演示
 
 
- ![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo7.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo8.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo11.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo9.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo10.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo12.gif)
+ ![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo13.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo8.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo11.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo9.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo10.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo12.gif)
 
 
 ## 1.用法
@@ -34,9 +34,11 @@
 
    对于Eclipse不能运行项目的，提供了apk供直接运行
    
-### 或者点击下载Demo [okgo_v2.0.0.apk](https://github.com/jeasonlzy/OkGo/blob/master/okgo_v2.0.0.apk?raw=true)。
+### 或者点击下载Demo [okgo_v2.0.0.apk](https://github.com/jeasonlzy/okhttp-OkGo/blob/master/okgo_v2.0.0.apk?raw=true)。
 
    本项目Demo的网络请求是我自己的服务器，有时候可能不稳定，网速比较慢时请耐心等待。。
+   
+   以下是最新版本的版本号，如果你想使用以前的版本，请点击这里，[历史版本](https://github.com/jeasonlzy/okhttp-OkGo/releases)。
 
  * 对于Android Studio的用户，可以选择添加:
 ```java
