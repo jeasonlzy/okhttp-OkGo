@@ -23,22 +23,46 @@
 #-------------------------------------------------------------------------
 
 #---------------------------------2.第三方包-------------------------------
+#okgo
+-dontwarn com.lzy.okgo.**
+-keep class com.lzy.okgo.**{*;}
 
-#okhttputils
--dontwarn com.lzy.okhttputils.**
--keep class com.lzy.okhttputils.**{*;}
+#okrx
+-dontwarn com.lzy.okrx.**
+-keep class com.lzy.okrx.**{*;}
 
 #okserver
--dontwarn okserver.**
--keep class okserver.**{*;}
+-dontwarn com.lzy.okserver.**
+-keep class com.lzy.okserver.**{*;}
 
 #okhttp
 -dontwarn okhttp3.**
 -keep class okhttp3.**{*;}
 
+-keepattributes SourceFile,LineNumberTable
+-keep class com.parse.*{ *; }
+-dontwarn com.parse.**
+-dontwarn com.squareup.picasso.**
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
 #okio
 -dontwarn okio.**
 -keep class okio.**{*;}
+
+#rxjava
+-dontwarn sun.misc.**
+-keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
+ long producerIndex;
+ long consumerIndex;
+}
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueProducerNodeRef {
+ rx.internal.util.atomic.LinkedQueueNode producerNode;
+}
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueConsumerNodeRef {
+ rx.internal.util.atomic.LinkedQueueNode consumerNode;
+}
 
 #imagepicker
 -dontwarn com.lzy.imagepicker.**

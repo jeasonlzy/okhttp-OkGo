@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.Nullable;
 
 import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.cache.CacheMode;
@@ -254,7 +253,7 @@ public class OkGo {
     }
 
     /** 添加全局拦截器 */
-    public OkGo addInterceptor(@Nullable Interceptor interceptor) {
+    public OkGo addInterceptor(Interceptor interceptor) {
         okHttpClientBuilder.addInterceptor(interceptor);
         return this;
     }

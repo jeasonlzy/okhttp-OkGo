@@ -1,6 +1,5 @@
 package com.lzy.okgo.request;
 
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.lzy.okgo.OkGo;
@@ -85,7 +84,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
     }
 
     @SuppressWarnings("unchecked")
-    public R url(@NonNull String url) {
+    public R url(String url) {
         this.url = url;
         return (R) this;
     }
@@ -249,7 +248,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
     }
 
     @SuppressWarnings("unchecked")
-    public R addCookie(@NonNull String name, @NonNull String value) {
+    public R addCookie(String name, String value) {
         Cookie.Builder builder = new Cookie.Builder();
         Cookie cookie = builder.name(name).value(value).domain(httpUrl.host()).build();
         userCookies.add(cookie);
@@ -257,13 +256,13 @@ public abstract class BaseRequest<R extends BaseRequest> {
     }
 
     @SuppressWarnings("unchecked")
-    public R addCookie(@NonNull Cookie cookie) {
+    public R addCookie(Cookie cookie) {
         userCookies.add(cookie);
         return (R) this;
     }
 
     @SuppressWarnings("unchecked")
-    public R addCookies(@NonNull List<Cookie> cookies) {
+    public R addCookies(List<Cookie> cookies) {
         userCookies.addAll(cookies);
         return (R) this;
     }

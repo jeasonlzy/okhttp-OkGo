@@ -1,13 +1,12 @@
 package com.lzy.okserver.download;
 
 import android.os.Environment;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import com.lzy.okgo.request.BaseRequest;
 import com.lzy.okserver.download.db.DownloadDBManager;
 import com.lzy.okserver.listener.DownloadListener;
 import com.lzy.okserver.task.ExecutorWithListener;
-import com.lzy.okgo.request.BaseRequest;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -76,12 +75,12 @@ public class DownloadManager {
     }
 
     /** 添加一个下载任务,一句taskTag标识是否属于同一个任务 */
-    public void addTask(String taskTag, @NonNull BaseRequest request, DownloadListener listener) {
+    public void addTask(String taskTag, BaseRequest request, DownloadListener listener) {
         addTask(null, taskTag, request, listener, false);
     }
 
     /** 添加一个下载任务,一句taskTag标识是否属于同一个任务 */
-    public void addTask(String fileName, String taskTag, @NonNull BaseRequest request, DownloadListener listener) {
+    public void addTask(String fileName, String taskTag, BaseRequest request, DownloadListener listener) {
         addTask(fileName, taskTag, request, listener, false);
     }
 
@@ -92,7 +91,7 @@ public class DownloadManager {
      * @param listener  下载监听
      * @param isRestart 是否重新开始下载
      */
-    private void addTask(String fileName, String taskTag, @NonNull BaseRequest request, DownloadListener listener, boolean isRestart) {
+    private void addTask(String fileName, String taskTag, BaseRequest request, DownloadListener listener, boolean isRestart) {
         DownloadInfo downloadInfo = getDownloadInfo(taskTag);
         if (downloadInfo == null) {
             downloadInfo = new DownloadInfo();
@@ -212,7 +211,7 @@ public class DownloadManager {
     }
 
     /** 重新开始下载任务 */
-    private void restartTaskByKey(@NonNull String taskKey) {
+    private void restartTaskByKey(String taskKey) {
         DownloadInfo downloadInfo = getDownloadInfo(taskKey);
         if (downloadInfo == null) return;
         if (downloadInfo.getState() != DOWNLOADING) {
@@ -222,7 +221,7 @@ public class DownloadManager {
     }
 
     /** 获取一个任务 */
-    public DownloadInfo getDownloadInfo(@NonNull String taskKey) {
+    public DownloadInfo getDownloadInfo(String taskKey) {
         for (DownloadInfo downloadInfo : mDownloadInfoList) {
             if (taskKey.equals(downloadInfo.getTaskKey())) {
                 return downloadInfo;
@@ -232,7 +231,7 @@ public class DownloadManager {
     }
 
     /** 移除一个任务 */
-    private void removeTaskByKey(@NonNull String taskKey) {
+    private void removeTaskByKey(String taskKey) {
         ListIterator<DownloadInfo> iterator = mDownloadInfoList.listIterator();
         while (iterator.hasNext()) {
             DownloadInfo info = iterator.next();

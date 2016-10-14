@@ -1,7 +1,5 @@
 package com.lzy.okgo.request;
 
-import android.support.annotation.NonNull;
-
 import com.lzy.okgo.model.HttpParams;
 
 import java.io.File;
@@ -20,7 +18,7 @@ import okhttp3.RequestBody;
  * ================================================
  */
 public interface HasBody<R> {
-    R requestBody(@NonNull RequestBody requestBody);
+    R requestBody(RequestBody requestBody);
 
     R params(String key, File file);
 

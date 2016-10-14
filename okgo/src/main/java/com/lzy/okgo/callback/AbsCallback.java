@@ -1,7 +1,5 @@
 package com.lzy.okgo.callback;
 
-import android.support.annotation.Nullable;
-
 import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.convert.Converter;
 import com.lzy.okgo.request.BaseRequest;
@@ -65,7 +63,7 @@ public abstract class AbsCallback<T> implements Converter<T> {
     }
 
     /** 请求网络结束后，UI线程 */
-    public void onAfter(@Nullable T t, @Nullable Exception e) {
+    public void onAfter(T t, Exception e) {
         if (e != null) e.printStackTrace();
     }
 

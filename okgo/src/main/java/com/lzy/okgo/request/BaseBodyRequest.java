@@ -1,7 +1,5 @@
 package com.lzy.okgo.request;
 
-import android.support.annotation.NonNull;
-
 import com.lzy.okgo.model.HttpParams;
 import com.lzy.okgo.utils.HttpUtils;
 
@@ -35,7 +33,7 @@ public abstract class BaseBodyRequest<R extends BaseBodyRequest> extends BaseReq
 
     @SuppressWarnings("unchecked")
     @Override
-    public R requestBody(@NonNull RequestBody requestBody) {
+    public R requestBody(RequestBody requestBody) {
         this.requestBody = requestBody;
         return (R) this;
     }

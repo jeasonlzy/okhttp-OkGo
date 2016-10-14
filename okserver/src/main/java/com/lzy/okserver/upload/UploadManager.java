@@ -1,11 +1,9 @@
 package com.lzy.okserver.upload;
 
-import android.support.annotation.NonNull;
-
-import com.lzy.okserver.listener.UploadListener;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.request.BaseBodyRequest;
 import com.lzy.okgo.request.PostRequest;
+import com.lzy.okserver.listener.UploadListener;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -53,13 +51,13 @@ public class UploadManager {
 
     /** 添加一个上传任务,默认使用post请求 */
     @Deprecated
-    public <T> void addTask(String url, @NonNull File resource, @NonNull String key, UploadListener<T> listener) {
+    public <T> void addTask(String url, File resource, String key, UploadListener<T> listener) {
         PostRequest request = OkGo.post(url).params(key, resource);
         addTask(url, request, listener);
     }
 
     /** 添加一个上传任务 */
-    public <T> void addTask(String taskKey, @NonNull BaseBodyRequest request, UploadListener<T> listener) {
+    public <T> void addTask(String taskKey, BaseBodyRequest request, UploadListener<T> listener) {
         UploadInfo uploadInfo = new UploadInfo();
         uploadInfo.setTaskKey(taskKey);
         uploadInfo.setState(UploadManager.NONE);

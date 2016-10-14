@@ -2,12 +2,11 @@ package com.lzy.okserver.download;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.support.annotation.NonNull;
 
-import com.lzy.okserver.download.db.DownloadRequest;
-import com.lzy.okserver.listener.DownloadListener;
 import com.lzy.okgo.request.BaseRequest;
 import com.lzy.okgo.utils.OkLogger;
+import com.lzy.okserver.download.db.DownloadRequest;
+import com.lzy.okserver.listener.DownloadListener;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -284,7 +283,8 @@ public class DownloadInfo implements Comparable<DownloadInfo> {
 
     /** 两个任务排序按照 id 的大小排序 */
     @Override
-    public int compareTo(@NonNull DownloadInfo another) {
+    public int compareTo(DownloadInfo another) {
+        if (another == null) return 0;
         return ((Integer) getId()).compareTo(another.getId());
     }
 }
