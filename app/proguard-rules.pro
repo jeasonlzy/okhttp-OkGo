@@ -24,16 +24,16 @@
 
 #---------------------------------2.第三方包-------------------------------
 #okgo
--dontwarn com.lzy.okgo.**
--keep class com.lzy.okgo.**{*;}
+#-dontwarn com.lzy.okgo.**
+#-keep class com.lzy.okgo.**{*;}
 
 #okrx
--dontwarn com.lzy.okrx.**
--keep class com.lzy.okrx.**{*;}
+#-dontwarn com.lzy.okrx.**
+#-keep class com.lzy.okrx.**{*;}
 
 #okserver
--dontwarn com.lzy.okserver.**
--keep class com.lzy.okserver.**{*;}
+#-dontwarn com.lzy.okserver.**
+#-keep class com.lzy.okserver.**{*;}
 
 #okhttp
 -dontwarn okhttp3.**

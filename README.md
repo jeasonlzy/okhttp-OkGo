@@ -545,6 +545,19 @@ execute方法不传入callback即为同步的请求，返回`Response`对象，�
 ###无论对于哪种缓存模式，都可以指定一个`cacheKey`，建议针对不同需要缓存的页面设置不同的`cacheKey`，如果相同，会导致数据覆盖。
 
 ## 五、混淆
+
+okgo, okrx, okserver 所有代码均可以混淆,但是由于底层使用的是 okhttp,它不能混淆,所以只需要添加以下混淆代码就可以了
+```java
+    #okhttp
+    -dontwarn okhttp3.**
+    -keep class okhttp3.**{*;}
+    
+    #okio
+    -dontwarn okio.**
+    -keep class okio.**{*;}
+```
+
+当然如果你确实不需要混淆okgo的代码,可以继续添加以下代码
 ```java
     #okgo
     -dontwarn com.lzy.okgo.**
@@ -557,14 +570,4 @@ execute方法不传入callback即为同步的请求，返回`Response`对象，�
     #okserver
     -dontwarn com.lzy.okserver.**
     -keep class com.lzy.okserver.**{*;}
-    
-    #okhttp
-    -dontwarn okhttp3.**
-    -keep class okhttp3.**{*;}
-    
-    #okio
-    -dontwarn okio.**
-    -keep class okio.**{*;}
 ```
-
-
