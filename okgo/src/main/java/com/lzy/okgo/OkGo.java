@@ -43,7 +43,6 @@ import okhttp3.OkHttpClient;
 public class OkGo {
     public static final int DEFAULT_MILLISECONDS = 60000;       //默认的超时时间
 
-    private static OkGo mGo;                                //单例
     private Handler mDelivery;                                  //用于在主线程执行的调度器
     private OkHttpClient.Builder okHttpClientBuilder;           //ok请求的客户端
     private HttpParams mCommonParams;                           //全局公共请求参数
@@ -63,14 +62,11 @@ public class OkGo {
     }
 
     public static OkGo getInstance() {
-        if (mGo == null) {
-            synchronized (OkGo.class) {
-                if (mGo == null) {
-                    mGo = new OkGo();
-                }
-            }
-        }
-        return mGo;
+        return OkGoHolder.holder;
+    }
+
+    private static class OkGoHolder {
+        private static OkGo holder = new OkGo();
     }
 
     /** 必须在全局Application先调用，获取context上下文，否则缓存无法使用 */

@@ -265,7 +265,6 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
             float progress = downloadLength * 1.0f / mDownloadInfo.getTotalLength();
             mDownloadInfo.setProgress(progress);
             long curTime = System.currentTimeMillis();
-            System.out.println(mDownloadInfo.getDownloadLength() + "  " + count);
 
             //每200毫秒刷新一次数据
             if (curTime - lastRefreshUiTime >= 200 || progress == 1.0f) {
