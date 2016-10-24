@@ -1,7 +1,5 @@
 package com.lzy.okgo.callback;
 
-import android.os.Environment;
-
 import com.lzy.okgo.convert.FileConvert;
 
 import java.io.File;
@@ -26,7 +24,7 @@ public abstract class FileCallback extends AbsCallback<File> {
     }
 
     public FileCallback(String destFileName) {
-        this(Environment.getExternalStorageDirectory() + FileConvert.DM_TARGET_FOLDER, destFileName);
+        this(null, destFileName);
     }
 
     public FileCallback(String destFileDir, String destFileName) {

@@ -16,6 +16,7 @@ import com.lzy.okgo.utils.HeaderParser;
 import com.lzy.okgo.utils.HttpUtils;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 
 import okhttp3.Headers;
 import okhttp3.Request;
@@ -38,6 +39,8 @@ public class CacheCall<T> implements Call<T> {
     private okhttp3.Call rawCall;
     private CacheEntity<T> cacheEntity;
     private AbsCallback<T> mCallback;
+
+    private int currentRetryCount;
 
     public CacheCall(BaseRequest baseRequest) {
         this.baseRequest = baseRequest;
@@ -73,7 +76,7 @@ public class CacheCall<T> implements Call<T> {
         }
         //构建请求
         RequestBody requestBody = baseRequest.generateRequestBody();
-        Request request = baseRequest.generateRequest(baseRequest.wrapRequestBody(requestBody));
+        final Request request = baseRequest.generateRequest(baseRequest.wrapRequestBody(requestBody));
         rawCall = baseRequest.generateCall(request);
 
         if (cacheMode == CacheMode.IF_NONE_CACHE_REQUEST) {
@@ -110,13 +113,21 @@ public class CacheCall<T> implements Call<T> {
         if (canceled) {
             rawCall.cancel();
         }
+        currentRetryCount = 0;
         rawCall.enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(okhttp3.Call call, IOException e) {
-                mCallback.parseError(call, e);
-                //请求失败，一般为url地址错误，网络错误等,并且过滤用户主动取消的网络请求
-                if (!call.isCanceled()) {
-                    sendFailResultCallback(false, call, null, e);
+                if (e instanceof SocketTimeoutException && currentRetryCount < baseRequest.getRetryCount()) {
+                    //超时重试处理
+                    currentRetryCount++;
+                    okhttp3.Call newCall = baseRequest.generateCall(call.request());
+                    newCall.enqueue(this);
+                } else {
+                    mCallback.parseError(call, e);
+                    //请求失败，一般为url地址错误，网络错误等,并且过滤用户主动取消的网络请求
+                    if (!call.isCanceled()) {
+                        sendFailResultCallback(false, call, null, e);
+                    }
                 }
             }
 

@@ -14,6 +14,8 @@ import com.lzy.demo.model.ServerModel;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.adapter.Call;
+import com.lzy.okgo.callback.BitmapCallback;
+import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.convert.BitmapConvert;
 import com.lzy.okgo.convert.FileConvert;
 import com.lzy.okgo.convert.StringConvert;
@@ -22,11 +24,9 @@ import com.lzy.okrx.RxAdapter;
 import java.io.File;
 
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.Response;
 import rx.Observable;
-import rx.functions.Action1;
-import rx.functions.Func1;
 
 public class TestActivity extends BaseActivity {
 
@@ -54,32 +54,16 @@ public class TestActivity extends BaseActivity {
 
     @OnClick(R.id.btn2)
     public void btn2(View view) {
-        OkGo.post(Urls.URL_METHOD)//
+        OkGo.post(Urls.URL_IMAGE)//
+                .connTimeOut(2000)//
+                .readTimeOut(2000)//
+                .writeTimeOut(2000)//
                 .headers("aaa", "111")//
                 .params("bbb", "222")//
-                .getCall(new JsonConvert<LzyResponse<ServerModel>>() {}, RxAdapter.<LzyResponse<ServerModel>>create())//
-                .map(new Func1<LzyResponse<ServerModel>, ServerModel>() {
+                .execute(new BitmapCallback() {
                     @Override
-                    public ServerModel call(LzyResponse<ServerModel> response) {
-                        return response.data;
-                    }
-                })//
-                .doOnNext(new Action1<ServerModel>() {
-                    @Override
-                    public void call(ServerModel serverModel) {
-                        System.out.println("------" + serverModel);
-                    }
-                })//
-                .subscribe(new Action1<ServerModel>() {
-                    @Override
-                    public void call(ServerModel serverModel) {
-                        System.out.println("======成功");
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        throwable.printStackTrace();
-                        System.out.println("======失败");
+                    public void onSuccess(Bitmap bitmap, okhttp3.Call call, Response response) {
+                        System.out.println("onSuccess");
                     }
                 });
     }

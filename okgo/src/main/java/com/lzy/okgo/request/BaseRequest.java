@@ -49,6 +49,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
     protected long readTimeOut;
     protected long writeTimeOut;
     protected long connectTimeout;
+    protected int retryCount;
     protected CacheMode cacheMode;
     protected String cacheKey;
     protected long cacheTime = CacheEntity.CACHE_NEVER_EXPIRE;      //默认缓存的超时时间
@@ -81,6 +82,8 @@ public abstract class BaseRequest<R extends BaseRequest> {
         //添加缓存模式
         if (go.getCacheMode() != null) cacheMode = go.getCacheMode();
         cacheTime = go.getCacheTime();
+        //超时重试次数
+        retryCount = go.getRetryCount();
     }
 
     @SuppressWarnings("unchecked")
@@ -331,6 +334,10 @@ public abstract class BaseRequest<R extends BaseRequest> {
 
     public long getCacheTime() {
         return cacheTime;
+    }
+
+    public int getRetryCount() {
+        return retryCount;
     }
 
     public Request getRequest() {

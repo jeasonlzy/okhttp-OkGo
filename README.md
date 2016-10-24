@@ -2,7 +2,7 @@
 
 # OkGo - `OkHttpUtils-2.0.0` 升级后改名 `OkGo`,全新完美支持`RxJava`
 
-### 该库是封装了okhttp的网络框架，可以与RxJava完美结合，比Retrofit更简单易用。支持大文件上传下载，上传进度回调，下载进度回调，表单上传（多文件和多参数一起上传），链式调用，可以自定义返回对象，支持Https和自签名证书，支持cookie自动管理，支持四种缓存模式缓存网络数据，支持301、302重定向，扩展了统一的上传管理和下载管理功能
+### 该库是封装了okhttp的网络框架，可以与RxJava完美结合，比Retrofit更简单易用。支持大文件上传下载，上传进度回调，下载进度回调，表单上传（多文件和多参数一起上传），链式调用，可以自定义返回对象，支持Https和自签名证书，支持超时自动重连，支持cookie自动管理，支持四种缓存模式缓存网络数据，支持301、302重定向，扩展了统一的上传管理和下载管理功能
 
 该项目参考了以下项目：
 
@@ -86,6 +86,7 @@
 * 支持cookie的内存存储和持久化存储，支持传递自定义cookie
 * 支持304缓存协议，扩展四种本地缓存模式,并且支持缓存时间控制
 * 支持301、302重定向
+* 支持自定义超时自动重连次数
 * 支持链式调用
 * 支持可信证书和自签名证书的https的访问,支持双向认证
 * 支持根据Tag取消请求
@@ -155,6 +156,9 @@
 
                     //可以全局统一设置缓存时间,默认永不过期,具体使用方法看 github 介绍
                     .setCacheTime(CacheEntity.CACHE_NEVER_EXPIRE)
+                    
+                    //可以全局统一设置超时重连次数,默认为三次,那么最差的情况会请求4次(一次原始请求,三次重连请求),不需要可以设置为0
+                    .setRetryCount(3)
 
                     //如果不想让框架管理cookie,以下不需要
 //                .setCookieStore(new MemoryCookieStore())                //cookie使用内存缓存（app退出后，cookie消失）
@@ -250,10 +254,22 @@ OkGo.get(Urls.URL_IMAGE)//
 	});
 ```
 ### 3.请求 文件下载
+`FileCallback`具有三个重载的构造方法,分别是
+* `FileCallback()`:空参构造
+* `FileCallback(String destFileName)`:可以额外指定文件下载完成后的文件名
+* `FileCallback(String destFileDir, String destFileName)`:可以额外指定文件的下载目录和下载完成后的文件名
+
+文件目录如果不指定,默认下载的目录为 `sdcard/download/`,文件名如果不指定,则按照以下规则命名:
+
+* 1.首先检查用户是否传入了文件名,如果传入,将以用户传入的文件名命名
+* 2.如果没有传入,那么将会检查服务端返回的响应头是否含有`Content-Disposition=attachment;filename=FileName.txt`该种形式的响应头,如果有,则按照该响应头中指定的文件名命名文件,如`FileName.txt`
+* 3.如果上述响应头不存在,则检查下载的文件url,例如:`http://image.baidu.com/abc.jpg`,那么将会自动以`abc.jpg`命名文件
+* 4.如果url也把文件名解析不出来,那么最终将以`nofilename`命名文件
+
 ```java
 OkGo.get(Urls.URL_DOWNLOAD)//
 	.tag(this)//
-	.execute(new FileCallback("file.jpg") {  //文件下载时，需要指定下载的文件目录和文件名
+	.execute(new FileCallback() {  //文件下载时，可以指定下载的文件目录和文件名
 	    @Override
 	    public void onSuccess(File file, Call call, Response response) {
 		    // file 即为文件数据，文件保存在指定目录

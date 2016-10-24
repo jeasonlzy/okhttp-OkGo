@@ -48,6 +48,7 @@ public class OkGo {
     private HttpParams mCommonParams;                           //全局公共请求参数
     private HttpHeaders mCommonHeaders;                         //全局公共请求头
     private CacheMode mCacheMode;                               //全局缓存模式
+    private int mRetryCount = 3;                                    //全局超时重试次数
     private long mCacheTime = CacheEntity.CACHE_NEVER_EXPIRE;   //全局缓存过期时间,默认永不过期
     private static Application context;                         //全局上下文
     private CookieJarImpl cookieJar;                            //全局 Cookie 实例
@@ -184,21 +185,33 @@ public class OkGo {
     }
 
     /** 全局读取超时时间 */
-    public OkGo setReadTimeOut(int readTimeOut) {
+    public OkGo setReadTimeOut(long readTimeOut) {
         okHttpClientBuilder.readTimeout(readTimeOut, TimeUnit.MILLISECONDS);
         return this;
     }
 
     /** 全局写入超时时间 */
-    public OkGo setWriteTimeOut(int writeTimeout) {
+    public OkGo setWriteTimeOut(long writeTimeout) {
         okHttpClientBuilder.writeTimeout(writeTimeout, TimeUnit.MILLISECONDS);
         return this;
     }
 
     /** 全局连接超时时间 */
-    public OkGo setConnectTimeout(int connectTimeout) {
+    public OkGo setConnectTimeout(long connectTimeout) {
         okHttpClientBuilder.connectTimeout(connectTimeout, TimeUnit.MILLISECONDS);
         return this;
+    }
+
+    /** 超时重试次数 */
+    public OkGo setRetryCount(int retryCount) {
+        if (retryCount < 0) throw new IllegalArgumentException("retryCount must > 0");
+        mRetryCount = retryCount;
+        return this;
+    }
+
+    /** 超时重试次数 */
+    public int getRetryCount() {
+        return mRetryCount;
     }
 
     /** 全局的缓存模式 */
