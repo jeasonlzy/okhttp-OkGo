@@ -255,16 +255,16 @@ OkGo.get(Urls.URL_IMAGE)//
 ```
 ### 3.请求 文件下载
 `FileCallback`具有三个重载的构造方法,分别是
-* `FileCallback()`:空参构造
-* `FileCallback(String destFileName)`:可以额外指定文件下载完成后的文件名
-* `FileCallback(String destFileDir, String destFileName)`:可以额外指定文件的下载目录和下载完成后的文件名
+> `FileCallback()`:空参构造<br>
+> `FileCallback(String destFileName)`:可以额外指定文件下载完成后的文件名<br>
+> `FileCallback(String destFileDir, String destFileName)`:可以额外指定文件的下载目录和下载完成后的文件名
 
 文件目录如果不指定,默认下载的目录为 `sdcard/download/`,文件名如果不指定,则按照以下规则命名:
 
-* 1.首先检查用户是否传入了文件名,如果传入,将以用户传入的文件名命名
-* 2.如果没有传入,那么将会检查服务端返回的响应头是否含有`Content-Disposition=attachment;filename=FileName.txt`该种形式的响应头,如果有,则按照该响应头中指定的文件名命名文件,如`FileName.txt`
-* 3.如果上述响应头不存在,则检查下载的文件url,例如:`http://image.baidu.com/abc.jpg`,那么将会自动以`abc.jpg`命名文件
-* 4.如果url也把文件名解析不出来,那么最终将以`nofilename`命名文件
+> 1.首先检查用户是否传入了文件名,如果传入,将以用户传入的文件名命名<br>
+> 2.如果没有传入,那么将会检查服务端返回的响应头是否含有`Content-Disposition=attachment;filename=FileName.txt`该种形式的响应头,如果有,则按照该响应头中指定的文件名命名文件,如`FileName.txt`<br>
+> 3.如果上述响应头不存在,则检查下载的文件url,例如:`http://image.baidu.com/abc.jpg`,那么将会自动以`abc.jpg`命名文件<br>
+> 4.如果url也把文件名解析不出来,那么最终将以`nofilename`命名文件
 
 ```java
 OkGo.get(Urls.URL_DOWNLOAD)//
