@@ -1,5 +1,6 @@
 package com.lzy.okgo.request;
 
+import com.lzy.okgo.OkGo;
 import com.lzy.okgo.utils.OkLogger;
 
 import java.io.IOException;
@@ -79,8 +80,8 @@ public class ProgressRequestBody extends RequestBody {
             bytesWritten += byteCount;
 
             long curTime = System.currentTimeMillis();
-            //每200毫秒刷新一次数据
-            if (curTime - lastRefreshUiTime >= 200 || bytesWritten == contentLength) {
+            //每100毫秒刷新一次数据
+            if (curTime - lastRefreshUiTime >= OkGo.REFRESH_TIME || bytesWritten == contentLength) {
                 //计算下载速度
                 long diffTime = (curTime - lastRefreshUiTime) / 1000;
                 if (diffTime == 0) diffTime += 1;

@@ -54,7 +54,7 @@ public class TestActivity extends BaseActivity {
 
     @OnClick(R.id.btn2)
     public void btn2(View view) {
-        OkGo.post(Urls.URL_IMAGE)//
+        OkGo.post("http://www.qunar.com")//
                 .connTimeOut(2000)//
                 .readTimeOut(2000)//
                 .writeTimeOut(2000)//

@@ -10,7 +10,7 @@ import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.cookie.CookieJarImpl;
 import com.lzy.okgo.cookie.store.CookieStore;
 import com.lzy.okgo.https.HttpsUtils;
-import com.lzy.okgo.interceptor.LoggerInterceptor;
+import com.lzy.okgo.interceptor.HttpLoggingInterceptor;
 import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.HttpParams;
 import com.lzy.okgo.request.DeleteRequest;
@@ -42,6 +42,7 @@ import okhttp3.OkHttpClient;
  */
 public class OkGo {
     public static final int DEFAULT_MILLISECONDS = 60000;       //默认的超时时间
+    public static final int REFRESH_TIME = 100;                 //回调刷新时间（单位ms）
 
     private Handler mDelivery;                                  //用于在主线程执行的调度器
     private OkHttpClient.Builder okHttpClientBuilder;           //ok请求的客户端
@@ -135,7 +136,9 @@ public class OkGo {
      * 一般来说,这些异常是由于不标准的数据格式,或者特殊需要主动产生的,并不是框架错误,如果不想每次打印,这里可以关闭异常显示
      */
     public OkGo debug(String tag, boolean isPrintException) {
-        okHttpClientBuilder.addInterceptor(new LoggerInterceptor(tag, true));
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(tag);
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        okHttpClientBuilder.addInterceptor(loggingInterceptor);
         OkLogger.debug(isPrintException);
         return this;
     }
