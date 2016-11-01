@@ -72,9 +72,9 @@ public class HttpParams implements Serializable {
 
     public void put(String key, String value, boolean... isReplace) {
         if (isReplace != null && isReplace.length > 0) {
-            put(key, String.valueOf(value), isReplace[0]);
+            put(key, value, isReplace[0]);
         } else {
-            put(key, String.valueOf(value), IS_REPLACE);
+            put(key, value, IS_REPLACE);
         }
     }
 
