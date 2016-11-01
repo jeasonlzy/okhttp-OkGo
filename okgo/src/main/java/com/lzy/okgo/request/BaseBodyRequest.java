@@ -84,6 +84,14 @@ public abstract class BaseBodyRequest<R extends BaseBodyRequest> extends BaseReq
 
     /** 注意使用该方法上传字符串会清空实体中其他所有的参数，头信息不清除 */
     @SuppressWarnings("unchecked")
+    public R upString(String string, MediaType mediaType) {
+        this.string = string;
+        this.mediaType = mediaType;
+        return (R) this;
+    }
+
+    /** 注意使用该方法上传字符串会清空实体中其他所有的参数，头信息不清除 */
+    @SuppressWarnings("unchecked")
     @Override
     public R upJson(String json) {
         this.json = json;
