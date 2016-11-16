@@ -10,7 +10,7 @@ import okhttp3.RequestBody;
 
 /**
  * ================================================
- * 作    者：jeasonlzy（廖子尧）Github地址：https://github.com/jeasonlzy0216
+ * 作    者：jeasonlzy（廖子尧）Github地址：https://github.com/jeasonlzy
  * 版    本：1.0
  * 创建日期：16/8/9
  * 描    述：表示当前请求是否具有请求体

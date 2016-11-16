@@ -11,7 +11,7 @@ import okhttp3.RequestBody;
 
 /**
  * ================================================
- * 作    者：jeasonlzy（廖子尧）Github地址：https://github.com/jeasonlzy0216
+ * 作    者：jeasonlzy（廖子尧）Github地址：https://github.com/jeasonlzy
  * 版    本：1.0
  * 创建日期：16/8/9
  * 描    述：
@@ -82,7 +82,10 @@ public abstract class BaseBodyRequest<R extends BaseBodyRequest> extends BaseReq
         return (R) this;
     }
 
-    /** 注意使用该方法上传字符串会清空实体中其他所有的参数，头信息不清除 */
+    /**
+     * 注意使用该方法上传字符串会清空实体中其他所有的参数，头信息不清除
+     * 该方法用于定制请求content-type
+     */
     @SuppressWarnings("unchecked")
     public R upString(String string, MediaType mediaType) {
         this.string = string;

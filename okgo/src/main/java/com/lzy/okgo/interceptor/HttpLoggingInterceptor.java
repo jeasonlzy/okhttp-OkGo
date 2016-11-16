@@ -32,7 +32,8 @@ public class HttpLoggingInterceptor implements Interceptor {
 
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
-    private volatile Level level = Level.NONE;
+    private volatile Level printLevel = Level.NONE;
+    private java.util.logging.Level colorLevel;
     private Logger logger;
 
     public enum Level {
@@ -42,28 +43,26 @@ public class HttpLoggingInterceptor implements Interceptor {
         BODY        //所有数据全部打印
     }
 
-    public void log(String message) {
-        logger.log(java.util.logging.Level.INFO, message);
-    }
-
     public HttpLoggingInterceptor(String tag) {
         logger = Logger.getLogger(tag);
     }
 
-    public HttpLoggingInterceptor setLevel(Level level) {
-        if (level == null) throw new NullPointerException("level == null. Use Level.NONE instead.");
-        this.level = level;
-        return this;
+    public void setPrintLevel(Level level) {
+        printLevel = level;
     }
 
-    public Level getLevel() {
-        return level;
+    public void setColorLevel(java.util.logging.Level level) {
+        colorLevel = level;
+    }
+
+    public void log(String message) {
+        logger.log(colorLevel, message);
     }
 
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
-        if (level == Level.NONE) {
+        if (printLevel == Level.NONE) {
             return chain.proceed(request);
         }
 
@@ -86,8 +85,8 @@ public class HttpLoggingInterceptor implements Interceptor {
     }
 
     private void logForRequest(Request request, Connection connection) throws IOException {
-        boolean logBody = (level == Level.BODY);
-        boolean logHeaders = (level == Level.BODY || level == Level.HEADERS);
+        boolean logBody = (printLevel == Level.BODY);
+        boolean logHeaders = (printLevel == Level.BODY || printLevel == Level.HEADERS);
         RequestBody requestBody = request.body();
         boolean hasRequestBody = requestBody != null;
         Protocol protocol = connection != null ? connection.protocol() : Protocol.HTTP_1_1;
@@ -122,8 +121,8 @@ public class HttpLoggingInterceptor implements Interceptor {
         Response.Builder builder = response.newBuilder();
         Response clone = builder.build();
         ResponseBody responseBody = clone.body();
-        boolean logBody = (level == Level.BODY);
-        boolean logHeaders = (level == Level.BODY || level == Level.HEADERS);
+        boolean logBody = (printLevel == Level.BODY);
+        boolean logHeaders = (printLevel == Level.BODY || printLevel == Level.HEADERS);
 
         try {
             log("<-- " + clone.code() + ' ' + clone.message() + ' ' + clone.request().url() + " (" + tookMs + "ms）");

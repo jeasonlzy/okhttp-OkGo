@@ -23,9 +23,10 @@ import com.lzy.okgo.utils.OkLogger;
 
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSession;
+import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Call;
 import okhttp3.Interceptor;
@@ -46,17 +47,18 @@ public class OkGo {
 
     private Handler mDelivery;                                  //用于在主线程执行的调度器
     private OkHttpClient.Builder okHttpClientBuilder;           //ok请求的客户端
+    private OkHttpClient okHttpClient;                          //ok请求的客户端
     private HttpParams mCommonParams;                           //全局公共请求参数
     private HttpHeaders mCommonHeaders;                         //全局公共请求头
     private CacheMode mCacheMode;                               //全局缓存模式
-    private int mRetryCount = 3;                                    //全局超时重试次数
+    private int mRetryCount = 3;                                //全局超时重试次数
     private long mCacheTime = CacheEntity.CACHE_NEVER_EXPIRE;   //全局缓存过期时间,默认永不过期
     private static Application context;                         //全局上下文
     private CookieJarImpl cookieJar;                            //全局 Cookie 实例
 
     private OkGo() {
         okHttpClientBuilder = new OkHttpClient.Builder();
-        okHttpClientBuilder.hostnameVerifier(new DefaultHostnameVerifier());
+        okHttpClientBuilder.hostnameVerifier(HttpsUtils.UnSafeHostnameVerifier);
         okHttpClientBuilder.connectTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
         okHttpClientBuilder.readTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
         okHttpClientBuilder.writeTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
@@ -87,7 +89,7 @@ public class OkGo {
     }
 
     public OkHttpClient getOkHttpClient() {
-        return okHttpClientBuilder.build();
+        return okHttpClient;
     }
 
     /** 对外暴露 OkHttpClient,方便自定义 */
@@ -127,50 +129,65 @@ public class OkGo {
 
     /** 调试模式,默认打开所有的异常调试 */
     public OkGo debug(String tag) {
-        debug(tag, true);
+        debug(tag, Level.INFO, true);
         return this;
     }
 
     /**
-     * 调试模式,第二个参数表示所有catch住的log是否需要打印
+     * 调试模式,第三个参数表示所有catch住的log是否需要打印
      * 一般来说,这些异常是由于不标准的数据格式,或者特殊需要主动产生的,并不是框架错误,如果不想每次打印,这里可以关闭异常显示
      */
-    public OkGo debug(String tag, boolean isPrintException) {
+    public OkGo debug(String tag, Level level, boolean isPrintException) {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(tag);
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        loggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.BODY);
+        loggingInterceptor.setColorLevel(level);
         okHttpClientBuilder.addInterceptor(loggingInterceptor);
         OkLogger.debug(isPrintException);
         return this;
     }
 
-    /**
-     * 此类是用于主机名验证的基接口。 在握手期间，如果 URL 的主机名和服务器的标识主机名不匹配，
-     * 则验证机制可以回调此接口的实现程序来确定是否应该允许此连接。策略可以是基于证书的或依赖于其他验证方案。
-     * 当验证 URL 主机名使用的默认规则失败时使用这些回调。如果主机名是可接受的，则返回 true
-     */
-    public class DefaultHostnameVerifier implements HostnameVerifier {
-        @Override
-        public boolean verify(String hostname, SSLSession session) {
-            return true;
-        }
-    }
-
-    /** https的全局访问规则 */
+    /** https的自定义域名访问规则 */
     public OkGo setHostnameVerifier(HostnameVerifier hostnameVerifier) {
         okHttpClientBuilder.hostnameVerifier(hostnameVerifier);
         return this;
     }
 
-    /** https的全局自签名证书 */
+    /**
+     * https单向认证
+     * 用含有服务端公钥的证书校验服务端证书
+     */
     public OkGo setCertificates(InputStream... certificates) {
-        HttpsUtils.SSLParams sslParams = HttpsUtils.getSslSocketFactory(null, null, certificates);
+        setCertificates(null, null, certificates);
+        return this;
+    }
+
+    /**
+     * https单向认证
+     * 可以额外配置信任服务端的证书策略，否则默认是按CA证书去验证的，若不是CA可信任的证书，则无法通过验证
+     */
+    public OkGo setCertificates(X509TrustManager trustManager) {
+        setCertificates(null, null, trustManager);
+        return this;
+    }
+
+    /**
+     * https双向认证
+     * bksFile 和 password -> 客户端使用bks证书校验服务端证书
+     * certificates -> 用含有服务端公钥的证书校验服务端证书
+     */
+    public OkGo setCertificates(InputStream bksFile, String password, InputStream... certificates) {
+        HttpsUtils.SSLParams sslParams = HttpsUtils.getSslSocketFactory(null, bksFile, password, certificates);
         okHttpClientBuilder.sslSocketFactory(sslParams.sSLSocketFactory, sslParams.trustManager);
         return this;
     }
 
-    /** https双向认证证书 */
-    public OkGo setCertificates(InputStream bksFile, String password, InputStream... certificates) {
-        HttpsUtils.SSLParams sslParams = HttpsUtils.getSslSocketFactory(bksFile, password, certificates);
+    /**
+     * https双向认证
+     * bksFile 和 password -> 客户端使用bks证书校验服务端证书
+     * X509TrustManager -> 如果需要自己校验，那么可以自己实现相关校验，如果不需要自己校验，那么传null即可
+     */
+    public OkGo setCertificates(InputStream bksFile, String password, X509TrustManager trustManager) {
+        HttpsUtils.SSLParams sslParams = HttpsUtils.getSslSocketFactory(trustManager, bksFile, password, null);
         okHttpClientBuilder.sslSocketFactory(sslParams.sSLSocketFactory, sslParams.trustManager);
         return this;
     }
@@ -268,6 +285,11 @@ public class OkGo {
     public OkGo addInterceptor(Interceptor interceptor) {
         okHttpClientBuilder.addInterceptor(interceptor);
         return this;
+    }
+
+    /** 构建okhttp客户端，一定要调用 */
+    public void build() {
+        okHttpClient = okHttpClientBuilder.build();
     }
 
     /** 根据Tag取消请求 */

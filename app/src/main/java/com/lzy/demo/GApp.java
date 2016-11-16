@@ -9,9 +9,16 @@ import com.lzy.okgo.cookie.store.PersistentCookieStore;
 import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.HttpParams;
 
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.X509TrustManager;
+
 /**
  * ================================================
- * 作    者：廖子尧   github 地址  https://github.com/jeasonlzy0216/
+ * 作    者：廖子尧   github 地址  https://github.com/jeasonlzy/
  * 版    本：1.0
  * 创建日期：2015/9/23
  * 描    述：
@@ -26,7 +33,7 @@ public class GApp extends Application {
 
         //---------这里给出的是示例代码,告诉你可以这么传,实际使用的时候,根据需要传,不需要就不传-------------//
         HttpHeaders headers = new HttpHeaders();
-        headers.put("commonHeaderKey1", "commonHeaderValue1");    //header不支持中文
+        headers.put("commonHeaderKey1", "commonHeaderValue1");    //header不支持中文，不允许有特殊字符
         headers.put("commonHeaderKey2", "commonHeaderValue2");
         HttpParams params = new HttpParams();
         params.put("commonParamsKey1", "commonParamsValue1");     //param支持中文,直接传,不要自己编码
@@ -50,7 +57,7 @@ public class GApp extends Application {
                     .setReadTimeOut(OkGo.DEFAULT_MILLISECONDS)     //全局的读取超时时间
                     .setWriteTimeOut(OkGo.DEFAULT_MILLISECONDS)    //全局的写入超时时间
 
-                    //可以全局统一设置缓存模式,默认是不使用缓存,可以不传,具体其他模式看 github 介绍 https://github.com/jeasonlzy0216/
+                    //可以全局统一设置缓存模式,默认是不使用缓存,可以不传,具体其他模式看 github 介绍 https://github.com/jeasonlzy/
                     .setCacheMode(CacheMode.NO_CACHE)
 
                     //可以全局统一设置缓存时间,默认永不过期,具体使用方法看 github 介绍
@@ -59,14 +66,19 @@ public class GApp extends Application {
                     //可以全局统一设置超时重连次数,默认为三次,那么最差的情况会请求4次(一次原始请求,三次重连请求),不需要可以设置为0
                     .setRetryCount(3)
 
-                    //如果不想让框架管理cookie,以下不需要
-//                .setCookieStore(new MemoryCookieStore())                //cookie使用内存缓存（app退出后，cookie消失）
-                    .setCookieStore(new PersistentCookieStore())          //cookie持久化存储，如果cookie不过期，则一直有效
+                    //如果不想让框架管理cookie（或者叫session的保持）,以下不需要
+//                .setCookieStore(new MemoryCookieStore())            //cookie使用内存缓存（app退出后，cookie消失）
+                    .setCookieStore(new PersistentCookieStore())        //cookie持久化存储，如果cookie不过期，则一直有效
 
                     //可以设置https的证书,以下几种方案根据需要自己设置
-//                    .setCertificates()                                  //方法一：信任所有证书（选一种即可）
-//                    .setCertificates(getAssets().open("srca.cer"))      //方法二：也可以自己设置https证书（选一种即可）
-//                    .setCertificates(getAssets().open("aaaa.bks"), "123456", getAssets().open("srca.cer"))//方法三：传入bks证书,密码,和cer证书,支持双向加密
+                    .setCertificates()                                  //方法一：信任所有证书,不安全有风险
+//                    .setCertificates(new SafeTrustManager())            //方法二：自定义信任规则，校验服务端证书
+//                    .setCertificates(getAssets().open("srca.cer"))      //方法三：使用预埋证书，校验服务端证书（自签名证书）
+//                    //方法四：使用bks证书和密码管理客户端证书（双向认证），使用预埋证书，校验服务端证书（自签名证书）
+//                    .setCertificates(getAssets().open("xxx.bks"), "123456", getAssets().open("yyy.cer"))//
+
+                    //配置https的域名匹配规则
+                    .setHostnameVerifier(new SafeHostnameVerifier())
 
                     //可以添加全局拦截器,不会用的千万不要传,错误写法直接导致任何回调不执行
 //                .addInterceptor(new Interceptor() {
@@ -77,10 +89,55 @@ public class GApp extends Application {
 //                })
 
                     //这两行同上,不需要就不要传
-                    .addCommonHeaders(headers)                                         //设置全局公共头
-                    .addCommonParams(params);                                          //设置全局公共参数
+                    .addCommonHeaders(headers)  //设置全局公共头
+                    .addCommonParams(params)    //设置全局公共参数
+                    .build();                   //一定要build。。
+
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * 这里只是我谁便写的认证规则，具体每个业务是否需要验证，以及验证规则是什么，请与服务端或者leader确定
+     * 这里只是我谁便写的认证规则，具体每个业务是否需要验证，以及验证规则是什么，请与服务端或者leader确定
+     * 这里只是我谁便写的认证规则，具体每个业务是否需要验证，以及验证规则是什么，请与服务端或者leader确定
+     * 重要的事情说三遍，以下代码不要直接使用
+     */
+    private class SafeTrustManager implements X509TrustManager {
+        @Override
+        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+        }
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+            try {
+                for (X509Certificate certificate : chain) {
+                    certificate.checkValidity(); //检查证书是否过期，签名是否通过等
+                }
+            } catch (Exception e) {
+                throw new CertificateException(e);
+            }
+        }
+
+        @Override
+        public X509Certificate[] getAcceptedIssuers() {
+            return new X509Certificate[0];
+        }
+    }
+
+    /**
+     * 这里只是我谁便写的认证规则，具体每个业务是否需要验证，以及验证规则是什么，请与服务端或者leader确定
+     * 这里只是我谁便写的认证规则，具体每个业务是否需要验证，以及验证规则是什么，请与服务端或者leader确定
+     * 这里只是我谁便写的认证规则，具体每个业务是否需要验证，以及验证规则是什么，请与服务端或者leader确定
+     * 重要的事情说三遍，以下代码不要直接使用
+     */
+    private class SafeHostnameVerifier implements HostnameVerifier {
+        @Override
+        public boolean verify(String hostname, SSLSession session) {
+            //验证主机名是否匹配
+//            return hostname.equals("server.jeasonlzy.com");
+            return true;
         }
     }
 }
