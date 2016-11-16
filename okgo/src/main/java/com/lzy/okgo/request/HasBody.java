@@ -2,6 +2,9 @@ package com.lzy.okgo.request;
 
 import com.lzy.okgo.model.HttpParams;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.util.List;
 
@@ -33,6 +36,10 @@ public interface HasBody<R> {
     R upString(String string);
 
     R upJson(String json);
+
+    R upJson(JSONObject jsonObject);
+
+    R upJson(JSONArray jsonArray);
 
     R upBytes(byte[] bs);
 }
