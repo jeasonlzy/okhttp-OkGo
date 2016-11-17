@@ -305,4 +305,14 @@ public class OkGo {
             }
         }
     }
+
+    /** 取消所有请求请求 */
+    public void cancelAll() {
+        for (Call call : getOkHttpClient().dispatcher().queuedCalls()) {
+            call.cancel();
+        }
+        for (Call call : getOkHttpClient().dispatcher().runningCalls()) {
+            call.cancel();
+        }
+    }
 }

@@ -78,7 +78,7 @@ public class PersistentCookieStore implements CookieStore {
 
     /** 根据当前url获取所有需要的cookie,只返回没有过期的cookie */
     @Override
-    public List<Cookie> loadCookies(HttpUrl url) {
+    public List<Cookie> loadCookie(HttpUrl url) {
         ArrayList<Cookie> ret = new ArrayList<>();
         if (cookies.containsKey(url.host())) {
             Collection<Cookie> urlCookies = cookies.get(url.host()).values();
@@ -95,7 +95,7 @@ public class PersistentCookieStore implements CookieStore {
 
     /** 将url的所有Cookie保存在本地 */
     @Override
-    public void saveCookies(HttpUrl url, List<Cookie> urlCookies) {
+    public void saveCookie(HttpUrl url, List<Cookie> urlCookies) {
         if (!cookies.containsKey(url.host())) {
             cookies.put(url.host(), new ConcurrentHashMap<String, Cookie>());
         }
@@ -106,6 +106,19 @@ public class PersistentCookieStore implements CookieStore {
             } else {
                 saveCookie(url, cookie, getCookieToken(cookie));
             }
+        }
+    }
+
+    @Override
+    public void saveCookie(HttpUrl url, Cookie cookie) {
+        if (!cookies.containsKey(url.host())) {
+            cookies.put(url.host(), new ConcurrentHashMap<String, Cookie>());
+        }
+        //当前cookie是否过期
+        if (isCookieExpired(cookie)) {
+            removeCookie(url, cookie);
+        } else {
+            saveCookie(url, cookie, getCookieToken(cookie));
         }
     }
 
@@ -176,9 +189,17 @@ public class PersistentCookieStore implements CookieStore {
     /** 获取所有的cookie */
     @Override
     public List<Cookie> getAllCookie() {
-        ArrayList<Cookie> ret = new ArrayList<>();
+        List<Cookie> ret = new ArrayList<>();
         for (String key : cookies.keySet())
             ret.addAll(cookies.get(key).values());
+        return ret;
+    }
+
+    @Override
+    public List<Cookie> getCookie(HttpUrl url) {
+        List<Cookie> ret = new ArrayList<>();
+        Map<String, Cookie> mapCookie = cookies.get(url.host());
+        if (mapCookie != null) ret.addAll(mapCookie.values());
         return ret;
     }
 

@@ -17,13 +17,19 @@ import okhttp3.HttpUrl;
 public interface CookieStore {
 
     /** 保存url对应所有cookie */
-    void saveCookies(HttpUrl url, List<Cookie> cookie);
+    void saveCookie(HttpUrl url, List<Cookie> cookie);
+
+    /** 保存url对应所有cookie */
+    void saveCookie(HttpUrl url, Cookie cookie);
 
     /** 加载url所有的cookie */
-    List<Cookie> loadCookies(HttpUrl url);
+    List<Cookie> loadCookie(HttpUrl url);
 
     /** 获取当前所有保存的cookie */
     List<Cookie> getAllCookie();
+
+    /** 获取当前url对应的所有的cookie */
+    List<Cookie> getCookie(HttpUrl url);
 
     /** 根据url和cookie移除对应的cookie */
     boolean removeCookie(HttpUrl url, Cookie cookie);

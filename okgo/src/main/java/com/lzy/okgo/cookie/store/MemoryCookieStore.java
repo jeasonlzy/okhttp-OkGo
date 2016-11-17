@@ -22,7 +22,7 @@ public class MemoryCookieStore implements CookieStore {
     private final HashMap<String, List<Cookie>> memoryCookies = new HashMap<>();
 
     @Override
-    public synchronized void saveCookies(HttpUrl url, List<Cookie> cookies) {
+    public synchronized void saveCookie(HttpUrl url, List<Cookie> cookies) {
         List<Cookie> oldCookies = memoryCookies.get(url.host());
         List<Cookie> needRemove = new ArrayList<>();
         for (Cookie newCookie : cookies) {
@@ -37,7 +37,20 @@ public class MemoryCookieStore implements CookieStore {
     }
 
     @Override
-    public synchronized List<Cookie> loadCookies(HttpUrl url) {
+    public synchronized void saveCookie(HttpUrl url, Cookie cookie) {
+        List<Cookie> cookies = memoryCookies.get(url.host());
+        List<Cookie> needRemove = new ArrayList<>();
+        for (Cookie item : cookies) {
+            if (cookie.name().equals(item.name())) {
+                needRemove.add(item);
+            }
+        }
+        cookies.removeAll(needRemove);
+        cookies.add(cookie);
+    }
+
+    @Override
+    public synchronized List<Cookie> loadCookie(HttpUrl url) {
         List<Cookie> cookies = memoryCookies.get(url.host());
         if (cookies == null) {
             cookies = new ArrayList<>();
@@ -53,6 +66,14 @@ public class MemoryCookieStore implements CookieStore {
         for (String url : httpUrls) {
             cookies.addAll(memoryCookies.get(url));
         }
+        return cookies;
+    }
+
+    @Override
+    public List<Cookie> getCookie(HttpUrl url) {
+        List<Cookie> cookies = new ArrayList<>();
+        List<Cookie> urlCookies = memoryCookies.get(url.host());
+        if (urlCookies != null) cookies.addAll(urlCookies);
         return cookies;
     }
 

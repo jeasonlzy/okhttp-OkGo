@@ -10,6 +10,8 @@ import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cookie.store.CookieStore;
 
+import java.util.List;
+
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Call;
@@ -33,13 +35,31 @@ public class CookieActivity extends BaseDetailActivity {
         OkGo.getInstance().cancelTag(this);
     }
 
+    @OnClick(R.id.getCookie)
+    public void getCookie(View view) {
+        //一般手动取出cookie的目的只是交给 webview 等等，非必要情况不要自己操作
+        CookieStore cookieStore = OkGo.getInstance().getCookieJar().getCookieStore();
+        HttpUrl httpUrl = HttpUrl.parse(Urls.URL_METHOD);
+        List<Cookie> cookies = cookieStore.getCookie(httpUrl);
+        showToast(httpUrl.host() + "对应的cookie如下：" + cookies.toString());
+    }
+
+    @OnClick(R.id.getAllCookie)
+    public void getAllCookie(View view) {
+        //一般手动取出cookie的目的只是交给 webview 等等，非必要情况不要自己操作
+        CookieStore cookieStore = OkGo.getInstance().getCookieJar().getCookieStore();
+        List<Cookie> allCookie = cookieStore.getAllCookie();
+        showToast("所有cookie如下：" + allCookie.toString());
+    }
+
     @OnClick(R.id.addCookie)
     public void addCookie(View view) {
 
         HttpUrl httpUrl = HttpUrl.parse(Urls.URL_METHOD);
         Cookie.Builder builder = new Cookie.Builder();
         Cookie cookie = builder.name("myCookieKey1").value("myCookieValue1").domain(httpUrl.host()).build();
-        OkGo.getInstance().getCookieJar().addCookie(cookie);
+        CookieStore cookieStore = OkGo.getInstance().getCookieJar().getCookieStore();
+        cookieStore.saveCookie(httpUrl, cookie);
 
         showToast("详细添加cookie的代码，请看demo的代码");
 

@@ -6,6 +6,20 @@
     android:orientation="vertical">
 
     <Button
+        android:id="@+id/getCookie"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="获取指定url对应的cookie"
+        android:textAllCaps="false"/>
+
+    <Button
+        android:id="@+id/getAllCookie"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="获取所有的cookie"
+        android:textAllCaps="false"/>
+
+    <Button
         android:id="@+id/addCookie"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

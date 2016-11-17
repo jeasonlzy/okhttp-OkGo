@@ -11,6 +11,7 @@ import com.lzy.okgo.model.HttpParams;
 
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.logging.Level;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
@@ -49,8 +50,9 @@ public class GApp extends Application {
             //以下都不是必须的，根据需要自行选择,一般来说只需要 debug,缓存相关,cookie相关的 就可以了
             OkGo.getInstance()
 
-                    //打开该调试开关,控制台会使用 红色error 级别打印log,并不是错误,是为了显眼,不需要就不要加入该行
-                    .debug("OkGo")
+                    // 打开该调试开关,打印级别INFO,并不是异常,是为了显眼,不需要就不要加入该行
+                    // 最后的true表示是否打印okgo的内部异常，一般打开方便调试错误
+                    .debug("OkGo", Level.INFO, true)
 
                     //如果使用默认的 60秒,以下三行也不需要传
                     .setConnectTimeout(OkGo.DEFAULT_MILLISECONDS)  //全局的连接超时时间
@@ -77,10 +79,10 @@ public class GApp extends Application {
 //                    //方法四：使用bks证书和密码管理客户端证书（双向认证），使用预埋证书，校验服务端证书（自签名证书）
 //                    .setCertificates(getAssets().open("xxx.bks"), "123456", getAssets().open("yyy.cer"))//
 
-                    //配置https的域名匹配规则
-                    .setHostnameVerifier(new SafeHostnameVerifier())
+                    //配置https的域名匹配规则，详细看demo的初始化介绍，不需要就不要加入，使用不当会导致https握手失败
+//                    .setHostnameVerifier(new SafeHostnameVerifier())
 
-                    //可以添加全局拦截器,不会用的千万不要传,错误写法直接导致任何回调不执行
+                    //可以添加全局拦截器，不需要就不要加入，错误写法直接导致任何回调不执行
 //                .addInterceptor(new Interceptor() {
 //                    @Override
 //                    public Response intercept(Chain chain) throws IOException {
@@ -88,10 +90,10 @@ public class GApp extends Application {
 //                    }
 //                })
 
-                    //这两行同上,不需要就不要传
+                    //这两行同上，不需要就不要加入
                     .addCommonHeaders(headers)  //设置全局公共头
                     .addCommonParams(params)    //设置全局公共参数
-                    .build();                   //一定要build。。
+                    .build();                   //一定要build，一定要build，一定要build
 
         } catch (Exception e) {
             e.printStackTrace();

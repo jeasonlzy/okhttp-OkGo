@@ -115,7 +115,7 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .params("param1", "paramValue1")//
                         .params("param2", "paramValue2")//
                         .params("param3", "paramValue3")//
-                        .isMultipart(false)         //强制使用 multipart/form-data 表单上传（只是演示，不需要的话不要设置。默认就是false）
+                        .isMultipart(true)         //强制使用 multipart/form-data 表单上传（只是演示，不需要的话不要设置。默认就是false）
                         .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                             @Override
                             public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {

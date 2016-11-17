@@ -71,7 +71,7 @@ public class PostTextActivity extends BaseDetailActivity {
         OkGo.post(Urls.URL_TEXT_UPLOAD)//
                 .tag(this)//
                 .headers("header1", "headerValue1")//
-//                .params("param1", "paramValue1")// 这里不要使用params，upString 与 params 是互斥的，只有 upJson 的数据会被上传
+//                .params("param1", "paramValue1")// 这里不要使用params，upString 与 params 是互斥的，只有 upString 的数据会被上传
                 .upString("这是要上传的长文本数据！")//
                 .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                     @Override
@@ -93,7 +93,7 @@ public class PostTextActivity extends BaseDetailActivity {
         OkGo.post(Urls.URL_TEXT_UPLOAD)//
                 .tag(this)//
                 .headers("header1", "headerValue1")//
-//                .params("param1", "paramValue1")// 这里不要使用params，upBytes 与 params 是互斥的，只有 upJson 的数据会被上传
+//                .params("param1", "paramValue1")// 这里不要使用params，upBytes 与 params 是互斥的，只有 upBytes 的数据会被上传
                 .upBytes("这是字节数据".getBytes())//
                 .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                     @Override
