@@ -20,6 +20,7 @@ import com.lzy.okgo.convert.StringConvert;
 import com.lzy.okrx.RxAdapter;
 
 import java.io.File;
+import java.util.HashSet;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -52,18 +53,30 @@ public class TestActivity extends BaseActivity {
 
     @OnClick(R.id.btn2)
     public void btn2(View view) {
-        String bbb = null;
         OkGo.get("https://github.com/")//
                 .tag(this)//
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(String s, okhttp3.Call call, Response response) {
-                        System.out.println("-----");
+                        System.out.println("---onSuccess--");
+                    }
+
+                    @Override
+                    public void onError(okhttp3.Call call, Response response, Exception e) {
+                        e.printStackTrace();
+                        System.out.println("--onError---");
                     }
                 });
     }
 
     @OnClick(R.id.btn3)
     public void btn3(View view) {
+
+        HashSet<String> set = new HashSet<>();
+        set.add("111");
+        set.add("222");
+        set.add("111");
+
+        OkGo.getInstance().cancelTag(this);
     }
 }

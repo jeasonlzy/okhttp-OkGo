@@ -63,7 +63,7 @@ public class MemoryCookieStore implements CookieStore {
     }
 
     @Override
-    public synchronized boolean removeCookies(HttpUrl url) {
+    public synchronized boolean removeCookie(HttpUrl url) {
         return memoryCookies.remove(url.host()) != null;
     }
 

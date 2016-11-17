@@ -27,6 +27,7 @@
         <activity android:name=".okgo.JsonRequestActivity"/>
         <activity android:name=".okgo.BitmapRequestActivity"/>
         <activity android:name=".okgo.PostTextActivity"/>
+        <activity android:name=".okgo.CookieActivity"/>
         <activity android:name=".okgo.FormUploadActivity"/>
         <activity android:name=".okgo.FileDownloadActivity"/>
         <activity android:name=".okgo.CacheActivity"/>

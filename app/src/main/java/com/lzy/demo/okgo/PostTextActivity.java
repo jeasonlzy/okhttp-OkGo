@@ -26,7 +26,7 @@ public class PostTextActivity extends BaseDetailActivity {
     protected void onActivityCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_post_text);
         ButterKnife.bind(this);
-        setTitle("自动解析Json对象");
+        setTitle("上传大文本Json数据");
     }
 
     @Override
@@ -49,8 +49,8 @@ public class PostTextActivity extends BaseDetailActivity {
         OkGo.post(Urls.URL_TEXT_UPLOAD)//
                 .tag(this)//
                 .headers("header1", "headerValue1")//
-                .params("param1", "paramValue1")//
-                .upJson(jsonObject.toString())//
+//                .params("param1", "paramValue1")//  这里不要使用params，upJson 与 params 是互斥的，只有 upJson 的数据会被上传
+                .upJson(jsonObject)//
                 .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                     @Override
                     public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
@@ -71,7 +71,7 @@ public class PostTextActivity extends BaseDetailActivity {
         OkGo.post(Urls.URL_TEXT_UPLOAD)//
                 .tag(this)//
                 .headers("header1", "headerValue1")//
-                .params("param1", "paramValue1")//
+//                .params("param1", "paramValue1")// 这里不要使用params，upString 与 params 是互斥的，只有 upJson 的数据会被上传
                 .upString("这是要上传的长文本数据！")//
                 .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                     @Override
@@ -93,7 +93,7 @@ public class PostTextActivity extends BaseDetailActivity {
         OkGo.post(Urls.URL_TEXT_UPLOAD)//
                 .tag(this)//
                 .headers("header1", "headerValue1")//
-                .params("param1", "paramValue1")//
+//                .params("param1", "paramValue1")// 这里不要使用params，upBytes 与 params 是互斥的，只有 upJson 的数据会被上传
                 .upBytes("这是字节数据".getBytes())//
                 .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                     @Override

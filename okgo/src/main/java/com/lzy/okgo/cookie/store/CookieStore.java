@@ -29,7 +29,7 @@ public interface CookieStore {
     boolean removeCookie(HttpUrl url, Cookie cookie);
 
     /** 根据url移除所有的cookie */
-    boolean removeCookies(HttpUrl url);
+    boolean removeCookie(HttpUrl url);
 
     /** 移除所有的cookie */
     boolean removeAllCookie();

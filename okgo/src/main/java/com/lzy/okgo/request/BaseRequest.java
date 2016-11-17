@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Cookie;
-import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -52,17 +50,14 @@ public abstract class BaseRequest<R extends BaseRequest> {
     protected HttpParams params = new HttpParams();                 //添加的param
     protected HttpHeaders headers = new HttpHeaders();              //添加的header
     protected List<Interceptor> interceptors = new ArrayList<>();   //额外的拦截器
-    protected List<Cookie> userCookies = new ArrayList<>();         //用户手动添加的Cookie
 
     private AbsCallback mCallback;
     private Converter mConverter;
-    private HttpUrl httpUrl;
     private Request mRequest;
 
     public BaseRequest(String url) {
         this.url = url;
         baseUrl = url;
-        httpUrl = HttpUrl.parse(url);
         OkGo go = OkGo.getInstance();
         //默认添加 Accept-Language
         String acceptLanguage = HttpHeaders.getAcceptLanguage();
@@ -227,26 +222,6 @@ public abstract class BaseRequest<R extends BaseRequest> {
     }
 
     @SuppressWarnings("unchecked")
-    public R addCookie(String name, String value) {
-        Cookie.Builder builder = new Cookie.Builder();
-        Cookie cookie = builder.name(name).value(value).domain(httpUrl.host()).build();
-        userCookies.add(cookie);
-        return (R) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public R addCookie(Cookie cookie) {
-        userCookies.add(cookie);
-        return (R) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public R addCookies(List<Cookie> cookies) {
-        userCookies.addAll(cookies);
-        return (R) this;
-    }
-
-    @SuppressWarnings("unchecked")
     public R setCallback(AbsCallback callback) {
         this.mCallback = callback;
         return (R) this;
@@ -362,14 +337,13 @@ public abstract class BaseRequest<R extends BaseRequest> {
     /** 根据当前的请求参数，生成对应的 Call 任务 */
     public okhttp3.Call generateCall(Request request) {
         mRequest = request;
-        if (readTimeOut <= 0 && writeTimeOut <= 0 && connectTimeout <= 0 && userCookies.size() == 0 && interceptors.size() == 0) {
+        if (readTimeOut <= 0 && writeTimeOut <= 0 && connectTimeout <= 0 && interceptors.size() == 0) {
             return OkGo.getInstance().getOkHttpClient().newCall(request);
         } else {
             OkHttpClient.Builder newClientBuilder = OkGo.getInstance().getOkHttpClient().newBuilder();
             if (readTimeOut > 0) newClientBuilder.readTimeout(readTimeOut, TimeUnit.MILLISECONDS);
             if (writeTimeOut > 0) newClientBuilder.writeTimeout(writeTimeOut, TimeUnit.MILLISECONDS);
             if (connectTimeout > 0) newClientBuilder.connectTimeout(connectTimeout, TimeUnit.MILLISECONDS);
-            if (userCookies.size() > 0) OkGo.getInstance().getCookieJar().addCookies(userCookies);
             if (interceptors.size() > 0) {
                 for (Interceptor interceptor : interceptors) {
                     newClientBuilder.addInterceptor(interceptor);
