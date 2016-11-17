@@ -296,7 +296,7 @@ OkGo.get(Urls.URL_DOWNLOAD)//
 ```java
 OkGo.post(Urls.URL_TEXT_UPLOAD)//
 	.tag(this)//
-	.params("param1", "paramValue1")//  这里不要使用params，upString 与 params 是互斥的，只有 upString 的数据会被上传
+//	.params("param1", "paramValue1")//  这里不要使用params，upString 与 params 是互斥的，只有 upString 的数据会被上传
 	.upString("这是要上传的长文本数据！")//
 	.execute(new StringCallback() {
 	    @Override
@@ -323,7 +323,7 @@ JSONObject jsonObject = new JSONObject(params);
         
 OkGo.post(Urls.URL_TEXT_UPLOAD)//
 	.tag(this)//
-	.params("param1", "paramValue1")//  这里不要使用params，upJson 与 params 是互斥的，只有 upJson 的数据会被上传
+//	.params("param1", "paramValue1")//  这里不要使用params，upJson 与 params 是互斥的，只有 upJson 的数据会被上传
 	.upJson(jsonObject.toString())//
 	.execute(new StringCallback() {
 	    @Override
@@ -581,49 +581,49 @@ session机制。session机制是一种服务器端的机制，服务器使用一
 
 对于okgo来说，okgo完全遵循了http协议，所以，如果你的服务端的session是按照set-cookie头返回给客户端，并且希望在下次请求的时候自动带上这个cookie值，那么你只需要在okgo初始化的时候添加这么一行代码：
 ```java
-	OkGo.getInstance()
-		...
-		 //如果不想让框架管理cookie（或者叫session的保持）,以下不需要
-		.setCookieStore(new MemoryCookieStore())            //cookie使用内存缓存（app退出后，cookie消失）
-		.setCookieStore(new PersistentCookieStore())        //cookie持久化存储，如果cookie不过期，则一直有效
-		...
+OkGo.getInstance()
+	...
+	 //如果不想让框架管理cookie（或者叫session的保持）,以下不需要
+	.setCookieStore(new MemoryCookieStore())            //cookie使用内存缓存（app退出后，cookie消失）
+	.setCookieStore(new PersistentCookieStore())        //cookie持久化存储，如果cookie不过期，则一直有效
+	...
 ```
 以上方式任选其一就可以了。
-#### 以后所有的请求不需要你有任何的额外代码，就只要上面这一行，就完成了所有请求的cookie与session全自动管理。就是这么的强大！但是要注意，cookie是绑定的url对应的host，比如你的请求两个接口，一个是 www.domain1.com，一个是 www.domain2.com，那么这个时候，domain1所具有的cookie是不会自动在domain2中携带的，如果一定需要，可以按以下方法手动获取并添加。
+#### 以后所有的请求不需要你有任何的额外代码，就只要上面这一行，就完成了所有请求的cookie与session全自动管理。就是这么的强大！但是要注意，cookie是绑定的url对应的host，比如你的请求两个接口，一个是 www.domain1.com 一个是 www.domain2.com 那么这个时候，domain1所具有的cookie是不会自动在domain2中携带的，如果一定需要，可以按以下方法手动获取并添加。
 
 如果你需要与webview交互，okgo需要向webview传递cookie，或者webview需要向okgo传递cookie，那么这时候就需要手动介入到okgo的cookie管理中，使用方法依然极其简单。
 
 * 查看url所对应的cookie
 ```java
-	//一般手动取出cookie的目的只是交给 webview 等等，非必要情况不要自己操作
-	CookieStore cookieStore = OkGo.getInstance().getCookieJar().getCookieStore();
-	HttpUrl httpUrl = HttpUrl.parse(Urls.URL_METHOD);
-	List<Cookie> cookies = cookieStore.getCookie(httpUrl);
-	showToast(httpUrl.host() + "对应的cookie如下：" + cookies.toString());
+//一般手动取出cookie的目的只是交给 webview 等等，非必要情况不要自己操作
+CookieStore cookieStore = OkGo.getInstance().getCookieJar().getCookieStore();
+HttpUrl httpUrl = HttpUrl.parse(Urls.URL_METHOD);
+List<Cookie> cookies = cookieStore.getCookie(httpUrl);
+showToast(httpUrl.host() + "对应的cookie如下：" + cookies.toString());
 ```
 
 * 查看okgo管理的所有cookie 
 ```java
-	//一般手动取出cookie的目的只是交给 webview 等等，非必要情况不要自己操作
-    CookieStore cookieStore = OkGo.getInstance().getCookieJar().getCookieStore();
-    List<Cookie> allCookie = cookieStore.getAllCookie();
-    showToast("所有cookie如下：" + allCookie.toString());
+//一般手动取出cookie的目的只是交给 webview 等等，非必要情况不要自己操作
+CookieStore cookieStore = OkGo.getInstance().getCookieJar().getCookieStore();
+List<Cookie> allCookie = cookieStore.getAllCookie();
+showToast("所有cookie如下：" + allCookie.toString());
 ```
 
 * 手动添加cookie
 ```java
-	HttpUrl httpUrl = HttpUrl.parse(Urls.URL_METHOD);
-	Cookie.Builder builder = new Cookie.Builder();
-	Cookie cookie = builder.name("myCookieKey1").value("myCookieValue1").domain(httpUrl.host()).build();
-	CookieStore cookieStore = OkGo.getInstance().getCookieJar().getCookieStore();
-	cookieStore.saveCookie(httpUrl, cookie);
+HttpUrl httpUrl = HttpUrl.parse(Urls.URL_METHOD);
+Cookie.Builder builder = new Cookie.Builder();
+Cookie cookie = builder.name("myCookieKey1").value("myCookieValue1").domain(httpUrl.host()).build();
+CookieStore cookieStore = OkGo.getInstance().getCookieJar().getCookieStore();
+cookieStore.saveCookie(httpUrl, cookie);
 ```
 
 * 手动移除cookie
 ```java
-	HttpUrl httpUrl = HttpUrl.parse(Urls.URL_METHOD);
-	CookieStore cookieStore = OkGo.getInstance().getCookieJar().getCookieStore();
-	cookieStore.removeCookie(httpUrl);
+HttpUrl httpUrl = HttpUrl.parse(Urls.URL_METHOD);
+CookieStore cookieStore = OkGo.getInstance().getCookieJar().getCookieStore();
+cookieStore.removeCookie(httpUrl);
 ```
 
 ## 六、混淆
