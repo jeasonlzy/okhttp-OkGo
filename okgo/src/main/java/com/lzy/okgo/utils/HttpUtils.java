@@ -70,8 +70,8 @@ public class HttpUtils {
     }
 
     /** 生成类似表单的请求体 */
-    public static RequestBody generateMultipartRequestBody(HttpParams params) {
-        if (params.fileParamsMap.isEmpty()) {
+    public static RequestBody generateMultipartRequestBody(HttpParams params, boolean isMultipart) {
+        if (params.fileParamsMap.isEmpty() && !isMultipart) {
             //表单提交，没有文件
             FormBody.Builder bodyBuilder = new FormBody.Builder();
             for (String key : params.urlParamsMap.keySet()) {

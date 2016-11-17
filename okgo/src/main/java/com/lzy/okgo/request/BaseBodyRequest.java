@@ -27,10 +27,18 @@ public abstract class BaseBodyRequest<R extends BaseBodyRequest> extends BaseReq
     protected String content;           //上传的文本内容
     protected byte[] bs;                //上传的字节数据
 
+    protected boolean isMultipart = false;  //是否强制使用 multipart/form-data 表单上传
     protected RequestBody requestBody;
 
     public BaseBodyRequest(String url) {
         super(url);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public R isMultipart(boolean isMultipart) {
+        this.isMultipart = isMultipart;
+        return (R) this;
     }
 
     @SuppressWarnings("unchecked")
@@ -136,6 +144,6 @@ public abstract class BaseBodyRequest<R extends BaseBodyRequest> extends BaseReq
         if (requestBody != null) return requestBody;                                                //自定义的请求体
         if (content != null && mediaType != null) return RequestBody.create(mediaType, content);    //post上传字符串数据
         if (bs != null && mediaType != null) return RequestBody.create(mediaType, bs);              //post上传字节数组
-        return HttpUtils.generateMultipartRequestBody(params);
+        return HttpUtils.generateMultipartRequestBody(params, isMultipart);
     }
 }

@@ -21,6 +21,9 @@ import okhttp3.RequestBody;
  * ================================================
  */
 public interface HasBody<R> {
+
+    R isMultipart(boolean isMultipart);
+
     R requestBody(RequestBody requestBody);
 
     R params(String key, File file);
