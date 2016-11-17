@@ -43,26 +43,26 @@
 
  * 对于Android Studio的用户，可以选择添加:
 ```java
-    compile 'com.lzy.net:okgo:2.1.0'        //可以单独使用，不需要依赖下方的扩展包
-    compile 'com.lzy.net:okrx:0.1.1'        //RxJava扩展支持，根据需要添加
-	compile 'com.lzy.net:okserver:1.1.1'    //下载管理和上传管理扩展，根据需要添加
-    
-    或者
-    
-	compile 'com.lzy.net:okgo:+'        //版本号使用 + 可以自动引用最新版
-	compile 'com.lzy.net:okrx:+'        //版本号使用 + 可以自动引用最新版
-	compile 'com.lzy.net:okserver:+'    //版本号使用 + 可以自动引用最新版
+compile 'com.lzy.net:okgo:2.1.0'        //可以单独使用，不需要依赖下方的扩展包
+compile 'com.lzy.net:okrx:0.1.1'        //RxJava扩展支持，根据需要添加
+compile 'com.lzy.net:okserver:1.1.1'    //下载管理和上传管理扩展，根据需要添加
+
+或者
+
+compile 'com.lzy.net:okgo:+'        //版本号使用 + 可以自动引用最新版
+compile 'com.lzy.net:okrx:+'        //版本号使用 + 可以自动引用最新版
+compile 'com.lzy.net:okserver:+'    //版本号使用 + 可以自动引用最新版
 ```
 
  * 对于Eclipse的用户，可以选择添加 `/jar` 目录下的:
 ```java
-	okgo-2.1.0.jar
-	okrx-0.1.1.jar
-	okserver-1.1.1.jar
+okgo-2.1.0.jar
+okrx-0.1.1.jar
+okserver-1.1.1.jar
 ```
  * 如果是以jar包的形式引入`okserver`,需要在清单文件中额外注册一个服务
 ```java
-    <service android:name="com.lzy.okserver.download.DownloadService"/>
+<service android:name="com.lzy.okserver.download.DownloadService"/>
 ```
  * 如果只是用了`okgo`的jar,没有使用`okserver`的jar,那么不需要注册上面的服务
 
@@ -123,61 +123,61 @@
 一般在 Aplication，或者基类中，只需要调用一次即可，可以配置调试开关，全局的超时时间，公共的请求头和请求参数等信息
 ### 不要忘记了在清单文件中注册 Aplication
 ```java
-    @Override
-    public void onCreate() {
-        super.onCreate();
+@Override
+public void onCreate() {
+    super.onCreate();
 
-        //---------这里给出的是示例代码,告诉你可以这么传,实际使用的时候,根据需要传,不需要就不传-------------//
-        HttpHeaders headers = new HttpHeaders();
-        headers.put("commonHeaderKey1", "commonHeaderValue1");    //header不支持中文
-        headers.put("commonHeaderKey2", "commonHeaderValue2");
-        HttpParams params = new HttpParams();
-        params.put("commonParamsKey1", "commonParamsValue1");     //param支持中文,直接传,不要自己编码
-        params.put("commonParamsKey2", "这里支持中文参数");
-        //-----------------------------------------------------------------------------------//
+    //---------这里给出的是示例代码,告诉你可以这么传,实际使用的时候,根据需要传,不需要就不传-------------//
+    HttpHeaders headers = new HttpHeaders();
+    headers.put("commonHeaderKey1", "commonHeaderValue1");    //header不支持中文
+    headers.put("commonHeaderKey2", "commonHeaderValue2");
+    HttpParams params = new HttpParams();
+    params.put("commonParamsKey1", "commonParamsValue1");     //param支持中文,直接传,不要自己编码
+    params.put("commonParamsKey2", "这里支持中文参数");
+    //-----------------------------------------------------------------------------------//
 
-        //必须调用初始化
-        OkGo.init(this);
+    //必须调用初始化
+    OkGo.init(this);
 
-        //以下设置的所有参数是全局参数,同样的参数可以在请求的时候再设置一遍,那么对于该请求来讲,请求中的参数会覆盖全局参数
-        //好处是全局参数统一,特定请求可以特别定制参数
-        try {
-            //以下都不是必须的，根据需要自行选择,一般来说只需要 debug,缓存相关,cookie相关的 就可以了
-            OkGo.getInstance()
+    //以下设置的所有参数是全局参数,同样的参数可以在请求的时候再设置一遍,那么对于该请求来讲,请求中的参数会覆盖全局参数
+    //好处是全局参数统一,特定请求可以特别定制参数
+    try {
+        //以下都不是必须的，根据需要自行选择,一般来说只需要 debug,缓存相关,cookie相关的 就可以了
+        OkGo.getInstance()
 
-                    // 打开该调试开关,打印级别INFO,并不是异常,是为了显眼,不需要就不要加入该行
-                    // 最后的true表示是否打印okgo的内部异常，一般打开方便调试错误
-                    .debug("OkGo", Level.INFO, true)
+                // 打开该调试开关,打印级别INFO,并不是异常,是为了显眼,不需要就不要加入该行
+                // 最后的true表示是否打印okgo的内部异常，一般打开方便调试错误
+                .debug("OkGo", Level.INFO, true)
 
-                    //如果使用默认的 60秒,以下三行也不需要传
-                    .setConnectTimeout(OkGo.DEFAULT_MILLISECONDS)  //全局的连接超时时间
-                    .setReadTimeOut(OkGo.DEFAULT_MILLISECONDS)     //全局的读取超时时间
-                    .setWriteTimeOut(OkGo.DEFAULT_MILLISECONDS)    //全局的写入超时时间
+                //如果使用默认的 60秒,以下三行也不需要传
+                .setConnectTimeout(OkGo.DEFAULT_MILLISECONDS)  //全局的连接超时时间
+                .setReadTimeOut(OkGo.DEFAULT_MILLISECONDS)     //全局的读取超时时间
+                .setWriteTimeOut(OkGo.DEFAULT_MILLISECONDS)    //全局的写入超时时间
 
-                    //可以全局统一设置缓存模式,默认是不使用缓存,可以不传,具体其他模式看 github 介绍 https://github.com/jeasonlzy/
-                    .setCacheMode(CacheMode.NO_CACHE)
+                //可以全局统一设置缓存模式,默认是不使用缓存,可以不传,具体其他模式看 github 介绍 https://github.com/jeasonlzy/
+                .setCacheMode(CacheMode.NO_CACHE)
 
-                    //可以全局统一设置缓存时间,默认永不过期,具体使用方法看 github 介绍
-                    .setCacheTime(CacheEntity.CACHE_NEVER_EXPIRE)
+                //可以全局统一设置缓存时间,默认永不过期,具体使用方法看 github 介绍
+                .setCacheTime(CacheEntity.CACHE_NEVER_EXPIRE)
 
-                    //可以全局统一设置超时重连次数,默认为三次,那么最差的情况会请求4次(一次原始请求,三次重连请求),不需要可以设置为0
-                    .setRetryCount(3)
+                //可以全局统一设置超时重连次数,默认为三次,那么最差的情况会请求4次(一次原始请求,三次重连请求),不需要可以设置为0
+                .setRetryCount(3)
 
-                    //如果不想让框架管理cookie（或者叫session的保持）,以下不需要
-//                .setCookieStore(new MemoryCookieStore())            //cookie使用内存缓存（app退出后，cookie消失）
-                    .setCookieStore(new PersistentCookieStore())        //cookie持久化存储，如果cookie不过期，则一直有效
+                //如果不想让框架管理cookie（或者叫session的保持）,以下不需要
+//              .setCookieStore(new MemoryCookieStore())            //cookie使用内存缓存（app退出后，cookie消失）
+                .setCookieStore(new PersistentCookieStore())        //cookie持久化存储，如果cookie不过期，则一直有效
 
-                    //可以设置https的证书,以下几种方案根据需要自己设置
-                    .setCertificates()                                  //方法一：信任所有证书,不安全有风险
-//                    .setCertificates(new SafeTrustManager())            //方法二：自定义信任规则，校验服务端证书
-//                    .setCertificates(getAssets().open("srca.cer"))      //方法三：使用预埋证书，校验服务端证书（自签名证书）
-//                    //方法四：使用bks证书和密码管理客户端证书（双向认证），使用预埋证书，校验服务端证书（自签名证书）
-//                    .setCertificates(getAssets().open("xxx.bks"), "123456", getAssets().open("yyy.cer"))//
+                //可以设置https的证书,以下几种方案根据需要自己设置
+                .setCertificates()                                  //方法一：信任所有证书,不安全有风险
+//              .setCertificates(new SafeTrustManager())            //方法二：自定义信任规则，校验服务端证书
+//              .setCertificates(getAssets().open("srca.cer"))      //方法三：使用预埋证书，校验服务端证书（自签名证书）
+//              //方法四：使用bks证书和密码管理客户端证书（双向认证），使用预埋证书，校验服务端证书（自签名证书）
+//               .setCertificates(getAssets().open("xxx.bks"), "123456", getAssets().open("yyy.cer"))//
 
-                    //配置https的域名匹配规则，详细看demo的初始化介绍，不需要就不要加入，使用不当会导致https握手失败
-//                    .setHostnameVerifier(new SafeHostnameVerifier())
+                //配置https的域名匹配规则，详细看demo的初始化介绍，不需要就不要加入，使用不当会导致https握手失败
+//               .setHostnameVerifier(new SafeHostnameVerifier())
 
-                    //可以添加全局拦截器，不需要就不要加入，错误写法直接导致任何回调不执行
+                //可以添加全局拦截器，不需要就不要加入，错误写法直接导致任何回调不执行
 //                .addInterceptor(new Interceptor() {
 //                    @Override
 //                    public Response intercept(Chain chain) throws IOException {
@@ -185,15 +185,15 @@
 //                    }
 //                })
 
-                    //这两行同上，不需要就不要加入
-                    .addCommonHeaders(headers)  //设置全局公共头
-                    .addCommonParams(params)    //设置全局公共参数
-                    .build();                   //一定要build，一定要build，一定要build
+                //这两行同上，不需要就不要加入
+                .addCommonHeaders(headers)  //设置全局公共头
+                .addCommonParams(params)    //设置全局公共参数
+                .build();                   //一定要build，一定要build，一定要build
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+}
 ```
 
 ## 二、普通请求
@@ -341,18 +341,18 @@ OkGo.post(Urls.URL_TEXT_UPLOAD)//
 
 ### 6.https请求，需要在初始化的时候配置以下代码
 ```java
-	OkGo.getInstance()
-		...
-		//可以设置https的证书,以下几种方案根据需要自己设置
-		   .setCertificates()                                  //方法一：信任所有证书,不安全有风险
-		// .setCertificates(new SafeTrustManager())            //方法二：自定义信任规则，校验服务端证书
-		// .setCertificates(getAssets().open("srca.cer"))      //方法三：使用预埋证书，校验服务端证书（自签名证书）
-		//方法四：使用bks证书和密码管理客户端证书（双向认证），使用预埋证书，校验服务端证书（自签名证书）
-		// .setCertificates(getAssets().open("xxx.bks"), "123456", getAssets().open("yyy.cer"))//
-		
-		//配置https的域名匹配规则，详细看demo的初始化介绍，不需要就不要加入，使用不当会导致https握手失败
-		// .setHostnameVerifier(new SafeHostnameVerifier())
-		...
+OkGo.getInstance()
+    ...
+    //可以设置https的证书,以下几种方案根据需要自己设置
+       .setCertificates()                                  //方法一：信任所有证书,不安全有风险
+    // .setCertificates(new SafeTrustManager())            //方法二：自定义信任规则，校验服务端证书
+    // .setCertificates(getAssets().open("srca.cer"))      //方法三：使用预埋证书，校验服务端证书（自签名证书）
+    //方法四：使用bks证书和密码管理客户端证书（双向认证），使用预埋证书，校验服务端证书（自签名证书）
+    // .setCertificates(getAssets().open("xxx.bks"), "123456", getAssets().open("yyy.cer"))//
+    
+    //配置https的域名匹配规则，详细看demo的初始化介绍，不需要就不要加入，使用不当会导致https握手失败
+    // .setHostnameVerifier(new SafeHostnameVerifier())
+    ...
 ```
 ### 7.请求功能的所有配置讲解
 
@@ -462,25 +462,25 @@ OkGo.post(Urls.URL_METHOD)    // 请求方式和请求url, get请求不需要拼
 每个请求前都设置了一个参数`tag`，取消则通过` OkGo.cancel(tag)`执行。
 例如：在Activity中，当Activity销毁取消请求，可以在onDestory里面统一取消。
 ```java
-	@Override
-	protected void onDestroy() {
-	    super.onDestroy();
+@Override
+protected void onDestroy() {
+    super.onDestroy();
 
-		//根据 Tag 取消请求
-	    OkGo.getInstance().cancelTag(this);
+    //根据 Tag 取消请求
+    OkGo.getInstance().cancelTag(this);
 
-		//取消所有请求
-	    OkGo.getInstance().cancelAll();
-	}
+    //取消所有请求
+    OkGo.getInstance().cancelAll();
+}
 ```
 ### 9.同步的请求
 execute方法不传入callback即为同步的请求，返回`Response`对象，需要自己解析
 ```java
-	Response response = OkGo.get("http://www.baidu.com")//
-					                .tag(this)//
-					                .headers("aaa", "111")//
-					                .params("bbb", "222")
-								  .execute();
+Response response = OkGo.get("http://www.baidu.com")//
+                                .tag(this)//
+                                .headers("aaa", "111")//
+                                .params("bbb", "222")
+                                .execute();
 ```
 ### 10.参数的顺序
 添加header和param的方法各有三个地方,在提交的时候,他们是有顺序的,如果对提交顺序有需要的话,请注意这里
@@ -488,44 +488,44 @@ execute方法不传入callback即为同步的请求，返回`Response`对象，�
  * 第一个地方,全局初始化时,使用`OkGo.getInstance().addCommonHeaders()`,`OkGo.getInstance().addCommonParams()` 添加
 
 ```java
-    HttpHeaders headers = new HttpHeaders();
-    headers.put("HKAAA", "HVAAA");
-    headers.put("HKBBB", "HVBBB");
-    HttpParams params = new HttpParams();
-    params.put("PKAAA", "PVAAA"); 
-    params.put("PKBBB", "PVBBB");
-    
-    OkGo.getInstance()
-               .addCommonHeaders(headers) //设置全局公共头
-               .addCommonParams(params);  //设置全局公共参数
+HttpHeaders headers = new HttpHeaders();
+headers.put("HKAAA", "HVAAA");
+headers.put("HKBBB", "HVBBB");
+HttpParams params = new HttpParams();
+params.put("PKAAA", "PVAAA"); 
+params.put("PKBBB", "PVBBB");
+
+OkGo.getInstance()
+    .addCommonHeaders(headers) //设置全局公共头
+    .addCommonParams(params);  //设置全局公共参数
 ```
 
  * 第二个地方,`callback`的`onBefore`方法中添加
  
 ```java
-    public abstract class CommonCallback<T> extends AbsCallback<T> {
-        @Override
-        public void onBefore(BaseRequest request) {
-            super.onBefore(request);
-            
-            request.headers("HKCCC", "HVCCC")//
-                    .headers("HKDDD", "HVDDD")//
-                    .params("PKCCC", "PVCCC")//
-                    .params("PKDDD", "PVDDD")//
-        }
+public abstract class CommonCallback<T> extends AbsCallback<T> {
+    @Override
+    public void onBefore(BaseRequest request) {
+        super.onBefore(request);
+        
+        request.headers("HKCCC", "HVCCC")//
+                .headers("HKDDD", "HVDDD")//
+                .params("PKCCC", "PVCCC")//
+                .params("PKDDD", "PVDDD")//
     }
+}
 ```
 
  * 第三个地方,执行网络请求的时候添加
 
 ```java
-    OkGo.get(Urls.URL_METHOD)//
-            .tag(this)//
-            .headers("HKEEE", "HVEEE")//
-            .headers("HKFFF", "HVFFF")//
-            .params("PKEEE", "PVEEE")//
-            .params("PKFFF", "PVFFF")//
-            .execute(new MethodCallBack<>(this, ServerModel.class));
+OkGo.get(Urls.URL_METHOD)//
+        .tag(this)//
+        .headers("HKEEE", "HVEEE")//
+        .headers("HKFFF", "HVFFF")//
+        .params("PKEEE", "PVEEE")//
+        .params("PKFFF", "PVFFF")//
+        .execute(new MethodCallBack<>(this, ServerModel.class));
 ```
  
  那么,最终执行请求的参数的添加顺序为

@@ -22,7 +22,7 @@
 public class Login{
     public int code;
     public String msg;
-    public People data;
+    public ServerModel data;
 
     public class ServerModel{
         public long id;
