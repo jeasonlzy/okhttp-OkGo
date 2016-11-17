@@ -7,14 +7,14 @@ android {
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 24
-        versionCode 16
-        versionName "1.1.0"
+        versionCode 17
+        versionName "1.1.1"
     }
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-//    compile 'com.lzy.net:okgo:2.0.0'
+//    compile 'com.lzy.net:okgo:2.1.0'
     compile project(':okgo')
 }
 

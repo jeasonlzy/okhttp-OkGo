@@ -3,11 +3,12 @@ package com.lzy.okserver.download;
 import android.os.Message;
 import android.text.TextUtils;
 
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.utils.HttpUtils;
+import com.lzy.okgo.utils.OkLogger;
 import com.lzy.okserver.download.db.DownloadDBManager;
 import com.lzy.okserver.listener.DownloadListener;
 import com.lzy.okserver.task.PriorityAsyncTask;
-import com.lzy.okgo.utils.HttpUtils;
-import com.lzy.okgo.utils.OkLogger;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -267,7 +268,7 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
             long curTime = System.currentTimeMillis();
 
             //每200毫秒刷新一次数据
-            if (curTime - lastRefreshUiTime >= 200 || progress == 1.0f) {
+            if (curTime - lastRefreshUiTime >= OkGo.REFRESH_TIME || progress == 1.0f) {
                 postMessage(null, null);
                 lastRefreshUiTime = System.currentTimeMillis();
             }

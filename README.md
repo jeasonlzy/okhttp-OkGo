@@ -35,7 +35,7 @@
 
    对于Eclipse不能运行项目的，提供了apk供直接运行
    
-### 或者点击下载Demo [okgo_v2.0.0.apk](https://github.com/jeasonlzy/okhttp-OkGo/blob/master/okgo_v2.0.0.apk?raw=true)。
+### 或者点击下载Demo [okgo_v2.1.0.apk](https://github.com/jeasonlzy/okhttp-OkGo/blob/master/okgo_v2.1.0.apk?raw=true)。
 
    本项目Demo的网络请求是我自己的服务器，有时候可能不稳定，网速比较慢时请耐心等待。。
    
@@ -43,9 +43,9 @@
 
  * 对于Android Studio的用户，可以选择添加:
 ```java
-    compile 'com.lzy.net:okgo:2.0.0'        //可以单独使用，不需要依赖下方的扩展包
-    compile 'com.lzy.net:okrx:0.1.0'        //RxJava扩展支持，根据需要添加
-	compile 'com.lzy.net:okserver:1.1.0'    //下载管理和上传管理扩展，根据需要添加
+    compile 'com.lzy.net:okgo:2.1.0'        //可以单独使用，不需要依赖下方的扩展包
+    compile 'com.lzy.net:okrx:0.1.1'        //RxJava扩展支持，根据需要添加
+	compile 'com.lzy.net:okserver:1.1.1'    //下载管理和上传管理扩展，根据需要添加
     
     或者
     
@@ -56,9 +56,9 @@
 
  * 对于Eclipse的用户，可以选择添加 `/jar` 目录下的:
 ```java
-	okgo-2.0.0.jar
-	okrx-0.1.0.jar
-	okserver-1.1.0.jar
+	okgo-2.1.0.jar
+	okrx-0.1.1.jar
+	okserver-1.1.1.jar
 ```
  * 如果是以jar包的形式引入`okserver`,需要在清单文件中额外注册一个服务
 ```java
@@ -635,26 +635,26 @@ cookieStore.removeCookie(httpUrl);
 
 okgo, okrx, okserver 所有代码均可以混淆,但是由于底层使用的是 okhttp,它不能混淆,所以只需要添加以下混淆代码就可以了
 ```java
-    #okhttp
-    -dontwarn okhttp3.**
-    -keep class okhttp3.**{*;}
-    
-    #okio
-    -dontwarn okio.**
-    -keep class okio.**{*;}
+#okhttp
+-dontwarn okhttp3.**
+-keep class okhttp3.**{*;}
+
+#okio
+-dontwarn okio.**
+-keep class okio.**{*;}
 ```
 
 当然如果你确实不需要混淆okgo的代码,可以继续添加以下代码
 ```java
-    #okgo
-    -dontwarn com.lzy.okgo.**
-    -keep class com.lzy.okgo.**{*;}
-    
-    #okrx
-    -dontwarn com.lzy.okrx.**
-    -keep class com.lzy.okrx.**{*;}
-    
-    #okserver
-    -dontwarn com.lzy.okserver.**
-    -keep class com.lzy.okserver.**{*;}
+#okgo
+-dontwarn com.lzy.okgo.**
+-keep class com.lzy.okgo.**{*;}
+
+#okrx
+-dontwarn com.lzy.okrx.**
+-keep class com.lzy.okrx.**{*;}
+
+#okserver
+-dontwarn com.lzy.okserver.**
+-keep class com.lzy.okserver.**{*;}
 ```

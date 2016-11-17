@@ -16,6 +16,7 @@
 ```
 
 * 那么你需要定义的JavaBean有两种方式
+
 第一种：将code和msg也定义在javabean中
 ```java
 public class Login{
@@ -46,16 +47,16 @@ public class ServerModel {
 }
 ```
 
-* 提供的demo中按照第二种方式实现的，对于第二种方式，我们再创建 JsonCallback 的时候，需要这么传递泛型将`LzyResponse<ServerModel>`作为一个泛型传递，相当于传递了两层，泛型中包含了又一个泛型
+* 提供的demo中按照第二种方式实现的，对于第二种方式，我们在创建 JsonCallback 的时候，需要这么将`LzyResponse<ServerModel>`作为一个泛型传递，相当于传递了两层，泛型中包含了又一个泛型
 ```java
 OkGo.get(Urls.URL_METHOD)//
-        .tag(this)//
-        .execute(new JsonCallback<LzyResponse<ServerModel>>(this) {
-            @Override
-            public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
-                
-            }
-        });
+    .tag(this)//
+    .execute(new JsonCallback<LzyResponse<ServerModel>>(this) {
+        @Override
+        public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
+            
+        }
+    });
 ```
 
 * 那么在`JsonCallback`中对应的解析代码如下,详细的原理就不说了，下面的注释很详细
