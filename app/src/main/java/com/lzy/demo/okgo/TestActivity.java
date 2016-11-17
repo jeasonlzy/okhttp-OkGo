@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import com.lzy.demo.R;
 import com.lzy.demo.base.BaseActivity;
 import com.lzy.demo.callback.JsonConvert;
-import com.lzy.demo.model.LzyResponse;
 import com.lzy.demo.model.ServerModel;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.adapter.Call;
@@ -78,5 +77,17 @@ public class TestActivity extends BaseActivity {
         set.add("111");
 
         OkGo.getInstance().cancelTag(this);
+    }
+
+    public class LzyResponse<T> {
+        public int code;
+        public String msg;
+        public T data;
+    }
+
+    public class People {
+        public long id;
+        public String name;
+        public int age;
     }
 }

@@ -555,6 +555,11 @@ execute方法不传入callback即为同步的请求，返回`Response`对象，�
 
 以上基本是包含了大部分的业务逻辑，具体情况请参照demo示例，根据业务需求修改！
 
+### [JsonCallback自定义的详细原理与方法点击这里](https://github.com/jeasonlzy/OkGO/blob/master/README_JSONCALLBACK.md)
+### [JsonCallback自定义的详细原理与方法点击这里](https://github.com/jeasonlzy/OkGO/blob/master/README_JSONCALLBACK.md)
+### [JsonCallback自定义的详细原理与方法点击这里](https://github.com/jeasonlzy/OkGO/blob/master/README_JSONCALLBACK.md)
+
+
 ## 四、缓存的使用
 
 ###使用缓存前，必须让缓存的数据`javaBean`对象实现`Serializable`接口，否者会报`NotSerializableException`。
