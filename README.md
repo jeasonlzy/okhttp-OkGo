@@ -35,7 +35,7 @@
 
    对于Eclipse不能运行项目的，提供了apk供直接运行
    
-### 或者点击下载Demo [okgo_v2.1.1.apk](https://github.com/jeasonlzy/okhttp-OkGo/blob/master/okgo_v2.1.0.apk?raw=true)。
+### 或者点击下载Demo [okgo_v2.1.1.apk](https://github.com/jeasonlzy/okhttp-OkGo/blob/master/okgo_v2.1.1.apk?raw=true)。
 
    本项目Demo的网络请求是我自己的服务器，有时候可能不稳定，网速比较慢时请耐心等待。。
    
