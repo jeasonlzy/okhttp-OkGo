@@ -2,13 +2,11 @@
 
 # OkGo - `OkHttpUtils-2.0.0` 升级后改名 `OkGo`,全新完美支持`RxJava`
 
-### 该库是封装了okhttp的网络框架，可以与RxJava完美结合，比Retrofit更简单易用。支持大文件上传下载，上传进度回调，下载进度回调，表单上传（多文件和多参数一起上传），链式调用，可以自定义返回对象，支持Https和自签名证书，支持超时自动重连，支持cookie自动管理，支持四种缓存模式缓存网络数据，支持301、302重定向，扩展了统一的上传管理和下载管理功能
+### 该库是封装了okhttp的标准RESTful风格的网络框架，可以与RxJava完美结合，比Retrofit更简单易用。支持大文件上传下载，上传进度回调，下载进度回调，表单上传（多文件和多参数一起上传），链式调用，可以自定义返回对象，支持Https和自签名证书，支持超时自动重连，支持cookie与session的自动管理，支持四种缓存模式缓存网络数据，支持301、302重定向，扩展了统一的上传管理和下载管理功能
 
 该项目参考了以下项目：
 
- * [https://github.com/hongyangAndroid/okhttp-utils](https://github.com/hongyangAndroid/okhttp-utils)  
  * [https://github.com/yanzhenjie/NoHttp](https://github.com/Y0LANDA/NoHttp) 
- * [https://github.com/wyouflf/xUtils](https://github.com/wyouflf/xUtils) 
  * [https://github.com/square/retrofit](https://github.com/square/retrofit)
 
 在此特别感谢上述作者，喜欢原作的可以去使用原项目。同时欢迎大家下载体验本项目，如果使用过程中遇到什么问题，欢迎反馈。
@@ -21,7 +19,26 @@
 ## 演示
 
 
- ![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo13.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo8.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo11.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo9.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo10.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo12.gif)
+![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo13.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo8.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo11.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo9.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo10.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo12.gif)
+
+
+## 文档目录（点击快速导航）
+- [基本用法与使用注意事项](#用法)  
+- [OkGo,OkRx,OkServer分别支持的功能列表](#3.OkGo目前支持)  
+- [全局配置](#一、全局配置)
+- [请求回调方法及回调顺序介绍](#二、普通请求)
+- [请求基本网络数据,请求Bitmap对象，请求文件下载](#1.基本的网络请求)
+- [上传String类型的文本,上传Json类型的文本](#4.普通Post，直接上传String类型的文本)
+- [https请求](#6.https请求，需要在初始化的时候配置以下代码)
+- [请求功能的所有配置讲解](#7.请求功能的所有配置讲解)
+- [取消请求](#8.取消请求)
+- [同步请求](#9.同步的请求)
+- [请求参数的顺序](#10.参数的顺序)
+- [OkGo内置CallBack介绍](#三、自定义CallBack使用)
+- [JsonCallback自定义的详细原理与方法介绍](https://github.com/jeasonlzy/OkGO/blob/master/README_JSONCALLBACK.md)
+- [OkGO强大的缓存使用介绍](#四、缓存的使用)
+- [cookie的使用与session的保持](#五、cookie的使用与session的保持)
+- [混淆配置](#六、混淆)
 
 
 ## 1.用法
@@ -35,13 +52,14 @@
 
    对于Eclipse不能运行项目的，提供了apk供直接运行
    
-### 或者点击下载Demo [okgo_v2.1.1.apk](https://github.com/jeasonlzy/okhttp-OkGo/blob/master/okgo_v2.1.1.apk?raw=true)。
+### 或者点击下载Demo [okgo_v2.1.1.apk](https://github.com/jeasonlzy/okhttp-OkGo/blob/master/okgo_v2.1.1.apk?raw=true)
 
    本项目Demo的网络请求是我自己的服务器，有时候可能不稳定，网速比较慢时请耐心等待。。
    
    以下是最新版本的版本号，如果你想使用以前的版本，请点击这里，[历史版本](https://github.com/jeasonlzy/okhttp-OkGo/releases)。
 
  * 对于Android Studio的用户，可以选择添加:
+
 ```java
 compile 'com.lzy.net:okgo:2.1.1'        //可以单独使用，不需要依赖下方的扩展包
 compile 'com.lzy.net:okrx:0.1.1'        //RxJava扩展支持，根据需要添加
@@ -77,7 +95,7 @@ okserver-1.1.1.jar
  * 使用缓存时，如果不指定`cacheKey`，默认是用url带参数的全路径名为`cacheKey`。
  * 使用该网络框架时，必须要在 Application 中做初始化 `OkGo.init(this);`。
 
-## 3.OkGo 目前支持
+## 3.OkGo目前支持
 * 一般的 get,post,put,delete,head,options请求
 * 基于Post的大文本数据上传
 * 多文件和多参数统一的表单上传
@@ -93,7 +111,7 @@ okserver-1.1.1.jar
 * 支持根据Tag取消请求
 * 支持自定义泛型Callback，自动根据泛型返回对象
 
-## 4.OkRx 扩展功能
+## 4.OkRx扩展功能
 ### [OkRx使用文档](https://github.com/jeasonlzy/OkGO/blob/master/README_RX.md)  [OkRx使用文档](https://github.com/jeasonlzy/OkGO/blob/master/README_RX.md)  [OkRx使用文档](https://github.com/jeasonlzy/OkGO/blob/master/README_RX.md)
 * 完美结合RxJava
 * 比Retrofit更简单方便
@@ -101,7 +119,7 @@ okserver-1.1.1.jar
 * 支持Json数据的自动解析转换
 * OkGo包含的所有请求功能,OkRx全部支持
 
-## 5.OkServer 扩展功能
+## 5.OkServer扩展功能
 
 ### 5.1 统一的文件下载管理(DownloadManager)：
  * 结合OkGo的request进行网络请求,支持与OkGo保持相同的全局公共参数,同时支持请求传递参数
