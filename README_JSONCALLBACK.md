@@ -17,7 +17,7 @@
 
 * 那么你需要定义的JavaBean有两种方式
 
-第一种：将code和msg也定义在javabean中
+### 第一种：将code和msg也定义在javabean中
 ```java
 public class Login{
     public int code;
@@ -32,7 +32,44 @@ public class Login{
 }
 ```
 
-第二种：使用泛型，分离基础包装与实际数据，这样子需要定义两个javabean，一个全项目通用的`LzyResponse`，一个单纯的业务模块需要的数据
+* 对于这种方式，我们在创建 JsonCallback 的时候，需要这么将`Login`作为一个泛型传递
+```java
+OkGo.get(Urls.URL_METHOD)//
+    .tag(this)//
+    .execute(new JsonCallback<Login>(this) {
+        @Override
+        public void onSuccess(Login login, Call call, Response response) {
+            
+        }
+    });
+```
+
+* 那么在`JsonCallback`中对应的解析代码如下,详细的原理就不说了，下面的注释很详细
+```java
+@Override
+public T convertSuccess(Response response) throws Exception {
+
+    //以下代码是通过泛型解析实际参数,泛型必须传
+
+    //com.lzy.demo.callback.DialogCallback<com.lzy.demo.model.Login> 得到类的泛型，包括了泛型参数
+    Type genType = getClass().getGenericSuperclass();
+    //从上述的类中取出真实的泛型参数，有些类可能有多个泛型，所以是数值
+    Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+    //我们的示例代码中，只有一个泛型，所以取出第一个，得到如下结果
+    //com.lzy.demo.model.Login
+    Type type = params[0];
+
+    //这里我们既然都已经拿到了泛型的真实类型，即对应的 class ，那么当然可以开始解析数据了，我们采用 Gson 解析
+    //以下代码是根据泛型解析数据，返回对象，返回的对象自动以参数的形式传递到 onSuccess 中，可以直接使用
+    JsonReader jsonReader = new JsonReader(response.body().charStream());
+    //有数据类型，表示有data
+    T data = Convert.fromJson(jsonReader, type);
+    response.close();
+    return data;
+}
+```
+
+### 第二种：使用泛型，分离基础包装与实际数据，这样子需要定义两个javabean，一个全项目通用的`LzyResponse`，一个单纯的业务模块需要的数据
 ```java
 public class LzyResponse<T> {
     public int code;
@@ -127,6 +164,23 @@ public T convertSuccess(Response response) throws Exception {
     }
 }
 ```
-* JsonConvet 与 JsonCallback 一样，只是 JsonCallback 是在传统回调形式中用的，而 JsonConvert 是在 OkRx 中使用的，其余没有任何区别
 
-### 更详细的代码请自行看 demo ，有很详细的注释
+### 更详细的代码请自行看 demo ，有很详细的注释，JsonConvet 与 JsonCallback 一样，只是 JsonCallback 是在传统回调形式中用的，而 JsonConvert 是在 OkRx 中使用的，其余没有任何区别
+
+### 总结：
+
+分析上面两种写法，对于第一种，如果服务端返回了这么个数据
+```java
+{
+	"code":300,
+	"msg":"用户名或密码错误",	
+}
+```
+
+那么对于第一种，很明显，这样的的数据应该要回调onError的，但是我们在convertSuccess中只是解析的了数据，并不知道数据中的code码300是表示错误数据的，我们任然会解析数据并返回，这就导致了会回调onSuccess，然后我们需要在onSuccess中判断code码，给予用户错误提示或者成功跳转的逻辑。这样，就把无论正确的还是错误的数据，都交给了onSuccess处理，在使用上不太友好。</br>
+
+所以我推荐的是第二种方式，这种方式不仅可以正确的解析数据，而且能在解析的过程中判断错误码，并根据不同的错误码抛出不同的异常错误（这里抛出异常并不会导致okgo挂掉，而是以异常的形式通知okgo回调onError，并且将该异常以参数的形式传递给onError），这样做后，在onSuccess中处理的一定是成功的数据，在onError中处理的一定是失败的数据，达到了有好的逻辑交互。</br>
+
+正是因为我推荐的是第二种写法，而第二种写法是依赖于业务中定义的数据结构的，不同的项目定义的数据结构都不一样，无法封装到库中，所以以demo的形式提供示例代码，根据需要自己修改。</br>
+
+

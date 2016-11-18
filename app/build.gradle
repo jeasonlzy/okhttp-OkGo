@@ -11,8 +11,8 @@ android {
         applicationId "com.lzy.demo"
         minSdkVersion 14
         targetSdkVersion 24
-        versionCode 21
-        versionName "2.1.0"
+        versionCode 22
+        versionName "2.1.1"
     }
     signingConfigs {
         appkey {
@@ -76,9 +76,9 @@ dependencies {
     compile 'com.lzy.widget:ninegridview:0.2.1'
     compile 'com.lzy.widget:imagepicker:0.3.2'
     compile 'com.lzy.widget:view-core:0.2.1'
-//  compile 'com.lzy.net:okgo:+'
-//  compile 'com.lzy.net:okrx:+'
-//  compile 'com.lzy.net:okserver:+'
+//    compile 'com.lzy.net:okgo:+'
+//    compile 'com.lzy.net:okrx:+'
+//    compile 'com.lzy.net:okserver:+'
     compile project(':okgo')
     compile project(':okrx')
     compile project(':okserver')

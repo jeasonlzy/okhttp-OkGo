@@ -30,14 +30,14 @@
         android:id="@+id/removeCookie"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="移除cookie"
+        android:text="手动移除cookie"
         android:textAllCaps="false"/>
 
     <Button
         android:id="@+id/updateCookie"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="修改cookie"
+        android:text="手动修改cookie"
         android:textAllCaps="false"/>
 
 </LinearLayout>
