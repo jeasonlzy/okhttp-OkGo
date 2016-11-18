@@ -30,11 +30,12 @@
 - [请求回调方法及回调顺序介绍](#二普通请求)
 - [请求基本网络数据,请求Bitmap对象，请求文件下载](#1基本的网络请求)
 - [上传String类型的文本,上传Json类型的文本](#4普通Post直接上传String类型的文本)
-- [https请求](#6https请求需要在初始化的时候配置以下代码)
-- [请求功能的所有配置讲解](#7请求功能的所有配置讲解)
-- [取消请求](#8取消请求)
-- [同步请求](#9同步的请求)
-- [请求参数的顺序](#10参数的顺序)
+- [上传图片或者文件并回调上传进度,表单上传](6上传图片或者文件)
+- [https请求](#7https请求需要在初始化的时候配置以下代码)
+- [请求功能的所有配置讲解](#8请求功能的所有配置讲解)
+- [取消请求](#9取消请求)
+- [同步请求](#10同步的请求)
+- [请求参数的顺序](#11参数的顺序)
 - [OkGo内置CallBack介绍](#三自定义CallBack使用)
 - [JsonCallback自定义的详细原理与方法介绍](https://github.com/jeasonlzy/OkGO/blob/master/README_JSONCALLBACK.md)
 - [OkGO强大的缓存使用介绍](#四缓存的使用)
@@ -357,7 +358,31 @@ OkGo.post(Urls.URL_TEXT_UPLOAD)//
 	});
 ```
 
-### 6.https请求，需要在初始化的时候配置以下代码
+
+### 6.上传图片或者文件
+上传文件支持文件与参数一起同时上传，也支持一个key上传多个文件
+```java
+OkGo.post(URL_FORM_UPLOAD)//
+	.tag(this)//
+	.params("param1", "paramValue1") 		// 这里可以上传参数
+	.params("file1", new File("filepath1"))   // 可以添加文件上传
+	.params("file2", new File("filepath2")) 	// 支持多文件同时添加上传
+	.addFileParams("key", List<File> files)	// 这里支持一个key传多个文件
+	.execute(new StringCallback() {
+	    @Override
+	    public void onSuccess(String s, Call call, Response response) {
+			//上传成功
+	    }
+	    
+	    	    
+	    @Override
+        public void upProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
+            //这里回调上传进度(该回调在主线程,可以直接更新ui)
+        }
+	});
+```
+
+### 7.https请求，需要在初始化的时候配置以下代码
 ```java
 OkGo.getInstance()
     ...
@@ -372,7 +397,7 @@ OkGo.getInstance()
     // .setHostnameVerifier(new SafeHostnameVerifier())
     ...
 ```
-### 7.请求功能的所有配置讲解
+### 8.请求功能的所有配置讲解
 
 以下代码包含了以下内容：
 
@@ -476,7 +501,7 @@ OkGo.post(Urls.URL_METHOD)    // 请求方式和请求url, get请求不需要拼
 		}
     });
 ```
-### 8.取消请求
+### 9.取消请求
 每个请求前都设置了一个参数`tag`，取消则通过` OkGo.cancel(tag)`执行。
 例如：在Activity中，当Activity销毁取消请求，可以在onDestory里面统一取消。
 ```java
@@ -491,7 +516,7 @@ protected void onDestroy() {
     OkGo.getInstance().cancelAll();
 }
 ```
-### 9.同步的请求
+### 10.同步的请求
 execute方法不传入callback即为同步的请求，返回`Response`对象，需要自己解析
 ```java
 Response response = OkGo.get("http://www.baidu.com")//
@@ -500,7 +525,7 @@ Response response = OkGo.get("http://www.baidu.com")//
                                 .params("bbb", "222")
                                 .execute();
 ```
-### 10.参数的顺序
+### 11.参数的顺序
 添加header和param的方法各有三个地方,在提交的时候,他们是有顺序的,如果对提交顺序有需要的话,请注意这里
 
  * 第一个地方,全局初始化时,使用`OkGo.getInstance().addCommonHeaders()`,`OkGo.getInstance().addCommonParams()` 添加
