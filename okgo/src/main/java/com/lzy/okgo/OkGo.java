@@ -89,6 +89,7 @@ public class OkGo {
     }
 
     public OkHttpClient getOkHttpClient() {
+        if (okHttpClient == null) okHttpClient = okHttpClientBuilder.build();
         return okHttpClient;
     }
 
@@ -285,11 +286,6 @@ public class OkGo {
     public OkGo addInterceptor(Interceptor interceptor) {
         okHttpClientBuilder.addInterceptor(interceptor);
         return this;
-    }
-
-    /** 构建okhttp客户端，一定要调用 */
-    public void build() {
-        okHttpClient = okHttpClientBuilder.build();
     }
 
     /** 根据Tag取消请求 */

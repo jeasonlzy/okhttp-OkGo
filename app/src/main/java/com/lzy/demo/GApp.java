@@ -92,8 +92,7 @@ public class GApp extends Application {
 
                     //这两行同上，不需要就不要加入
                     .addCommonHeaders(headers)  //设置全局公共头
-                    .addCommonParams(params)    //设置全局公共参数
-                    .build();                   //一定要build，一定要build，一定要build
+                    .addCommonParams(params);   //设置全局公共参数
 
         } catch (Exception e) {
             e.printStackTrace();
