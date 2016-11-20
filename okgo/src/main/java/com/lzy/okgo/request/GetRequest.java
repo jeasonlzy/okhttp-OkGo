@@ -16,6 +16,8 @@ import okhttp3.RequestBody;
  */
 public class GetRequest extends BaseRequest<GetRequest> {
 
+    protected String method = "GET";
+
     public GetRequest(String url) {
         super(url);
     }

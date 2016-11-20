@@ -43,7 +43,7 @@ import okhttp3.OkHttpClient;
  */
 public class OkGo {
     public static final int DEFAULT_MILLISECONDS = 60000;       //默认的超时时间
-    public static final int REFRESH_TIME = 100;                 //回调刷新时间（单位ms）
+    public static int REFRESH_TIME = 100;                       //回调刷新时间（单位ms）
 
     private Handler mDelivery;                                  //用于在主线程执行的调度器
     private OkHttpClient.Builder okHttpClientBuilder;           //ok请求的客户端

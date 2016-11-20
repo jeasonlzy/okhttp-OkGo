@@ -18,7 +18,6 @@ import com.lzy.demo.base.BaseActivity;
 import com.lzy.demo.model.ApkModel;
 import com.lzy.demo.ui.NumberProgressBar;
 import com.lzy.demo.utils.ApkUtils;
-import com.lzy.demo.utils.AppCacheUtils;
 import com.lzy.okserver.download.DownloadInfo;
 import com.lzy.okserver.download.DownloadManager;
 import com.lzy.okserver.download.DownloadService;
@@ -125,7 +124,7 @@ public class DownloadManagerActivity extends BaseActivity implements View.OnClic
             holder.refresh(downloadInfo);
 
             //对于非进度更新的ui放在这里，对于实时更新的进度ui，放在holder中
-            ApkModel apk = (ApkModel) AppCacheUtils.getInstance(DownloadManagerActivity.this).getObject(downloadInfo.getUrl());
+            ApkModel apk = (ApkModel) downloadInfo.getData();
             if (apk != null) {
                 Glide.with(DownloadManagerActivity.this).load(apk.getIconUrl()).error(R.mipmap.ic_launcher).into(holder.icon);
                 holder.name.setText(apk.getName());

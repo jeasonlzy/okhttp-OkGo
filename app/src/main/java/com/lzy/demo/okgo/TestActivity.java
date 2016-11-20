@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import com.lzy.demo.R;
 import com.lzy.demo.base.BaseActivity;
 import com.lzy.demo.callback.JsonConvert;
+import com.lzy.demo.model.LzyResponse;
 import com.lzy.demo.model.ServerModel;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.adapter.Call;
@@ -19,7 +20,6 @@ import com.lzy.okgo.convert.StringConvert;
 import com.lzy.okrx.RxAdapter;
 
 import java.io.File;
-import java.util.HashSet;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -52,7 +52,7 @@ public class TestActivity extends BaseActivity {
 
     @OnClick(R.id.btn2)
     public void btn2(View view) {
-        OkGo.get("https://github.com/")//
+        OkGo.get("http://app.mi.com/download/433097?ref=search")//
                 .tag(this)//
                 .execute(new StringCallback() {
                     @Override
@@ -65,29 +65,15 @@ public class TestActivity extends BaseActivity {
                         e.printStackTrace();
                         System.out.println("--onError---");
                     }
+
+                    @Override
+                    public void downloadProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
+                        System.out.println(currentSize + " " + totalSize + " " + progress);
+                    }
                 });
     }
 
     @OnClick(R.id.btn3)
     public void btn3(View view) {
-
-        HashSet<String> set = new HashSet<>();
-        set.add("111");
-        set.add("222");
-        set.add("111");
-
-        OkGo.getInstance().cancelTag(this);
-    }
-
-    public class LzyResponse<T> {
-        public int code;
-        public String msg;
-        public T data;
-    }
-
-    public class People {
-        public long id;
-        public String name;
-        public int age;
     }
 }

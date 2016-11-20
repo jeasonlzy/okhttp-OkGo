@@ -4,8 +4,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.lzy.okgo.OkGo;
-import com.lzy.okserver.download.DownloadInfo;
 import com.lzy.okgo.utils.OkLogger;
+import com.lzy.okserver.download.DownloadInfo;
 
 /**
  * ================================================
@@ -19,11 +19,12 @@ import com.lzy.okgo.utils.OkLogger;
 public class DownloadInfoHelper extends SQLiteOpenHelper {
 
     private static final String DB_CACHE_NAME = "okgo_server.db";
-    public static final int DB_CACHE_VERSION = 3;
+    public static final int DB_CACHE_VERSION = 4;
     public static final String TABLE_NAME = "download_table";
 
     //四条sql语句
-    private static final String SQL_CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "(" + //
+    private static final String SQL_CREATE_TABLE = //
+            "CREATE TABLE " + TABLE_NAME + "(" + //
             DownloadInfo.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +//
             DownloadInfo.TASK_KEY + " VARCHAR, " +//
             DownloadInfo.URL + " VARCHAR, " +//
@@ -35,7 +36,8 @@ public class DownloadInfoHelper extends SQLiteOpenHelper {
             DownloadInfo.DOWNLOAD_LENGTH + " INTEGER, " +//
             DownloadInfo.NETWORK_SPEED + " INTEGER, " +//
             DownloadInfo.STATE + " INTEGER, " +//
-            DownloadInfo.DOWNLOAD_REQUEST + " BLOB)";
+            DownloadInfo.DOWNLOAD_REQUEST + " BLOB, " +//
+            DownloadInfo.DATA + " BLOB)";
     private static final String SQL_CREATE_UNIQUE_INDEX = "CREATE UNIQUE INDEX cache_unique_index ON " + TABLE_NAME + "(\"" + DownloadInfo.TASK_KEY + "\")";
     private static final String SQL_DELETE_TABLE = "DROP TABLE " + TABLE_NAME;
     private static final String SQL_DELETE_UNIQUE_INDEX = "DROP INDEX cache_unique_index";
@@ -64,7 +66,7 @@ public class DownloadInfoHelper extends SQLiteOpenHelper {
         if (newVersion != oldVersion) {
             db.beginTransaction();
             try {
-                if (newVersion > 2) {
+                if (newVersion > 3) {
                     db.execSQL(SQL_DELETE_UNIQUE_INDEX);
                     db.execSQL(SQL_DELETE_TABLE);
                 }

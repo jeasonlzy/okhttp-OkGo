@@ -38,6 +38,7 @@ import okhttp3.Response;
 public abstract class BaseRequest<R extends BaseRequest> {
 
     protected String url;
+    protected String method;
     protected String baseUrl;
     protected Object tag;
     protected long readTimeOut;
@@ -308,7 +309,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
      * GET,POST,HEAD,PUT,DELETE,OPTIONS
      */
     public String getMethod() {
-        return mRequest.method();
+        return method;
     }
 
     /** 根据不同的请求方式和参数，生成不同的RequestBody */

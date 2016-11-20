@@ -9,6 +9,7 @@ import com.lzy.okserver.listener.DownloadListener;
 import com.lzy.okserver.task.ExecutorWithListener;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -74,14 +75,19 @@ public class DownloadManager {
         }
     }
 
-    /** 添加一个下载任务,一句taskTag标识是否属于同一个任务 */
+    /** 添加一个下载任务,依据taskTag标识是否属于同一个任务 */
     public void addTask(String taskTag, BaseRequest request, DownloadListener listener) {
-        addTask(null, taskTag, request, listener, false);
+        addTask(null, taskTag, null, request, listener, false);
     }
 
-    /** 添加一个下载任务,一句taskTag标识是否属于同一个任务 */
+    /** 添加一个下载任务,依据taskTag标识是否属于同一个任务 */
+    public void addTask(String taskTag, Serializable data, BaseRequest request, DownloadListener listener) {
+        addTask(null, taskTag, data, request, listener, false);
+    }
+
+    /** 添加一个下载任务,依据taskTag标识是否属于同一个任务 */
     public void addTask(String fileName, String taskTag, BaseRequest request, DownloadListener listener) {
-        addTask(fileName, taskTag, request, listener, false);
+        addTask(fileName, taskTag, null, request, listener, false);
     }
 
     /**
@@ -91,7 +97,7 @@ public class DownloadManager {
      * @param listener  下载监听
      * @param isRestart 是否重新开始下载
      */
-    private void addTask(String fileName, String taskTag, BaseRequest request, DownloadListener listener, boolean isRestart) {
+    private void addTask(String fileName, String taskTag, Serializable data, BaseRequest request, DownloadListener listener, boolean isRestart) {
         DownloadInfo downloadInfo = getDownloadInfo(taskTag);
         if (downloadInfo == null) {
             downloadInfo = new DownloadInfo();
@@ -101,6 +107,7 @@ public class DownloadManager {
             downloadInfo.setRequest(request);
             downloadInfo.setState(DownloadManager.NONE);
             downloadInfo.setTargetFolder(mTargetFolder);
+            downloadInfo.setData(data);
             DownloadDBManager.INSTANCE.replace(downloadInfo);
             mDownloadInfoList.add(downloadInfo);
         }
@@ -200,7 +207,7 @@ public class DownloadManager {
                         //因为该监听是全局监听，每次任务被移除都会回调，所以以下方法执行一次后，必须移除，否者会反复调用
                         threadPool.getExecutor().removeOnTaskEndListener(this);
                         //此时监听给空，表示会使用之前的监听，true表示重新下载，会删除临时文件
-                        addTask(downloadInfo.getFileName(), downloadInfo.getTaskKey(), downloadInfo.getRequest(), downloadInfo.getListener(), true);
+                        addTask(downloadInfo.getFileName(), downloadInfo.getTaskKey(), downloadInfo.getData(), downloadInfo.getRequest(), downloadInfo.getListener(), true);
                     }
                 }
             });

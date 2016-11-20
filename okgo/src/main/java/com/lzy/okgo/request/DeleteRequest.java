@@ -20,6 +20,8 @@ import okhttp3.RequestBody;
  */
 public class DeleteRequest extends BaseBodyRequest<DeleteRequest> {
 
+    protected String method = "DELETE";
+
     public DeleteRequest(String url) {
         super(url);
     }

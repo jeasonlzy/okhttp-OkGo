@@ -5,7 +5,6 @@ import android.text.TextUtils;
 
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.utils.HttpUtils;
-import com.lzy.okgo.utils.OkLogger;
 import com.lzy.okserver.download.db.DownloadDBManager;
 import com.lzy.okserver.listener.DownloadListener;
 import com.lzy.okserver.task.PriorityAsyncTask;
@@ -76,8 +75,6 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
     /** 每个任务进队列的时候，都会执行该方法 */
     @Override
     protected void onPreExecute() {
-        OkLogger.e("onPreExecute:" + mDownloadInfo.getFileName());
-
         //添加成功的回调
         DownloadListener listener = mDownloadInfo.getListener();
         if (listener != null) listener.onAdd(mDownloadInfo);
@@ -105,7 +102,6 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
     @Override
     protected DownloadInfo doInBackground(Void... params) {
         if (isCancelled()) return mDownloadInfo;
-        OkLogger.e("doInBackground:" + mDownloadInfo.getFileName());
         mPreviousTime = System.currentTimeMillis();
         mDownloadInfo.setNetworkSpeed(0);
         mDownloadInfo.setState(DownloadManager.DOWNLOADING);
@@ -122,6 +118,13 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
             postMessage("网络异常", e);
             return mDownloadInfo;
         }
+        int code = response.code();
+        if (code == 404 || code >= 500) {
+            mDownloadInfo.setNetworkSpeed(0);
+            mDownloadInfo.setState(DownloadManager.ERROR);
+            postMessage("服务器数据错误", null);
+            return mDownloadInfo;
+        }
         //构建下载文件路径，如果有设置，就用设置的，否者就自己创建
         String url = mDownloadInfo.getUrl();
         String fileName = mDownloadInfo.getFileName();
@@ -130,7 +133,9 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
             mDownloadInfo.setFileName(fileName);
         }
         if (TextUtils.isEmpty(mDownloadInfo.getTargetPath())) {
-            File file = new File(mDownloadInfo.getTargetFolder(), fileName);
+            File targetFolder = new File(mDownloadInfo.getTargetFolder());
+            if (!targetFolder.exists()) targetFolder.mkdirs();
+            File file = new File(targetFolder, fileName);
             mDownloadInfo.setTargetPath(file.getAbsolutePath());
         }
         //检查文件有效性，文件大小大于总文件大小
@@ -179,7 +184,6 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
 
         //循环结束走到这里，a.下载完成     b.暂停      c.判断是否下载出错
         if (isCancelled()) {
-            OkLogger.e("state: 暂停 " + mDownloadInfo.getState());
             mDownloadInfo.setNetworkSpeed(0);
             if (isPause) mDownloadInfo.setState(DownloadManager.PAUSE); //暂停
             else mDownloadInfo.setState(DownloadManager.NONE);          //停止

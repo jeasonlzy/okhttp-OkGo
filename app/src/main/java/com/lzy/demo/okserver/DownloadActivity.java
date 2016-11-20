@@ -3,6 +3,7 @@ package com.lzy.demo.okserver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,11 +22,10 @@ import com.lzy.demo.base.BaseActivity;
 import com.lzy.demo.base.BaseRecyclerAdapter;
 import com.lzy.demo.base.DividerItemDecoration;
 import com.lzy.demo.model.ApkModel;
-import com.lzy.demo.utils.AppCacheUtils;
-import com.lzy.okserver.download.DownloadManager;
-import com.lzy.okserver.download.DownloadService;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.request.GetRequest;
+import com.lzy.okserver.download.DownloadManager;
+import com.lzy.okserver.download.DownloadService;
 
 import java.util.ArrayList;
 
@@ -53,6 +53,7 @@ public class DownloadActivity extends BaseActivity {
 
         initData();
         downloadManager = DownloadService.getDownloadManager();
+        downloadManager.setTargetFolder(Environment.getExternalStorageDirectory().getAbsolutePath() + "/aaa/");
 
         targetFolder.setText("下载路径: " + downloadManager.getTargetFolder());
         sbCorePoolSize.setMax(5);
@@ -150,8 +151,7 @@ public class DownloadActivity extends BaseActivity {
                             .headers("headerKey2", "headerValue2")//
                             .params("paramKey1", "paramValue1")//
                             .params("paramKey2", "paramValue2");
-                    downloadManager.addTask(apkModel.getUrl(), request, null);
-                    AppCacheUtils.getInstance(getApplicationContext()).put(apkModel.getUrl(), apkModel);
+                    downloadManager.addTask(apkModel.getUrl(), apkModel, request, null);
                     download.setText("已在队列");
                     download.setEnabled(false);
                 }

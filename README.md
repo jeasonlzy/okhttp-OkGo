@@ -54,7 +54,7 @@
 
    对于Eclipse不能运行项目的，提供了apk供直接运行
    
-### 或者点击下载Demo [okgo_v2.1.1.apk](https://github.com/jeasonlzy/okhttp-OkGo/blob/master/okgo_v2.1.1.apk?raw=true)
+### 或者点击下载Demo [okgo_v2.1.2.apk](https://github.com/jeasonlzy/okhttp-OkGo/blob/master/okgo_v2.1.2.apk?raw=true)
 
    本项目Demo的网络请求是我自己的服务器，有时候可能不稳定，网速比较慢时请耐心等待。。
    
@@ -63,9 +63,9 @@
  * 对于Android Studio的用户，可以选择添加:
 
 ```java
-compile 'com.lzy.net:okgo:2.1.1'        //可以单独使用，不需要依赖下方的扩展包
-compile 'com.lzy.net:okrx:0.1.1'        //RxJava扩展支持，根据需要添加
-compile 'com.lzy.net:okserver:1.1.1'    //下载管理和上传管理扩展，根据需要添加
+compile 'com.lzy.net:okgo:2.1.2'        //可以单独使用，不需要依赖下方的扩展包
+compile 'com.lzy.net:okrx:0.1.2'        //RxJava扩展支持，根据需要添加
+compile 'com.lzy.net:okserver:1.1.2'    //下载管理和上传管理扩展，根据需要添加
 
 或者
 
@@ -76,9 +76,9 @@ compile 'com.lzy.net:okserver:+'    //版本号使用 + 可以自动引用最新
 
  * 对于Eclipse的用户，可以选择添加 `/jar` 目录下的:
 ```java
-okgo-2.1.1.jar
-okrx-0.1.1.jar
-okserver-1.1.1.jar
+okgo-2.1.2.jar
+okrx-0.1.2.jar
+okserver-1.1.2.jar
 ```
  * 如果是以jar包的形式引入`okserver`,需要在清单文件中额外注册一个服务
 ```java

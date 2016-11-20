@@ -20,6 +20,8 @@ import okhttp3.RequestBody;
  */
 public class OptionsRequest extends BaseBodyRequest<OptionsRequest> {
 
+    protected String method = "OPTIONS";
+
     public OptionsRequest(String url) {
         super(url);
     }

@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 24
-        versionCode 2
-        versionName "0.1.1"
+        versionCode 3
+        versionName "0.1.2"
     }
     buildTypes {
         release {
@@ -22,7 +22,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'io.reactivex:rxjava:1.2.0'
     compile 'io.reactivex:rxandroid:1.2.1'
-//    compile 'com.lzy.net:okgo:2.1.0'
+//    compile 'com.lzy.net:okgo:2.1.2'
     compile project(':okgo')
 }
 

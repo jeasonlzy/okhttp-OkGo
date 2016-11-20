@@ -13,6 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 /**
  * ================================================
@@ -38,6 +39,7 @@ public class DownloadInfo implements Comparable<DownloadInfo> {
     public static final String NETWORK_SPEED = "networkSpeed";
     public static final String STATE = "state";
     public static final String DOWNLOAD_REQUEST = "downloadRequest";
+    public static final String DATA = "data";
 
     private int id;                     //id自增长
     private String taskKey;             //下载的标识键
@@ -51,6 +53,7 @@ public class DownloadInfo implements Comparable<DownloadInfo> {
     private long networkSpeed;          //下载速度
     private int state = 0;              //当前状态
     private BaseRequest request;        //当前任务的网络请求
+    private Serializable data;          //额外的数据
 
     private DownloadRequest downloadRequest = new DownloadRequest();
     private DownloadTask task;          //执行当前下载的任务
@@ -98,6 +101,24 @@ public class DownloadInfo implements Comparable<DownloadInfo> {
                 OkLogger.e(e);
             }
         }
+
+        try {
+            baos = new ByteArrayOutputStream();
+            oos = new ObjectOutputStream(baos);
+            oos.writeObject(downloadInfo.getData());
+            oos.flush();
+            byte[] data = baos.toByteArray();
+            values.put(DownloadInfo.DATA, data);
+        } catch (IOException e) {
+            OkLogger.e(e);
+        } finally {
+            try {
+                if (oos != null) oos.close();
+                if (baos != null) baos.close();
+            } catch (IOException e) {
+                OkLogger.e(e);
+            }
+        }
         return values;
     }
 
@@ -115,9 +136,9 @@ public class DownloadInfo implements Comparable<DownloadInfo> {
         info.setNetworkSpeed(cursor.getLong(cursor.getColumnIndex(DownloadInfo.NETWORK_SPEED)));
         info.setState(cursor.getInt(cursor.getColumnIndex(DownloadInfo.STATE)));
 
-        byte[] requestData = cursor.getBlob(cursor.getColumnIndex(DownloadInfo.DOWNLOAD_REQUEST));
         ByteArrayInputStream bais = null;
         ObjectInputStream ois = null;
+        byte[] requestData = cursor.getBlob(cursor.getColumnIndex(DownloadInfo.DOWNLOAD_REQUEST));
         try {
             if (requestData != null) {
                 bais = new ByteArrayInputStream(requestData);
@@ -133,6 +154,25 @@ public class DownloadInfo implements Comparable<DownloadInfo> {
                     request.headers(downloadRequest.headers);
                     info.setRequest(request);
                 }
+            }
+        } catch (Exception e) {
+            OkLogger.e(e);
+        } finally {
+            try {
+                if (ois != null) ois.close();
+                if (bais != null) bais.close();
+            } catch (IOException e) {
+                OkLogger.e(e);
+            }
+        }
+
+        byte[] data = cursor.getBlob(cursor.getColumnIndex(DownloadInfo.DATA));
+        try {
+            if (data != null) {
+                bais = new ByteArrayInputStream(data);
+                ois = new ObjectInputStream(bais);
+                Serializable serializableData = (Serializable) ois.readObject();
+                info.setData(serializableData);
             }
         } catch (Exception e) {
             OkLogger.e(e);
@@ -269,6 +309,14 @@ public class DownloadInfo implements Comparable<DownloadInfo> {
 
     public void removeListener() {
         listener = null;
+    }
+
+    public Serializable getData() {
+        return data;
+    }
+
+    public void setData(Serializable data) {
+        this.data = data;
     }
 
     /** taskKey 相同就认为是同一个任务 */
