@@ -155,7 +155,8 @@ public class HttpLoggingInterceptor implements Interceptor {
      * Returns true if the body in question probably contains human readable text. Uses a small sample
      * of code points to detect unicode control characters commonly used in binary file signatures.
      */
-    static boolean isPlaintext(MediaType mediaType) {
+    private static boolean isPlaintext(MediaType mediaType) {
+        if (mediaType == null) return false;
         if (mediaType.type() != null && mediaType.type().equals("text")) {
             return true;
         }

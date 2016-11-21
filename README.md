@@ -63,7 +63,7 @@
  * 对于Android Studio的用户，可以选择添加:
 
 ```java
-compile 'com.lzy.net:okgo:2.1.2'        //可以单独使用，不需要依赖下方的扩展包
+compile 'com.lzy.net:okgo:2.1.3'        //可以单独使用，不需要依赖下方的扩展包
 compile 'com.lzy.net:okrx:0.1.2'        //RxJava扩展支持，根据需要添加
 compile 'com.lzy.net:okserver:1.1.2'    //下载管理和上传管理扩展，根据需要添加
 
@@ -76,7 +76,7 @@ compile 'com.lzy.net:okserver:+'    //版本号使用 + 可以自动引用最新
 
  * 对于Eclipse的用户，可以选择添加 `/jar` 目录下的:
 ```java
-okgo-2.1.2.jar
+okgo-2.1.3.jar
 okrx-0.1.2.jar
 okserver-1.1.2.jar
 ```
