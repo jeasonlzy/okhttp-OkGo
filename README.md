@@ -366,8 +366,10 @@ OkGo.post(Urls.URL_TEXT_UPLOAD)//
 
 #### 1).很多人会说需要在上传文件到时候，要把`Content-Type`修改掉，变成`multipart/form-data`，就像下面这样的。其实在使用OkGo的时候，只要你添加了文件，这里的的`Content-Type`不需要你手动设置，OkGo自动添加该请求头，同时，OkGo也不允许你修改该请求头。
 > Content-Type: multipart/form-data; boundary=---------------34jjk5234j5234kjggu34525
+
 #### 2).如果没有文件，那么OkGo将自动使用以下请求头，同样OkGo也不允许你修改该请求头。
 > Content-Type: application/x-www-form-urlencoded 
+
 #### 3).如果你的服务器希望你在没有文件的时候依然使用`multipart/form-data`请求，那么可以使用`.isMultipart(true)`这个方法强制修改，一般来说是不需要强制的。
 
 ```java
