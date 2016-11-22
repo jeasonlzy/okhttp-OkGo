@@ -76,10 +76,10 @@ public class JsonConvert<T> implements Converter<T> {
         JsonReader jsonReader = new JsonReader(response.body().charStream());
         if (rawType == Void.class) {
             //无数据类型,表示没有data数据的情况（以  new DialogCallback<LzyResponse<Void>>(this)  以这种形式传递的泛型)
-            SimpleResponse baseWbgResponse = Convert.fromJson(jsonReader, SimpleResponse.class);
+            SimpleResponse simpleResponse = Convert.fromJson(jsonReader, SimpleResponse.class);
             response.close();
             //noinspection unchecked
-            return (T) baseWbgResponse.toLzyResponse();
+            return (T) simpleResponse.toLzyResponse();
         } else if (rawType == LzyResponse.class) {
             //有数据类型，表示有data
             LzyResponse lzyResponse = Convert.fromJson(jsonReader, type);

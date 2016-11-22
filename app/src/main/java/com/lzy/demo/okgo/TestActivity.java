@@ -11,6 +11,7 @@ import com.lzy.demo.base.BaseActivity;
 import com.lzy.demo.callback.JsonConvert;
 import com.lzy.demo.model.LzyResponse;
 import com.lzy.demo.model.ServerModel;
+import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.adapter.Call;
 import com.lzy.okgo.callback.StringCallback;
@@ -52,23 +53,15 @@ public class TestActivity extends BaseActivity {
 
     @OnClick(R.id.btn2)
     public void btn2(View view) {
-        OkGo.get("http://app.mi.com/download/433097?ref=search")//
+        OkGo.post(Urls.URL_METHOD)//
                 .tag(this)//
+                .params("aaa","111",false)
+                .params("aaa","222",false)
+                .params("aaa","333",false)
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(String s, okhttp3.Call call, Response response) {
                         System.out.println("---onSuccess--");
-                    }
-
-                    @Override
-                    public void onError(okhttp3.Call call, Response response, Exception e) {
-                        e.printStackTrace();
-                        System.out.println("--onError---");
-                    }
-
-                    @Override
-                    public void downloadProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
-                        System.out.println(currentSize + " " + totalSize + " " + progress);
                     }
                 });
     }
