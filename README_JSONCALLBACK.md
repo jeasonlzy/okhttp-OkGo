@@ -4,7 +4,7 @@
 
 ## 一般服务端返回的数据格式都是这样的，我相信这4种数据格式包含了99%以上的业务。
 
-- 数据类型A-最外层数据类型是JsonObject，data数据也是JsonObject
+- 数据类型A-最外层数据类型是`JsonObject`，data 数据也是`JsonObject`
 ```java
 {
 	"code":0,
@@ -17,7 +17,7 @@
 }
 ```
 
-- 数据类型B-最外层数据类型是JsonObject，data数据是JsonArray
+- 数据类型B-最外层数据类型是`JsonObject`，data 数据是`JsonArray`
 ```java
 {
 	"code":0,
@@ -42,7 +42,7 @@
 }
 ```
 
-- 数据类型C-没有固定的msg，code字段格式包装，服务器任意返回对象
+- 数据类型C-没有固定的 msg、code 字段格式包装，服务器任意返回对象
 ```java
 "data":{
 	"id":123456,
@@ -51,7 +51,7 @@
 }	
 ```
 
-- 数据类型D-最外层数据类型是JsonArray，内部数据是JsonObject
+- 数据类型D-最外层数据类型是`JsonArray`，内部数据是`JsonObject`
 ```java
 [
 	{
@@ -76,19 +76,22 @@
 
 ### 第一种：将code和msg也定义在javabean中
 - 数据类型A定义方式
+
 ![image](https://github.com/jeasonlzy/Screenshots/blob/master/JsonCallback/a.png)
 
 - 数据类型B定义方式
+
 ![image](https://github.com/jeasonlzy/Screenshots/blob/master/JsonCallback/b.png)
 
-- 数据类型C和D定义方式一样，这里就按照服务端的数据一一对应好字段就行了，没什么其他的妙招。
+- 数据类型C和D定义方式一样，这里就按照服务端的数据一一对应好字段就行了，没什么其他的妙招
+
 ![image](https://github.com/jeasonlzy/Screenshots/blob/master/JsonCallback/cd.png)
 
 - 数据格式定义完成后，对于ABC这三种，我们在创建 JsonCallback 的时候，只需要这么将`Login`作为一个泛型传递
 ```java
 OkGo.get(Urls.URL_METHOD)//
     .tag(this)//
-    .execute(new JsonCallback<Login>(this) {
+    .execute(new JsonCallback<Login>(this) {   //这里传递Login
         @Override
         public void onSuccess(Login login, Call call, Response response) {
             
@@ -158,7 +161,7 @@ public class ServerModel {
 ```java
 OkGo.get(Urls.URL_METHOD)//
     .tag(this)//
-    .execute(new JsonCallback<LzyResponse<ServerModel>>(this) {
+    .execute(new JsonCallback<LzyResponse<ServerModel>>(this) {   //这里传递LzyResponse<ServerModel>
         @Override
         public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
             
