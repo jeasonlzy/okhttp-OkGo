@@ -74,7 +74,7 @@
 
 ## 那么你需要定义的JavaBean有以下两种方式
 
-### 第一种：将code和msg也定义在javabean中
+### 第一种：将code和msg也定义在javabean中(适用99%以上的情况)
 - 数据类型A定义方式
 
 ![image](https://github.com/jeasonlzy/Screenshots/blob/master/JsonCallback/a.png)
@@ -136,7 +136,7 @@ public T convertSuccess(Response response) throws Exception {
 }
 ```
 
-### 第二种：使用泛型，分离基础包装与实际数据
+### 第二种：使用泛型，分离基础包装与实际数据（推荐写法，但是对服务端数据格式有要求）
 
 - 这样子需要定义两个javabean，一个全项目通用的`LzyResponse`，一个单纯的业务模块需要的数据
 - 这种方法只适合服务器返回有固定数据格式的情况，比如A和B，如果服务器的数据格式不统一，不建议使用该种方式，具体的定义方法如下
@@ -253,7 +253,7 @@ public T convertSuccess(Response response) throws Exception {
 
 ### 总结：
 
-* 分析上面两种写法，很明显第一种要方便、简单、通用，第二种方式更麻烦，还难以理解。那我在demo中为什么不使用第一种方式呢？
+> 分析上面两种写法，很明显第一种要方便、简单、通用，第二种方式更麻烦，还难以理解。那我在demo中为什么不使用第一种方式呢？
 
 先做如下分析，如果服务端返回了这么个数据，这种数据应该是经常返回的。
 
