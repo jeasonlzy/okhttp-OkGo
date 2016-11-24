@@ -11,10 +11,8 @@ import com.lzy.demo.base.BaseActivity;
 import com.lzy.demo.callback.JsonConvert;
 import com.lzy.demo.model.LzyResponse;
 import com.lzy.demo.model.ServerModel;
-import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.adapter.Call;
-import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.convert.BitmapConvert;
 import com.lzy.okgo.convert.FileConvert;
 import com.lzy.okgo.convert.StringConvert;
@@ -24,7 +22,6 @@ import java.io.File;
 
 import butterknife.Bind;
 import butterknife.OnClick;
-import okhttp3.Response;
 import rx.Observable;
 
 public class TestActivity extends BaseActivity {
@@ -53,17 +50,6 @@ public class TestActivity extends BaseActivity {
 
     @OnClick(R.id.btn2)
     public void btn2(View view) {
-        OkGo.post(Urls.URL_METHOD)//
-                .tag(this)//
-                .params("aaa","111",false)
-                .params("aaa","222",false)
-                .params("aaa","333",false)
-                .execute(new StringCallback() {
-                    @Override
-                    public void onSuccess(String s, okhttp3.Call call, Response response) {
-                        System.out.println("---onSuccess--");
-                    }
-                });
     }
 
     @OnClick(R.id.btn3)

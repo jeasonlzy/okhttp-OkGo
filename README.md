@@ -662,7 +662,7 @@ OkGo.getInstance()
 ```java
 //一般手动取出cookie的目的只是交给 webview 等等，非必要情况不要自己操作
 CookieStore cookieStore = OkGo.getInstance().getCookieJar().getCookieStore();
-HttpUrl httpUrl = HttpUrl.parse(Urls.URL_METHOD);
+HttpUrl httpUrl = HttpUrl.parse("http://server.jeasonlzy.com/OkHttpUtils/method/");
 List<Cookie> cookies = cookieStore.getCookie(httpUrl);
 showToast(httpUrl.host() + "对应的cookie如下：" + cookies.toString());
 ```
@@ -677,7 +677,7 @@ showToast("所有cookie如下：" + allCookie.toString());
 
 * 手动添加cookie
 ```java
-HttpUrl httpUrl = HttpUrl.parse(Urls.URL_METHOD);
+HttpUrl httpUrl = HttpUrl.parse("http://server.jeasonlzy.com/OkHttpUtils/method/");
 Cookie.Builder builder = new Cookie.Builder();
 Cookie cookie = builder.name("myCookieKey1").value("myCookieValue1").domain(httpUrl.host()).build();
 CookieStore cookieStore = OkGo.getInstance().getCookieJar().getCookieStore();
@@ -686,7 +686,7 @@ cookieStore.saveCookie(httpUrl, cookie);
 
 * 手动移除cookie
 ```java
-HttpUrl httpUrl = HttpUrl.parse(Urls.URL_METHOD);
+HttpUrl httpUrl = HttpUrl.parse("http://server.jeasonlzy.com/OkHttpUtils/method/");
 CookieStore cookieStore = OkGo.getInstance().getCookieJar().getCookieStore();
 cookieStore.removeCookie(httpUrl);
 ```

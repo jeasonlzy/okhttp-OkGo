@@ -2,7 +2,9 @@
 
 # JsonCallback自定义
 
-* 一般服务端返回的数据格式都是这样的
+## 一般服务端返回的数据格式都是这样的，我相信这4种数据格式包含了99%以上的业务。
+
+- 数据类型A-最外层数据类型是JsonObject，data数据也是JsonObject
 ```java
 {
 	"code":0,
@@ -15,24 +17,74 @@
 }
 ```
 
-* 那么你需要定义的JavaBean有两种方式
-
-### 第一种：将code和msg也定义在javabean中
+- 数据类型B-最外层数据类型是JsonObject，data数据是JsonArray
 ```java
-public class Login{
-    public int code;
-    public String msg;
-    public ServerModel data;
-
-    public class ServerModel{
-        public long id;
-        public String name;
-        public int age;
-    }
+{
+	"code":0,
+	"msg":"请求成功",
+	"data":[
+		{
+			"id":123456,
+			"name":"张三",
+			"age":18
+		},
+		{
+			"id":123456,
+			"name":"张三",
+			"age":18
+		},
+		{
+			"id":123456,
+			"name":"张三",
+			"age":18
+		}
+	]
 }
 ```
 
-* 对于这种方式，我们在创建 JsonCallback 的时候，需要这么将`Login`作为一个泛型传递
+- 数据类型C-没有固定的msg，code字段格式包装，服务器任意返回对象
+```java
+"data":{
+	"id":123456,
+	"name":"张三",
+	"age":18
+}	
+```
+
+- 数据类型D-最外层数据类型是JsonArray，内部数据是JsonObject
+```java
+[
+	{
+		"id":123456,
+		"name":"张三",
+		"age":18
+	},
+	{
+		"id":123456,
+		"name":"张三",
+		"age":18
+	},
+	{
+		"id":123456,
+		"name":"张三",
+		"age":18
+	}
+]
+```
+
+## 那么你需要定义的JavaBean有以下两种方式
+
+### 第一种：将code和msg也定义在javabean中
+- 数据类型A定义方式
+![image](https://github.com/jeasonlzy/Screenshots/blob/master/JsonCallback/a.png)
+
+- 数据类型B定义方式
+![image](https://github.com/jeasonlzy/Screenshots/blob/master/JsonCallback/b.png)
+
+- 数据类型C和D定义方式一样，这里就按照服务端的数据一一对应好字段就行了，没什么其他的妙招。
+![image](https://github.com/jeasonlzy/Screenshots/blob/master/JsonCallback/cd.png)
+
+- 数据格式定义完成后，对于ABC这三种，我们在创建 JsonCallback 的时候，只需要这么将`Login`作为一个泛型传递
 ```java
 OkGo.get(Urls.URL_METHOD)//
     .tag(this)//
@@ -44,7 +96,19 @@ OkGo.get(Urls.URL_METHOD)//
     });
 ```
 
-* 那么在`JsonCallback`中对应的解析代码如下,详细的原理就不说了，下面的注释很详细
+- 数据格式定义完成后，对于D这种集合数据，我们只需要改一个地方，传递泛型的时候，传递`List<Login>`就可以了，如下
+```java
+OkGo.get(Urls.URL_METHOD)//
+    .tag(this)//
+    .execute(new JsonCallback<List<Login>>(this) {    //解析集合就是这么的简单，直接加上List就可以了
+        @Override
+        public void onSuccess(List<Login> logins, Call call, Response response) {
+            
+        }
+    });
+```
+
+- 现在数据格式定义完成，用法也写完了，那么怎么解析数据呢，就是在`JsonCallback`的`convertSuccess`方法中写如下代码，以上四种数据类型统统使用这样一种解析方法就可以完成所有的数据解析，不需要任何额外的代码，下面的代码可以直接复制使用，详细的原理就不说了，注释很详细
 ```java
 @Override
 public T convertSuccess(Response response) throws Exception {
@@ -69,7 +133,11 @@ public T convertSuccess(Response response) throws Exception {
 }
 ```
 
-### 第二种：使用泛型，分离基础包装与实际数据，这样子需要定义两个javabean，一个全项目通用的`LzyResponse`，一个单纯的业务模块需要的数据
+### 第二种：使用泛型，分离基础包装与实际数据
+
+- 这样子需要定义两个javabean，一个全项目通用的`LzyResponse`，一个单纯的业务模块需要的数据
+- 这种方法只适合服务器返回有固定数据格式的情况，比如A和B，如果服务器的数据格式不统一，不建议使用该种方式，具体的定义方法如下
+
 ```java
 public class LzyResponse<T> {
     public int code;
@@ -84,7 +152,9 @@ public class ServerModel {
 }
 ```
 
-* 提供的demo中按照第二种方式实现的，对于第二种方式，我们在创建 JsonCallback 的时候，需要这么将`LzyResponse<ServerModel>`作为一个泛型传递，相当于传递了两层，泛型中包含了又一个泛型
+在okgo提供的demo中是按照这种方式实现的，对于这种方式，我们在创建`JsonCallback`的时候，需要这么将`LzyResponse<ServerModel>`作为一个泛型传递，相当于传递了两层，泛型中包含了又一个泛型
+
+- 对于数据类型A采用以下传递泛型的方法
 ```java
 OkGo.get(Urls.URL_METHOD)//
     .tag(this)//
@@ -95,8 +165,19 @@ OkGo.get(Urls.URL_METHOD)//
         }
     });
 ```
+- 对于集合数据类型B采用以下传递泛型的方法，看起来比较复杂，泛型较多，但是很好理解
+```java
+OkGo.get(Urls.URL_METHOD)//
+    .tag(this)//
+    .execute(new JsonCallback<LzyResponse<List<ServerModel>>>(this) {  //我们发现解析集合也依然很简单，加一层List就解析集合数据了
+        @Override
+        public void onSuccess(LzyResponse<List<ServerModel>> responseListData, Call call, Response response) {
+            
+        }
+    });
+```
 
-* 那么在`JsonCallback`中对应的解析代码如下,详细的原理就不说了，下面的注释很详细
+- 那么在`JsonCallback`的`convertSuccess`方法中写如下解析代码，详细的原理就不说了，下面的注释很详细
 ```java
 @Override
 public T convertSuccess(Response response) throws Exception {
@@ -165,11 +246,14 @@ public T convertSuccess(Response response) throws Exception {
 }
 ```
 
-### 更详细的代码请自行看 demo ，有很详细的注释，JsonConvet 与 JsonCallback 一样，只是 JsonCallback 是在传统回调形式中用的，而 JsonConvert 是在 OkRx 中使用的，其余没有任何区别
+### 关于第二种更详细的代码请自行看demo，有很详细的注释，`JsonConvet`与`JsonCallback`一样，只是`JsonCallback`是在传统回调形式中用的，而`JsonConvert`是在`OkRx`中使用的，其余没有任何区别
 
 ### 总结：
 
-分析上面两种写法，对于第一种，如果服务端返回了这么个数据
+* 分析上面两种写法，很明显第一种要方便、简单、通用，第二种方式更麻烦，还难以理解。那我在demo中为什么不使用第一种方式呢？
+
+先做如下分析，如果服务端返回了这么个数据，这种数据应该是经常返回的。
+
 ```java
 {
 	"code":300,
@@ -177,13 +261,11 @@ public T convertSuccess(Response response) throws Exception {
 }
 ```
 
-那么对于第一种，很明显，这样的的数据应该要回调`onError`的，但是我们在`convertSuccess`中只是解析了数据，并不知道数据中的`code`码300是表示错误数据的，我们仍然会解析数据并返回，这就导致了会回调`onSuccess`，之后我们需要在`onSuccess`中判断`code`码，给予用户错误提示或者做成功跳转的逻辑。这样做的结果是，把无论正确的还是错误的数据，都交给了`onSuccess`处理，在使用上不太友好。</br>
+* 第一种方式，很明显，这样的的数据应该要回调`onError`的，但是我们在`convertSuccess`中只是解析了数据，并不知道数据中的`code`码300是表示错误数据的，我们仍然会解析数据并返回，这就导致了会回调`onSuccess`，之后的逻辑我们需要在`onSuccess`中判断`code`码，给予用户错误提示或者做成功跳转的逻辑。这样做的结果是，把无论正确的还是错误的数据，都交给了`onSuccess`处理，在使用上不太友好，逻辑分层混乱。
 
-所以我推荐的是第二种方式，这种方式不仅可以正确的解析数据，而且能在解析的过程中判断错误码，并根据不同的错误码抛出不同的异常（这里抛出异常并不会导致okgo挂掉，而是以异常的形式通知okgo回调`onError`，并且将该异常以参数的形式传递到`onError`），这样做后，在`onSuccess`中处理的一定是成功的数据，在`onError`中处理的一定是失败的数据，达到了友好的逻辑交互。</br>
+* 第二种方式，这种方式不仅可以正确的解析数据，而且能在解析的过程中判断错误码，并根据不同的错误码抛出不同的异常（这里抛出异常并不会导致okgo挂掉，而是以异常的形式通知okgo回调`onError`，并且将该异常以参数的形式传递到`onError`），这样做后，在`onSuccess`中处理的一定是成功的数据，在`onError`中处理的一定是失败的数据，达到了友好的逻辑分层。
 
-正是因为我推荐的是第二种写法，而第二种写法是依赖于业务中定义的数据结构的，不同的项目定义的数据结构都不一样，无法封装到库中，所以用demo的形式提供示例代码，根据需要自己修改。</br>
-
-如果有些服务器后台并没有统一数据格式，那么这个时候还是使用第一种方式吧。</br>
+* 正是因为我推荐的是第二种写法，而第二种写法是依赖于业务中定义的数据结构的，不同的项目定义的数据结构都不一样，无法封装到库中，所以用demo的形式提供示例代码，根据需要自己修改。同时我也推荐服务端对返回的数据做一次统一包装，就像上面的示例一样，用code和msg包一层。
 
 
 
