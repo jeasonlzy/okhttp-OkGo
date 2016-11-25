@@ -44,7 +44,9 @@
 
 
 ## 1.用法
-### 尽量抓包看网络数据，尽量抓包看网络数据，尽量抓包看网络数据，重要的事情说三遍
+### 尽量抓包看网络数据，log有些数据不会打印，不会抓包请百度，学一次受用终生，重要的事情说三遍
+### 尽量抓包看网络数据，log有些数据不会打印，不会抓包请百度，学一次受用终生，重要的事情说三遍
+### 尽量抓包看网络数据，log有些数据不会打印，不会抓包请百度，学一次受用终生，重要的事情说三遍
 
 > * 为了方便大家使用，更加通俗的理解http的网络协议，建议做网络请求的时候，对每个请求抓包后查看请求信息和响应信息。
 > * 如果是 Windows 操作系统，可以使用 `Fiddler` 对手机的请求进行抓包查看。
@@ -54,7 +56,7 @@
 
    对于Eclipse不能运行项目的，提供了apk供直接运行
    
-### 或者点击下载Demo [okgo_v2.1.2.apk](https://github.com/jeasonlzy/okhttp-OkGo/blob/master/okgo_v2.1.2.apk?raw=true)
+### 或者点击下载Demo [okgo_v2.1.3.apk](https://github.com/jeasonlzy/okhttp-OkGo/blob/master/okgo_v2.1.3.apk?raw=true)
 
    本项目Demo的网络请求是我自己的服务器，有时候可能不稳定，网速比较慢时请耐心等待。。
    
@@ -316,12 +318,20 @@ OkGo.get(Urls.URL_DOWNLOAD)//
 	});
 ```
 ### 4.普通Post，直接上传String类型的文本
-一般此种用法用于与服务器约定的数据格式，当使用该方法时，params中的参数设置是无效的，所有参数均需要通过需要上传的文本中指定，此外，额外指定的header参数仍然保持有效。
+一般此种用法用于与服务器约定的数据格式，当使用该方法时，params中的参数设置是无效的，所有参数均需要通过需要上传的文本中指定，此外，额外指定的header参数仍然保持有效。</br>
+
+默认会携带以下请求头
+> Content-Type: text/plain;charset=utf-8
+
+如果你对请求头有自己的要求，可以使用这个重载的形式，传入自定义的`content-type`
+> upString("这是要上传的长文本数据！", MediaType.parse("application/xml")) // 比如上传xml数据，这里就可以自己指定请求头
+
 ```java
 OkGo.post(Urls.URL_TEXT_UPLOAD)//
 	.tag(this)//
 //	.params("param1", "paramValue1")//  这里不要使用params，upString 与 params 是互斥的，只有 upString 的数据会被上传
 	.upString("这是要上传的长文本数据！")//
+//	.upString("这是要上传的长文本数据！", MediaType.parse("application/xml")) // 比如上传xml数据，这里就可以自己指定请求头
 	.execute(new StringCallback() {
 	    @Override
 	    public void onSuccess(String s, Call call, Response response) {
@@ -336,7 +346,11 @@ OkGo.post(Urls.URL_TEXT_UPLOAD)//
 ```
 
 ### 5.普通Post，直接上传Json类型的文本
-该方法与postString没有本质区别，只是数据格式是json,一般来说，需要自己创建一个实体bean或者一个map，把需要的参数设置进去，然后通过三方的Gson或者fastjson转换成json字符串，最后直接使用该方法提交到服务器。
+该方法与postString没有本质区别，只是数据格式是json,一般来说，需要自己创建一个实体bean或者一个map，把需要的参数设置进去，然后通过三方的Gson或者fastjson转换成json字符串，最后直接使用该方法提交到服务器。</br>
+
+默认会携带以下请求头，请不要手动修改，okgo也不支持自己修改
+> Content-Type: application/json;charset=utf-8
+
 ```java
 HashMap<String, String> params = new HashMap<>();
 params.put("key1", "value1");
@@ -370,7 +384,7 @@ OkGo.post(Urls.URL_TEXT_UPLOAD)//
 特别要注意的是</br>
 
 #### 1).很多人会说需要在上传文件到时候，要把`Content-Type`修改掉，变成`multipart/form-data`，就像下面这样的。其实在使用OkGo的时候，只要你添加了文件，这里的的`Content-Type`不需要你手动设置，OkGo自动添加该请求头，同时，OkGo也不允许你修改该请求头。
-> Content-Type: multipart/form-data; boundary=---------------34jjk5234j5234kjggu34525
+> Content-Type: multipart/form-data; boundary=f6b76bad-0345-4337-b7d8-b362cb1f9949
 
 #### 2).如果没有文件，那么OkGo将自动使用以下请求头，同样OkGo也不允许你修改该请求头。
 > Content-Type: application/x-www-form-urlencoded 

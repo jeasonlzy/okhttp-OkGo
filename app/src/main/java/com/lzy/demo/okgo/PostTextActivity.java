@@ -18,6 +18,7 @@ import java.util.HashMap;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Call;
+import okhttp3.MediaType;
 import okhttp3.Response;
 
 public class PostTextActivity extends BaseDetailActivity {
@@ -73,6 +74,7 @@ public class PostTextActivity extends BaseDetailActivity {
                 .headers("header1", "headerValue1")//
 //                .params("param1", "paramValue1")// 这里不要使用params，upString 与 params 是互斥的，只有 upString 的数据会被上传
                 .upString("这是要上传的长文本数据！")//
+//                .upString("这是要上传的长文本数据！", MediaType.parse("application/xml"))// 比如上传xml数据，这里就可以自己指定请求头
                 .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                     @Override
                     public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
