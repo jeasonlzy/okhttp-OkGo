@@ -16,10 +16,9 @@ import okhttp3.RequestBody;
  */
 public class HeadRequest extends BaseRequest<HeadRequest> {
 
-    protected String method = "HEAD";
-
     public HeadRequest(String url) {
         super(url);
+        method = "HEAD";
     }
 
     @Override

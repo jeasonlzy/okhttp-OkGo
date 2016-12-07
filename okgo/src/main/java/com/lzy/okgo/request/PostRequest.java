@@ -20,10 +20,9 @@ import okhttp3.RequestBody;
  */
 public class PostRequest extends BaseBodyRequest<PostRequest> {
 
-    protected String method = "POST";
-
     public PostRequest(String url) {
         super(url);
+        method = "POST";
     }
 
     @Override

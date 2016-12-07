@@ -20,10 +20,9 @@ import okhttp3.RequestBody;
  */
 public class PutRequest extends BaseBodyRequest<PutRequest> {
 
-    protected String method = "PUT";
-
     public PutRequest(String url) {
         super(url);
+        method = "PUT";
     }
 
     @Override

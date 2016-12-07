@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 24
-        versionCode 23
-        versionName "2.1.3"
+        versionCode 24
+        versionName "2.1.4"
     }
 }
 
@@ -17,4 +17,4 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
 }
 
-//apply from: 'bintray.gradle'
+//apply from: 'bintray.gradle'、

@@ -116,6 +116,8 @@ public class DownloadManager {
             //构造即开始执行
             DownloadTask downloadTask = new DownloadTask(downloadInfo, isRestart, listener);
             downloadInfo.setTask(downloadTask);
+        } else if (downloadInfo.getState() == DownloadManager.FINISH) {
+            if (listener != null) listener.onFinish(downloadInfo);
         }
     }
 

@@ -65,9 +65,9 @@
  * 对于Android Studio的用户，可以选择添加:
 
 ```java
-compile 'com.lzy.net:okgo:2.1.3'        //可以单独使用，不需要依赖下方的扩展包
+compile 'com.lzy.net:okgo:2.1.4'        //可以单独使用，不需要依赖下方的扩展包
 compile 'com.lzy.net:okrx:0.1.2'        //RxJava扩展支持，根据需要添加
-compile 'com.lzy.net:okserver:1.1.2'    //下载管理和上传管理扩展，根据需要添加
+compile 'com.lzy.net:okserver:1.1.3'    //下载管理和上传管理扩展，根据需要添加
 
 或者
 
@@ -80,10 +80,10 @@ compile 'com.lzy.net:okserver:+'    //版本号使用 + 可以自动引用最新
 ```java
 okhttp-3.4.1.jar        //okhttp官方包 （必须导）
 okio-1.9.0.jar          //okio官方包（必须导）
-okgo-2.1.3.jar          //okgo基本功能包（必须导）
+okgo-2.1.4.jar          //okgo基本功能包（必须导）
 
 okrx-0.1.2.jar          //okrx扩展支持包，想用rxjava调用的必须要导（同时还需要rxjava的jar，自行下载，不提供）
-okserver-1.1.2.jar      //okserver扩展支持包，使用下载管理必须要
+okserver-1.1.3.jar      //okserver扩展支持包，使用下载管理必须要
 ```
  * 如果是以jar包的形式引入`okserver`,需要在清单文件中额外注册一个服务
 ```java

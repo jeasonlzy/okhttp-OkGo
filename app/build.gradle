@@ -46,6 +46,10 @@ android {
             signingConfig signingConfigs.appkey
         }
     }
+    lintOptions {
+        abortOnError false
+    }
+
 }
 
 task makeApk {
