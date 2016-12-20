@@ -1,5 +1,8 @@
 package com.lzy.demo.cache;
 
+import com.google.gson.stream.JsonReader;
+import com.lzy.demo.model.NewsResponse;
+import com.lzy.demo.utils.Convert;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.request.BaseRequest;
@@ -33,14 +36,26 @@ public abstract class NewsCallback<T> extends AbsCallback<T> {
     @Override
     public T convertSuccess(Response response) throws Exception {
         //以下代码是通过泛型解析实际参数,泛型必须传
-        NewsConvert<T> convert = NewsConvert.create();
         Type genType = getClass().getGenericSuperclass();
         Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
         Type type = params[0];
         if (!(type instanceof ParameterizedType)) throw new IllegalStateException("没有填写泛型参数");
-        convert.setType((ParameterizedType) type);
-        T t = convert.convertSuccess(response);
-        response.close();
-        return t;
+
+        JsonReader jsonReader = new JsonReader(response.body().charStream());
+        Type rawType = ((ParameterizedType) type).getRawType();
+        if (rawType == NewsResponse.class) {
+            NewsResponse newsResponse = Convert.fromJson(jsonReader, type);
+            if (newsResponse.showapi_res_code == 0) {
+                response.close();
+                //noinspection unchecked
+                return (T) newsResponse;
+            } else {
+                response.close();
+                throw new IllegalStateException(newsResponse.showapi_res_error);
+            }
+        } else {
+            response.close();
+            throw new IllegalStateException("基类错误无法解析!");
+        }
     }
 }

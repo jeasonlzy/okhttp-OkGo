@@ -84,8 +84,10 @@ public class NewsTabFragment extends BaseFragment implements SwipeRefreshLayout.
                     @Override
                     public void onSuccess(NewsResponse<NewsModel> newsResponse, Call call, Response response) {
                         NewsModel newsModel = newsResponse.showapi_res_body;
-                        currentPage = newsModel.pagebean.currentPage;
-                        newsAdapter.setNewData(newsModel.pagebean.contentlist);
+                        if (newsModel.pagebean != null) {
+                            currentPage = newsModel.pagebean.currentPage;
+                            newsAdapter.setNewData(newsModel.pagebean.contentlist);
+                        }
                     }
 
                     @Override
@@ -132,13 +134,15 @@ public class NewsTabFragment extends BaseFragment implements SwipeRefreshLayout.
                     @Override
                     public void onSuccess(NewsResponse<NewsModel> newsResponse, Call call, Response response) {
                         NewsModel newsModel = newsResponse.showapi_res_body;
-                        currentPage = newsModel.pagebean.currentPage;
-                        newsAdapter.addData(newsModel.pagebean.contentlist);
-                        //显示没有更多数据
-                        if (newsModel.pagebean.allPages == currentPage) {
-                            newsAdapter.loadComplete();         //加载完成
-                            View noDataView = inflater.inflate(R.layout.item_no_data, (ViewGroup) recyclerView.getParent(), false);
-                            newsAdapter.addFooterView(noDataView);
+                        if (newsModel.pagebean != null) {
+                            currentPage = newsModel.pagebean.currentPage;
+                            newsAdapter.addData(newsModel.pagebean.contentlist);
+                            //显示没有更多数据
+                            if (newsModel.pagebean.allPages == currentPage) {
+                                newsAdapter.loadComplete();         //加载完成
+                                View noDataView = inflater.inflate(R.layout.item_no_data, (ViewGroup) recyclerView.getParent(), false);
+                                newsAdapter.addFooterView(noDataView);
+                            }
                         }
                     }
 
