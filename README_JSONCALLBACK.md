@@ -207,11 +207,13 @@ public T convertSuccess(Response response) throws Exception {
     //class com.lzy.demo.model.LzyResponse
     //此时，rawType的类型实际上是 class，但 Class 实现了 Type 接口，所以我们用 Type 接收没有问题
     Type rawType = ((ParameterizedType) type).getRawType();
+    //这里获取最终内部泛型的类型 com.lzy.demo.model.ServerModel
+    Type typeArgument = ((ParameterizedType) type).getActualTypeArguments()[0];
 
     //这里我们既然都已经拿到了泛型的真实类型，即对应的 class ，那么当然可以开始解析数据了，我们采用 Gson 解析
     //以下代码是根据泛型解析数据，返回对象，返回的对象自动以参数的形式传递到 onSuccess 中，可以直接使用
     JsonReader jsonReader = new JsonReader(response.body().charStream());
-    if (rawType == Void.class) {
+    if (typeArgument == Void.class) {
         //无数据类型,表示没有data数据的情况（以  new DialogCallback<LzyResponse<Void>>(this)  以这种形式传递的泛型)
         SimpleResponse simpleResponse = Convert.fromJson(jsonReader, SimpleResponse.class);
         response.close();
