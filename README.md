@@ -1,6 +1,16 @@
+
  ![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/logo4.jpg)
 
 # OkGo - `OkHttpUtils-2.0.0` 升级后改名 `OkGo`,全新完美支持`RxJava`
+[![API](https://img.shields.io/badge/API-9%2B-orange.svg?style=flat)](https://android-arsenal.com/api?level=9)
+
+### Method and size
+[![Method and size](https://img.shields.io/badge/OkGo - core: 867 | deps: 2861 | 92 KB-e91e63.svg)](http://www.methodscount.com/?lib=com.lzy.net%3Aokgo%3A2.0.0)
+<br>
+[![Method and size](https://img.shields.io/badge/OkRx - core: 59 | deps: 9398 | 7 KB-e91e63.svg)](http://www.methodscount.com/?lib=com.lzy.net%3Aokrx%3A0.1.0)
+<br>
+[![Method and size](https://img.shields.io/badge/OkServer - core: 507 | deps: 3728 | 55 KB-e91e63.svg)](http://www.methodscount.com/?lib=com.lzy.net%3Aokserver%3A1.1.0)
+
 
 ### 该库是封装了okhttp的标准RESTful风格的网络框架，可以与RxJava完美结合，比Retrofit更简单易用。支持大文件上传下载，上传进度回调，下载进度回调，表单上传（多文件和多参数一起上传），链式调用，可以自定义返回对象，支持Https和自签名证书，支持超时自动重连，支持cookie与session的自动管理，支持四种缓存模式缓存网络数据，支持301、302重定向，扩展了统一的上传管理和下载管理功能
 
