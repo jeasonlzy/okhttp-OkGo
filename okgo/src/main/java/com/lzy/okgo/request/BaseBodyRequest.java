@@ -26,6 +26,7 @@ public abstract class BaseBodyRequest<R extends BaseBodyRequest> extends BaseReq
     protected MediaType mediaType;      //上传的MIME类型
     protected String content;           //上传的文本内容
     protected byte[] bs;                //上传的字节数据
+    protected File file;                //单纯的上传一个文件
 
     protected boolean isMultipart = false;  //是否强制使用 multipart/form-data 表单上传
     protected RequestBody requestBody;
@@ -97,6 +98,7 @@ public abstract class BaseBodyRequest<R extends BaseBodyRequest> extends BaseReq
      * 该方法用于定制请求content-type
      */
     @SuppressWarnings("unchecked")
+    @Override
     public R upString(String string, MediaType mediaType) {
         this.content = string;
         this.mediaType = mediaType;
@@ -139,11 +141,39 @@ public abstract class BaseBodyRequest<R extends BaseBodyRequest> extends BaseReq
         return (R) this;
     }
 
+    /** 注意使用该方法上传字符串会清空实体中其他所有的参数，头信息不清除 */
+    @SuppressWarnings("unchecked")
+    @Override
+    public R upBytes(byte[] bs, MediaType mediaType) {
+        this.bs = bs;
+        this.mediaType = mediaType;
+        return (R) this;
+    }
+
+    /** 注意使用该方法上传字符串会清空实体中其他所有的参数，头信息不清除 */
+    @SuppressWarnings("unchecked")
+    @Override
+    public R upFile(File file) {
+        this.file = file;
+        this.mediaType = HttpUtils.guessMimeType(file.getName());
+        return (R) this;
+    }
+
+    /** 注意使用该方法上传字符串会清空实体中其他所有的参数，头信息不清除 */
+    @SuppressWarnings("unchecked")
+    @Override
+    public R upFile(File file, MediaType mediaType) {
+        this.file = file;
+        this.mediaType = mediaType;
+        return (R) this;
+    }
+
     @Override
     public RequestBody generateRequestBody() {
         if (requestBody != null) return requestBody;                                                //自定义的请求体
-        if (content != null && mediaType != null) return RequestBody.create(mediaType, content);    //post上传字符串数据
-        if (bs != null && mediaType != null) return RequestBody.create(mediaType, bs);              //post上传字节数组
+        if (content != null && mediaType != null) return RequestBody.create(mediaType, content);    //上传字符串数据
+        if (bs != null && mediaType != null) return RequestBody.create(mediaType, bs);              //上传字节数组
+        if (file != null && mediaType != null) return RequestBody.create(mediaType, file);          //上传一个文件
         return HttpUtils.generateMultipartRequestBody(params, isMultipart);
     }
 }

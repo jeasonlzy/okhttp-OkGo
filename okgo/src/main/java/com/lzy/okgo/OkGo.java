@@ -14,6 +14,7 @@ import com.lzy.okgo.request.DeleteRequest;
 import com.lzy.okgo.request.GetRequest;
 import com.lzy.okgo.request.HeadRequest;
 import com.lzy.okgo.request.OptionsRequest;
+import com.lzy.okgo.request.PatchRequest;
 import com.lzy.okgo.request.PostRequest;
 import com.lzy.okgo.request.PutRequest;
 
@@ -82,6 +83,11 @@ public class OkGo {
     /** options请求 */
     public static OptionsRequest options(String url) {
         return new OptionsRequest(url);
+    }
+
+    /** patch请求 */
+    public static PatchRequest patch(String url) {
+        return new PatchRequest(url);
     }
 
     /** 必须在全局Application先调用，获取context上下文，否则缓存无法使用 */

@@ -1,9 +1,9 @@
 package com.lzy.okgo.model;
 
+import com.lzy.okgo.utils.HttpUtils;
+
 import java.io.File;
 import java.io.Serializable;
-import java.net.FileNameMap;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -151,7 +151,7 @@ public class HttpParams implements Serializable {
     }
 
     public void put(String key, File file, String fileName) {
-        put(key, file, fileName, guessMimeType(fileName));
+        put(key, file, fileName, HttpUtils.guessMimeType(fileName));
     }
 
     public void put(String key, FileWrapper fileWrapper) {
@@ -203,16 +203,6 @@ public class HttpParams implements Serializable {
     public void clear() {
         urlParamsMap.clear();
         fileParamsMap.clear();
-    }
-
-    private MediaType guessMimeType(String path) {
-        FileNameMap fileNameMap = URLConnection.getFileNameMap();
-        path = path.replace("#", "");   //解决文件名中含有#号异常的问题
-        String contentType = fileNameMap.getContentTypeFor(path);
-        if (contentType == null) {
-            contentType = "application/octet-stream";
-        }
-        return MediaType.parse(contentType);
     }
 
     /** 文件类型的包装类 */

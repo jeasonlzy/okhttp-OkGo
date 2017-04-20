@@ -7,12 +7,15 @@ import com.lzy.okgo.model.HttpParams;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.net.FileNameMap;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 
 import okhttp3.FormBody;
 import okhttp3.Headers;
+import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -151,5 +154,16 @@ public class HttpUtils {
             return delete;
         }
         return false;
+    }
+
+    /** 根据文件名获取MIME类型 */
+    public static MediaType guessMimeType(String fileName) {
+        FileNameMap fileNameMap = URLConnection.getFileNameMap();
+        fileName = fileName.replace("#", "");   //解决文件名中含有#号异常的问题
+        String contentType = fileNameMap.getContentTypeFor(fileName);
+        if (contentType == null) {
+            contentType = "application/octet-stream";
+        }
+        return MediaType.parse(contentType);
     }
 }
