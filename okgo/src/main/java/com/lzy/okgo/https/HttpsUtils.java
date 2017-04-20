@@ -38,7 +38,45 @@ public class HttpsUtils {
         public X509TrustManager trustManager;
     }
 
-    public static SSLParams getSslSocketFactory(X509TrustManager trustManager, InputStream bksFile, String password, InputStream[] certificates) {
+    public static SSLParams getSslSocketFactory() {
+        return getSslSocketFactoryBase(null, null, null);
+    }
+
+    /**
+     * https单向认证
+     * 可以额外配置信任服务端的证书策略，否则默认是按CA证书去验证的，若不是CA可信任的证书，则无法通过验证
+     */
+    public static SSLParams getSslSocketFactory(X509TrustManager trustManager) {
+        return getSslSocketFactoryBase(trustManager, null, null);
+    }
+
+    /**
+     * https单向认证
+     * 用含有服务端公钥的证书校验服务端证书
+     */
+    public static SSLParams getSslSocketFactory(InputStream... certificates) {
+        return getSslSocketFactoryBase(null, null, null, certificates);
+    }
+
+    /**
+     * https双向认证
+     * bksFile 和 password -> 客户端使用bks证书校验服务端证书
+     * certificates -> 用含有服务端公钥的证书校验服务端证书
+     */
+    public static SSLParams getSslSocketFactory(InputStream bksFile, String password, InputStream... certificates) {
+        return getSslSocketFactoryBase(null, bksFile, password, certificates);
+    }
+
+    /**
+     * https双向认证
+     * bksFile 和 password -> 客户端使用bks证书校验服务端证书
+     * X509TrustManager -> 如果需要自己校验，那么可以自己实现相关校验，如果不需要自己校验，那么传null即可
+     */
+    public static SSLParams getSslSocketFactory(InputStream bksFile, String password, X509TrustManager trustManager) {
+        return getSslSocketFactoryBase(trustManager, bksFile, password);
+    }
+
+    private static SSLParams getSslSocketFactoryBase(X509TrustManager trustManager, InputStream bksFile, String password, InputStream... certificates) {
         SSLParams sslParams = new SSLParams();
         try {
             KeyManager[] keyManagers = prepareKeyManager(bksFile, password);

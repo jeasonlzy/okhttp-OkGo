@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.lzy.okgo.OkGo;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -42,8 +40,8 @@ public class PersistentCookieStore implements CookieStore {
     private final HashMap<String, ConcurrentHashMap<String, Cookie>> cookies;
     private final SharedPreferences cookiePrefs;
 
-    public PersistentCookieStore() {
-        cookiePrefs = OkGo.getContext().getSharedPreferences(COOKIE_PREFS, Context.MODE_PRIVATE);
+    public PersistentCookieStore(Context context) {
+        cookiePrefs = context.getSharedPreferences(COOKIE_PREFS, Context.MODE_PRIVATE);
         cookies = new HashMap<>();
 
         //将持久化的cookies缓存到内存中,数据结构为 Map<Url.host, Map<Cookie.name, Cookie>>

@@ -30,7 +30,7 @@ public class DownloadService extends Service {
 
     /** start 方式开启服务，保存全局的下载管理对象 */
     public static DownloadManager getDownloadManager() {
-        Context context = OkGo.getContext();
+        Context context = OkGo.getInstance().getContext();
         if (!DownloadService.isServiceRunning(context)) context.startService(new Intent(context, DownloadService.class));
         if (DownloadService.DOWNLOAD_MANAGER == null) DownloadService.DOWNLOAD_MANAGER = DownloadManager.getInstance();
         return DOWNLOAD_MANAGER;

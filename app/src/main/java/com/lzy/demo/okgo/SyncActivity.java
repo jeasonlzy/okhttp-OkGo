@@ -6,10 +6,10 @@ import android.os.Message;
 import android.view.View;
 import android.widget.Toast;
 
-import com.lzy.okgo.OkGo;
 import com.lzy.demo.R;
 import com.lzy.demo.base.BaseDetailActivity;
 import com.lzy.demo.utils.Urls;
+import com.lzy.okgo.OkGo;
 
 import java.io.IOException;
 
@@ -21,7 +21,7 @@ public class SyncActivity extends BaseDetailActivity {
 
     private Handler handler = new InnerHandler();
 
-    private static class InnerHandler extends Handler {
+    private class InnerHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             try {
@@ -29,7 +29,7 @@ public class SyncActivity extends BaseDetailActivity {
                 //对response需要自己做解析
                 String data = response.body().string();
                 System.out.println("同步请求的数据：" + data);
-                Toast.makeText(OkGo.getContext(), "同步请求成功" + data, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "同步请求成功" + data, Toast.LENGTH_SHORT).show();
             } catch (IOException e) {
                 e.printStackTrace();
             }

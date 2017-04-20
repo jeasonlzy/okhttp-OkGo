@@ -19,7 +19,7 @@ import com.lzy.okserver.download.DownloadInfo;
 public class DownloadInfoHelper extends SQLiteOpenHelper {
 
     private static final String DB_CACHE_NAME = "okgo_server.db";
-    public static final int DB_CACHE_VERSION = 4;
+    private static final int DB_CACHE_VERSION = 4;
     public static final String TABLE_NAME = "download_table";
 
     //四条sql语句
@@ -43,7 +43,7 @@ public class DownloadInfoHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_UNIQUE_INDEX = "DROP INDEX cache_unique_index";
 
     public DownloadInfoHelper() {
-        super(OkGo.getContext(), DB_CACHE_NAME, null, DB_CACHE_VERSION);
+        super(OkGo.getInstance().getContext(), DB_CACHE_NAME, null, DB_CACHE_VERSION);
     }
 
     @Override

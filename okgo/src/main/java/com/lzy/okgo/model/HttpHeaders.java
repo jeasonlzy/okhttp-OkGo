@@ -191,7 +191,7 @@ public class HttpHeaders implements Serializable {
                 Class<?> sysResCls = Class.forName("com.android.internal.R$string");
                 Field webUserAgentField = sysResCls.getDeclaredField("web_user_agent");
                 Integer resId = (Integer) webUserAgentField.get(null);
-                webUserAgent = OkGo.getContext().getString(resId);
+                webUserAgent = OkGo.getInstance().getContext().getString(resId);
             } catch (Exception e) {
                 // We have nothing to do
             }

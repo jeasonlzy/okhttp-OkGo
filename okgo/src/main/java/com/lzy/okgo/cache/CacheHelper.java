@@ -8,8 +8,8 @@ import com.lzy.okgo.utils.OkLogger;
 
 class CacheHelper extends SQLiteOpenHelper {
 
-    public static final String DB_CACHE_NAME = "okgo_cache.db";
-    public static final int DB_CACHE_VERSION = 3;
+    private static final String DB_CACHE_NAME = "okgo_cache.db";
+    private static final int DB_CACHE_VERSION = 3;
     public static final String TABLE_NAME = "cache_table";
 
     //表中的五个字段
@@ -21,17 +21,17 @@ class CacheHelper extends SQLiteOpenHelper {
 
     //四条sql语句
     private static final String SQL_CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "(" + //
-            ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +//
-            KEY + " VARCHAR, " +//
-            LOCAL_EXPIRE + " INTEGER, " +//
-            HEAD + " BLOB, " +//
-            DATA + " BLOB)";
+                                                   ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +//
+                                                   KEY + " VARCHAR, " +//
+                                                   LOCAL_EXPIRE + " INTEGER, " +//
+                                                   HEAD + " BLOB, " +//
+                                                   DATA + " BLOB)";
     private static final String SQL_CREATE_UNIQUE_INDEX = "CREATE UNIQUE INDEX cache_unique_index ON " + TABLE_NAME + "(\"key\")";
     private static final String SQL_DELETE_TABLE = "DROP TABLE " + TABLE_NAME;
     private static final String SQL_DELETE_UNIQUE_INDEX = "DROP INDEX cache_unique_index";
 
     public CacheHelper() {
-        super(OkGo.getContext(), DB_CACHE_NAME, null, DB_CACHE_VERSION);
+        super(OkGo.getInstance().getContext(), DB_CACHE_NAME, null, DB_CACHE_VERSION);
     }
 
     @Override
