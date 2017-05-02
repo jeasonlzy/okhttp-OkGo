@@ -1,7 +1,7 @@
 package com.lzy.demo.cache;
 
 import com.google.gson.stream.JsonReader;
-import com.lzy.demo.model.NewsResponse;
+import com.lzy.demo.model.MarkResponse;
 import com.lzy.demo.utils.Convert;
 import com.lzy.okgo.convert.Converter;
 
@@ -35,15 +35,15 @@ public class NewsConvert<T> implements Converter<T> {
 
         JsonReader jsonReader = new JsonReader(response.body().charStream());
         Type rawType = ((ParameterizedType) type).getRawType();
-        if (rawType == NewsResponse.class) {
-            NewsResponse newsResponse = Convert.fromJson(jsonReader, type);
-            if (newsResponse.showapi_res_code == 0) {
+        if (rawType == MarkResponse.class) {
+            MarkResponse newsResponse = Convert.fromJson(jsonReader, type);
+            if (newsResponse.error == false) {
                 response.close();
                 //noinspection unchecked
                 return (T) newsResponse;
             } else {
                 response.close();
-                throw new IllegalStateException(newsResponse.showapi_res_error);
+                throw new IllegalStateException("服务端接口返回错误");
             }
         } else {
             response.close();
