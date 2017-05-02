@@ -22,6 +22,9 @@ public class Urls {
     public static final String URL_DOWNLOAD = SERVER + "download";
     public static final String URL_REDIRECT = SERVER + "redirect";
 
-    public static final String NEWS = "http://apis.baidu.com/showapi_open_bus/channel_news/search_news";
-    public static final String APIKEY = "593e074aa96b18276fbe1aec8992f398";
+    public static final String URL_GANK_BASE = "http://gank.io/api/data/";
+    public static final String TYPE_GANK_ANDROID = "Android";
+    public static final String TYPE_GANK_IOS = "iOS";
+    public static final String TYPE_GANK_FRONT_END = "前端";
+    public static final int PAGE_SIZE = 10;
 }

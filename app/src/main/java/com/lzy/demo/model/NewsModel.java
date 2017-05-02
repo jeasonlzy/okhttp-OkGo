@@ -1,7 +1,9 @@
 package com.lzy.demo.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
-import java.util.List;
+import java.util.Date;
 
 /**
  * ================================================
@@ -16,41 +18,22 @@ public class NewsModel implements Serializable {
 
     private static final long serialVersionUID = 6753210234564872868L;
 
-    public PageBean pagebean;
-    public int ret_code;
+    public class GankBean implements Serializable {
 
-    public static class PageBean implements Serializable {
-        private static final long serialVersionUID = -7782857008135312889L;
-
-        public int allNum;
-        public int allPages;
-        public int currentPage;
-        public int maxResult;
-        public List<ContentList> contentlist;
-    }
-
-    public static class ContentList implements Serializable {
-        private static final long serialVersionUID = -7041713994407568209L;
-
-        public String channelId;
-        public String channelName;
-        public String content;
+        private static final long serialVersionUID = -3320444919726119048L;
+        @SerializedName("_id")
+        public String id;
+        @SerializedName("createdAt")
+        public Date createTime;
         public String desc;
-        public String html;
-        public String link;
-        public String nid;
-        public String pubDate;
-        public int sentiment_display;
+        public String[] images;
+        @SerializedName("publishedAt")
+        public Date publishTime;
         public String source;
-        public String title;
-        public List<NewsImage> imageurls;
-    }
-
-    public static class NewsImage implements Serializable {
-        private static final long serialVersionUID = -7441255403568397400L;
-
-        public int width;
-        public int height;
+        public String type;
         public String url;
+        public boolean used;
+        public String who;
     }
+
 }

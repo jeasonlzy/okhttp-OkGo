@@ -9,11 +9,12 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import com.lzy.ninegrid.NineGridView;
 import com.lzy.demo.R;
 import com.lzy.demo.WebActivity;
 import com.lzy.demo.base.BaseActivity;
 import com.lzy.demo.utils.GlideImageLoader;
+import com.lzy.demo.utils.Urls;
+import com.lzy.ninegrid.NineGridView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +24,12 @@ import butterknife.OnClick;
 
 public class CacheDemoActivity extends BaseActivity {
 
-    @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.viewPager) ViewPager viewPager;
-    @Bind(R.id.tab) TabLayout tab;
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+    @Bind(R.id.viewPager)
+    ViewPager viewPager;
+    @Bind(R.id.tab)
+    TabLayout tab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,14 +40,14 @@ public class CacheDemoActivity extends BaseActivity {
         NineGridView.setImageLoader(new GlideImageLoader());
 
         ArrayList<NewsTabFragment> fragments = new ArrayList<>();
-        NewsTabFragment fragment1 = NewsTabFragment.newInstance();
-        fragment1.setTitle("国内最新");
+        NewsTabFragment fragment1 = NewsTabFragment.newInstance(Urls.TYPE_GANK_ANDROID);
+        fragment1.setTitle("Android");
         fragments.add(fragment1);
-        NewsTabFragment fragment2 = NewsTabFragment.newInstance();
-        fragment2.setTitle("游戏焦点");
+        NewsTabFragment fragment2 = NewsTabFragment.newInstance(Urls.TYPE_GANK_IOS);
+        fragment2.setTitle("iOS");
         fragments.add(fragment2);
-        NewsTabFragment fragment3 = NewsTabFragment.newInstance();
-        fragment3.setTitle("娱乐焦点");
+        NewsTabFragment fragment3 = NewsTabFragment.newInstance(Urls.TYPE_GANK_FRONT_END);
+        fragment3.setTitle("前端");
         fragments.add(fragment3);
         MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager(), fragments);
         viewPager.setAdapter(adapter);
