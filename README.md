@@ -1,4 +1,4 @@
- ![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/logo4.jpg)
+![](http://7xss53.com1.z0.glb.clouddn.com/markdown/aqyyw.jpg)
 
 # OkGo - `OkHttpUtils-2.0.0` 升级后改名 `OkGo`,全新完美支持`RxJava`
 
@@ -731,4 +731,21 @@ okgo, okrx, okserver 所有代码均可以混淆,但是由于底层使用的是 
 #okserver
 -dontwarn com.lzy.okserver.**
 -keep class com.lzy.okserver.**{*;}
+```
+
+# License
+```
+ Copyright 2016 jeasonlzy(廖子尧)
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
 ```
