@@ -42,9 +42,9 @@ import okhttp3.OkHttpClient;
  * ================================================
  */
 public class OkGo {
-    public static final int DEFAULT_CONNECT_TIMEOUT = 60_000;   //默认的超时时间
-    public static final int DEFAULT_READ_TIMEOUT = 60_000;      //默认的超时时间
-    public static final int DEFAULT_WRITE_TIMEOUT = 60_000;     //默认的超时时间
+    public static final int DEFAULT_CONNECT_TIMEOUT = 60_000;   //默认连接超时时间
+    public static final int DEFAULT_READ_TIMEOUT = 60_000;      //默认读取超时时间
+    public static final int DEFAULT_WRITE_TIMEOUT = 60_000;     //默认写入超时时间
     public static int REFRESH_TIME = 100;                       //回调刷新时间（单位ms）
 
     private Handler mDelivery;                                  //用于在主线程执行的调度器
