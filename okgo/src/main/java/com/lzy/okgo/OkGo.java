@@ -42,7 +42,9 @@ import okhttp3.OkHttpClient;
  * ================================================
  */
 public class OkGo {
-    public static final int DEFAULT_MILLISECONDS = 60000;       //默认的超时时间
+    public static final int DEFAULT_CONNECT_TIMEOUT = 60_000;   //默认连接超时时间
+    public static final int DEFAULT_READ_TIMEOUT = 60_000;      //默认读取超时时间
+    public static final int DEFAULT_WRITE_TIMEOUT = 60_000;     //默认写入超时时间
     public static int REFRESH_TIME = 100;                       //回调刷新时间（单位ms）
 
     private Handler mDelivery;                                  //用于在主线程执行的调度器
@@ -59,9 +61,9 @@ public class OkGo {
     private OkGo() {
         okHttpClientBuilder = new OkHttpClient.Builder();
         okHttpClientBuilder.hostnameVerifier(HttpsUtils.UnSafeHostnameVerifier);
-        okHttpClientBuilder.connectTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
-        okHttpClientBuilder.readTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
-        okHttpClientBuilder.writeTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
+        okHttpClientBuilder.connectTimeout(DEFAULT_CONNECT_TIMEOUT, TimeUnit.MILLISECONDS);
+        okHttpClientBuilder.readTimeout(DEFAULT_READ_TIMEOUT, TimeUnit.MILLISECONDS);
+        okHttpClientBuilder.writeTimeout(DEFAULT_WRITE_TIMEOUT, TimeUnit.MILLISECONDS);
         mDelivery = new Handler(Looper.getMainLooper());
     }
 
