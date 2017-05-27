@@ -59,11 +59,21 @@ public class NoneCacheRequestPolicy<T> extends BaseCachePolicy<T> {
     @Override
     public void requestAsync(CacheEntity<T> cacheEntity, Call rawCall, Callback<T> callback) {
         mCallback = callback;
-        mCallback.onStart(httpRequest);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mCallback.onStart(httpRequest);
+            }
+        });
         if (cacheEntity != null) {
-            HttpResponse<T> success = HttpResponse.success(true, cacheEntity.getData(), rawCall, null);
-            mCallback.onCacheSuccess(success.body(), success);
-            mCallback.onFinish(success);
+            final HttpResponse<T> success = HttpResponse.success(true, cacheEntity.getData(), rawCall, null);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mCallback.onCacheSuccess(success.body(), success);
+                    mCallback.onFinish(success);
+                }
+            });
             return;
         }
         requestNetworkAsync();

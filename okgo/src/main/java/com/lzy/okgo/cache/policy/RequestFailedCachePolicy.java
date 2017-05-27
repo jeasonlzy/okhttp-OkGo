@@ -35,19 +35,25 @@ public class RequestFailedCachePolicy<T> extends BaseCachePolicy<T> {
 
     @Override
     public void onError(final HttpResponse<T> error) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (cacheEntity != null) {
-                    HttpResponse<T> cacheSuccess = HttpResponse.success(true, cacheEntity.getData(), error.getRawCall(), error.getRawResponse());
+
+        if (cacheEntity != null) {
+            final HttpResponse<T> cacheSuccess = HttpResponse.success(true, cacheEntity.getData(), error.getRawCall(), error.getRawResponse());
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
                     mCallback.onCacheSuccess(cacheSuccess.body(), cacheSuccess);
                     mCallback.onFinish(cacheSuccess);
-                } else {
+                }
+            });
+        } else {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
                     mCallback.onError(error.getException(), error);
                     mCallback.onFinish(error);
                 }
-            }
-        });
+            });
+        }
     }
 
     @Override
@@ -62,7 +68,12 @@ public class RequestFailedCachePolicy<T> extends BaseCachePolicy<T> {
     @Override
     public void requestAsync(CacheEntity<T> cacheEntity, Call rawCall, Callback<T> callback) {
         mCallback = callback;
-        mCallback.onStart(httpRequest);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mCallback.onStart(httpRequest);
+            }
+        });
         requestNetworkAsync();
     }
 }

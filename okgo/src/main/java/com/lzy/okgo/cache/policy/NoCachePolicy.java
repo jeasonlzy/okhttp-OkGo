@@ -52,7 +52,12 @@ public class NoCachePolicy<T> extends BaseCachePolicy<T> {
     @Override
     public void requestAsync(CacheEntity<T> cacheEntity, Call rawCall, Callback<T> callback) {
         mCallback = callback;
-        mCallback.onStart(httpRequest);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mCallback.onStart(httpRequest);
+            }
+        });
         requestNetworkAsync();
     }
 }

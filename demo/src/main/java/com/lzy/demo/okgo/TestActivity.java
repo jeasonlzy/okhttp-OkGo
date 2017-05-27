@@ -22,10 +22,12 @@ import android.widget.ImageView;
 
 import com.lzy.demo.R;
 import com.lzy.demo.base.BaseActivity;
-import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
-import com.lzy.okgo.callback.StringCallback;
+import com.lzy.okgo.callback.FileCallback;
 import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.request.HttpRequest;
+
+import java.io.File;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -61,15 +63,28 @@ public class TestActivity extends BaseActivity {
 
     @OnClick(R.id.btn3)
     public void btn3(View view) {
-        OkGo.<String>get(Urls.URL_METHOD)//
+
+        OkGo.<File>get("http://www.apk3.com/uploads/soft/20160511/wshdyq.hit_1.15_25.apk")//
                 .tag(this)//
-                .execute(new StringCallback() {
+                .execute(new FileCallback() {
                     @Override
-                    public void onSuccess(String s, HttpResponse<String> response) {
+                    public void onSuccess(File file, HttpResponse<File> response) {
+                        System.out.println("onSuccess");
                     }
 
                     @Override
-                    public void onError(Exception e, HttpResponse<String> response) {
+                    public void onStart(HttpRequest<File, ? extends HttpRequest> request) {
+                        System.out.println("onStart");
+                    }
+
+                    @Override
+                    public void onError(Exception e, HttpResponse<File> response) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void downloadProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
+                        System.out.println(currentSize + " " + totalSize + " " + progress + " " + networkSpeed);
                     }
                 });
     }

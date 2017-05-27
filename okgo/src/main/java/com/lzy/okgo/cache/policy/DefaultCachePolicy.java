@@ -47,17 +47,27 @@ public class DefaultCachePolicy<T> extends BaseCachePolicy<T> {
     }
 
     @Override
-    public boolean onAnalysisResponse(Call call, Response response) {
+    public boolean onAnalysisResponse(final Call call, final Response response) {
         if (response.code() != 304) return false;
 
         if (cacheEntity == null) {
-            HttpResponse<T> error = HttpResponse.error(true, call, response, CacheException.NON_AND_304(httpRequest.getCacheKey()));
-            mCallback.onError(error.getException(), error);
-            mCallback.onFinish(error);
+            final HttpResponse<T> error = HttpResponse.error(true, call, response, CacheException.NON_AND_304(httpRequest.getCacheKey()));
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mCallback.onError(error.getException(), error);
+                    mCallback.onFinish(error);
+                }
+            });
         } else {
-            HttpResponse<T> success = HttpResponse.success(true, cacheEntity.getData(), call, response);
-            mCallback.onCacheSuccess(success.body(), success);
-            mCallback.onFinish(success);
+            final HttpResponse<T> success = HttpResponse.success(true, cacheEntity.getData(), call, response);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mCallback.onCacheSuccess(success.body(), success);
+                    mCallback.onFinish(success);
+                }
+            });
         }
         return true;
     }
@@ -79,7 +89,12 @@ public class DefaultCachePolicy<T> extends BaseCachePolicy<T> {
     @Override
     public void requestAsync(CacheEntity<T> cacheEntity, Call rawCall, Callback<T> callback) {
         mCallback = callback;
-        mCallback.onStart(httpRequest);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mCallback.onStart(httpRequest);
+            }
+        });
         requestNetworkAsync();
     }
 }
