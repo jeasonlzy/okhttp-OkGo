@@ -20,7 +20,7 @@ import com.lzy.demo.model.NewsResponse;
 import com.lzy.demo.utils.Convert;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.callback.AbsCallback;
-import com.lzy.okgo.request.BaseRequest;
+import com.lzy.okgo.request.HttpRequest;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -39,7 +39,7 @@ import okhttp3.Response;
 public abstract class NewsCallback<T> extends AbsCallback<T> {
 
     @Override
-    public void onBefore(BaseRequest request) {
+    public void onStart(HttpRequest<T, ? extends HttpRequest> request) {
         //缓存演示代码所有请求需要添加 apikey
         request.headers("apikey", Urls.APIKEY);
     }
@@ -49,7 +49,7 @@ public abstract class NewsCallback<T> extends AbsCallback<T> {
      * 实际使用中,自己服务器返回的数据格式和上面网站肯定不一样,所以以下是参考代码,根据实际情况自己改写
      */
     @Override
-    public T convertSuccess(Response response) throws Exception {
+    public T convertResponse(Response response) throws Exception {
         //以下代码是通过泛型解析实际参数,泛型必须传
         Type genType = getClass().getGenericSuperclass();
         Type[] params = ((ParameterizedType) genType).getActualTypeArguments();

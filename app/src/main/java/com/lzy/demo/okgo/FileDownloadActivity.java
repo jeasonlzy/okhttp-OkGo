@@ -16,7 +16,6 @@
 package com.lzy.demo.okgo;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.text.format.Formatter;
 import android.view.View;
 import android.widget.Button;
@@ -28,15 +27,14 @@ import com.lzy.demo.ui.NumberProgressBar;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.FileCallback;
-import com.lzy.okgo.request.BaseRequest;
+import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.request.HttpRequest;
 
 import java.io.File;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import okhttp3.Call;
-import okhttp3.Response;
 
 /**
  * ================================================
@@ -71,20 +69,27 @@ public class FileDownloadActivity extends BaseDetailActivity {
 
     @OnClick(R.id.fileDownload)
     public void fileDownload(View view) {
-        OkGo.get(Urls.URL_DOWNLOAD)//
+        OkGo.<File>get(Urls.URL_DOWNLOAD)//
                 .tag(this)//
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
                 .execute(new FileCallback("OkGo.apk") {
+
                     @Override
-                    public void onBefore(BaseRequest request) {
+                    public void onStart(HttpRequest<File, ? extends HttpRequest> request) {
                         btnFileDownload.setText("正在下载中");
                     }
 
                     @Override
-                    public void onSuccess(File file, Call call, Response response) {
-                        handleResponse(file, call, response);
+                    public void onSuccess(File file, HttpResponse<File> response) {
+                        handleResponse(response);
                         btnFileDownload.setText("下载完成");
+                    }
+
+                    @Override
+                    public void onError(Exception e, HttpResponse<File> response) {
+                        handleError(response);
+                        btnFileDownload.setText("下载出错");
                     }
 
                     @Override
@@ -99,13 +104,6 @@ public class FileDownloadActivity extends BaseDetailActivity {
                         tvProgress.setText((Math.round(progress * 10000) * 1.0f / 100) + "%");
                         pbProgress.setMax(100);
                         pbProgress.setProgress((int) (progress * 100));
-                    }
-
-                    @Override
-                    public void onError(Call call, @Nullable Response response, @Nullable Exception e) {
-                        super.onError(call, response, e);
-                        handleError(call, response);
-                        btnFileDownload.setText("下载出错");
                     }
                 });
     }

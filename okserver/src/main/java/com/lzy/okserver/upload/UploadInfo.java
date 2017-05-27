@@ -17,7 +17,7 @@ package com.lzy.okserver.upload;
 
 import com.lzy.okserver.download.DownloadInfo;
 import com.lzy.okserver.listener.UploadListener;
-import com.lzy.okgo.request.BaseBodyRequest;
+import com.lzy.okgo.request.HttpBodyRequest;
 
 /**
  * ================================================
@@ -37,7 +37,7 @@ public class UploadInfo {
     private long uploadLength;                  //已上传大小
     private long networkSpeed;                  //上传速度
     private int state;                          //当前状态
-    private BaseBodyRequest request;            //当前任务的网络请求
+    private HttpBodyRequest request;            //当前任务的网络请求
 
     private UploadTask task;                    //执行当前上传的任务
     private UploadListener listener;            //当前上传任务的监听
@@ -98,11 +98,11 @@ public class UploadInfo {
         this.state = state;
     }
 
-    public BaseBodyRequest getRequest() {
+    public HttpBodyRequest getRequest() {
         return request;
     }
 
-    public void setRequest(BaseBodyRequest request) {
+    public void setRequest(HttpBodyRequest request) {
         this.request = request;
     }
 

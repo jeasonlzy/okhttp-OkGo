@@ -17,11 +17,11 @@ package com.lzy.demo.callback;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.support.annotation.Nullable;
 import android.view.Window;
 
 import com.lzy.okgo.callback.StringCallback;
-import com.lzy.okgo.request.BaseRequest;
+import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.request.HttpRequest;
 
 /**
  * ================================================
@@ -45,18 +45,15 @@ public abstract class StringDialogCallback extends StringCallback {
     }
 
     @Override
-    public void onBefore(BaseRequest request) {
-        super.onBefore(request);
-        //网络请求前显示对话框
+    public void onStart(HttpRequest<String, ? extends HttpRequest> request) {
         if (dialog != null && !dialog.isShowing()) {
             dialog.show();
         }
     }
 
     @Override
-    public void onAfter(@Nullable String s, @Nullable Exception e) {
-        super.onAfter(s, e);
-        //网络请求结束后关闭对话框
+    public void onFinish(HttpResponse<String> response) {
+        super.onFinish(response);
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
         }

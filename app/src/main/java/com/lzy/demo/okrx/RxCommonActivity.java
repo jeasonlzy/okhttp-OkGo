@@ -26,7 +26,8 @@ import com.lzy.demo.model.ServerModel;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.convert.StringConvert;
-import com.lzy.okrx.RxAdapter;
+import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okrx.adapter.ObservableHttp;
 
 import org.json.JSONObject;
 
@@ -35,11 +36,12 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
-import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 /**
  * ================================================
@@ -68,30 +70,35 @@ public class RxCommonActivity extends BaseRxDetailActivity {
 
     @OnClick(R.id.commonRequest)
     public void commonRequest(View view) {
-        Subscription subscription = OkGo.post(Urls.URL_METHOD)//
+        Subscription subscription = OkGo.<String>post(Urls.URL_METHOD)//
                 .headers("aaa", "111")//
                 .params("bbb", "222")//
-                .getCall(StringConvert.create(), RxAdapter.<String>create())//以上为产生请求事件,请求默认发生在IO线程
+                .converter(new StringConvert())//
+                .adapt(new ObservableHttp<String>())//
+                .subscribeOn(Schedulers.io())//
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
-                        showLoading();  //开始请求前显示对话框
+                        showLoading();
                     }
                 })//
-                .observeOn(AndroidSchedulers.mainThread())//切换到主线程
-                .subscribe(new Action1<String>() {
+                .observeOn(AndroidSchedulers.mainThread())//
+                .subscribe(new Subscriber<HttpResponse<String>>() {
                     @Override
-                    public void call(String s) {
-                        dismissLoading();               //请求成功,关闭对话框
-                        handleResponse(s, null, null);
+                    public void onCompleted() {
+                        dismissLoading();
                     }
-                }, new Action1<Throwable>() {
+
                     @Override
-                    public void call(Throwable throwable) {
-                        throwable.printStackTrace();
-                        dismissLoading();       //请求失败
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
                         showToast("请求失败");
-                        handleError(null, null);
+                        handleError(null);
+                    }
+
+                    @Override
+                    public void onNext(HttpResponse<String> response) {
+                        handleResponse(response);
                     }
                 });
         addSubscribe(subscription);
@@ -100,32 +107,42 @@ public class RxCommonActivity extends BaseRxDetailActivity {
     @OnClick(R.id.retrofitRequest)
     public void retrofitRequest(View view) {
         Subscription subscription = ServerApi.getServerModel("aaa", "bbb")//
+                .subscribeOn(Schedulers.io())//
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
-                        showLoading();  //开始请求前显示对话框
+                        showLoading();
                     }
                 })//
-                .map(new Func1<LzyResponse<ServerModel>, ServerModel>() {
+                .map(new Func1<HttpResponse<LzyResponse<ServerModel>>, HttpResponse<ServerModel>>() {
                     @Override
-                    public ServerModel call(LzyResponse<ServerModel> response) {
-                        return response.data;
+                    public HttpResponse<ServerModel> call(HttpResponse<LzyResponse<ServerModel>> response) {
+                        HttpResponse<ServerModel> httpResponse = new HttpResponse<>();
+                        httpResponse.setException(response.getException());
+                        httpResponse.setFromCache(response.isFromCache());
+                        httpResponse.setRawResponse(response.getRawResponse());
+                        httpResponse.setRawCall(response.getRawCall());
+                        httpResponse.setBody(response.body().data);
+                        return httpResponse;
                     }
-                })  //转换数据结果
-                .observeOn(AndroidSchedulers.mainThread())  //切换到主线程
-                .subscribe(new Action1<ServerModel>() {
+                })//
+                .observeOn(AndroidSchedulers.mainThread())  //
+                .subscribe(new Subscriber<HttpResponse<ServerModel>>() {
                     @Override
-                    public void call(ServerModel serverModel) {
-                        dismissLoading();                   //请求成功
-                        handleResponse(serverModel, null, null);
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        throwable.printStackTrace();            //请求失败
-                        showToast("请求失败");
+                    public void onCompleted() {
                         dismissLoading();
-                        handleError(null, null);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();            //请求失败
+                        showToast("请求失败");
+                        handleError(null);
+                    }
+
+                    @Override
+                    public void onNext(HttpResponse<ServerModel> response) {
+                        handleResponse(response);
                     }
                 });
         addSubscribe(subscription);
@@ -133,36 +150,46 @@ public class RxCommonActivity extends BaseRxDetailActivity {
 
     @OnClick(R.id.jsonRequest)
     public void jsonRequest(View view) {
-        Subscription subscription = OkGo.post(Urls.URL_JSONOBJECT)//
+        Subscription subscription = OkGo.<LzyResponse<ServerModel>>post(Urls.URL_JSONOBJECT)//
                 .headers("aaa", "111")//
-                .params("bbb", "222")//一定要注意这里的写法,JsonConvert最后的大括号千万不能忘记
-                .getCall(new JsonConvert<LzyResponse<ServerModel>>() {}, RxAdapter.<LzyResponse<ServerModel>>create())//
+                .params("bbb", "222")//
+                .converter(new JsonConvert<LzyResponse<ServerModel>>())//
+                .adapt(new ObservableHttp<LzyResponse<ServerModel>>())//
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
                         showLoading();
                     }
                 })//
-                .map(new Func1<LzyResponse<ServerModel>, ServerModel>() {
+                .map(new Func1<HttpResponse<LzyResponse<ServerModel>>, HttpResponse<ServerModel>>() {
                     @Override
-                    public ServerModel call(LzyResponse<ServerModel> response) {
-                        return response.data;
+                    public HttpResponse<ServerModel> call(HttpResponse<LzyResponse<ServerModel>> response) {
+                        HttpResponse<ServerModel> httpResponse = new HttpResponse<>();
+                        httpResponse.setException(response.getException());
+                        httpResponse.setFromCache(response.isFromCache());
+                        httpResponse.setRawResponse(response.getRawResponse());
+                        httpResponse.setRawCall(response.getRawCall());
+                        httpResponse.setBody(response.body().data);
+                        return httpResponse;
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Action1<ServerModel>() {
+                .subscribe(new Subscriber<HttpResponse<ServerModel>>() {
                     @Override
-                    public void call(ServerModel serverModel) {
-                        dismissLoading();                   //请求成功
-                        handleResponse(serverModel, null, null);
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        throwable.printStackTrace();            //请求失败
-                        showToast("请求失败");
+                    public void onCompleted() {
                         dismissLoading();
-                        handleError(null, null);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();            //请求失败
+                        showToast("请求失败");
+                        handleError(null);
+                    }
+
+                    @Override
+                    public void onNext(HttpResponse<ServerModel> response) {
+                        handleResponse(response);
                     }
                 });
         addSubscribe(subscription);
@@ -177,26 +204,41 @@ public class RxCommonActivity extends BaseRxDetailActivity {
                         showLoading();
                     }
                 })//
-                .map(new Func1<LzyResponse<List<ServerModel>>, List<ServerModel>>() {
+                .doOnSubscribe(new Action0() {
                     @Override
-                    public List<ServerModel> call(LzyResponse<List<ServerModel>> response) {
-                        return response.data;
+                    public void call() {
+                        showLoading();
+                    }
+                })//
+                .map(new Func1<HttpResponse<LzyResponse<List<ServerModel>>>, HttpResponse<List<ServerModel>>>() {
+                    @Override
+                    public HttpResponse<List<ServerModel>> call(HttpResponse<LzyResponse<List<ServerModel>>> response) {
+                        HttpResponse<List<ServerModel>> httpResponse = new HttpResponse<>();
+                        httpResponse.setException(response.getException());
+                        httpResponse.setFromCache(response.isFromCache());
+                        httpResponse.setRawResponse(response.getRawResponse());
+                        httpResponse.setRawCall(response.getRawCall());
+                        httpResponse.setBody(response.body().data);
+                        return httpResponse;
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Action1<List<ServerModel>>() {
+                .subscribe(new Subscriber<HttpResponse<List<ServerModel>>>() {
                     @Override
-                    public void call(List<ServerModel> serverModels) {
-                        dismissLoading();                   //请求成功
-                        handleResponse(serverModels, null, null);
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        throwable.printStackTrace();            //请求失败
-                        showToast("请求失败");
+                    public void onCompleted() {
                         dismissLoading();
-                        handleError(null, null);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();            //请求失败
+                        showToast("请求失败");
+                        handleError(null);
+                    }
+
+                    @Override
+                    public void onNext(HttpResponse<List<ServerModel>> response) {
+                        handleResponse(response);
                     }
                 });
         addSubscribe(subscription);
@@ -204,30 +246,35 @@ public class RxCommonActivity extends BaseRxDetailActivity {
 
     @OnClick(R.id.upString)
     public void upString(View view) {
-        Subscription subscription = OkGo.post(Urls.URL_TEXT_UPLOAD)//
+        Subscription subscription = OkGo.<String>post(Urls.URL_TEXT_UPLOAD)//
                 .headers("bbb", "222")//
                 .upString("上传的文本。。。")//
-                .getCall(StringConvert.create(), RxAdapter.<String>create())//以上为产生请求事件,请求默认发生在IO线程
+                .converter(new StringConvert())//
+                .adapt(new ObservableHttp<String>())//
+                .subscribeOn(Schedulers.io())//
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
-                        showLoading();  //开始请求前显示对话框
+                        showLoading();
                     }
                 })//
-                .observeOn(AndroidSchedulers.mainThread())//切换到主线程
-                .subscribe(new Action1<String>() {
+                .observeOn(AndroidSchedulers.mainThread())//
+                .subscribe(new Subscriber<HttpResponse<String>>() {
                     @Override
-                    public void call(String s) {
-                        dismissLoading();               //请求成功,关闭对话框
-                        handleResponse(s, null, null);
+                    public void onCompleted() {
+                        dismissLoading();
                     }
-                }, new Action1<Throwable>() {
+
                     @Override
-                    public void call(Throwable throwable) {
-                        throwable.printStackTrace();
-                        dismissLoading();       //请求失败
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
                         showToast("请求失败");
-                        handleError(null, null);
+                        handleError(null);
+                    }
+
+                    @Override
+                    public void onNext(HttpResponse<String> response) {
+                        handleResponse(response);
                     }
                 });
         addSubscribe(subscription);
@@ -242,30 +289,35 @@ public class RxCommonActivity extends BaseRxDetailActivity {
         params.put("key4", "其实你怎么高兴怎么写都行");
         JSONObject jsonObject = new JSONObject(params);
 
-        Subscription subscription = OkGo.post(Urls.URL_TEXT_UPLOAD)//
+        Subscription subscription = OkGo.<String>post(Urls.URL_TEXT_UPLOAD)//
                 .headers("bbb", "222")//
                 .upJson(jsonObject.toString())//
-                .getCall(StringConvert.create(), RxAdapter.<String>create())//以上为产生请求事件,请求默认发生在IO线程
+                .converter(new StringConvert())//
+                .adapt(new ObservableHttp<String>())//
+                .subscribeOn(Schedulers.io())//
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
-                        showLoading();  //开始请求前显示对话框
+                        showLoading();
                     }
                 })//
-                .observeOn(AndroidSchedulers.mainThread())//切换到主线程
-                .subscribe(new Action1<String>() {
+                .observeOn(AndroidSchedulers.mainThread())//
+                .subscribe(new Subscriber<HttpResponse<String>>() {
                     @Override
-                    public void call(String s) {
-                        dismissLoading();               //请求成功,关闭对话框
-                        handleResponse(s, null, null);
+                    public void onCompleted() {
+                        dismissLoading();
                     }
-                }, new Action1<Throwable>() {
+
                     @Override
-                    public void call(Throwable throwable) {
-                        throwable.printStackTrace();
-                        dismissLoading();       //请求失败
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
                         showToast("请求失败");
-                        handleError(null, null);
+                        handleError(null);
+                    }
+
+                    @Override
+                    public void onNext(HttpResponse<String> response) {
+                        handleResponse(response);
                     }
                 });
         addSubscribe(subscription);

@@ -17,13 +17,14 @@ package com.lzy.okserver.upload;
 
 import android.os.Message;
 
+import com.lzy.okgo.callback.AbsCallback;
+import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.request.HttpBodyRequest;
 import com.lzy.okserver.listener.UploadListener;
 import com.lzy.okserver.task.PriorityAsyncTask;
-import com.lzy.okgo.callback.AbsCallback;
 
 import java.io.IOException;
 
-import okhttp3.Call;
 import okhttp3.Response;
 
 /**
@@ -71,7 +72,9 @@ public class UploadTask<T> extends PriorityAsyncTask<Void, UploadInfo, UploadInf
         //构建请求体,默认使用post请求上传
         Response response;
         try {
-            response = mUploadInfo.getRequest().setCallback(new MergeListener()).execute();
+            HttpBodyRequest request = mUploadInfo.getRequest();
+            request.setCallback(new MergeListener());
+            response = request.execute();
         } catch (IOException e) {
             e.printStackTrace();
             mUploadInfo.setNetworkSpeed(0);
@@ -107,7 +110,7 @@ public class UploadTask<T> extends PriorityAsyncTask<Void, UploadInfo, UploadInf
 
         private long lastRefreshUiTime;
 
-        public MergeListener() {
+        MergeListener() {
             lastRefreshUiTime = System.currentTimeMillis();
         }
 
@@ -128,12 +131,12 @@ public class UploadTask<T> extends PriorityAsyncTask<Void, UploadInfo, UploadInf
         }
 
         @Override
-        public T convertSuccess(Response response) throws Exception {
-            return null;
+        public void onSuccess(T t, HttpResponse<T> response) {
         }
 
         @Override
-        public void onSuccess(T t, Call call, Response response) {
+        public T convertResponse(Response response) throws Exception {
+            return null;
         }
     }
 

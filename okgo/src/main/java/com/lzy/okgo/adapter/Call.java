@@ -15,9 +15,9 @@
  */
 package com.lzy.okgo.adapter;
 
-import com.lzy.okgo.callback.AbsCallback;
-import com.lzy.okgo.model.Response;
-import com.lzy.okgo.request.BaseRequest;
+import com.lzy.okgo.callback.Callback;
+import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.request.HttpRequest;
 
 /**
  * ================================================
@@ -30,10 +30,10 @@ import com.lzy.okgo.request.BaseRequest;
  */
 public interface Call<T> {
     /** 同步执行 */
-    Response<T> execute() throws Exception;
+    HttpResponse<T> execute() throws Exception;
 
     /** 异步回调执行 */
-    void execute(AbsCallback<T> callback);
+    void execute(Callback<T> callback);
 
     /** 是否已经执行 */
     boolean isExecuted();
@@ -46,5 +46,5 @@ public interface Call<T> {
 
     Call<T> clone();
 
-    BaseRequest getBaseRequest();
+    HttpRequest getHttpRequest();
 }

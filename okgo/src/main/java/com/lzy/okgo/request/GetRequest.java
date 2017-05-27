@@ -15,6 +15,7 @@
  */
 package com.lzy.okgo.request;
 
+import com.lzy.okgo.model.HttpMethod;
 import com.lzy.okgo.utils.HttpUtils;
 
 import okhttp3.Request;
@@ -29,11 +30,15 @@ import okhttp3.RequestBody;
  * 修订历史：
  * ================================================
  */
-public class GetRequest extends BaseRequest<GetRequest> {
+public class GetRequest<T> extends HttpRequest<T, GetRequest<T>> {
 
     public GetRequest(String url) {
         super(url);
-        method = "GET";
+    }
+
+    @Override
+    public HttpMethod getMethod() {
+        return HttpMethod.GET;
     }
 
     @Override

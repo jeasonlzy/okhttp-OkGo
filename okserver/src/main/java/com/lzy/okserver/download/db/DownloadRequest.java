@@ -18,7 +18,7 @@ package com.lzy.okserver.download.db;
 import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.HttpParams;
-import com.lzy.okgo.request.BaseRequest;
+import com.lzy.okgo.request.HttpRequest;
 import com.lzy.okgo.request.DeleteRequest;
 import com.lzy.okgo.request.GetRequest;
 import com.lzy.okgo.request.HeadRequest;
@@ -49,8 +49,8 @@ public class DownloadRequest implements Serializable {
     public HttpParams params;
     public HttpHeaders headers;
 
-    public static String getMethod(BaseRequest request) {
-        if (request instanceof GetRequest) return "get";
+    public static String getMethod(HttpRequest request) {
+        if (request instanceof GetRequest) return "query";
         if (request instanceof PostRequest) return "post";
         if (request instanceof PutRequest) return "put";
         if (request instanceof DeleteRequest) return "delete";
@@ -59,8 +59,8 @@ public class DownloadRequest implements Serializable {
         return "";
     }
 
-    public static BaseRequest createRequest(String url, String method) {
-        if (method.equals("get")) return new GetRequest(url);
+    public static HttpRequest createRequest(String url, String method) {
+        if (method.equals("query")) return new GetRequest(url);
         if (method.equals("post")) return new PostRequest(url);
         if (method.equals("put")) return new PutRequest(url);
         if (method.equals("delete")) return new DeleteRequest(url);

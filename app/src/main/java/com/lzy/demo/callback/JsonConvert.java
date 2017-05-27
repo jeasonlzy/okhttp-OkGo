@@ -60,7 +60,7 @@ public class JsonConvert<T> implements Converter<T> {
      * </pre>
      */
     @Override
-    public T convertSuccess(Response response) throws Exception {
+    public T convertResponse(Response response) throws Exception {
 
         // 重要的事情说三遍，不同的业务，这里的代码逻辑都不一样，如果你不修改，那么基本不可用
         // 重要的事情说三遍，不同的业务，这里的代码逻辑都不一样，如果你不修改，那么基本不可用

@@ -13,28 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzy.okgo.callback;
-
-import okhttp3.Call;
-import okhttp3.Response;
+package com.lzy.okgo.exception;
 
 /**
  * ================================================
  * 作    者：jeasonlzy（廖子尧）Github地址：https://github.com/jeasonlzy
  * 版    本：1.0
- * 创建日期：16/9/11
- * 描    述：所有回调的包装类,空实现
+ * 创建日期：16/8/28
+ * 描    述：
  * 修订历史：
  * ================================================
  */
-public class AbsCallbackWrapper<T> extends AbsCallback<T> {
-    @Override
-    public T convertSuccess(Response value) throws Exception {
-        value.close();
-        return (T) value;
+public class CacheException extends Exception {
+    private static final long serialVersionUID = 845628123701073013L;
+
+    public static CacheException NON_OR_EXPIRE(String cacheKey) {
+        return new CacheException("cacheKey = " + cacheKey + " ,can't find cache by cacheKey, or cache has expired!");
     }
 
-    @Override
-    public void onSuccess(T t, Call call, Response response) {
+    public static CacheException NON_AND_304(String cacheKey) {
+        return new CacheException("the http response code is 304, but the cache with cacheKey = " + cacheKey + " is null or expired!");
+    }
+
+    public CacheException(String detailMessage) {
+        super(detailMessage);
     }
 }

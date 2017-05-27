@@ -16,6 +16,7 @@
 package com.lzy.okgo.request;
 
 import com.lzy.okgo.model.HttpHeaders;
+import com.lzy.okgo.model.HttpMethod;
 import com.lzy.okgo.utils.HttpUtils;
 import com.lzy.okgo.utils.OkLogger;
 
@@ -33,11 +34,15 @@ import okhttp3.RequestBody;
  * 修订历史：
  * ================================================
  */
-public class OptionsRequest extends BaseBodyRequest<OptionsRequest> {
+public class OptionsRequest<T> extends HttpBodyRequest<T, OptionsRequest<T>> {
 
     public OptionsRequest(String url) {
         super(url);
-        method = "OPTIONS";
+    }
+
+    @Override
+    public HttpMethod getMethod() {
+        return HttpMethod.OPTIONS;
     }
 
     @Override
@@ -48,6 +53,7 @@ public class OptionsRequest extends BaseBodyRequest<OptionsRequest> {
             OkLogger.e(e);
         }
         Request.Builder requestBuilder = HttpUtils.appendHeaders(headers);
+        if (isSpliceUrl) url = HttpUtils.createUrlFromParams(baseUrl, params.urlParamsMap);
         return requestBuilder.method("OPTIONS", requestBody).url(url).tag(tag).build();
     }
 }

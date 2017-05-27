@@ -25,6 +25,7 @@ import com.lzy.demo.model.LzyResponse;
 import com.lzy.demo.model.ServerModel;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
+import com.lzy.okgo.model.HttpResponse;
 
 import org.json.JSONObject;
 
@@ -32,9 +33,6 @@ import java.util.HashMap;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import okhttp3.Call;
-import okhttp3.MediaType;
-import okhttp3.Response;
 
 /**
  * ================================================
@@ -71,29 +69,27 @@ public class PostTextActivity extends BaseDetailActivity {
         params.put("key4", "其实你怎么高兴怎么写都行");
         JSONObject jsonObject = new JSONObject(params);
 
-        OkGo.post(Urls.URL_TEXT_UPLOAD)//
+        OkGo.<LzyResponse<ServerModel>>post(Urls.URL_TEXT_UPLOAD)//
                 .tag(this)//
                 .headers("header1", "headerValue1")//
 //                .params("param1", "paramValue1")//  这里不要使用params，upJson 与 params 是互斥的，只有 upJson 的数据会被上传
                 .upJson(jsonObject)//
                 .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                     @Override
-                    public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
-                        handleResponse(responseData.data, call, response);
+                    public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, HttpResponse<LzyResponse<ServerModel>> response) {
+                        handleResponse(response);
                     }
 
                     @Override
-                    public void onError(Call call, Response response, Exception e) {
-                        super.onError(call, response, e);
-                        handleError(call, response);
+                    public void onError(Exception e, HttpResponse<LzyResponse<ServerModel>> response) {
+                        handleError(response);
                     }
-
                 });
     }
 
     @OnClick(R.id.postString)
     public void postString(View view) {
-        OkGo.post(Urls.URL_TEXT_UPLOAD)//
+        OkGo.<LzyResponse<ServerModel>>post(Urls.URL_TEXT_UPLOAD)//
                 .tag(this)//
                 .headers("header1", "headerValue1")//
 //                .params("param1", "paramValue1")// 这里不要使用params，upString 与 params 是互斥的，只有 upString 的数据会被上传
@@ -101,38 +97,34 @@ public class PostTextActivity extends BaseDetailActivity {
 //                .upString("这是要上传的长文本数据！", MediaType.parse("application/xml"))// 比如上传xml数据，这里就可以自己指定请求头
                 .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                     @Override
-                    public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
-                        handleResponse(responseData.data, call, response);
+                    public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, HttpResponse<LzyResponse<ServerModel>> response) {
+                        handleResponse(response);
                     }
 
                     @Override
-                    public void onError(Call call, Response response, Exception e) {
-                        super.onError(call, response, e);
-                        handleError(call, response);
+                    public void onError(Exception e, HttpResponse<LzyResponse<ServerModel>> response) {
+                        handleError(response);
                     }
-
                 });
     }
 
     @OnClick(R.id.postBytes)
     public void postBytes(View view) {
-        OkGo.post(Urls.URL_TEXT_UPLOAD)//
+        OkGo.<LzyResponse<ServerModel>>post(Urls.URL_TEXT_UPLOAD)//
                 .tag(this)//
                 .headers("header1", "headerValue1")//
 //                .params("param1", "paramValue1")// 这里不要使用params，upBytes 与 params 是互斥的，只有 upBytes 的数据会被上传
                 .upBytes("这是字节数据".getBytes())//
                 .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                     @Override
-                    public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
-                        handleResponse(responseData.data, call, response);
+                    public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, HttpResponse<LzyResponse<ServerModel>> response) {
+                        handleResponse(response);
                     }
 
                     @Override
-                    public void onError(Call call, Response response, Exception e) {
-                        super.onError(call, response, e);
-                        handleError(call, response);
+                    public void onError(Exception e, HttpResponse<LzyResponse<ServerModel>> response) {
+                        handleError(response);
                     }
-
                 });
     }
 }

@@ -18,7 +18,7 @@ package com.lzy.okserver.download;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-import com.lzy.okgo.request.BaseRequest;
+import com.lzy.okgo.request.HttpRequest;
 import com.lzy.okgo.utils.OkLogger;
 import com.lzy.okserver.download.db.DownloadRequest;
 import com.lzy.okserver.listener.DownloadListener;
@@ -67,7 +67,7 @@ public class DownloadInfo implements Comparable<DownloadInfo> {
     private long downloadLength;        //已下载大小
     private long networkSpeed;          //下载速度
     private int state = 0;              //当前状态
-    private BaseRequest request;        //当前任务的网络请求
+    private HttpRequest request;        //当前任务的网络请求
     private Serializable data;          //额外的数据
 
     private DownloadRequest downloadRequest = new DownloadRequest();
@@ -87,7 +87,7 @@ public class DownloadInfo implements Comparable<DownloadInfo> {
         values.put(NETWORK_SPEED, downloadInfo.getNetworkSpeed());
         values.put(STATE, downloadInfo.getState());
 
-        BaseRequest request = downloadInfo.getRequest();
+        HttpRequest request = downloadInfo.getRequest();
         DownloadRequest downloadRequest = downloadInfo.getDownloadRequest();
         downloadRequest.cacheKey = request.getCacheKey();
         downloadRequest.cacheTime = request.getCacheTime();
@@ -160,7 +160,7 @@ public class DownloadInfo implements Comparable<DownloadInfo> {
                 ois = new ObjectInputStream(bais);
                 DownloadRequest downloadRequest = (DownloadRequest) ois.readObject();
                 info.setDownloadRequest(downloadRequest);
-                BaseRequest request = DownloadRequest.createRequest(downloadRequest.url, downloadRequest.method);
+                HttpRequest request = DownloadRequest.createRequest(downloadRequest.url, downloadRequest.method);
                 if (request != null) {
                     request.cacheMode(downloadRequest.cacheMode);
                     request.cacheTime(downloadRequest.cacheTime);
@@ -290,11 +290,11 @@ public class DownloadInfo implements Comparable<DownloadInfo> {
         this.state = state;
     }
 
-    public BaseRequest getRequest() {
+    public HttpRequest getRequest() {
         return request;
     }
 
-    public void setRequest(BaseRequest request) {
+    public void setRequest(HttpRequest request) {
         this.request = request;
     }
 

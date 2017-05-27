@@ -22,14 +22,16 @@ import android.widget.ImageView;
 
 import com.lzy.demo.R;
 import com.lzy.demo.base.BaseRxDetailActivity;
+import com.lzy.okgo.model.HttpResponse;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
-import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * ================================================
@@ -61,6 +63,7 @@ public class RxBitmapActivity extends BaseRxDetailActivity {
     @OnClick(R.id.requestImage)
     public void requestImage(View view) {
         Subscription subscription = ServerApi.getBitmap("aaa", "bbb")//
+                .subscribeOn(Schedulers.io())//
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
@@ -68,21 +71,23 @@ public class RxBitmapActivity extends BaseRxDetailActivity {
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Action1<Bitmap>() {
+                .subscribe(new Subscriber<HttpResponse<Bitmap>>() {
                     @Override
-                    public void call(Bitmap bitmap) {
-                        dismissLoading();                   //请求成功
-                        handleResponse(bitmap, null, null);
-                        imageView.setImageBitmap(bitmap);
-                        System.out.println("---------");
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        throwable.printStackTrace();            //请求失败
-                        showToast("请求失败");
+                    public void onCompleted() {
                         dismissLoading();
-                        handleError(null, null);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();            //请求失败
+                        handleError(null);
+                        showToast("请求失败");
+                    }
+
+                    @Override
+                    public void onNext(HttpResponse<Bitmap> response) {
+                        handleResponse(response);
+                        imageView.setImageBitmap(response.body());
                     }
                 });
         addSubscribe(subscription);

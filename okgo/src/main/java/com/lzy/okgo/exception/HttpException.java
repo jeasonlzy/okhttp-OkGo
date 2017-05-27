@@ -13,27 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzy.okrx;
+package com.lzy.okgo.exception;
 
-import com.lzy.okgo.model.Response;
+import com.lzy.okgo.model.HttpResponse;
 
-/** Exception for an unexpected, non-2xx HTTP response. */
+import static com.lzy.okgo.utils.TypeUtils.checkNotNull;
+
 /**
  * ================================================
  * 作    者：jeasonlzy（廖子尧）Github地址：https://github.com/jeasonlzy
  * 版    本：1.0
- * 创建日期：16/9/11
+ * 创建日期：16/8/28
  * 描    述：
  * 修订历史：
  * ================================================
  */
-public final class HttpException extends Exception {
-    private final int code;
-    private final String message;
-    private final transient Response<?> response;
+public class HttpException extends RuntimeException {
+    private static final long serialVersionUID = 8773734741709178425L;
 
-    public HttpException(Response<?> response) {
-        super("HTTP " + response.code() + " " + response.message());
+    public static HttpException NET_ERROR() {
+        return new HttpException("network error! http response code is 404 or 5xx!");
+    }
+
+    public static HttpException COMMON(String message) {
+        return new HttpException(message);
+    }
+
+    private static String getMessage(HttpResponse<?> response) {
+        checkNotNull(response, "response == null");
+        return "HTTP " + response.code() + " " + response.message();
+    }
+
+    private int code;
+    private String message;
+    private transient HttpResponse<?> response;
+
+    public HttpException(String message) {
+        super(message);
+    }
+
+    public HttpException(HttpResponse<?> response) {
+        super(getMessage(response));
         this.code = response.code();
         this.message = response.message();
         this.response = response;
@@ -52,7 +72,7 @@ public final class HttpException extends Exception {
     /**
      * The full HTTP response. This may be null if the exception was serialized.
      */
-    public Response<?> response() {
+    public HttpResponse<?> response() {
         return response;
     }
 }

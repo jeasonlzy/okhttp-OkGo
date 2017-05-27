@@ -24,14 +24,10 @@ package com.lzy.okgo.adapter;
  * 修订历史：
  * ================================================
  */
-public class DefaultCallAdapter<T> implements CallAdapter<Call<T>> {
-
-    public static <T> DefaultCallAdapter<T> create() {
-        return new DefaultCallAdapter<>();
-    }
+public class DefaultCallAdapter<T> implements CallAdapter<T, Call<T>> {
 
     @Override
-    public <R> Call<T> adapt(Call<R> call) {
-        return (Call<T>) call;
+    public Call<T> adapt(Call<T> call, AdapterParam param) {
+        return call;
     }
 }

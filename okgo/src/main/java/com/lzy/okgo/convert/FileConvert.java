@@ -19,7 +19,7 @@ import android.os.Environment;
 import android.text.TextUtils;
 
 import com.lzy.okgo.OkGo;
-import com.lzy.okgo.callback.AbsCallback;
+import com.lzy.okgo.callback.Callback;
 import com.lzy.okgo.utils.HttpUtils;
 import com.lzy.okgo.utils.OkLogger;
 
@@ -45,7 +45,7 @@ public class FileConvert implements Converter<File> {
 
     private String destFileDir;     //目标文件存储的文件夹路径
     private String destFileName;    //目标文件存储的文件名
-    private AbsCallback callback;    //下载回调
+    private Callback<File> callback;    //下载回调
 
     public FileConvert() {
         this(null);
@@ -60,12 +60,12 @@ public class FileConvert implements Converter<File> {
         this.destFileName = destFileName;
     }
 
-    public void setCallback(AbsCallback callback) {
+    public void setCallback(Callback<File> callback) {
         this.callback = callback;
     }
 
     @Override
-    public File convertSuccess(Response value) throws Exception {
+    public File convertResponse(Response value) throws Exception {
         if (TextUtils.isEmpty(destFileDir)) destFileDir = Environment.getExternalStorageDirectory() + DM_TARGET_FOLDER;
         if (TextUtils.isEmpty(destFileName)) destFileName = HttpUtils.getNetFileName(value, value.request().url().toString());
 

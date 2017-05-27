@@ -33,4 +33,13 @@ public class LzyResponse<T> implements Serializable {
     public int code;
     public String msg;
     public T data;
+
+    @Override
+    public String toString() {
+        return "LzyResponse{\n" +//
+               "\tcode=" + code + "\n" +//
+               "\tmsg='" + msg + "\'\n" +//
+               "\tdata=" + data + "\n" +//
+               '}';
+    }
 }

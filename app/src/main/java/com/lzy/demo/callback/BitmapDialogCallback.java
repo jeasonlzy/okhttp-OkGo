@@ -18,11 +18,11 @@ package com.lzy.demo.callback;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
-import android.support.annotation.Nullable;
 import android.view.Window;
 
 import com.lzy.okgo.callback.BitmapCallback;
-import com.lzy.okgo.request.BaseRequest;
+import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.request.HttpRequest;
 
 /**
  * ================================================
@@ -46,14 +46,15 @@ public abstract class BitmapDialogCallback extends BitmapCallback {
     }
 
     @Override
-    public void onBefore(BaseRequest request) {
+    public void onStart(HttpRequest<Bitmap, ? extends HttpRequest> request) {
         if (dialog != null && !dialog.isShowing()) {
             dialog.show();
         }
     }
 
     @Override
-    public void onAfter(@Nullable Bitmap bitmap, @Nullable Exception e) {
+    public void onFinish(HttpResponse<Bitmap> response) {
+        super.onFinish(response);
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
         }

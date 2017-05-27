@@ -25,13 +25,12 @@ import com.lzy.demo.model.LzyResponse;
 import com.lzy.demo.model.ServerModel;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
+import com.lzy.okgo.model.HttpResponse;
 
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import okhttp3.Call;
-import okhttp3.Response;
 
 /**
  * ================================================
@@ -63,20 +62,20 @@ public class JsonRequestActivity extends BaseDetailActivity {
      */
     @OnClick(R.id.requestJson)
     public void requestJson(View view) {
-        OkGo.get(Urls.URL_JSONOBJECT)//
+        OkGo.<LzyResponse<ServerModel>>get(Urls.URL_JSONOBJECT)//
                 .tag(this)//
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
                 .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
+
                     @Override
-                    public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
-                        handleResponse(responseData.data, call, response);
+                    public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, HttpResponse<LzyResponse<ServerModel>> response) {
+                        handleResponse(response);
                     }
 
                     @Override
-                    public void onError(Call call, Response response, Exception e) {
-                        super.onError(call, response, e);
-                        handleError(call, response);
+                    public void onError(Exception e, HttpResponse<LzyResponse<ServerModel>> response) {
+                        handleError(response);
                     }
                 });
     }
@@ -86,20 +85,19 @@ public class JsonRequestActivity extends BaseDetailActivity {
      */
     @OnClick(R.id.requestJsonArray)
     public void requestJsonArray(View view) {
-        OkGo.get(Urls.URL_JSONARRAY)//
+        OkGo.<LzyResponse<List<ServerModel>>>get(Urls.URL_JSONARRAY)//
                 .tag(this)//
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
                 .execute(new DialogCallback<LzyResponse<List<ServerModel>>>(this) {
                     @Override
-                    public void onSuccess(LzyResponse<List<ServerModel>> responseData, Call call, Response response) {
-                        handleResponse(responseData.data, call, response);
+                    public void onSuccess(LzyResponse<List<ServerModel>> serverModelLzyResponse, HttpResponse<LzyResponse<List<ServerModel>>> response) {
+                        handleResponse(response);
                     }
 
                     @Override
-                    public void onError(Call call, Response response, Exception e) {
-                        super.onError(call, response, e);
-                        handleError(call, response);
+                    public void onError(Exception e, HttpResponse<LzyResponse<List<ServerModel>>> response) {
+                        handleError(response);
                     }
                 });
     }

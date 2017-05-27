@@ -1,1 +1,1 @@
-include ':app', ':okgo', ':okserver', ':okrx'
+include ':app', ':okgo', ':okserver', ':okrx', ':okrx2'

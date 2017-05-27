@@ -35,7 +35,8 @@ import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.okgo.OkGo;
-import com.lzy.okgo.request.BaseRequest;
+import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.request.HttpRequest;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -43,8 +44,6 @@ import java.util.ArrayList;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import okhttp3.Call;
-import okhttp3.Response;
 
 /**
  * ================================================
@@ -124,7 +123,7 @@ public class FormUploadActivity extends BaseDetailActivity {
             }
         }
         //拼接参数
-        OkGo.post(Urls.URL_FORM_UPLOAD)//
+        OkGo.<LzyResponse<ServerModel>>post(Urls.URL_FORM_UPLOAD)//
                 .tag(this)//
                 .headers("header1", "headerValue1")//
                 .headers("header2", "headerValue2")//
@@ -136,21 +135,19 @@ public class FormUploadActivity extends BaseDetailActivity {
                 .addFileParams("file", files)           // 这种方式为同一个key，上传多个文件
                 .execute(new JsonCallback<LzyResponse<ServerModel>>() {
                     @Override
-                    public void onBefore(BaseRequest request) {
-                        super.onBefore(request);
+                    public void onStart(HttpRequest<LzyResponse<ServerModel>, ? extends HttpRequest> request) {
                         btnFormUpload.setText("正在上传中...");
                     }
 
                     @Override
-                    public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
-                        handleResponse(responseData.data, call, response);
+                    public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, HttpResponse<LzyResponse<ServerModel>> response) {
+                        handleResponse(response);
                         btnFormUpload.setText("上传完成");
                     }
 
                     @Override
-                    public void onError(Call call, Response response, Exception e) {
-                        super.onError(call, response, e);
-                        handleError(call, response);
+                    public void onError(Exception e, HttpResponse<LzyResponse<ServerModel>> response) {
+                        handleError(response);
                         btnFormUpload.setText("上传出错");
                     }
 

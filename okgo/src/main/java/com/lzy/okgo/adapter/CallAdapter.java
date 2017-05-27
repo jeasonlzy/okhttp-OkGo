@@ -24,8 +24,8 @@ package com.lzy.okgo.adapter;
  * 修订历史：
  * ================================================
  */
-public interface CallAdapter<T> {
+public interface CallAdapter<T, R> {
 
     /** call执行的代理方法 */
-    <R> T adapt(Call<R> call);
+    R adapt(Call<T> call, AdapterParam param);
 }

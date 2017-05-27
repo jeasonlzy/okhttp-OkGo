@@ -34,13 +34,12 @@ import com.lzy.demo.model.ServerModel;
 import com.lzy.demo.utils.ColorUtils;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
+import com.lzy.okgo.model.HttpResponse;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import okhttp3.Call;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * ================================================
@@ -79,61 +78,58 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         switch (position) {
             case 0:
-                OkGo.get(Urls.URL_METHOD)//
+                OkGo.<LzyResponse<ServerModel>>get(Urls.URL_METHOD)//
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
                         .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                             @Override
-                            public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
-                                handleResponse(responseData.data, call, response);
+                            public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, HttpResponse<LzyResponse<ServerModel>> response) {
+                                handleResponse(response);
                             }
 
                             @Override
-                            public void onError(Call call, Response response, Exception e) {
-                                super.onError(call, response, e);
-                                handleError(call, response);
+                            public void onError(Exception e, HttpResponse<LzyResponse<ServerModel>> response) {
+                                handleError(response);
                             }
                         });
                 break;
             case 1:
-                OkGo.head(Urls.URL_METHOD)//
+                OkGo.<String>head(Urls.URL_METHOD)//
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
                         .execute(new StringDialogCallback(this) {
                             @Override
-                            public void onSuccess(String s, Call call, Response response) {
-                                handleResponse(s, call, response);
+                            public void onSuccess(String s, HttpResponse<String> response) {
+                                handleResponse(response);
                             }
 
                             @Override
-                            public void onError(Call call, Response response, Exception e) {
-                                super.onError(call, response, e);
-                                handleError(call, response);
+                            public void onError(Exception e, HttpResponse<String> response) {
+                                handleError(response);
                             }
                         });
                 break;
             case 2:
-                OkGo.options(Urls.URL_METHOD)//
+                OkGo.<LzyResponse<ServerModel>>options(Urls.URL_METHOD)//
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
                         .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                             @Override
-                            public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
-                                handleResponse(responseData.data, call, response);
+                            public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, HttpResponse<LzyResponse<ServerModel>> response) {
+                                handleResponse(response);
                             }
 
                             @Override
-                            public void onError(Call call, Response response, Exception e) {
-                                super.onError(call, response, e);
-                                handleError(call, response);
+                            public void onError(Exception e, HttpResponse<LzyResponse<ServerModel>> response) {
+                                handleError(response);
                             }
                         });
                 break;
             case 3:
-                OkGo.post(Urls.URL_METHOD)//
+                OkGo.<LzyResponse<ServerModel>>post(Urls.URL_METHOD)//
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
@@ -142,51 +138,48 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .isMultipart(true)         //强制使用 multipart/form-data 表单上传（只是演示，不需要的话不要设置。默认就是false）
                         .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                             @Override
-                            public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
-                                handleResponse(responseData.data, call, response);
+                            public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, HttpResponse<LzyResponse<ServerModel>> response) {
+                                handleResponse(response);
                             }
 
                             @Override
-                            public void onError(Call call, Response response, Exception e) {
-                                super.onError(call, response, e);
-                                handleError(call, response);
+                            public void onError(Exception e, HttpResponse<LzyResponse<ServerModel>> response) {
+                                handleError(response);
                             }
                         });
                 break;
             case 4:
-                OkGo.put(Urls.URL_METHOD)//
+                OkGo.<LzyResponse<ServerModel>>put(Urls.URL_METHOD)//
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
                         .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                             @Override
-                            public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
-                                handleResponse(responseData.data, call, response);
+                            public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, HttpResponse<LzyResponse<ServerModel>> response) {
+                                handleResponse(response);
                             }
 
                             @Override
-                            public void onError(Call call, Response response, Exception e) {
-                                super.onError(call, response, e);
-                                handleError(call, response);
+                            public void onError(Exception e, HttpResponse<LzyResponse<ServerModel>> response) {
+                                handleError(response);
                             }
                         });
                 break;
             case 5:
-                OkGo.delete(Urls.URL_METHOD)//
+                OkGo.<LzyResponse<ServerModel>>delete(Urls.URL_METHOD)//
                         .tag(this)//
                         .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
                         .requestBody(RequestBody.create(MediaType.parse("text/plain;charset=utf-8"), "这是要上传的数据"))//
                         .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                             @Override
-                            public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
-                                handleResponse(responseData.data, call, response);
+                            public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, HttpResponse<LzyResponse<ServerModel>> response) {
+                                handleResponse(response);
                             }
 
                             @Override
-                            public void onError(Call call, Response response, Exception e) {
-                                super.onError(call, response, e);
-                                handleError(call, response);
+                            public void onError(Exception e, HttpResponse<LzyResponse<ServerModel>> response) {
+                                handleError(response);
                             }
                         });
                 break;

@@ -31,8 +31,9 @@ import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.okgo.OkGo;
-import com.lzy.okgo.convert.StringConvert;
-import com.lzy.okrx.RxAdapter;
+import com.lzy.okgo.convert.FileConvert;
+import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okrx.adapter.ObservableHttp;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -40,9 +41,9 @@ import java.util.ArrayList;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
-import rx.functions.Action1;
 
 /**
  * ================================================
@@ -122,37 +123,43 @@ public class RxFormUploadActivity extends BaseRxDetailActivity {
             }
         }
         //拼接参数
-        OkGo.post(Urls.URL_FORM_UPLOAD)//
+        OkGo.<File>post(Urls.URL_FORM_UPLOAD)//
                 .tag(this)//
                 .headers("header1", "headerValue1")//
                 .headers("header2", "headerValue2")//
                 .params("param1", "paramValue1")//
                 .params("param2", "paramValue2")//
-//                .params("file1",new File("文件路径"))   //这种方式为一个key，对应一个文件
+//                .params("file1",new File("文件路径"))
 //                .params("file2",new File("文件路径"))
 //                .params("file3",new File("文件路径"))
-                .addFileParams("file", files)           // 这种方式为同一个key，上传多个文件
-                .getCall(StringConvert.create(), RxAdapter.<String>create())//
+                .addFileParams("file", files)//
+                .converter(new FileConvert())//
+                .adapt(new ObservableHttp<File>())//
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
                         btnFormUpload.setText("正在上传中...\n使用Rx方式做进度监听稍显麻烦,推荐使用回调方式");
                     }
                 })//
-                .observeOn(AndroidSchedulers.mainThread())//切换到主线程
-                .subscribe(new Action1<String>() {
+                .observeOn(AndroidSchedulers.mainThread())//
+                .subscribe(new Subscriber<HttpResponse<File>>() {
                     @Override
-                    public void call(String s) {
-                        btnFormUpload.setText("上传完成");
-                        handleResponse(s, null, null);
+                    public void onCompleted() {
+
                     }
-                }, new Action1<Throwable>() {
+
                     @Override
-                    public void call(Throwable throwable) {
-                        throwable.printStackTrace();
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
                         btnFormUpload.setText("上传出错");
                         showToast("请求失败");
-                        handleError(null, null);
+                        handleError(null);
+                    }
+
+                    @Override
+                    public void onNext(HttpResponse<File> response) {
+                        btnFormUpload.setText("上传完成");
+                        handleResponse(response);
                     }
                 });
     }

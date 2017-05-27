@@ -15,11 +15,13 @@
  */
 package com.lzy.okserver.download.db;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+
+import com.lzy.okgo.cache.BaseDao;
 import com.lzy.okserver.download.DownloadInfo;
 
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * ================================================
@@ -30,86 +32,58 @@ import java.util.concurrent.locks.ReentrantLock;
  * 修订历史：
  * ================================================
  */
-public enum DownloadDBManager {
+public class DownloadDBManager extends BaseDao<DownloadInfo> {
 
-    INSTANCE;
+    private DownloadDBManager() {
+        super(new DownloadInfoHelper());
+    }
 
-    private Lock mLock;
-    private DownloadInfoDao infoDao;
+    public static DownloadDBManager getInstance() {
+        return DownloadDBManagerHolder.instance;
+    }
 
-    DownloadDBManager() {
-        mLock = new ReentrantLock();
-        infoDao = new DownloadInfoDao();
+    private static class DownloadDBManagerHolder {
+        private static final DownloadDBManager instance = new DownloadDBManager();
+    }
+
+    @Override
+    public DownloadInfo parseCursorToBean(Cursor cursor) {
+        return DownloadInfo.parseCursorToBean(cursor);
+    }
+
+    @Override
+    public ContentValues getContentValues(DownloadInfo downloadInfo) {
+        return DownloadInfo.buildContentValues(downloadInfo);
+    }
+
+    @Override
+    protected String getTableName() {
+        return DownloadInfoHelper.TABLE_NAME;
     }
 
     /** 获取下载任务 */
     public DownloadInfo get(String key) {
-        mLock.lock();
-        try {
-            return infoDao.get(key);
-        } finally {
-            mLock.unlock();
-        }
+        List<DownloadInfo> infos = query(DownloadInfo.TASK_KEY + "=?", new String[]{key});
+        return infos.size() > 0 ? infos.get(0) : null;
+    }
+
+    /** 移除下载任务 */
+    public void delete(String taskKey) {
+        delete(DownloadInfo.TASK_KEY + "=?", new String[]{taskKey});
+    }
+
+    /** 更新下载任务 */
+    public int update(DownloadInfo downloadInfo) {
+        return update(downloadInfo, DownloadInfo.TASK_KEY + "=?", new String[]{downloadInfo.getTaskKey()});
     }
 
     /** 获取所有下载信息 */
     public List<DownloadInfo> getAll() {
-        mLock.lock();
-        try {
-            return infoDao.getAll();
-        } finally {
-            mLock.unlock();
-        }
-    }
-
-    /** 更新下载任务，没有就创建，有就替换 */
-    public DownloadInfo replace(DownloadInfo entity) {
-        mLock.lock();
-        try {
-            infoDao.replace(entity);
-            return entity;
-        } finally {
-            mLock.unlock();
-        }
-    }
-
-    /** 移除下载任务 */
-    public void delete(String key) {
-        mLock.lock();
-        try {
-            infoDao.delete(key);
-        } finally {
-            mLock.unlock();
-        }
-    }
-
-    /** 创建下载任务 */
-    public void create(DownloadInfo entity) {
-        mLock.lock();
-        try {
-            infoDao.create(entity);
-        } finally {
-            mLock.unlock();
-        }
-    }
-
-    /** 更新下载任务 */
-    public void update(DownloadInfo entity) {
-        mLock.lock();
-        try {
-            infoDao.update(entity);
-        } finally {
-            mLock.unlock();
-        }
+        return query(null, null, null, null, null, DownloadInfo.ID + " ASC", null);
     }
 
     /** 清空下载任务 */
     public boolean clear() {
-        mLock.lock();
-        try {
-            return infoDao.deleteAll() > 0;
-        } finally {
-            mLock.unlock();
-        }
+        return deleteAll() > 0;
     }
 }

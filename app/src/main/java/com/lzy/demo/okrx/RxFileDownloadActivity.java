@@ -23,15 +23,17 @@ import android.widget.TextView;
 import com.lzy.demo.R;
 import com.lzy.demo.base.BaseRxDetailActivity;
 import com.lzy.demo.ui.NumberProgressBar;
+import com.lzy.okgo.model.HttpResponse;
 
 import java.io.File;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
-import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * ================================================
@@ -67,6 +69,7 @@ public class RxFileDownloadActivity extends BaseRxDetailActivity {
     @OnClick(R.id.fileDownload)
     public void fileDownload(View view) {
         ServerApi.getFile("aaa", "bbb")//
+                .subscribeOn(Schedulers.io())//
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
@@ -74,19 +77,24 @@ public class RxFileDownloadActivity extends BaseRxDetailActivity {
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Action1<File>() {
+                .subscribe(new Subscriber<HttpResponse<File>>() {
                     @Override
-                    public void call(File file) {
-                        btnFileDownload.setText("下载完成");
-                        handleResponse(file, null, null);
+                    public void onCompleted() {
+
                     }
-                }, new Action1<Throwable>() {
+
                     @Override
-                    public void call(Throwable throwable) {
-                        throwable.printStackTrace();
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
                         btnFileDownload.setText("下载出错");
                         showToast("请求失败");
-                        handleError(null, null);
+                        handleError(null);
+                    }
+
+                    @Override
+                    public void onNext(HttpResponse<File> response) {
+                        btnFileDownload.setText("下载完成");
+                        handleResponse(response);
                     }
                 });
     }

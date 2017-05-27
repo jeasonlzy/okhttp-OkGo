@@ -16,7 +16,7 @@
 package com.lzy.okserver.upload;
 
 import com.lzy.okgo.OkGo;
-import com.lzy.okgo.request.BaseBodyRequest;
+import com.lzy.okgo.request.HttpBodyRequest;
 import com.lzy.okgo.request.PostRequest;
 import com.lzy.okserver.listener.UploadListener;
 
@@ -72,7 +72,7 @@ public class UploadManager {
     }
 
     /** 添加一个上传任务 */
-    public <T> void addTask(String taskKey, BaseBodyRequest request, UploadListener<T> listener) {
+    public <T> void addTask(String taskKey, HttpBodyRequest request, UploadListener<T> listener) {
         UploadInfo uploadInfo = new UploadInfo();
         uploadInfo.setTaskKey(taskKey);
         uploadInfo.setState(UploadManager.NONE);

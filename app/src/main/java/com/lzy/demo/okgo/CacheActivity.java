@@ -30,13 +30,13 @@ import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.cache.CacheManager;
 import com.lzy.okgo.cache.CacheMode;
+import com.lzy.okgo.model.HttpResponse;
 
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Call;
-import okhttp3.Response;
 
 /**
  * ================================================
@@ -65,7 +65,7 @@ public class CacheActivity extends BaseDetailActivity {
 
     @OnClick(R.id.getAll)
     public void getAll(View view) {
-        List<CacheEntity<Object>> all = CacheManager.INSTANCE.getAll();
+        List<CacheEntity<Object>> all = CacheManager.getInstance().getAll();
         StringBuilder sb = new StringBuilder();
         sb.append("共" + all.size() + "条缓存：").append("\n\n");
         for (int i = 0; i < all.size(); i++) {
@@ -78,14 +78,14 @@ public class CacheActivity extends BaseDetailActivity {
 
     @OnClick(R.id.clear)
     public void clear(View view) {
-        boolean clear = CacheManager.INSTANCE.clear();
+        boolean clear = CacheManager.getInstance().clear();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("清除缓存").setMessage("是否清除成功：" + clear).show();
     }
 
     @OnClick(R.id.no_cache)
     public void no_cache(View view) {
-        OkGo.get(Urls.URL_CACHE)//
+        OkGo.<LzyResponse<ServerModel>>get(Urls.URL_CACHE)//
                 .tag(this)//
                 .cacheMode(CacheMode.NO_CACHE)//
                 .cacheKey("no_cache")   //对于无缓存模式,该参数无效
@@ -97,7 +97,7 @@ public class CacheActivity extends BaseDetailActivity {
 
     @OnClick(R.id.cache_default)
     public void cache_default(View view) {
-        OkGo.get(Urls.URL_CACHE)//
+        OkGo.<LzyResponse<ServerModel>>get(Urls.URL_CACHE)//
                 .tag(this)//
                 .cacheMode(CacheMode.DEFAULT)//
                 .cacheKey("cache_default")//
@@ -109,7 +109,7 @@ public class CacheActivity extends BaseDetailActivity {
 
     @OnClick(R.id.request_failed_read_cache)
     public void request_failed_read_cache(View view) {
-        OkGo.get(Urls.URL_CACHE)//
+        OkGo.<LzyResponse<ServerModel>>get(Urls.URL_CACHE)//
                 .tag(this)//
                 .cacheMode(CacheMode.REQUEST_FAILED_READ_CACHE)//
                 .cacheKey("request_failed_read_cache")//
@@ -121,7 +121,7 @@ public class CacheActivity extends BaseDetailActivity {
 
     @OnClick(R.id.if_none_cache_request)
     public void if_none_cache_request(View view) {
-        OkGo.get(Urls.URL_CACHE)//
+        OkGo.<LzyResponse<ServerModel>>get(Urls.URL_CACHE)//
                 .tag(this)//
                 .cacheMode(CacheMode.IF_NONE_CACHE_REQUEST)//
                 .cacheKey("if_none_cache_request")//
@@ -133,7 +133,7 @@ public class CacheActivity extends BaseDetailActivity {
 
     @OnClick(R.id.first_cache_then_request)
     public void first_cache_then_request(View view) {
-        OkGo.get(Urls.URL_CACHE)//
+        OkGo.<LzyResponse<ServerModel>>get(Urls.URL_CACHE)//
                 .tag(this)//
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)//
                 .cacheKey("only_read_cache")//
@@ -145,33 +145,29 @@ public class CacheActivity extends BaseDetailActivity {
 
     private class CacheCallBack extends DialogCallback<LzyResponse<ServerModel>> {
 
-        public CacheCallBack(Activity activity) {
+        CacheCallBack(Activity activity) {
             super(activity);
         }
 
         @Override
-        public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
-            handleResponse(responseData.data, call, response);
+        public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, HttpResponse<LzyResponse<ServerModel>> response) {
+            handleResponse(response);
+            Call call = response.getRawCall();
             requestState.setText("请求成功  是否来自缓存：false  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
         }
 
         @Override
-        public void onCacheSuccess(LzyResponse<ServerModel> responseData, Call call) {
-            handleResponse(responseData.data, call, null);
+        public void onCacheSuccess(LzyResponse<ServerModel> serverModelLzyResponse, HttpResponse<LzyResponse<ServerModel>> response) {
+            handleResponse(response);
+            Call call = response.getRawCall();
             requestState.setText("请求成功  是否来自缓存：true  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
         }
 
         @Override
-        public void onError(Call call, Response response, Exception e) {
-            super.onError(call, response, e);
-            handleError(call, response);
+        public void onError(Exception e, HttpResponse<LzyResponse<ServerModel>> response) {
+            handleError(response);
+            Call call = response.getRawCall();
             requestState.setText("请求失败  是否来自缓存：false  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
-        }
-
-        @Override
-        public void onCacheError(Call call, Exception e) {
-            handleError(call, null);
-            requestState.setText("请求失败  是否来自缓存：true  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
         }
     }
 }

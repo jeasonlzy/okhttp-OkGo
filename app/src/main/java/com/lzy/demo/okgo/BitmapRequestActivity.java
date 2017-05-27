@@ -25,12 +25,11 @@ import com.lzy.demo.base.BaseDetailActivity;
 import com.lzy.demo.callback.BitmapDialogCallback;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
+import com.lzy.okgo.model.HttpResponse;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import okhttp3.Call;
-import okhttp3.Response;
 
 /**
  * ================================================
@@ -61,21 +60,20 @@ public class BitmapRequestActivity extends BaseDetailActivity {
 
     @OnClick(R.id.requestImage)
     public void requestJson(View view) {
-        OkGo.get(Urls.URL_IMAGE)//
+        OkGo.<Bitmap>get(Urls.URL_IMAGE)//
                 .tag(this)//
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//
                 .execute(new BitmapDialogCallback(this) {
                     @Override
-                    public void onSuccess(Bitmap bitmap, Call call, Response response) {
-                        handleResponse(bitmap, call, response);
+                    public void onSuccess(Bitmap bitmap, HttpResponse<Bitmap> response) {
+                        handleResponse(response);
                         imageView.setImageBitmap(bitmap);
                     }
 
                     @Override
-                    public void onError(Call call, Response response, Exception e) {
-                        super.onError(call, response, e);
-                        handleError(call, response);
+                    public void onError(Exception e, HttpResponse<Bitmap> response) {
+                        handleError(response);
                     }
                 });
     }

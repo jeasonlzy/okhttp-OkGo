@@ -24,15 +24,14 @@ import com.lzy.demo.callback.StringDialogCallback;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cookie.store.CookieStore;
+import com.lzy.okgo.model.HttpResponse;
 
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import okhttp3.Call;
 import okhttp3.Cookie;
 import okhttp3.HttpUrl;
-import okhttp3.Response;
 
 /**
  * ================================================
@@ -87,18 +86,17 @@ public class CookieActivity extends BaseDetailActivity {
 
         showToast("详细添加cookie的代码，请看demo的代码");
 
-        OkGo.post(Urls.URL_TEXT_UPLOAD)//
+        OkGo.<String>post(Urls.URL_TEXT_UPLOAD)//
                 .tag(this)//
                 .execute(new StringDialogCallback(this) {
                     @Override
-                    public void onSuccess(String s, Call call, Response response) {
-                        handleResponse(s, call, response);
+                    public void onSuccess(String s, HttpResponse<String> response) {
+                        handleResponse(response);
                     }
 
                     @Override
-                    public void onError(Call call, Response response, Exception e) {
-                        super.onError(call, response, e);
-                        handleError(call, response);
+                    public void onError(Exception e, HttpResponse<String> response) {
+                        handleError(response);
                     }
                 });
     }

@@ -230,40 +230,40 @@ callback一共有以下 10 个回调,除`onSuccess`必须实现以外,其余均�
 
  * convertSuccess():解析网络返回的数据回调
  * parseError():解析网络失败的数据回调
- * onBefore():网络请求真正执行前回调
+ * onStart():网络请求真正执行前回调
  * onSuccess():网络请求成功的回调
  * onCacheSuccess():缓存读取成功的回调
  * onError():网络请求失败的回调
  * onCacheError():网络缓存读取失败的回调
- * onAfter():网络请求结束的回调,无论成功失败一定会执行
+ * onFinish():网络请求结束的回调,无论成功失败一定会执行
  * upProgress():上传进度的回调
  * downloadProgress():下载进度的回调
 
 ### Callback回调具有如下顺序,虽然顺序写的很复杂,但是理解后,是很简单,并且合情合理的
 #### 1).无缓存模式 CacheMode.NO_CACHE
-> 网络请求成功  onBefore -> convertSuccess -> onSuccess -> onAfter<br>
-> 网络请求失败  onBefore -> parseError     -> onError   -> onAfter<br>
+> 网络请求成功  onStart -> convertSuccess -> onSuccess -> onFinish<br>
+> 网络请求失败  onStart -> parseError     -> onError   -> onFinish<br>
 
 #### 2).默认缓存模式,遵循304头 CacheMode.DEFAULT
-> 网络请求成功,服务端返回非304  onBefore -> convertSuccess -> onSuccess -> onAfter<br>
-> 网络请求成功服务端返回304    onBefore -> onCacheSuccess       -> onAfter<br>
-> 网络请求失败               onBefore -> parseError     -> onError   -> onAfter<br>
+> 网络请求成功,服务端返回非304  onStart -> convertSuccess -> onSuccess -> onFinish<br>
+> 网络请求成功服务端返回304    onStart -> onCacheSuccess       -> onFinish<br>
+> 网络请求失败               onStart -> parseError     -> onError   -> onFinish<br>
  
 #### 3).请求网络失败后读取缓存 CacheMode.REQUEST_FAILED_READ_CACHE
-> 网络请求成功,不读取缓存    onBefore -> convertSuccess -> onSuccess -> onAfter<br>
-> 网络请求失败,读取缓存成功  onBefore -> parseError -> onError -> onCacheSuccess -> onAfter<br>
-> 网络请求失败,读取缓存失败  onBefore -> parseError -> onError -> onCacheError   -> onAfter<br>
+> 网络请求成功,不读取缓存    onStart -> convertSuccess -> onSuccess -> onFinish<br>
+> 网络请求失败,读取缓存成功  onStart -> parseError -> onError -> onCacheSuccess -> onFinish<br>
+> 网络请求失败,读取缓存失败  onStart -> parseError -> onError -> onCacheError   -> onFinish<br>
 
 #### 4).如果缓存不存在才请求网络，否则使用缓存 CacheMode.IF_NONE_CACHE_REQUEST
-> 已经有缓存,不请求网络  onBefore -> onCacheSuccess -> onAfter<br>
-> 没有缓存请求网络成功   onBefore -> onCacheError   -> convertSuccess -> onSuccess -> onAfter<br>
-> 没有缓存请求网络失败   onBefore -> onCacheError   -> parseError     -> onError   -> onAfter<br>
+> 已经有缓存,不请求网络  onStart -> onCacheSuccess -> onFinish<br>
+> 没有缓存请求网络成功   onStart -> onCacheError   -> convertSuccess -> onSuccess -> onFinish<br>
+> 没有缓存请求网络失败   onStart -> onCacheError   -> parseError     -> onError   -> onFinish<br>
 
 #### 5).先使用缓存，不管是否存在，仍然请求网络 CacheMode.FIRST_CACHE_THEN_REQUEST
-> 无缓存时,网络请求成功  onBefore -> onCacheError   -> convertSuccess -> onSuccess -> onAfter<br>
-> 无缓存时,网络请求失败  onBefore -> onCacheError   -> parseError     -> onError   -> onAfter<br>
-> 有缓存时,网络请求成功  onBefore -> onCacheSuccess -> convertSuccess -> onSuccess -> onAfter<br>
-> 有缓存时,网络请求失败  onBefore -> onCacheSuccess -> parseError     -> onError   -> onAfter<br>
+> 无缓存时,网络请求成功  onStart -> onCacheError   -> convertSuccess -> onSuccess -> onFinish<br>
+> 无缓存时,网络请求失败  onStart -> onCacheError   -> parseError     -> onError   -> onFinish<br>
+> 有缓存时,网络请求成功  onStart -> onCacheSuccess -> convertSuccess -> onSuccess -> onFinish<br>
+> 有缓存时,网络请求失败  onStart -> onCacheSuccess -> parseError     -> onError   -> onFinish<br>
 
 ### 1.基本的网络请求
 ```java
@@ -460,7 +460,7 @@ OkGo.post(Urls.URL_METHOD)    // 请求方式和请求url, get请求不需要拼
 	//这里给出的泛型为 ServerModel，同时传递一个泛型的 class对象，即可自动将数据结果转成对象返回
 	.execute(new DialogCallback<ServerModel>(this) {
 		@Override
-		public void onBefore(BaseRequest request) {
+		public void onStart(BaseRequest request) {
 		    // UI线程 请求网络之前调用
 		    // 可以显示对话框，添加/修改/移除 请求参数
 		}
@@ -510,7 +510,7 @@ OkGo.post(Urls.URL_METHOD)    // 请求方式和请求url, get请求不需要拼
 		}
 	
 		@Override
-		public void onAfter(ServerModel serverModel, Exception e) {
+		public void onFinish(ServerModel serverModel, Exception e) {
 		    // UI 线程，请求结束后回调，无论网络请求成功还是失败，都会调用，可以用于关闭显示对话框
 		    // ServerModel 返回泛型约定的实体类型参数，如果网络请求失败，该对象为　null
 		    // e           本次网络访问的异常信息，如果服务器内部发生了错误，响应码为 404,或大于等于500
@@ -574,13 +574,13 @@ OkGo.getInstance()
     .addCommonParams(params);  //设置全局公共参数
 ```
 
- * 第二个地方,`callback`的`onBefore`方法中添加
+ * 第二个地方,`callback`的`onStart`方法中添加
  
 ```java
 public abstract class CommonCallback<T> extends AbsCallback<T> {
     @Override
-    public void onBefore(BaseRequest request) {
-        super.onBefore(request);
+    public void onStart(BaseRequest request) {
+        super.onStart(request);
         
         request.headers("HKCCC", "HVCCC")//
                 .headers("HKDDD", "HVDDD")//

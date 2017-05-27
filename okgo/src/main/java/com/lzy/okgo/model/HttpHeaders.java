@@ -211,7 +211,7 @@ public class HttpHeaders implements Serializable {
                 // We have nothing to do
             }
             if (TextUtils.isEmpty(webUserAgent)) {
-                webUserAgent = "Mozilla/5.0 (Linux; U; Android %s) AppleWebKit/533.1 (KHTML, like Gecko) Version/5.0 %sSafari/533.1";
+                webUserAgent = "okhttp-okgo/jeasonlzy";
             }
 
             Locale locale = Locale.getDefault();

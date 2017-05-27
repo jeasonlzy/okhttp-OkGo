@@ -25,7 +25,8 @@ import com.lzy.okgo.OkGo;
 import com.lzy.okgo.convert.BitmapConvert;
 import com.lzy.okgo.convert.FileConvert;
 import com.lzy.okgo.convert.StringConvert;
-import com.lzy.okrx.RxAdapter;
+import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okrx.adapter.ObservableHttp;
 
 import java.io.File;
 import java.util.List;
@@ -43,38 +44,43 @@ import rx.Observable;
  */
 public class ServerApi {
 
-    public static Observable<String> getString(String header, String param) {
-        return OkGo.post(Urls.URL_METHOD)//
+    public static Observable<HttpResponse<String>> getString(String header, String param) {
+        return OkGo.<String>post(Urls.URL_METHOD)//
                 .headers("aaa", header)//
                 .params("bbb", param)//
-                .getCall(StringConvert.create(), RxAdapter.<String>create());
+                .converter(new StringConvert())//
+                .adapt(new ObservableHttp<String>());
     }
 
-    public static Observable<LzyResponse<ServerModel>> getServerModel(String header, String param) {
-        return OkGo.post(Urls.URL_JSONOBJECT)//
+    public static Observable<HttpResponse<LzyResponse<ServerModel>>> getServerModel(String header, String param) {
+        return OkGo.<LzyResponse<ServerModel>>post(Urls.URL_JSONOBJECT)//
                 .headers("aaa", header)//
                 .params("bbb", param)//
-                .getCall(new JsonConvert<LzyResponse<ServerModel>>() {}, RxAdapter.<LzyResponse<ServerModel>>create());
+                .converter(new JsonConvert<LzyResponse<ServerModel>>())//
+                .adapt(new ObservableHttp<LzyResponse<ServerModel>>());
     }
 
-    public static Observable<LzyResponse<List<ServerModel>>> getServerListModel(String header, String param) {
-        return OkGo.post(Urls.URL_JSONARRAY)//
+    public static Observable<HttpResponse<LzyResponse<List<ServerModel>>>> getServerListModel(String header, String param) {
+        return OkGo.<LzyResponse<List<ServerModel>>>post(Urls.URL_JSONARRAY)//
                 .headers("aaa", header)//
                 .params("bbb", param)//
-                .getCall(new JsonConvert<LzyResponse<List<ServerModel>>>() {}, RxAdapter.<LzyResponse<List<ServerModel>>>create());
+                .converter(new JsonConvert<LzyResponse<List<ServerModel>>>())//
+                .adapt(new ObservableHttp<LzyResponse<List<ServerModel>>>());
     }
 
-    public static Observable<Bitmap> getBitmap(String header, String param) {
-        return OkGo.post(Urls.URL_IMAGE)//
+    public static Observable<HttpResponse<Bitmap>> getBitmap(String header, String param) {
+        return OkGo.<Bitmap>post(Urls.URL_IMAGE)//
                 .headers("aaa", header)//
                 .params("bbb", param)//
-                .getCall(BitmapConvert.create(), RxAdapter.<Bitmap>create());
+                .converter(new BitmapConvert())//
+                .adapt(new ObservableHttp<Bitmap>());
     }
 
-    public static Observable<File> getFile(String header, String param) {
-        return OkGo.post(Urls.URL_DOWNLOAD)//
+    public static Observable<HttpResponse<File>> getFile(String header, String param) {
+        return OkGo.<File>post(Urls.URL_DOWNLOAD)//
                 .headers("aaa", header)//
                 .params("bbb", param)//
-                .getCall(new FileConvert(), RxAdapter.<File>create());
+                .converter(new FileConvert())//
+                .adapt(new ObservableHttp<File>());
     }
 }

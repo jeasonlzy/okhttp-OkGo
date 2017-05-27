@@ -445,7 +445,7 @@ public class PriorityBlockingQueue<E> extends AbstractQueue<E> implements Blocki
         takeLock.lock();
         try {
             int n = Math.min(maxElements, count.get());
-            // count.get provides visibility to first n Nodes
+            // count.query provides visibility to first n Nodes
             Node<E> h = head;
             int i = 0;
             try {

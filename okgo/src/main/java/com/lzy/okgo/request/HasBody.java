@@ -39,6 +39,8 @@ public interface HasBody<R> {
 
     R isMultipart(boolean isMultipart);
 
+    R isSpliceUrl(boolean isSpliceUrl);
+
     R requestBody(RequestBody requestBody);
 
     R params(String key, File file);

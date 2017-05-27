@@ -63,27 +63,31 @@ task makeApk {
     }
 }
 
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile "com.android.support:appcompat-v7:$supportVersion"
     compile "com.android.support:design:$supportVersion"
     compile "com.android.support:recyclerview-v7:$supportVersion"
     compile "com.android.support:cardview-v7:$supportVersion"
+
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:v2.0.7'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.google.code.gson:gson:2.8.0'
+    debugCompile 'com.readystatesoftware.chuck:library:1.0.4'
+    releaseCompile 'com.readystatesoftware.chuck:library-no-op:1.0.4'
+
+    compile project(':okgo')
+    compile project(':okrx')
+//  compile project(':okrx2')
+    compile project(':okserver')
+//  compile 'com.lzy.net:okgo:+'
+//  compile 'com.lzy.net:okrx:+'
+//  compile 'com.lzy.net:okrx2:+'
+//  compile 'com.lzy.net:okserver:+'
     compile 'com.lzy.widget:ninegridview:0.2.1'
     compile 'com.lzy.widget:imagepicker:0.3.2'
     compile 'com.lzy.widget:view-core:0.2.1'
-
-    debugCompile 'com.readystatesoftware.chuck:library:1.0.4'
-    releaseCompile 'com.readystatesoftware.chuck:library-no-op:1.0.4'
-//    compile 'com.lzy.net:okgo:+'
-//    compile 'com.lzy.net:okrx:+'
-//    compile 'com.lzy.net:okserver:+'
-    compile project(':okgo')
-    compile project(':okrx')
-    compile project(':okserver')
 }

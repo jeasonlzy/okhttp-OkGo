@@ -25,24 +25,9 @@ package com.lzy.okgo.exception;
  * ================================================
  */
 public class OkGoException extends Exception {
-
-    public static OkGoException INSTANCE(String msg) {
-        return new OkGoException(msg);
-    }
-
-    public OkGoException() {
-        super();
-    }
+    private static final long serialVersionUID = -8641198158155821498L;
 
     public OkGoException(String detailMessage) {
         super(detailMessage);
-    }
-
-    public OkGoException(String detailMessage, Throwable throwable) {
-        super(detailMessage, throwable);
-    }
-
-    public OkGoException(Throwable throwable) {
-        super(throwable);
     }
 }

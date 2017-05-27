@@ -16,6 +16,7 @@
 package com.lzy.okgo.request;
 
 import com.lzy.okgo.model.HttpHeaders;
+import com.lzy.okgo.model.HttpMethod;
 import com.lzy.okgo.utils.HttpUtils;
 import com.lzy.okgo.utils.OkLogger;
 
@@ -33,11 +34,15 @@ import okhttp3.RequestBody;
  * 修订历史：
  * ================================================
  */
-public class PostRequest extends BaseBodyRequest<PostRequest> {
+public class PostRequest<T> extends HttpBodyRequest<T, PostRequest<T>> {
 
     public PostRequest(String url) {
         super(url);
-        method = "POST";
+    }
+
+    @Override
+    public HttpMethod getMethod() {
+        return HttpMethod.POST;
     }
 
     @Override
@@ -48,6 +53,7 @@ public class PostRequest extends BaseBodyRequest<PostRequest> {
             OkLogger.e(e);
         }
         Request.Builder requestBuilder = HttpUtils.appendHeaders(headers);
+        if (isSpliceUrl) url = HttpUtils.createUrlFromParams(baseUrl, params.urlParamsMap);
         return requestBuilder.post(requestBody).url(url).tag(tag).build();
     }
 }

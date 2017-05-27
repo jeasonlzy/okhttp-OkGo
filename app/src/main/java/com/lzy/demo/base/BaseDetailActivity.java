@@ -25,6 +25,8 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.lzy.demo.R;
+import com.lzy.demo.utils.Convert;
+import com.lzy.okgo.model.HttpResponse;
 
 import java.io.File;
 import java.util.List;
@@ -111,8 +113,9 @@ public abstract class BaseDetailActivity extends BaseActivity {
         rootContent.addView(view, params);
     }
 
-    protected <T> void handleResponse(T data, Call call, Response response) {
+    protected <T> void handleResponse(HttpResponse<T> response) {
         StringBuilder sb;
+        Call call = response.getRawCall();
         if (call != null) {
             requestState.setText("请求成功  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
 
@@ -127,49 +130,51 @@ public abstract class BaseDetailActivity extends BaseActivity {
             requestState.setText("--");
             requestHeaders.setText("--");
         }
-        if (data == null) {
+        T body = response.body();
+        if (body == null) {
             responseData.setText("--");
         } else {
-            if (data instanceof String) {
-                responseData.setText((String) data);
-            } else if (data instanceof List) {
+            if (body instanceof String) {
+                responseData.setText((String) body);
+            } else if (body instanceof List) {
                 sb = new StringBuilder();
-                List list = (List) data;
+                List list = (List) body;
                 for (Object obj : list) {
                     sb.append(obj.toString()).append("\n");
                 }
                 responseData.setText(sb.toString());
-            } else if (data instanceof Set) {
+            } else if (body instanceof Set) {
                 sb = new StringBuilder();
-                Set set = (Set) data;
+                Set set = (Set) body;
                 for (Object obj : set) {
                     sb.append(obj.toString()).append("\n");
                 }
                 responseData.setText(sb.toString());
-            } else if (data instanceof Map) {
+            } else if (body instanceof Map) {
                 sb = new StringBuilder();
-                Map map = (Map) data;
+                Map map = (Map) body;
                 Set keySet = map.keySet();
                 for (Object key : keySet) {
                     sb.append(key.toString()).append(" ： ").append(map.get(key)).append("\n");
                 }
                 responseData.setText(sb.toString());
-            } else if (data instanceof File) {
-                File file = (File) data;
+            } else if (body instanceof File) {
+                File file = (File) body;
                 responseData.setText("数据内容即为文件内容\n下载文件路径：" + file.getAbsolutePath());
-            } else if (data instanceof Bitmap) {
+            } else if (body instanceof Bitmap) {
                 responseData.setText("图片的内容即为数据");
             } else {
-                responseData.setText(data.toString());
+                responseData.setText(Convert.formatJson(body));
             }
         }
 
-        if (response != null) {
-            Headers responseHeadersString = response.headers();
+        Response rawResponse = response.getRawResponse();
+        if (rawResponse != null) {
+            Headers responseHeadersString = rawResponse.headers();
             Set<String> names = responseHeadersString.names();
             sb = new StringBuilder();
-            sb.append("url ： ").append(response.request().url()).append("\n\n");
-            sb.append("stateCode ： ").append(response.code()).append("\n");
+            sb.append("url ： ").append(rawResponse.request().url()).append("\n\n");
+            sb.append("stateCode ： ").append(rawResponse.code()).append("\n");
             for (String name : names) {
                 sb.append(name).append(" ： ").append(responseHeadersString.get(name)).append("\n");
             }
@@ -179,8 +184,10 @@ public abstract class BaseDetailActivity extends BaseActivity {
         }
     }
 
-    protected void handleError(Call call, Response response) {
+    protected <T> void handleError(HttpResponse<T> response) {
+        if (response == null) return;
         StringBuilder sb;
+        Call call = response.getRawCall();
         if (call != null) {
             requestState.setText("请求失败  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
 
@@ -197,11 +204,12 @@ public abstract class BaseDetailActivity extends BaseActivity {
         }
 
         responseData.setText("--");
-        if (response != null) {
-            Headers responseHeadersString = response.headers();
+        Response rawResponse = response.getRawResponse();
+        if (rawResponse != null) {
+            Headers responseHeadersString = rawResponse.headers();
             Set<String> names = responseHeadersString.names();
             sb = new StringBuilder();
-            sb.append("stateCode ： ").append(response.code()).append("\n");
+            sb.append("stateCode ： ").append(rawResponse.code()).append("\n");
             for (String name : names) {
                 sb.append(name).append(" ： ").append(responseHeadersString.get(name)).append("\n");
             }

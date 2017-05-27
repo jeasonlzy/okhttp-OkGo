@@ -32,6 +32,7 @@ import com.lzy.okgo.request.OptionsRequest;
 import com.lzy.okgo.request.PatchRequest;
 import com.lzy.okgo.request.PostRequest;
 import com.lzy.okgo.request.PutRequest;
+import com.lzy.okgo.request.TraceRequest;
 
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
@@ -46,8 +47,8 @@ import okhttp3.OkHttpClient;
  * ================================================
  */
 public class OkGo {
-    public static final int DEFAULT_MILLISECONDS = 60000;       //默认的超时时间
-    public static int REFRESH_TIME = 100;                       //回调刷新时间（单位ms）
+    public static final long DEFAULT_MILLISECONDS = 60000;      //默认的超时时间
+    public static long REFRESH_TIME = 100;                      //回调刷新时间（单位ms）
 
     private Handler mDelivery;                                  //用于在主线程执行的调度器
     private OkHttpClient okHttpClient;                          //ok请求的客户端
@@ -71,38 +72,43 @@ public class OkGo {
     }
 
     /** get请求 */
-    public static GetRequest get(String url) {
-        return new GetRequest(url);
+    public static <T> GetRequest<T> get(String url) {
+        return new GetRequest<>(url);
     }
 
     /** post请求 */
-    public static PostRequest post(String url) {
-        return new PostRequest(url);
+    public static <T> PostRequest<T> post(String url) {
+        return new PostRequest<>(url);
     }
 
     /** put请求 */
-    public static PutRequest put(String url) {
-        return new PutRequest(url);
+    public static <T> PutRequest<T> put(String url) {
+        return new PutRequest<>(url);
     }
 
     /** head请求 */
-    public static HeadRequest head(String url) {
-        return new HeadRequest(url);
+    public static <T> HeadRequest<T> head(String url) {
+        return new HeadRequest<>(url);
     }
 
     /** delete请求 */
-    public static DeleteRequest delete(String url) {
-        return new DeleteRequest(url);
+    public static <T> DeleteRequest<T> delete(String url) {
+        return new DeleteRequest<>(url);
     }
 
     /** options请求 */
-    public static OptionsRequest options(String url) {
-        return new OptionsRequest(url);
+    public static <T> OptionsRequest<T> options(String url) {
+        return new OptionsRequest<>(url);
     }
 
     /** patch请求 */
-    public static PatchRequest patch(String url) {
-        return new PatchRequest(url);
+    public static <T> PatchRequest<T> patch(String url) {
+        return new PatchRequest<>(url);
+    }
+
+    /** trace请求 */
+    public static <T> TraceRequest<T> trace(String url) {
+        return new TraceRequest<>(url);
     }
 
     /** 必须在全局Application先调用，获取context上下文，否则缓存无法使用 */

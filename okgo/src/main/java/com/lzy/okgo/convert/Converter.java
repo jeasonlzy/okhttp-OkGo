@@ -35,5 +35,5 @@ public interface Converter<T> {
      * @return 转换后的结果
      * @throws Exception 转换过程发生的异常
      */
-    T convertSuccess(Response response) throws Exception;
+    T convertResponse(Response response) throws Exception;
 }

@@ -17,10 +17,10 @@ package com.lzy.demo.callback;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.support.annotation.Nullable;
 import android.view.Window;
 
-import com.lzy.okgo.request.BaseRequest;
+import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.request.HttpRequest;
 
 /**
  * ================================================
@@ -49,17 +49,15 @@ public abstract class DialogCallback<T> extends JsonCallback<T> {
     }
 
     @Override
-    public void onBefore(BaseRequest request) {
-        super.onBefore(request);
-        //网络请求前显示对话框
+    public void onStart(HttpRequest<T, ? extends HttpRequest> request) {
         if (dialog != null && !dialog.isShowing()) {
             dialog.show();
         }
     }
 
     @Override
-    public void onAfter(@Nullable T t, @Nullable Exception e) {
-        super.onAfter(t, e);
+    public void onFinish(HttpResponse<T> response) {
+        super.onFinish(response);
         //网络请求结束后关闭对话框
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();

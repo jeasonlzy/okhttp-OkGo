@@ -1,0 +1,84 @@
+/*
+ * Copyright (C) 2016 Jake Wharton
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.lzy.okrx.subscribe;
+
+import com.lzy.okgo.adapter.Call;
+import com.lzy.okgo.callback.Callback;
+import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.request.HttpRequest;
+
+import okhttp3.Response;
+import rx.Observable.OnSubscribe;
+import rx.Subscriber;
+import rx.exceptions.Exceptions;
+
+public final class CallEnqueueOnSubscribe<T> implements OnSubscribe<HttpResponse<T>> {
+    private final Call<T> originalCall;
+
+    public CallEnqueueOnSubscribe(Call<T> originalCall) {
+        this.originalCall = originalCall;
+    }
+
+    @Override
+    public void call(final Subscriber<? super HttpResponse<T>> subscriber) {
+        // Since Call is a one-shot type, clone it for each new subscriber.
+        Call<T> call = originalCall.clone();
+        final CallArbiter<T> arbiter = new CallArbiter<>(call, subscriber);
+        subscriber.add(arbiter);
+        subscriber.setProducer(arbiter);
+
+        call.execute(new Callback<T>() {
+            @Override
+            public T convertResponse(Response response) throws Exception {
+                // okrx 使用converter转换，不需要这个解析方法
+                return null;
+            }
+
+            @Override
+            public void onStart(HttpRequest<T, ? extends HttpRequest> request) {
+            }
+
+            @Override
+            public void onSuccess(T t, HttpResponse<T> response) {
+                arbiter.emitNext(response);
+            }
+
+            @Override
+            public void onCacheSuccess(T t, HttpResponse<T> response) {
+                arbiter.emitNext(response);
+            }
+
+            @Override
+            public void onError(Exception e, HttpResponse<T> response) {
+                Exceptions.throwIfFatal(e);
+                arbiter.emitError(e);
+            }
+
+            @Override
+            public void onFinish(HttpResponse<T> response) {
+                arbiter.emitComplete();
+            }
+
+            @Override
+            public void upProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
+            }
+
+            @Override
+            public void downloadProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
+            }
+        });
+    }
+}

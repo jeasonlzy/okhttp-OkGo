@@ -18,7 +18,7 @@ package com.lzy.okserver.download;
 import android.os.Environment;
 import android.text.TextUtils;
 
-import com.lzy.okgo.request.BaseRequest;
+import com.lzy.okgo.request.HttpRequest;
 import com.lzy.okserver.download.db.DownloadDBManager;
 import com.lzy.okserver.listener.DownloadListener;
 import com.lzy.okserver.task.ExecutorWithListener;
@@ -77,31 +77,31 @@ public class DownloadManager {
         if (!new File(folder).exists()) new File(folder).mkdirs();
         mTargetFolder = folder;
 
-        mDownloadInfoList = DownloadDBManager.INSTANCE.getAll(); //获取所有任务
+        mDownloadInfoList = DownloadDBManager.getInstance().getAll(); //获取所有任务
         if (mDownloadInfoList != null && !mDownloadInfoList.isEmpty()) {
             for (DownloadInfo info : mDownloadInfoList) {
                 //校验数据的有效性，防止下载过程中退出，第二次进入的时候，由于状态没有更新导致的状态错误
                 if (info.getState() == WAITING || info.getState() == DOWNLOADING || info.getState() == PAUSE) {
                     info.setState(NONE);
                     info.setNetworkSpeed(0);
-                    DownloadDBManager.INSTANCE.replace(info);
+                    DownloadDBManager.getInstance().replace(info);
                 }
             }
         }
     }
 
     /** 添加一个下载任务,依据taskTag标识是否属于同一个任务 */
-    public void addTask(String taskTag, BaseRequest request, DownloadListener listener) {
+    public void addTask(String taskTag, HttpRequest request, DownloadListener listener) {
         addTask(null, taskTag, null, request, listener, false);
     }
 
     /** 添加一个下载任务,依据taskTag标识是否属于同一个任务 */
-    public void addTask(String taskTag, Serializable data, BaseRequest request, DownloadListener listener) {
+    public void addTask(String taskTag, Serializable data, HttpRequest request, DownloadListener listener) {
         addTask(null, taskTag, data, request, listener, false);
     }
 
     /** 添加一个下载任务,依据taskTag标识是否属于同一个任务 */
-    public void addTask(String fileName, String taskTag, BaseRequest request, DownloadListener listener) {
+    public void addTask(String fileName, String taskTag, HttpRequest request, DownloadListener listener) {
         addTask(fileName, taskTag, null, request, listener, false);
     }
 
@@ -112,7 +112,7 @@ public class DownloadManager {
      * @param listener  下载监听
      * @param isRestart 是否重新开始下载
      */
-    private void addTask(String fileName, String taskTag, Serializable data, BaseRequest request, DownloadListener listener, boolean isRestart) {
+    private void addTask(String fileName, String taskTag, Serializable data, HttpRequest request, DownloadListener listener, boolean isRestart) {
         DownloadInfo downloadInfo = getDownloadInfo(taskTag);
         if (downloadInfo == null) {
             downloadInfo = new DownloadInfo();
@@ -123,7 +123,7 @@ public class DownloadManager {
             downloadInfo.setState(DownloadManager.NONE);
             downloadInfo.setTargetFolder(mTargetFolder);
             downloadInfo.setData(data);
-            DownloadDBManager.INSTANCE.replace(downloadInfo);
+            DownloadDBManager.getInstance().replace(downloadInfo);
             mDownloadInfoList.add(downloadInfo);
         }
         //无状态，暂停，错误才允许开始下载
@@ -196,7 +196,7 @@ public class DownloadManager {
         pauseTask(taskKey);                         //暂停任务
         removeTaskByKey(taskKey);                   //移除任务
         if (isDeleteFile) deleteFile(downloadInfo.getTargetPath());   //删除文件
-        DownloadDBManager.INSTANCE.delete(taskKey);            //清除数据库
+        DownloadDBManager.getInstance().delete(taskKey);            //清除数据库
     }
 
     /** 删除所有任务 */

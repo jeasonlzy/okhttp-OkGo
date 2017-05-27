@@ -48,8 +48,8 @@ public abstract class FileCallback extends AbsCallback<File> {
     }
 
     @Override
-    public File convertSuccess(Response response) throws Exception {
-        File file = convert.convertSuccess(response);
+    public File convertResponse(Response response) throws Exception {
+        File file = convert.convertResponse(response);
         response.close();
         return file;
     }

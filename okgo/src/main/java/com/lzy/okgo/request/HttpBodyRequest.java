@@ -36,7 +36,7 @@ import okhttp3.RequestBody;
  * 修订历史：
  * ================================================
  */
-public abstract class BaseBodyRequest<R extends BaseBodyRequest> extends BaseRequest<R> implements HasBody<R> {
+public abstract class HttpBodyRequest<T, R extends HttpBodyRequest> extends HttpRequest<T, R> implements HasBody<R> {
 
     protected MediaType mediaType;      //上传的MIME类型
     protected String content;           //上传的文本内容
@@ -44,9 +44,10 @@ public abstract class BaseBodyRequest<R extends BaseBodyRequest> extends BaseReq
     protected File file;                //单纯的上传一个文件
 
     protected boolean isMultipart = false;  //是否强制使用 multipart/form-data 表单上传
+    protected boolean isSpliceUrl = false;  //是否拼接url参数
     protected RequestBody requestBody;
 
-    public BaseBodyRequest(String url) {
+    public HttpBodyRequest(String url) {
         super(url);
     }
 
@@ -54,6 +55,13 @@ public abstract class BaseBodyRequest<R extends BaseBodyRequest> extends BaseReq
     @Override
     public R isMultipart(boolean isMultipart) {
         this.isMultipart = isMultipart;
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public R isSpliceUrl(boolean isSpliceUrl) {
+        this.isSpliceUrl = isSpliceUrl;
         return (R) this;
     }
 

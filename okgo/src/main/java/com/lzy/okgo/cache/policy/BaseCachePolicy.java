@@ -1,0 +1,208 @@
+package com.lzy.okgo.cache.policy;
+
+import android.graphics.Bitmap;
+
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.cache.CacheEntity;
+import com.lzy.okgo.cache.CacheManager;
+import com.lzy.okgo.cache.CacheMode;
+import com.lzy.okgo.callback.Callback;
+import com.lzy.okgo.exception.HttpException;
+import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.request.HttpRequest;
+import com.lzy.okgo.utils.HeaderParser;
+import com.lzy.okgo.utils.HttpUtils;
+
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+
+import okhttp3.Call;
+import okhttp3.Headers;
+import okhttp3.Response;
+
+/**
+ * ================================================
+ * 作    者：jeasonlzy（廖子尧）Github地址：https://github.com/jeasonlzy
+ * 版    本：1.0
+ * 创建日期：2017/5/25
+ * 描    述：
+ * 修订历史：
+ * ================================================
+ */
+public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
+
+    protected HttpRequest<T, ? extends HttpRequest> httpRequest;
+    protected volatile boolean canceled;
+    protected volatile int currentRetryCount = 0;
+    protected boolean executed;
+    protected okhttp3.Call rawCall;
+    protected Callback<T> mCallback;
+    protected CacheEntity<T> cacheEntity;
+
+    public BaseCachePolicy(HttpRequest<T, ? extends HttpRequest> request) {
+        this.httpRequest = request;
+    }
+
+    @Override
+    public boolean onAnalysisResponse(Call call, Response response) {
+        return false;
+    }
+
+    @Override
+    public CacheEntity<T> prepareCache() {
+        //check the config of cache
+        if (httpRequest.getCacheKey() == null) {
+            httpRequest.cacheKey(HttpUtils.createUrlFromParams(httpRequest.getBaseUrl(), httpRequest.getParams().urlParamsMap));
+        }
+        if (httpRequest.getCacheMode() == null) {
+            httpRequest.cacheMode(CacheMode.NO_CACHE);
+        }
+
+        CacheMode cacheMode = httpRequest.getCacheMode();
+        if (cacheMode != CacheMode.NO_CACHE) {
+            //noinspection unchecked
+            cacheEntity = (CacheEntity<T>) CacheManager.getInstance().get(httpRequest.getCacheKey());
+            HeaderParser.addCacheHeaders(httpRequest, cacheEntity, cacheMode);
+            if (cacheEntity != null && cacheEntity.checkExpire(cacheMode, httpRequest.getCacheTime(), System.currentTimeMillis())) {
+                cacheEntity.setExpire(true);
+            }
+        }
+
+        if (cacheEntity == null || cacheEntity.isExpire() || cacheEntity.getData() == null || cacheEntity.getResponseHeaders() == null) {
+            cacheEntity = null;
+        }
+        return cacheEntity;
+    }
+
+    @Override
+    public synchronized okhttp3.Call prepareRawCall() {
+        if (executed) throw HttpException.COMMON("Already executed!");
+        executed = true;
+        rawCall = httpRequest.getRawCall();
+        if (canceled) rawCall.cancel();
+        return rawCall;
+    }
+
+    protected HttpResponse<T> requestNetworkSync() {
+        try {
+            Response response = rawCall.execute();
+            int responseCode = response.code();
+
+            //network error
+            if (responseCode == 404 || responseCode >= 500) {
+                return HttpResponse.error(false, rawCall, response, HttpException.NET_ERROR());
+            }
+
+            T body = httpRequest.getConverter().convertResponse(response);
+            //save cache when request is successful
+            saveCache(response.headers(), body);
+            return HttpResponse.success(false, body, rawCall, response);
+        } catch (Exception e) {
+            if (e instanceof SocketTimeoutException && currentRetryCount < OkGo.getInstance().getRetryCount()) {
+                currentRetryCount++;
+                rawCall = httpRequest.getRawCall();
+                if (canceled) {
+                    rawCall.cancel();
+                } else {
+                    //TODO 这个递归可能有问题
+                    requestNetworkSync();
+                }
+            }
+            return HttpResponse.error(false, rawCall, null, e);
+        }
+    }
+
+    protected void requestNetworkAsync() {
+        rawCall.enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, IOException e) {
+                if (e instanceof SocketTimeoutException && currentRetryCount < OkGo.getInstance().getRetryCount()) {
+                    //retry when timeout
+                    currentRetryCount++;
+                    rawCall = httpRequest.getRawCall();
+                    if (canceled) {
+                        rawCall.cancel();
+                    } else {
+                        rawCall.enqueue(this);
+                    }
+                } else {
+                    if (!call.isCanceled()) {
+                        HttpResponse<T> error = HttpResponse.error(false, call, null, e);
+                        onError(error);
+                    }
+                }
+            }
+
+            @Override
+            public void onResponse(okhttp3.Call call, okhttp3.Response response) throws IOException {
+                int responseCode = response.code();
+
+                //network error
+                if (responseCode == 404 || responseCode >= 500) {
+                    HttpResponse<T> error = HttpResponse.error(false, call, response, HttpException.NET_ERROR());
+                    onError(error);
+                    return;
+                }
+
+                if (onAnalysisResponse(call, response)) return;
+
+                try {
+                    T body = httpRequest.getConverter().convertResponse(response);
+                    //save cache when request is successful
+                    saveCache(response.headers(), body);
+                    HttpResponse<T> success = HttpResponse.success(false, body, call, response);
+                    onSuccess(success);
+                } catch (Exception e) {
+                    HttpResponse<T> error = HttpResponse.error(false, call, response, e);
+                    onError(error);
+                }
+            }
+        });
+    }
+
+    /**
+     * 请求成功后根据缓存模式，更新缓存数据
+     *
+     * @param headers 响应头
+     * @param data    响应数据
+     */
+    @SuppressWarnings("unchecked")
+    private void saveCache(Headers headers, T data) {
+        if (httpRequest.getCacheMode() == CacheMode.NO_CACHE) return;    //不需要缓存,直接返回
+        if (data instanceof Bitmap) return;             //Bitmap没有实现Serializable,不能缓存
+
+        CacheEntity<T> cache = HeaderParser.createCacheEntity(headers, data, httpRequest.getCacheMode(), httpRequest.getCacheKey());
+        if (cache == null) {
+            //服务器不需要缓存，移除本地缓存
+            CacheManager.getInstance().remove(httpRequest.getCacheKey());
+        } else {
+            //缓存命中，更新缓存
+            CacheManager.getInstance().replace(httpRequest.getCacheKey(), (CacheEntity<Object>) cache);
+        }
+    }
+
+    protected void runOnUiThread(Runnable run) {
+        OkGo.getInstance().getDelivery().post(run);
+    }
+
+    @Override
+    public boolean isExecuted() {
+        return executed;
+    }
+
+    @Override
+    public void cancel() {
+        canceled = true;
+        if (rawCall != null) {
+            rawCall.cancel();
+        }
+    }
+
+    @Override
+    public boolean isCanceled() {
+        if (canceled) return true;
+        synchronized (this) {
+            return rawCall != null && rawCall.isCanceled();
+        }
+    }
+}

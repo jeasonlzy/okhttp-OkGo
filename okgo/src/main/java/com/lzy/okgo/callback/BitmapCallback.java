@@ -32,9 +32,15 @@ import okhttp3.Response;
  */
 public abstract class BitmapCallback extends AbsCallback<Bitmap> {
 
+    private BitmapConvert convert;
+
+    public BitmapCallback() {
+        convert = new BitmapConvert();
+    }
+
     @Override
-    public Bitmap convertSuccess(Response response) throws Exception {
-        Bitmap bitmap = BitmapConvert.create().convertSuccess(response);
+    public Bitmap convertResponse(Response response) throws Exception {
+        Bitmap bitmap = convert.convertResponse(response);
         response.close();
         return bitmap;
     }
