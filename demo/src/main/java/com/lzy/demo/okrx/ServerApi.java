@@ -26,7 +26,7 @@ import com.lzy.okgo.convert.BitmapConvert;
 import com.lzy.okgo.convert.FileConvert;
 import com.lzy.okgo.convert.StringConvert;
 import com.lzy.okgo.model.Response;
-import com.lzy.okrx.adapter.ObservableHttp;
+import com.lzy.okrx.adapter.ObservableResponse;
 
 import java.io.File;
 import java.util.List;
@@ -49,7 +49,7 @@ public class ServerApi {
                 .headers("aaa", header)//
                 .params("bbb", param)//
                 .converter(new StringConvert())//
-                .adapt(new ObservableHttp<String>());
+                .adapt(new ObservableResponse<String>());
     }
 
     public static Observable<Response<LzyResponse<ServerModel>>> getServerModel(String header, String param) {
@@ -57,7 +57,7 @@ public class ServerApi {
                 .headers("aaa", header)//
                 .params("bbb", param)//
                 .converter(new JsonConvert<LzyResponse<ServerModel>>())//
-                .adapt(new ObservableHttp<LzyResponse<ServerModel>>());
+                .adapt(new ObservableResponse<LzyResponse<ServerModel>>());
     }
 
     public static Observable<Response<LzyResponse<List<ServerModel>>>> getServerListModel(String header, String param) {
@@ -65,7 +65,7 @@ public class ServerApi {
                 .headers("aaa", header)//
                 .params("bbb", param)//
                 .converter(new JsonConvert<LzyResponse<List<ServerModel>>>())//
-                .adapt(new ObservableHttp<LzyResponse<List<ServerModel>>>());
+                .adapt(new ObservableResponse<LzyResponse<List<ServerModel>>>());
     }
 
     public static Observable<Response<Bitmap>> getBitmap(String header, String param) {
@@ -73,7 +73,7 @@ public class ServerApi {
                 .headers("aaa", header)//
                 .params("bbb", param)//
                 .converter(new BitmapConvert())//
-                .adapt(new ObservableHttp<Bitmap>());
+                .adapt(new ObservableResponse<Bitmap>());
     }
 
     public static Observable<Response<File>> getFile(String header, String param) {
@@ -81,6 +81,6 @@ public class ServerApi {
                 .headers("aaa", header)//
                 .params("bbb", param)//
                 .converter(new FileConvert())//
-                .adapt(new ObservableHttp<File>());
+                .adapt(new ObservableResponse<File>());
     }
 }

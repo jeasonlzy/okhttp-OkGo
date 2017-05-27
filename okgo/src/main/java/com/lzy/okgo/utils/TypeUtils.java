@@ -277,13 +277,6 @@ public class TypeUtils {
         }
     }
 
-    public static <T> T checkNotNull(T object, String message) {
-        if (object == null) {
-            throw new NullPointerException(message);
-        }
-        return object;
-    }
-
     /** Returns true if {@code annotations} contains an instance of {@code cls}. */
     public static boolean isAnnotationPresent(Annotation[] annotations, Class<? extends Annotation> cls) {
         for (Annotation annotation : annotations) {

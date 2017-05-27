@@ -27,7 +27,7 @@ import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.convert.StringConvert;
 import com.lzy.okgo.model.Response;
-import com.lzy.okrx.adapter.ObservableHttp;
+import com.lzy.okrx.adapter.ObservableResponse;
 
 import org.json.JSONObject;
 
@@ -74,7 +74,7 @@ public class RxCommonActivity extends BaseRxDetailActivity {
                 .headers("aaa", "111")//
                 .params("bbb", "222")//
                 .converter(new StringConvert())//
-                .adapt(new ObservableHttp<String>())//
+                .adapt(new ObservableResponse<String>())//
                 .subscribeOn(Schedulers.io())//
                 .doOnSubscribe(new Action0() {
                     @Override
@@ -154,7 +154,7 @@ public class RxCommonActivity extends BaseRxDetailActivity {
                 .headers("aaa", "111")//
                 .params("bbb", "222")//
                 .converter(new JsonConvert<LzyResponse<ServerModel>>())//
-                .adapt(new ObservableHttp<LzyResponse<ServerModel>>())//
+                .adapt(new ObservableResponse<LzyResponse<ServerModel>>())//
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
@@ -250,7 +250,7 @@ public class RxCommonActivity extends BaseRxDetailActivity {
                 .headers("bbb", "222")//
                 .upString("上传的文本。。。")//
                 .converter(new StringConvert())//
-                .adapt(new ObservableHttp<String>())//
+                .adapt(new ObservableResponse<String>())//
                 .subscribeOn(Schedulers.io())//
                 .doOnSubscribe(new Action0() {
                     @Override
@@ -293,7 +293,7 @@ public class RxCommonActivity extends BaseRxDetailActivity {
                 .headers("bbb", "222")//
                 .upJson(jsonObject.toString())//
                 .converter(new StringConvert())//
-                .adapt(new ObservableHttp<String>())//
+                .adapt(new ObservableResponse<String>())//
                 .subscribeOn(Schedulers.io())//
                 .doOnSubscribe(new Action0() {
                     @Override

@@ -18,9 +18,8 @@ package com.lzy.okrx.adapter;
 import com.lzy.okgo.adapter.AdapterParam;
 import com.lzy.okgo.adapter.Call;
 import com.lzy.okgo.adapter.CallAdapter;
-import com.lzy.okgo.model.Result;
 
-import rx.Single;
+import rx.Completable;
 
 /**
  * ================================================
@@ -31,10 +30,10 @@ import rx.Single;
  * 修订历史：
  * ================================================
  */
-public class SingleResult<T> implements CallAdapter<T, Single<Result<T>>> {
+public class CompletableResponse<T> implements CallAdapter<T, Completable> {
     @Override
-    public Single<Result<T>> adapt(Call<T> call, AdapterParam param) {
-        ObservableResult<T> body = new ObservableResult<>();
-        return body.adapt(call, param).toSingle();
+    public Completable adapt(Call<T> call, AdapterParam param) {
+        ObservableResponse<T> body = new ObservableResponse<>();
+        return body.adapt(call, param).toCompletable();
     }
 }

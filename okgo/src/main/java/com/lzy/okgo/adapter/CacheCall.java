@@ -25,7 +25,7 @@ import com.lzy.okgo.cache.policy.RequestFailedCachePolicy;
 import com.lzy.okgo.callback.Callback;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.HttpRequest;
-import com.lzy.okgo.utils.TypeUtils;
+import com.lzy.okgo.utils.HttpUtils;
 
 /**
  * ================================================
@@ -55,7 +55,7 @@ public class CacheCall<T> implements Call<T> {
 
     @Override
     public void execute(Callback<T> callback) {
-        TypeUtils.checkNotNull(callback, "callback == null");
+        HttpUtils.checkNotNull(callback, "callback == null");
 
         policy = preparePolicy();
         CacheEntity<T> cacheEntity = policy.prepareCache();
@@ -84,7 +84,7 @@ public class CacheCall<T> implements Call<T> {
         if (httpRequest.getCachePolicy() != null) {
             policy = httpRequest.getCachePolicy();
         }
-        TypeUtils.checkNotNull(policy, "policy == null");
+        HttpUtils.checkNotNull(policy, "policy == null");
         return policy;
     }
 

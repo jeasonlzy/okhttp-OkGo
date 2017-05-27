@@ -79,8 +79,6 @@
         <activity android:name=".okrx.RxBitmapActivity"/>
         <activity android:name=".okrx.RxFileDownloadActivity"/>
         <activity android:name=".okrx.RxFormUploadActivity"/>
-        <activity android:name=".okrx.Rx2Activity">
-        </activity>
     </application>
 
 </manifest>

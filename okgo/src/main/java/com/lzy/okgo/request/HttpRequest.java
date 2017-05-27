@@ -30,7 +30,7 @@ import com.lzy.okgo.convert.Converter;
 import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.HttpMethod;
 import com.lzy.okgo.model.HttpParams;
-import com.lzy.okgo.utils.TypeUtils;
+import com.lzy.okgo.utils.HttpUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -297,7 +297,7 @@ public abstract class HttpRequest<T, R extends HttpRequest> {
     public Converter<T> getConverter() {
         // converter 优先级高于 callback
         if (converter == null) converter = callback;
-        TypeUtils.checkNotNull(converter, "converter == null, do you forget call HttpRequest#converter(Converter<T>) ?");
+        HttpUtils.checkNotNull(converter, "converter == null, do you forget call HttpRequest#converter(Converter<T>) ?");
         return converter;
     }
 

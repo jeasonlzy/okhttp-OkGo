@@ -33,7 +33,7 @@ import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.convert.FileConvert;
 import com.lzy.okgo.model.Response;
-import com.lzy.okrx.adapter.ObservableHttp;
+import com.lzy.okrx.adapter.ObservableResponse;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -134,7 +134,7 @@ public class RxFormUploadActivity extends BaseRxDetailActivity {
 //                .params("file3",new File("文件路径"))
                 .addFileParams("file", files)//
                 .converter(new FileConvert())//
-                .adapt(new ObservableHttp<File>())//
+                .adapt(new ObservableResponse<File>())//
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {

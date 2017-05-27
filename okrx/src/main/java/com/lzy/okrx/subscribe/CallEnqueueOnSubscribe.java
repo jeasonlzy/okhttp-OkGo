@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Jake Wharton
+ * Copyright 2016 jeasonlzy(廖子尧)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,15 @@ import rx.Observable.OnSubscribe;
 import rx.Subscriber;
 import rx.exceptions.Exceptions;
 
+/**
+ * ================================================
+ * 作    者：jeasonlzy（廖子尧）Github地址：https://github.com/jeasonlzy
+ * 版    本：1.0
+ * 创建日期：16/9/11
+ * 描    述：
+ * 修订历史：
+ * ================================================
+ */
 public final class CallEnqueueOnSubscribe<T> implements OnSubscribe<Response<T>> {
     private final Call<T> originalCall;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Square, Inc.
+ * Copyright 2016 jeasonlzy(廖子尧)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,17 @@
  */
 package com.lzy.okgo.model;
 
-import android.support.annotation.Nullable;
-
 import java.io.IOException;
 
-/** The result of executing an HTTP request. */
+/**
+ * ================================================
+ * 作    者：jeasonlzy（廖子尧）Github地址：https://github.com/jeasonlzy
+ * 版    本：1.0
+ * 创建日期：16/9/11
+ * 描    述：
+ * 修订历史：
+ * ================================================
+ */
 public final class Result<T> {
     @SuppressWarnings("ConstantConditions") // Guarding public API nullability.
     public static <T> Result<T> error(Throwable error) {
@@ -33,10 +39,10 @@ public final class Result<T> {
         return new Result<>(response, null);
     }
 
-    @Nullable private final Response<T> response;
-    @Nullable private final Throwable error;
+    private final Response<T> response;
+    private final Throwable error;
 
-    private Result(@Nullable Response<T> response, @Nullable Throwable error) {
+    private Result(Response<T> response, Throwable error) {
         this.response = response;
         this.error = error;
     }
@@ -45,7 +51,7 @@ public final class Result<T> {
      * The response received from executing an HTTP request. Only present when {@link #isError()} is
      * false, null otherwise.
      */
-    @Nullable
+
     public Response<T> response() {
         return response;
     }
@@ -57,7 +63,7 @@ public final class Result<T> {
      * remote server. Any other exception type indicates an unexpected failure and should be
      * considered fatal (configuration error, programming error, etc.).
      */
-    @Nullable
+
     public Throwable error() {
         return error;
     }
