@@ -17,7 +17,7 @@ package com.lzy.okrx2.observable;
 
 import com.lzy.okgo.adapter.Call;
 import com.lzy.okgo.callback.Callback;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.HttpRequest;
 
 import io.reactivex.Observable;
@@ -26,9 +26,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.exceptions.CompositeException;
 import io.reactivex.exceptions.Exceptions;
 import io.reactivex.plugins.RxJavaPlugins;
-import okhttp3.Response;
 
-public class CallEnqueueObservable<T> extends Observable<HttpResponse<T>> {
+public class CallEnqueueObservable<T> extends Observable<Response<T>> {
     private final Call<T> originalCall;
 
     public CallEnqueueObservable(Call<T> originalCall) {
@@ -36,7 +35,7 @@ public class CallEnqueueObservable<T> extends Observable<HttpResponse<T>> {
     }
 
     @Override
-    protected void subscribeActual(Observer<? super HttpResponse<T>> observer) {
+    protected void subscribeActual(Observer<? super Response<T>> observer) {
         // Since Call is a one-shot type, clone it for each new observer.
         Call<T> call = originalCall.clone();
         CallCallback<T> callback = new CallCallback<>(call, observer);
@@ -46,10 +45,10 @@ public class CallEnqueueObservable<T> extends Observable<HttpResponse<T>> {
 
     private static final class CallCallback<T> implements Disposable, Callback<T> {
         private final Call<T> call;
-        private final Observer<? super HttpResponse<T>> observer;
+        private final Observer<? super Response<T>> observer;
         boolean terminated = false;
 
-        CallCallback(Call<T> call, Observer<? super HttpResponse<T>> observer) {
+        CallCallback(Call<T> call, Observer<? super Response<T>> observer) {
             this.call = call;
             this.observer = observer;
         }
@@ -65,7 +64,7 @@ public class CallEnqueueObservable<T> extends Observable<HttpResponse<T>> {
         }
 
         @Override
-        public T convertResponse(Response response) throws Exception {
+        public T convertResponse(okhttp3.Response response) throws Exception {
             // okrx 使用converter转换，不需要这个解析方法
             return null;
         }
@@ -75,7 +74,7 @@ public class CallEnqueueObservable<T> extends Observable<HttpResponse<T>> {
         }
 
         @Override
-        public void onSuccess(T t, HttpResponse<T> response) {
+        public void onSuccess(T t, Response<T> response) {
             if (call.isCanceled()) return;
 
             try {
@@ -90,12 +89,12 @@ public class CallEnqueueObservable<T> extends Observable<HttpResponse<T>> {
         }
 
         @Override
-        public void onCacheSuccess(T t, HttpResponse<T> response) {
+        public void onCacheSuccess(T t, Response<T> response) {
             onSuccess(t, response);
         }
 
         @Override
-        public void onError(Exception e, HttpResponse<T> response) {
+        public void onError(Exception e, Response<T> response) {
             if (call.isCanceled()) return;
 
             try {
@@ -108,7 +107,7 @@ public class CallEnqueueObservable<T> extends Observable<HttpResponse<T>> {
         }
 
         @Override
-        public void onFinish(HttpResponse<T> response) {
+        public void onFinish(Response<T> response) {
             if (call.isCanceled()) return;
 
             try {

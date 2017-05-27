@@ -30,7 +30,7 @@ import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.cache.CacheManager;
 import com.lzy.okgo.cache.CacheMode;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 
 import java.util.List;
 
@@ -150,21 +150,21 @@ public class CacheActivity extends BaseDetailActivity {
         }
 
         @Override
-        public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, HttpResponse<LzyResponse<ServerModel>> response) {
+        public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, Response<LzyResponse<ServerModel>> response) {
             handleResponse(response);
             Call call = response.getRawCall();
             requestState.setText("请求成功  是否来自缓存：false  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
         }
 
         @Override
-        public void onCacheSuccess(LzyResponse<ServerModel> serverModelLzyResponse, HttpResponse<LzyResponse<ServerModel>> response) {
+        public void onCacheSuccess(LzyResponse<ServerModel> serverModelLzyResponse, Response<LzyResponse<ServerModel>> response) {
             handleResponse(response);
             Call call = response.getRawCall();
             requestState.setText("请求成功  是否来自缓存：true  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
         }
 
         @Override
-        public void onError(Exception e, HttpResponse<LzyResponse<ServerModel>> response) {
+        public void onError(Exception e, Response<LzyResponse<ServerModel>> response) {
             handleError(response);
             Call call = response.getRawCall();
             requestState.setText("请求失败  是否来自缓存：false  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());

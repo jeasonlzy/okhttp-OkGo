@@ -3,7 +3,7 @@ package com.lzy.okrx.adapter;
 import com.lzy.okgo.adapter.AdapterParam;
 import com.lzy.okgo.adapter.Call;
 import com.lzy.okgo.adapter.CallAdapter;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 import com.lzy.okrx.subscribe.BodyOnSubscribe;
 
 import rx.Observable;
@@ -20,7 +20,7 @@ import rx.Observable;
 public class ObservableBody<T> implements CallAdapter<T, Observable<T>> {
     @Override
     public Observable<T> adapt(Call<T> call, AdapterParam param) {
-        Observable.OnSubscribe<HttpResponse<T>> subscribe = AnalysisParams.analysis(call, param);
+        Observable.OnSubscribe<Response<T>> subscribe = AnalysisParams.analysis(call, param);
         BodyOnSubscribe<T> bodySubscribe = new BodyOnSubscribe<>(subscribe);
         return Observable.create(bodySubscribe);
     }

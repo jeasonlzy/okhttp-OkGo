@@ -34,7 +34,7 @@ import com.lzy.demo.model.ServerModel;
 import com.lzy.demo.utils.ColorUtils;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -84,12 +84,12 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .params("param1", "paramValue1")//
                         .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                             @Override
-                            public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, HttpResponse<LzyResponse<ServerModel>> response) {
+                            public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, Response<LzyResponse<ServerModel>> response) {
                                 handleResponse(response);
                             }
 
                             @Override
-                            public void onError(Exception e, HttpResponse<LzyResponse<ServerModel>> response) {
+                            public void onError(Exception e, Response<LzyResponse<ServerModel>> response) {
                                 handleError(response);
                             }
                         });
@@ -101,12 +101,12 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .params("param1", "paramValue1")//
                         .execute(new StringDialogCallback(this) {
                             @Override
-                            public void onSuccess(String s, HttpResponse<String> response) {
+                            public void onSuccess(String s, Response<String> response) {
                                 handleResponse(response);
                             }
 
                             @Override
-                            public void onError(Exception e, HttpResponse<String> response) {
+                            public void onError(Exception e, Response<String> response) {
                                 handleError(response);
                             }
                         });
@@ -118,12 +118,12 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .params("param1", "paramValue1")//
                         .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                             @Override
-                            public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, HttpResponse<LzyResponse<ServerModel>> response) {
+                            public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, Response<LzyResponse<ServerModel>> response) {
                                 handleResponse(response);
                             }
 
                             @Override
-                            public void onError(Exception e, HttpResponse<LzyResponse<ServerModel>> response) {
+                            public void onError(Exception e, Response<LzyResponse<ServerModel>> response) {
                                 handleError(response);
                             }
                         });
@@ -138,12 +138,12 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .isMultipart(true)         //强制使用 multipart/form-data 表单上传（只是演示，不需要的话不要设置。默认就是false）
                         .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                             @Override
-                            public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, HttpResponse<LzyResponse<ServerModel>> response) {
+                            public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, Response<LzyResponse<ServerModel>> response) {
                                 handleResponse(response);
                             }
 
                             @Override
-                            public void onError(Exception e, HttpResponse<LzyResponse<ServerModel>> response) {
+                            public void onError(Exception e, Response<LzyResponse<ServerModel>> response) {
                                 handleError(response);
                             }
                         });
@@ -155,12 +155,12 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .params("param1", "paramValue1")//
                         .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                             @Override
-                            public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, HttpResponse<LzyResponse<ServerModel>> response) {
+                            public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, Response<LzyResponse<ServerModel>> response) {
                                 handleResponse(response);
                             }
 
                             @Override
-                            public void onError(Exception e, HttpResponse<LzyResponse<ServerModel>> response) {
+                            public void onError(Exception e, Response<LzyResponse<ServerModel>> response) {
                                 handleError(response);
                             }
                         });
@@ -173,12 +173,12 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                         .requestBody(RequestBody.create(MediaType.parse("text/plain;charset=utf-8"), "这是要上传的数据"))//
                         .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                             @Override
-                            public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, HttpResponse<LzyResponse<ServerModel>> response) {
+                            public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, Response<LzyResponse<ServerModel>> response) {
                                 handleResponse(response);
                             }
 
                             @Override
-                            public void onError(Exception e, HttpResponse<LzyResponse<ServerModel>> response) {
+                            public void onError(Exception e, Response<LzyResponse<ServerModel>> response) {
                                 handleError(response);
                             }
                         });

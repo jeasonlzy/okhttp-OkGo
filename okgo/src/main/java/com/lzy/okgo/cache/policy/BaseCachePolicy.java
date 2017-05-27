@@ -8,7 +8,7 @@ import com.lzy.okgo.cache.CacheManager;
 import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.callback.Callback;
 import com.lzy.okgo.exception.HttpException;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.HttpRequest;
 import com.lzy.okgo.utils.HeaderParser;
 import com.lzy.okgo.utils.HttpUtils;
@@ -18,7 +18,6 @@ import java.net.SocketTimeoutException;
 
 import okhttp3.Call;
 import okhttp3.Headers;
-import okhttp3.Response;
 
 /**
  * ================================================
@@ -44,7 +43,7 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
     }
 
     @Override
-    public boolean onAnalysisResponse(Call call, Response response) {
+    public boolean onAnalysisResponse(Call call, okhttp3.Response response) {
         return false;
     }
 
@@ -83,20 +82,20 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
         return rawCall;
     }
 
-    protected HttpResponse<T> requestNetworkSync() {
+    protected Response<T> requestNetworkSync() {
         try {
-            Response response = rawCall.execute();
+            okhttp3.Response response = rawCall.execute();
             int responseCode = response.code();
 
             //network error
             if (responseCode == 404 || responseCode >= 500) {
-                return HttpResponse.error(false, rawCall, response, HttpException.NET_ERROR());
+                return Response.error(false, rawCall, response, HttpException.NET_ERROR());
             }
 
             T body = httpRequest.getConverter().convertResponse(response);
             //save cache when request is successful
             saveCache(response.headers(), body);
-            return HttpResponse.success(false, body, rawCall, response);
+            return Response.success(false, body, rawCall, response);
         } catch (Exception e) {
             if (e instanceof SocketTimeoutException && currentRetryCount < OkGo.getInstance().getRetryCount()) {
                 currentRetryCount++;
@@ -108,7 +107,7 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
                     requestNetworkSync();
                 }
             }
-            return HttpResponse.error(false, rawCall, null, e);
+            return Response.error(false, rawCall, null, e);
         }
     }
 
@@ -127,7 +126,7 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
                     }
                 } else {
                     if (!call.isCanceled()) {
-                        HttpResponse<T> error = HttpResponse.error(false, call, null, e);
+                        Response<T> error = Response.error(false, call, null, e);
                         onError(error);
                     }
                 }
@@ -139,7 +138,7 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
 
                 //network error
                 if (responseCode == 404 || responseCode >= 500) {
-                    HttpResponse<T> error = HttpResponse.error(false, call, response, HttpException.NET_ERROR());
+                    Response<T> error = Response.error(false, call, response, HttpException.NET_ERROR());
                     onError(error);
                     return;
                 }
@@ -150,10 +149,10 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
                     T body = httpRequest.getConverter().convertResponse(response);
                     //save cache when request is successful
                     saveCache(response.headers(), body);
-                    HttpResponse<T> success = HttpResponse.success(false, body, call, response);
+                    Response<T> success = Response.success(false, body, call, response);
                     onSuccess(success);
                 } catch (Exception e) {
-                    HttpResponse<T> error = HttpResponse.error(false, call, response, e);
+                    Response<T> error = Response.error(false, call, response, e);
                     onError(error);
                 }
             }

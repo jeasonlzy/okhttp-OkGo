@@ -26,7 +26,7 @@ import com.lzy.demo.model.ServerModel;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.convert.StringConvert;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 import com.lzy.okrx.adapter.ObservableHttp;
 
 import org.json.JSONObject;
@@ -83,7 +83,7 @@ public class RxCommonActivity extends BaseRxDetailActivity {
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Subscriber<HttpResponse<String>>() {
+                .subscribe(new Subscriber<Response<String>>() {
                     @Override
                     public void onCompleted() {
                         dismissLoading();
@@ -97,7 +97,7 @@ public class RxCommonActivity extends BaseRxDetailActivity {
                     }
 
                     @Override
-                    public void onNext(HttpResponse<String> response) {
+                    public void onNext(Response<String> response) {
                         handleResponse(response);
                     }
                 });
@@ -114,10 +114,10 @@ public class RxCommonActivity extends BaseRxDetailActivity {
                         showLoading();
                     }
                 })//
-                .map(new Func1<HttpResponse<LzyResponse<ServerModel>>, HttpResponse<ServerModel>>() {
+                .map(new Func1<Response<LzyResponse<ServerModel>>, Response<ServerModel>>() {
                     @Override
-                    public HttpResponse<ServerModel> call(HttpResponse<LzyResponse<ServerModel>> response) {
-                        HttpResponse<ServerModel> httpResponse = new HttpResponse<>();
+                    public Response<ServerModel> call(Response<LzyResponse<ServerModel>> response) {
+                        Response<ServerModel> httpResponse = new Response<>();
                         httpResponse.setException(response.getException());
                         httpResponse.setFromCache(response.isFromCache());
                         httpResponse.setRawResponse(response.getRawResponse());
@@ -127,7 +127,7 @@ public class RxCommonActivity extends BaseRxDetailActivity {
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())  //
-                .subscribe(new Subscriber<HttpResponse<ServerModel>>() {
+                .subscribe(new Subscriber<Response<ServerModel>>() {
                     @Override
                     public void onCompleted() {
                         dismissLoading();
@@ -141,7 +141,7 @@ public class RxCommonActivity extends BaseRxDetailActivity {
                     }
 
                     @Override
-                    public void onNext(HttpResponse<ServerModel> response) {
+                    public void onNext(Response<ServerModel> response) {
                         handleResponse(response);
                     }
                 });
@@ -161,10 +161,10 @@ public class RxCommonActivity extends BaseRxDetailActivity {
                         showLoading();
                     }
                 })//
-                .map(new Func1<HttpResponse<LzyResponse<ServerModel>>, HttpResponse<ServerModel>>() {
+                .map(new Func1<Response<LzyResponse<ServerModel>>, Response<ServerModel>>() {
                     @Override
-                    public HttpResponse<ServerModel> call(HttpResponse<LzyResponse<ServerModel>> response) {
-                        HttpResponse<ServerModel> httpResponse = new HttpResponse<>();
+                    public Response<ServerModel> call(Response<LzyResponse<ServerModel>> response) {
+                        Response<ServerModel> httpResponse = new Response<>();
                         httpResponse.setException(response.getException());
                         httpResponse.setFromCache(response.isFromCache());
                         httpResponse.setRawResponse(response.getRawResponse());
@@ -174,7 +174,7 @@ public class RxCommonActivity extends BaseRxDetailActivity {
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Subscriber<HttpResponse<ServerModel>>() {
+                .subscribe(new Subscriber<Response<ServerModel>>() {
                     @Override
                     public void onCompleted() {
                         dismissLoading();
@@ -188,7 +188,7 @@ public class RxCommonActivity extends BaseRxDetailActivity {
                     }
 
                     @Override
-                    public void onNext(HttpResponse<ServerModel> response) {
+                    public void onNext(Response<ServerModel> response) {
                         handleResponse(response);
                     }
                 });
@@ -210,10 +210,10 @@ public class RxCommonActivity extends BaseRxDetailActivity {
                         showLoading();
                     }
                 })//
-                .map(new Func1<HttpResponse<LzyResponse<List<ServerModel>>>, HttpResponse<List<ServerModel>>>() {
+                .map(new Func1<Response<LzyResponse<List<ServerModel>>>, Response<List<ServerModel>>>() {
                     @Override
-                    public HttpResponse<List<ServerModel>> call(HttpResponse<LzyResponse<List<ServerModel>>> response) {
-                        HttpResponse<List<ServerModel>> httpResponse = new HttpResponse<>();
+                    public Response<List<ServerModel>> call(Response<LzyResponse<List<ServerModel>>> response) {
+                        Response<List<ServerModel>> httpResponse = new Response<>();
                         httpResponse.setException(response.getException());
                         httpResponse.setFromCache(response.isFromCache());
                         httpResponse.setRawResponse(response.getRawResponse());
@@ -223,7 +223,7 @@ public class RxCommonActivity extends BaseRxDetailActivity {
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Subscriber<HttpResponse<List<ServerModel>>>() {
+                .subscribe(new Subscriber<Response<List<ServerModel>>>() {
                     @Override
                     public void onCompleted() {
                         dismissLoading();
@@ -237,7 +237,7 @@ public class RxCommonActivity extends BaseRxDetailActivity {
                     }
 
                     @Override
-                    public void onNext(HttpResponse<List<ServerModel>> response) {
+                    public void onNext(Response<List<ServerModel>> response) {
                         handleResponse(response);
                     }
                 });
@@ -259,7 +259,7 @@ public class RxCommonActivity extends BaseRxDetailActivity {
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Subscriber<HttpResponse<String>>() {
+                .subscribe(new Subscriber<Response<String>>() {
                     @Override
                     public void onCompleted() {
                         dismissLoading();
@@ -273,7 +273,7 @@ public class RxCommonActivity extends BaseRxDetailActivity {
                     }
 
                     @Override
-                    public void onNext(HttpResponse<String> response) {
+                    public void onNext(Response<String> response) {
                         handleResponse(response);
                     }
                 });
@@ -302,7 +302,7 @@ public class RxCommonActivity extends BaseRxDetailActivity {
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Subscriber<HttpResponse<String>>() {
+                .subscribe(new Subscriber<Response<String>>() {
                     @Override
                     public void onCompleted() {
                         dismissLoading();
@@ -316,7 +316,7 @@ public class RxCommonActivity extends BaseRxDetailActivity {
                     }
 
                     @Override
-                    public void onNext(HttpResponse<String> response) {
+                    public void onNext(Response<String> response) {
                         handleResponse(response);
                     }
                 });

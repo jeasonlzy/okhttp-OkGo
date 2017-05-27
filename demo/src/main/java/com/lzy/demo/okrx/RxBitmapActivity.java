@@ -22,7 +22,7 @@ import android.widget.ImageView;
 
 import com.lzy.demo.R;
 import com.lzy.demo.base.BaseRxDetailActivity;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -71,7 +71,7 @@ public class RxBitmapActivity extends BaseRxDetailActivity {
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Subscriber<HttpResponse<Bitmap>>() {
+                .subscribe(new Subscriber<Response<Bitmap>>() {
                     @Override
                     public void onCompleted() {
                         dismissLoading();
@@ -85,7 +85,7 @@ public class RxBitmapActivity extends BaseRxDetailActivity {
                     }
 
                     @Override
-                    public void onNext(HttpResponse<Bitmap> response) {
+                    public void onNext(Response<Bitmap> response) {
                         handleResponse(response);
                         imageView.setImageBitmap(response.body());
                     }

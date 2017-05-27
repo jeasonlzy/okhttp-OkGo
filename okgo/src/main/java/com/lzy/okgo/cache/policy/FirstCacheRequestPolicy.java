@@ -2,7 +2,7 @@ package com.lzy.okgo.cache.policy;
 
 import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.callback.Callback;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.HttpRequest;
 
 import okhttp3.Call;
@@ -22,7 +22,7 @@ public class FirstCacheRequestPolicy<T> extends BaseCachePolicy<T> {
     }
 
     @Override
-    public void onSuccess(final HttpResponse<T> success) {
+    public void onSuccess(final Response<T> success) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -33,7 +33,7 @@ public class FirstCacheRequestPolicy<T> extends BaseCachePolicy<T> {
     }
 
     @Override
-    public void onError(final HttpResponse<T> error) {
+    public void onError(final Response<T> error) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -44,15 +44,15 @@ public class FirstCacheRequestPolicy<T> extends BaseCachePolicy<T> {
     }
 
     @Override
-    public HttpResponse<T> requestSync(CacheEntity<T> cacheEntity, Call rawCall) {
+    public Response<T> requestSync(CacheEntity<T> cacheEntity, Call rawCall) {
         //同步请求，不能返回两次，只返回正确的数据
-        HttpResponse<T> response;
+        Response<T> response;
         if (cacheEntity != null) {
-            response = HttpResponse.success(true, cacheEntity.getData(), rawCall, null);
+            response = Response.success(true, cacheEntity.getData(), rawCall, null);
         }
         response = requestNetworkSync();
         if (!response.isSuccessful() && cacheEntity != null) {
-            response = HttpResponse.success(true, cacheEntity.getData(), rawCall, response.getRawResponse());
+            response = Response.success(true, cacheEntity.getData(), rawCall, response.getRawResponse());
         }
         return response;
     }
@@ -67,7 +67,7 @@ public class FirstCacheRequestPolicy<T> extends BaseCachePolicy<T> {
             }
         });
         if (cacheEntity != null) {
-            final HttpResponse<T> success = HttpResponse.success(true, cacheEntity.getData(), rawCall, null);
+            final Response<T> success = Response.success(true, cacheEntity.getData(), rawCall, null);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

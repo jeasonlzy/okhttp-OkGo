@@ -16,13 +16,13 @@
 package com.lzy.okrx.subscribe;
 
 import com.lzy.okgo.adapter.Call;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 
 import rx.Observable.OnSubscribe;
 import rx.Subscriber;
 import rx.exceptions.Exceptions;
 
-public final class CallExecuteOnSubscribe<T> implements OnSubscribe<HttpResponse<T>> {
+public final class CallExecuteOnSubscribe<T> implements OnSubscribe<Response<T>> {
     private final Call<T> originalCall;
 
     public CallExecuteOnSubscribe(Call<T> originalCall) {
@@ -30,14 +30,14 @@ public final class CallExecuteOnSubscribe<T> implements OnSubscribe<HttpResponse
     }
 
     @Override
-    public void call(Subscriber<? super HttpResponse<T>> subscriber) {
+    public void call(Subscriber<? super Response<T>> subscriber) {
         // Since Call is a one-shot type, clone it for each new subscriber.
         Call<T> call = originalCall.clone();
         CallArbiter<T> arbiter = new CallArbiter<>(call, subscriber);
         subscriber.add(arbiter);
         subscriber.setProducer(arbiter);
 
-        HttpResponse<T> response;
+        Response<T> response;
         try {
             response = call.execute();
         } catch (Throwable t) {

@@ -2,7 +2,7 @@ package com.lzy.okgo.cache.policy;
 
 import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.callback.Callback;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 
 import okhttp3.Call;
 
@@ -22,14 +22,14 @@ public interface CachePolicy<T> {
      *
      * @param success 获取的数据，可是是缓存或者网络
      */
-    void onSuccess(HttpResponse<T> success);
+    void onSuccess(Response<T> success);
 
     /**
      * 获取数据失败的回调
      *
      * @param error 失败的信息，可是是缓存或者网络
      */
-    void onError(HttpResponse<T> error);
+    void onError(Response<T> error);
 
     /**
      * 控制是否执行后续的回调动作
@@ -61,7 +61,7 @@ public interface CachePolicy<T> {
      * @param rawCall     请求的对象
      * @return 从缓存或本地获取的数据
      */
-    HttpResponse<T> requestSync(CacheEntity<T> cacheEntity, okhttp3.Call rawCall);
+    Response<T> requestSync(CacheEntity<T> cacheEntity, okhttp3.Call rawCall);
 
     /**
      * 异步请求获取数据

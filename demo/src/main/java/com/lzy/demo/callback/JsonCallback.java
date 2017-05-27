@@ -72,7 +72,7 @@ public abstract class JsonCallback<T> extends AbsCallback<T> {
      *     .tag(this)//
      *     .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
      *          @Override
-     *          public void onSuccess(LzyResponse<ServerModel> responseData, Call call, HttpResponse response) {
+     *          public void onSuccess(LzyResponse<ServerModel> responseData, Call call, Response response) {
      *              handleResponse(responseData.data, call, response);
      *          }
      *     });

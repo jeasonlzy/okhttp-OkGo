@@ -3,7 +3,7 @@ package com.lzy.okrx2.adapter;
 import com.lzy.okgo.adapter.AdapterParam;
 import com.lzy.okgo.adapter.Call;
 import com.lzy.okgo.adapter.CallAdapter;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 
 import io.reactivex.Single;
 
@@ -16,9 +16,9 @@ import io.reactivex.Single;
  * 修订历史：
  * ================================================
  */
-public class SingleHttp<T> implements CallAdapter<T, Single<HttpResponse<T>>> {
+public class SingleHttp<T> implements CallAdapter<T, Single<Response<T>>> {
     @Override
-    public Single<HttpResponse<T>> adapt(Call<T> call, AdapterParam param) {
+    public Single<Response<T>> adapt(Call<T> call, AdapterParam param) {
         ObservableHttp<T> observable = new ObservableHttp<>();
         return observable.adapt(call, param).singleOrError();
     }

@@ -26,7 +26,7 @@ import android.widget.TextView;
 
 import com.lzy.demo.R;
 import com.lzy.demo.utils.Convert;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 
 import java.io.File;
 import java.util.List;
@@ -35,7 +35,6 @@ import java.util.Set;
 
 import okhttp3.Call;
 import okhttp3.Headers;
-import okhttp3.Response;
 
 /**
  * ================================================
@@ -113,7 +112,7 @@ public abstract class BaseDetailActivity extends BaseActivity {
         rootContent.addView(view, params);
     }
 
-    protected <T> void handleResponse(HttpResponse<T> response) {
+    protected <T> void handleResponse(Response<T> response) {
         StringBuilder sb;
         Call call = response.getRawCall();
         if (call != null) {
@@ -168,7 +167,7 @@ public abstract class BaseDetailActivity extends BaseActivity {
             }
         }
 
-        Response rawResponse = response.getRawResponse();
+        okhttp3.Response rawResponse = response.getRawResponse();
         if (rawResponse != null) {
             Headers responseHeadersString = rawResponse.headers();
             Set<String> names = responseHeadersString.names();
@@ -184,7 +183,7 @@ public abstract class BaseDetailActivity extends BaseActivity {
         }
     }
 
-    protected <T> void handleError(HttpResponse<T> response) {
+    protected <T> void handleError(Response<T> response) {
         if (response == null) return;
         StringBuilder sb;
         Call call = response.getRawCall();
@@ -204,7 +203,7 @@ public abstract class BaseDetailActivity extends BaseActivity {
         }
 
         responseData.setText("--");
-        Response rawResponse = response.getRawResponse();
+        okhttp3.Response rawResponse = response.getRawResponse();
         if (rawResponse != null) {
             Headers responseHeadersString = rawResponse.headers();
             Set<String> names = responseHeadersString.names();

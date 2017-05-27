@@ -27,7 +27,7 @@ import com.lzy.demo.ui.NumberProgressBar;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.FileCallback;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.HttpRequest;
 
 import java.io.File;
@@ -81,13 +81,13 @@ public class FileDownloadActivity extends BaseDetailActivity {
                     }
 
                     @Override
-                    public void onSuccess(File file, HttpResponse<File> response) {
+                    public void onSuccess(File file, Response<File> response) {
                         handleResponse(response);
                         btnFileDownload.setText("下载完成");
                     }
 
                     @Override
-                    public void onError(Exception e, HttpResponse<File> response) {
+                    public void onError(Exception e, Response<File> response) {
                         handleError(response);
                         btnFileDownload.setText("下载出错");
                     }

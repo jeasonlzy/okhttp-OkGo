@@ -24,7 +24,7 @@ import com.lzy.demo.callback.StringDialogCallback;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cookie.store.CookieStore;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 
 import java.util.List;
 
@@ -90,12 +90,12 @@ public class CookieActivity extends BaseDetailActivity {
                 .tag(this)//
                 .execute(new StringDialogCallback(this) {
                     @Override
-                    public void onSuccess(String s, HttpResponse<String> response) {
+                    public void onSuccess(String s, Response<String> response) {
                         handleResponse(response);
                     }
 
                     @Override
-                    public void onError(Exception e, HttpResponse<String> response) {
+                    public void onError(Exception e, Response<String> response) {
                         handleError(response);
                     }
                 });

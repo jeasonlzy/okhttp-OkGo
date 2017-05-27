@@ -24,7 +24,7 @@ import com.lzy.demo.R;
 import com.lzy.demo.base.BaseActivity;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.FileCallback;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.HttpRequest;
 
 import java.io.File;
@@ -68,7 +68,7 @@ public class TestActivity extends BaseActivity {
                 .tag(this)//
                 .execute(new FileCallback() {
                     @Override
-                    public void onSuccess(File file, HttpResponse<File> response) {
+                    public void onSuccess(File file, Response<File> response) {
                         System.out.println("onSuccess");
                     }
 
@@ -78,7 +78,7 @@ public class TestActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onError(Exception e, HttpResponse<File> response) {
+                    public void onError(Exception e, Response<File> response) {
                         e.printStackTrace();
                     }
 

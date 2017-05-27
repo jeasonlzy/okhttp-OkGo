@@ -35,7 +35,7 @@ import com.lzy.demo.model.NewsResponse;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheMode;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -104,7 +104,7 @@ public class NewsTabFragment extends BaseFragment implements SwipeRefreshLayout.
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)  //缓存模式先使用缓存,然后使用网络数据
                 .execute(new NewsCallback<NewsResponse<NewsModel>>() {
                     @Override
-                    public void onSuccess(NewsResponse<NewsModel> newsResponse, HttpResponse<NewsResponse<NewsModel>> response) {
+                    public void onSuccess(NewsResponse<NewsModel> newsResponse, Response<NewsResponse<NewsModel>> response) {
                         NewsModel newsModel = newsResponse.showapi_res_body;
                         if (newsModel.pagebean != null) {
                             currentPage = newsModel.pagebean.currentPage;
@@ -113,7 +113,7 @@ public class NewsTabFragment extends BaseFragment implements SwipeRefreshLayout.
                     }
 
                     @Override
-                    public void onCacheSuccess(NewsResponse<NewsModel> newsResponse, HttpResponse<NewsResponse<NewsModel>> response) {
+                    public void onCacheSuccess(NewsResponse<NewsModel> newsResponse, Response<NewsResponse<NewsModel>> response) {
                         //一般来说,只需呀第一次初始化界面的时候需要使用缓存刷新界面,以后不需要,所以用一个变量标识
                         if (!isInitCache) {
                             //一般来说,缓存回调成功和网络回调成功做的事情是一样的,所以这里直接回调onSuccess
@@ -123,13 +123,13 @@ public class NewsTabFragment extends BaseFragment implements SwipeRefreshLayout.
                     }
 
                     @Override
-                    public void onError(Exception e, HttpResponse<NewsResponse<NewsModel>> response) {
+                    public void onError(Exception e, Response<NewsResponse<NewsModel>> response) {
                         //网络请求失败的回调,一般会弹个Toast
                         showToast(e.getMessage());
                     }
 
                     @Override
-                    public void onFinish(HttpResponse<NewsResponse<NewsModel>> response) {
+                    public void onFinish(Response<NewsResponse<NewsModel>> response) {
                         super.onFinish(response);
                         //可能需要移除之前添加的布局
                         newsAdapter.removeAllFooterView();
@@ -148,7 +148,7 @@ public class NewsTabFragment extends BaseFragment implements SwipeRefreshLayout.
                 .cacheMode(CacheMode.NO_CACHE)       //上拉不需要缓存
                 .execute(new NewsCallback<NewsResponse<NewsModel>>() {
                     @Override
-                    public void onSuccess(NewsResponse<NewsModel> newsResponse, HttpResponse<NewsResponse<NewsModel>> response) {
+                    public void onSuccess(NewsResponse<NewsModel> newsResponse, Response<NewsResponse<NewsModel>> response) {
                         NewsModel newsModel = newsResponse.showapi_res_body;
                         if (newsModel.pagebean != null) {
                             currentPage = newsModel.pagebean.currentPage;
@@ -163,7 +163,7 @@ public class NewsTabFragment extends BaseFragment implements SwipeRefreshLayout.
                     }
 
                     @Override
-                    public void onError(Exception e, HttpResponse<NewsResponse<NewsModel>> response) {
+                    public void onError(Exception e, Response<NewsResponse<NewsModel>> response) {
                         //显示数据加载失败,点击重试
                         newsAdapter.showLoadMoreFailedView();
                         //网络请求失败的回调,一般会弹个Toast

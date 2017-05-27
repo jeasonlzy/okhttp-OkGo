@@ -2,7 +2,7 @@ package com.lzy.okrx2.adapter;
 
 import com.lzy.okgo.adapter.AdapterParam;
 import com.lzy.okgo.adapter.Call;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 import com.lzy.okrx2.observable.CallEnqueueObservable;
 import com.lzy.okrx2.observable.CallExecuteObservable;
 
@@ -19,8 +19,8 @@ import io.reactivex.Observable;
  */
 class AnalysisParams {
 
-    static <T> Observable<HttpResponse<T>> analysis(Call<T> call, AdapterParam param) {
-        Observable<HttpResponse<T>> observable;
+    static <T> Observable<Response<T>> analysis(Call<T> call, AdapterParam param) {
+        Observable<Response<T>> observable;
         if (param == null) param = new AdapterParam();
         if (param.isAsync) {
             observable = new CallEnqueueObservable<>(call);

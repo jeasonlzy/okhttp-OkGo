@@ -16,7 +16,7 @@
 package com.lzy.okrx2.observable;
 
 import com.lzy.okgo.exception.HttpException;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -26,9 +26,9 @@ import io.reactivex.exceptions.Exceptions;
 import io.reactivex.plugins.RxJavaPlugins;
 
 public final class BodyObservable<T> extends Observable<T> {
-    private final Observable<HttpResponse<T>> upstream;
+    private final Observable<Response<T>> upstream;
 
-    public BodyObservable(Observable<HttpResponse<T>> upstream) {
+    public BodyObservable(Observable<Response<T>> upstream) {
         this.upstream = upstream;
     }
 
@@ -37,7 +37,7 @@ public final class BodyObservable<T> extends Observable<T> {
         upstream.subscribe(new BodyObserver<T>(observer));
     }
 
-    private static class BodyObserver<R> implements Observer<HttpResponse<R>> {
+    private static class BodyObserver<R> implements Observer<Response<R>> {
         private final Observer<? super R> observer;
         private boolean terminated;
 
@@ -51,7 +51,7 @@ public final class BodyObservable<T> extends Observable<T> {
         }
 
         @Override
-        public void onNext(HttpResponse<R> response) {
+        public void onNext(Response<R> response) {
             if (response.isSuccessful()) {
                 observer.onNext(response.body());
             } else {

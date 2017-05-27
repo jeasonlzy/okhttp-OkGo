@@ -3,11 +3,10 @@ package com.lzy.okgo.cache.policy;
 import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.callback.Callback;
 import com.lzy.okgo.exception.CacheException;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.HttpRequest;
 
 import okhttp3.Call;
-import okhttp3.Response;
 
 /**
  * ================================================
@@ -25,7 +24,7 @@ public class DefaultCachePolicy<T> extends BaseCachePolicy<T> {
     }
 
     @Override
-    public void onSuccess(final HttpResponse<T> success) {
+    public void onSuccess(final Response<T> success) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -36,7 +35,7 @@ public class DefaultCachePolicy<T> extends BaseCachePolicy<T> {
     }
 
     @Override
-    public void onError(final HttpResponse<T> error) {
+    public void onError(final Response<T> error) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -47,11 +46,11 @@ public class DefaultCachePolicy<T> extends BaseCachePolicy<T> {
     }
 
     @Override
-    public boolean onAnalysisResponse(final Call call, final Response response) {
+    public boolean onAnalysisResponse(final Call call, final okhttp3.Response response) {
         if (response.code() != 304) return false;
 
         if (cacheEntity == null) {
-            final HttpResponse<T> error = HttpResponse.error(true, call, response, CacheException.NON_AND_304(httpRequest.getCacheKey()));
+            final Response<T> error = Response.error(true, call, response, CacheException.NON_AND_304(httpRequest.getCacheKey()));
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -60,7 +59,7 @@ public class DefaultCachePolicy<T> extends BaseCachePolicy<T> {
                 }
             });
         } else {
-            final HttpResponse<T> success = HttpResponse.success(true, cacheEntity.getData(), call, response);
+            final Response<T> success = Response.success(true, cacheEntity.getData(), call, response);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -73,14 +72,14 @@ public class DefaultCachePolicy<T> extends BaseCachePolicy<T> {
     }
 
     @Override
-    public HttpResponse<T> requestSync(CacheEntity<T> cacheEntity, okhttp3.Call rawCall) {
-        HttpResponse<T> response = requestNetworkSync();
+    public Response<T> requestSync(CacheEntity<T> cacheEntity, okhttp3.Call rawCall) {
+        Response<T> response = requestNetworkSync();
         //HTTP cache protocol
         if (response.isSuccessful() && response.code() == 304) {
             if (cacheEntity == null) {
-                response = HttpResponse.error(true, rawCall, response.getRawResponse(), CacheException.NON_AND_304(httpRequest.getCacheKey()));
+                response = Response.error(true, rawCall, response.getRawResponse(), CacheException.NON_AND_304(httpRequest.getCacheKey()));
             } else {
-                response = HttpResponse.success(true, cacheEntity.getData(), rawCall, response.getRawResponse());
+                response = Response.success(true, cacheEntity.getData(), rawCall, response.getRawResponse());
             }
         }
         return response;

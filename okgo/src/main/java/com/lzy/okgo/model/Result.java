@@ -28,15 +28,15 @@ public final class Result<T> {
     }
 
     @SuppressWarnings("ConstantConditions") // Guarding public API nullability.
-    public static <T> Result<T> response(HttpResponse<T> response) {
+    public static <T> Result<T> response(Response<T> response) {
         if (response == null) throw new NullPointerException("response == null");
         return new Result<>(response, null);
     }
 
-    @Nullable private final HttpResponse<T> response;
+    @Nullable private final Response<T> response;
     @Nullable private final Throwable error;
 
-    private Result(@Nullable HttpResponse<T> response, @Nullable Throwable error) {
+    private Result(@Nullable Response<T> response, @Nullable Throwable error) {
         this.response = response;
         this.error = error;
     }
@@ -46,7 +46,7 @@ public final class Result<T> {
      * false, null otherwise.
      */
     @Nullable
-    public HttpResponse<T> response() {
+    public Response<T> response() {
         return response;
     }
 

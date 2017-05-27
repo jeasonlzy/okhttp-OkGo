@@ -25,7 +25,7 @@ import com.lzy.demo.model.LzyResponse;
 import com.lzy.demo.model.ServerModel;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 
 import org.json.JSONObject;
 
@@ -76,12 +76,12 @@ public class PostTextActivity extends BaseDetailActivity {
                 .upJson(jsonObject)//
                 .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                     @Override
-                    public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, HttpResponse<LzyResponse<ServerModel>> response) {
+                    public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, Response<LzyResponse<ServerModel>> response) {
                         handleResponse(response);
                     }
 
                     @Override
-                    public void onError(Exception e, HttpResponse<LzyResponse<ServerModel>> response) {
+                    public void onError(Exception e, Response<LzyResponse<ServerModel>> response) {
                         handleError(response);
                     }
                 });
@@ -97,12 +97,12 @@ public class PostTextActivity extends BaseDetailActivity {
 //                .upString("这是要上传的长文本数据！", MediaType.parse("application/xml"))// 比如上传xml数据，这里就可以自己指定请求头
                 .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                     @Override
-                    public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, HttpResponse<LzyResponse<ServerModel>> response) {
+                    public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, Response<LzyResponse<ServerModel>> response) {
                         handleResponse(response);
                     }
 
                     @Override
-                    public void onError(Exception e, HttpResponse<LzyResponse<ServerModel>> response) {
+                    public void onError(Exception e, Response<LzyResponse<ServerModel>> response) {
                         handleError(response);
                     }
                 });
@@ -117,12 +117,12 @@ public class PostTextActivity extends BaseDetailActivity {
                 .upBytes("这是字节数据".getBytes())//
                 .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                     @Override
-                    public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, HttpResponse<LzyResponse<ServerModel>> response) {
+                    public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, Response<LzyResponse<ServerModel>> response) {
                         handleResponse(response);
                     }
 
                     @Override
-                    public void onError(Exception e, HttpResponse<LzyResponse<ServerModel>> response) {
+                    public void onError(Exception e, Response<LzyResponse<ServerModel>> response) {
                         handleError(response);
                     }
                 });

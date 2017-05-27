@@ -16,7 +16,7 @@
 package com.lzy.okrx2.observable;
 
 import com.lzy.okgo.adapter.Call;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -25,7 +25,7 @@ import io.reactivex.exceptions.CompositeException;
 import io.reactivex.exceptions.Exceptions;
 import io.reactivex.plugins.RxJavaPlugins;
 
-public class CallExecuteObservable<T> extends Observable<HttpResponse<T>> {
+public class CallExecuteObservable<T> extends Observable<Response<T>> {
     private final Call<T> originalCall;
 
     public CallExecuteObservable(Call<T> originalCall) {
@@ -33,14 +33,14 @@ public class CallExecuteObservable<T> extends Observable<HttpResponse<T>> {
     }
 
     @Override
-    protected void subscribeActual(Observer<? super HttpResponse<T>> observer) {
+    protected void subscribeActual(Observer<? super Response<T>> observer) {
         // Since Call is a one-shot type, clone it for each new observer.
         Call<T> call = originalCall.clone();
         observer.onSubscribe(new CallDisposable(call));
 
         boolean terminated = false;
         try {
-            HttpResponse<T> response = call.execute();
+            Response<T> response = call.execute();
             if (!call.isCanceled()) {
                 observer.onNext(response);
             }

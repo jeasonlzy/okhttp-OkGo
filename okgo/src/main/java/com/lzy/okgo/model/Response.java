@@ -17,7 +17,6 @@ package com.lzy.okgo.model;
 
 import okhttp3.Call;
 import okhttp3.Headers;
-import okhttp3.Response;
 
 /**
  * ================================================
@@ -28,7 +27,7 @@ import okhttp3.Response;
  * 修订历史：
  * ================================================
  */
-public final class HttpResponse<T> {
+public final class Response<T> {
 
     private T body;
     private Exception exception;
@@ -36,8 +35,8 @@ public final class HttpResponse<T> {
     private okhttp3.Call rawCall;
     private okhttp3.Response rawResponse;
 
-    public static <T> HttpResponse<T> success(boolean isFromCache, T body, Call rawCall, Response rawResponse) {
-        HttpResponse<T> response = new HttpResponse<>();
+    public static <T> Response<T> success(boolean isFromCache, T body, Call rawCall, okhttp3.Response rawResponse) {
+        Response<T> response = new Response<>();
         response.setFromCache(isFromCache);
         response.setBody(body);
         response.setRawCall(rawCall);
@@ -45,8 +44,8 @@ public final class HttpResponse<T> {
         return response;
     }
 
-    public static <T> HttpResponse<T> error(boolean isFromCache, Call rawCall, Response rawResponse, Exception exception) {
-        HttpResponse<T> response = new HttpResponse<>();
+    public static <T> Response<T> error(boolean isFromCache, Call rawCall, okhttp3.Response rawResponse, Exception exception) {
+        Response<T> response = new Response<>();
         response.setFromCache(isFromCache);
         response.setRawCall(rawCall);
         response.setRawResponse(rawResponse);
@@ -54,7 +53,7 @@ public final class HttpResponse<T> {
         return response;
     }
 
-    public HttpResponse() {
+    public Response() {
     }
 
     public int code() {
@@ -97,11 +96,11 @@ public final class HttpResponse<T> {
         this.rawCall = rawCall;
     }
 
-    public Response getRawResponse() {
+    public okhttp3.Response getRawResponse() {
         return rawResponse;
     }
 
-    public void setRawResponse(Response rawResponse) {
+    public void setRawResponse(okhttp3.Response rawResponse) {
         this.rawResponse = rawResponse;
     }
 

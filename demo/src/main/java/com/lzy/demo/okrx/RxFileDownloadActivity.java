@@ -23,7 +23,7 @@ import android.widget.TextView;
 import com.lzy.demo.R;
 import com.lzy.demo.base.BaseRxDetailActivity;
 import com.lzy.demo.ui.NumberProgressBar;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 
 import java.io.File;
 
@@ -77,7 +77,7 @@ public class RxFileDownloadActivity extends BaseRxDetailActivity {
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Subscriber<HttpResponse<File>>() {
+                .subscribe(new Subscriber<Response<File>>() {
                     @Override
                     public void onCompleted() {
 
@@ -92,7 +92,7 @@ public class RxFileDownloadActivity extends BaseRxDetailActivity {
                     }
 
                     @Override
-                    public void onNext(HttpResponse<File> response) {
+                    public void onNext(Response<File> response) {
                         btnFileDownload.setText("下载完成");
                         handleResponse(response);
                     }

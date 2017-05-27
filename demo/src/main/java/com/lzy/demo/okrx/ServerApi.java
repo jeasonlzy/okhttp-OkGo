@@ -25,7 +25,7 @@ import com.lzy.okgo.OkGo;
 import com.lzy.okgo.convert.BitmapConvert;
 import com.lzy.okgo.convert.FileConvert;
 import com.lzy.okgo.convert.StringConvert;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 import com.lzy.okrx.adapter.ObservableHttp;
 
 import java.io.File;
@@ -44,7 +44,7 @@ import rx.Observable;
  */
 public class ServerApi {
 
-    public static Observable<HttpResponse<String>> getString(String header, String param) {
+    public static Observable<Response<String>> getString(String header, String param) {
         return OkGo.<String>post(Urls.URL_METHOD)//
                 .headers("aaa", header)//
                 .params("bbb", param)//
@@ -52,7 +52,7 @@ public class ServerApi {
                 .adapt(new ObservableHttp<String>());
     }
 
-    public static Observable<HttpResponse<LzyResponse<ServerModel>>> getServerModel(String header, String param) {
+    public static Observable<Response<LzyResponse<ServerModel>>> getServerModel(String header, String param) {
         return OkGo.<LzyResponse<ServerModel>>post(Urls.URL_JSONOBJECT)//
                 .headers("aaa", header)//
                 .params("bbb", param)//
@@ -60,7 +60,7 @@ public class ServerApi {
                 .adapt(new ObservableHttp<LzyResponse<ServerModel>>());
     }
 
-    public static Observable<HttpResponse<LzyResponse<List<ServerModel>>>> getServerListModel(String header, String param) {
+    public static Observable<Response<LzyResponse<List<ServerModel>>>> getServerListModel(String header, String param) {
         return OkGo.<LzyResponse<List<ServerModel>>>post(Urls.URL_JSONARRAY)//
                 .headers("aaa", header)//
                 .params("bbb", param)//
@@ -68,7 +68,7 @@ public class ServerApi {
                 .adapt(new ObservableHttp<LzyResponse<List<ServerModel>>>());
     }
 
-    public static Observable<HttpResponse<Bitmap>> getBitmap(String header, String param) {
+    public static Observable<Response<Bitmap>> getBitmap(String header, String param) {
         return OkGo.<Bitmap>post(Urls.URL_IMAGE)//
                 .headers("aaa", header)//
                 .params("bbb", param)//
@@ -76,7 +76,7 @@ public class ServerApi {
                 .adapt(new ObservableHttp<Bitmap>());
     }
 
-    public static Observable<HttpResponse<File>> getFile(String header, String param) {
+    public static Observable<Response<File>> getFile(String header, String param) {
         return OkGo.<File>post(Urls.URL_DOWNLOAD)//
                 .headers("aaa", header)//
                 .params("bbb", param)//

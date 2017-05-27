@@ -35,7 +35,7 @@ import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.okgo.OkGo;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.HttpRequest;
 
 import java.io.File;
@@ -140,13 +140,13 @@ public class FormUploadActivity extends BaseDetailActivity {
                     }
 
                     @Override
-                    public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, HttpResponse<LzyResponse<ServerModel>> response) {
+                    public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, Response<LzyResponse<ServerModel>> response) {
                         handleResponse(response);
                         btnFormUpload.setText("上传完成");
                     }
 
                     @Override
-                    public void onError(Exception e, HttpResponse<LzyResponse<ServerModel>> response) {
+                    public void onError(Exception e, Response<LzyResponse<ServerModel>> response) {
                         handleError(response);
                         btnFormUpload.setText("上传出错");
                     }

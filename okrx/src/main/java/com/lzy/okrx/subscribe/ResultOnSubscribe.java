@@ -15,7 +15,7 @@
  */
 package com.lzy.okrx.subscribe;
 
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 import com.lzy.okgo.model.Result;
 
 import rx.Observable.OnSubscribe;
@@ -28,9 +28,9 @@ import rx.exceptions.OnErrorNotImplementedException;
 import rx.plugins.RxJavaHooks;
 
 public final class ResultOnSubscribe<T> implements OnSubscribe<Result<T>> {
-    private final OnSubscribe<HttpResponse<T>> upstream;
+    private final OnSubscribe<Response<T>> upstream;
 
-    public ResultOnSubscribe(OnSubscribe<HttpResponse<T>> upstream) {
+    public ResultOnSubscribe(OnSubscribe<Response<T>> upstream) {
         this.upstream = upstream;
     }
 
@@ -39,7 +39,7 @@ public final class ResultOnSubscribe<T> implements OnSubscribe<Result<T>> {
         upstream.call(new ResultSubscriber<T>(subscriber));
     }
 
-    private static class ResultSubscriber<R> extends Subscriber<HttpResponse<R>> {
+    private static class ResultSubscriber<R> extends Subscriber<Response<R>> {
 
         private final Subscriber<? super Result<R>> subscriber;
 
@@ -49,7 +49,7 @@ public final class ResultOnSubscribe<T> implements OnSubscribe<Result<T>> {
         }
 
         @Override
-        public void onNext(HttpResponse<R> response) {
+        public void onNext(Response<R> response) {
             subscriber.onNext(Result.response(response));
         }
 

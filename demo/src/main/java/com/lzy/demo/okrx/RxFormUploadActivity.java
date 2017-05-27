@@ -32,7 +32,7 @@ import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.convert.FileConvert;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 import com.lzy.okrx.adapter.ObservableHttp;
 
 import java.io.File;
@@ -142,7 +142,7 @@ public class RxFormUploadActivity extends BaseRxDetailActivity {
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Subscriber<HttpResponse<File>>() {
+                .subscribe(new Subscriber<Response<File>>() {
                     @Override
                     public void onCompleted() {
 
@@ -157,7 +157,7 @@ public class RxFormUploadActivity extends BaseRxDetailActivity {
                     }
 
                     @Override
-                    public void onNext(HttpResponse<File> response) {
+                    public void onNext(Response<File> response) {
                         btnFormUpload.setText("上传完成");
                         handleResponse(response);
                     }

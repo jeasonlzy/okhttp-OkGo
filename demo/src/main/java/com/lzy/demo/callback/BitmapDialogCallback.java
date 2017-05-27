@@ -21,7 +21,7 @@ import android.graphics.Bitmap;
 import android.view.Window;
 
 import com.lzy.okgo.callback.BitmapCallback;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.HttpRequest;
 
 /**
@@ -53,7 +53,7 @@ public abstract class BitmapDialogCallback extends BitmapCallback {
     }
 
     @Override
-    public void onFinish(HttpResponse<Bitmap> response) {
+    public void onFinish(Response<Bitmap> response) {
         super.onFinish(response);
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();

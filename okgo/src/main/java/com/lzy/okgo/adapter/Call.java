@@ -16,7 +16,7 @@
 package com.lzy.okgo.adapter;
 
 import com.lzy.okgo.callback.Callback;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.HttpRequest;
 
 /**
@@ -30,7 +30,7 @@ import com.lzy.okgo.request.HttpRequest;
  */
 public interface Call<T> {
     /** 同步执行 */
-    HttpResponse<T> execute() throws Exception;
+    Response<T> execute() throws Exception;
 
     /** 异步回调执行 */
     void execute(Callback<T> callback);

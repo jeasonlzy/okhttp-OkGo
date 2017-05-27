@@ -23,7 +23,7 @@ import com.lzy.demo.base.BaseDetailActivity;
 import com.lzy.demo.callback.StringDialogCallback;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -61,7 +61,7 @@ public class RedirectActivity extends BaseDetailActivity {
                 .params("param1", "paramValue1")//
                 .execute(new StringDialogCallback(this) {
                     @Override
-                    public void onSuccess(String s, HttpResponse<String> response) {
+                    public void onSuccess(String s, Response<String> response) {
                         handleResponse(response);
                         responseData.setText("注意看请求头的url和响应头的url是不一样的！\n这代表了在请求过程中发生了重定向，" +//
                                              "okhttp默认将重定向封装在了请求内部，只有最后一次请求的数据会被真正的请求下来触发回调，中间过程" +//
@@ -69,7 +69,7 @@ public class RedirectActivity extends BaseDetailActivity {
                     }
 
                     @Override
-                    public void onError(Exception e, HttpResponse<String> response) {
+                    public void onError(Exception e, Response<String> response) {
                         handleError(response);
                     }
                 });

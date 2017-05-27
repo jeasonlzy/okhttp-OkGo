@@ -16,7 +16,7 @@
 package com.lzy.okrx.subscribe;
 
 import com.lzy.okgo.adapter.Call;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -32,7 +32,6 @@ import rx.exceptions.OnCompletedFailedException;
 import rx.exceptions.OnErrorFailedException;
 import rx.exceptions.OnErrorNotImplementedException;
 import rx.plugins.RxJavaHooks;
-import rx.plugins.RxJavaPlugins;
 
 final class CallArbiter<T> extends AtomicInteger implements Subscription, Producer {
     private static final long serialVersionUID = 613435323949233509L;
@@ -43,11 +42,11 @@ final class CallArbiter<T> extends AtomicInteger implements Subscription, Produc
     private static final int STATE_TERMINATED = 3;
 
     private final Call<T> call;
-    private final Subscriber<? super HttpResponse<T>> subscriber;
+    private final Subscriber<? super Response<T>> subscriber;
 
-    private volatile LinkedList<HttpResponse<T>> responseList;
+    private volatile LinkedList<Response<T>> responseList;
 
-    CallArbiter(Call<T> call, Subscriber<? super HttpResponse<T>> subscriber) {
+    CallArbiter(Call<T> call, Subscriber<? super Response<T>> subscriber) {
         super(STATE_WAITING);
         responseList = new LinkedList<>();
 
@@ -96,7 +95,7 @@ final class CallArbiter<T> extends AtomicInteger implements Subscription, Produc
         }
     }
 
-    void emitNext(HttpResponse<T> response) {
+    void emitNext(Response<T> response) {
         while (true) {
             int state = get();
             switch (state) {
@@ -126,12 +125,12 @@ final class CallArbiter<T> extends AtomicInteger implements Subscription, Produc
         }
     }
 
-    private void emitResponse(List<HttpResponse<T>> responseList) {
+    private void emitResponse(List<Response<T>> responseList) {
         try {
             synchronized (this) {
-                Iterator<HttpResponse<T>> iterator = responseList.iterator();
+                Iterator<Response<T>> iterator = responseList.iterator();
                 while (iterator.hasNext()) {
-                    HttpResponse<T> next = iterator.next();
+                    Response<T> next = iterator.next();
                     iterator.remove();
                     if (!isUnsubscribed()) {
                         subscriber.onNext(next);

@@ -15,7 +15,7 @@
  */
 package com.lzy.okgo.exception;
 
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 
 import static com.lzy.okgo.utils.TypeUtils.checkNotNull;
 
@@ -39,20 +39,20 @@ public class HttpException extends RuntimeException {
         return new HttpException(message);
     }
 
-    private static String getMessage(HttpResponse<?> response) {
+    private static String getMessage(Response<?> response) {
         checkNotNull(response, "response == null");
         return "HTTP " + response.code() + " " + response.message();
     }
 
     private int code;
     private String message;
-    private transient HttpResponse<?> response;
+    private transient Response<?> response;
 
     public HttpException(String message) {
         super(message);
     }
 
-    public HttpException(HttpResponse<?> response) {
+    public HttpException(Response<?> response) {
         super(getMessage(response));
         this.code = response.code();
         this.message = response.message();
@@ -72,7 +72,7 @@ public class HttpException extends RuntimeException {
     /**
      * The full HTTP response. This may be null if the exception was serialized.
      */
-    public HttpResponse<?> response() {
+    public Response<?> response() {
         return response;
     }
 }

@@ -22,7 +22,7 @@ import com.lzy.demo.R;
 import com.lzy.demo.base.BaseDetailActivity;
 import com.lzy.demo.callback.StringDialogCallback;
 import com.lzy.okgo.OkGo;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -76,12 +76,12 @@ public class HttpsActivity extends BaseDetailActivity {
                 .execute(new StringDialogCallback(this) {
 
                     @Override
-                    public void onError(Exception e, HttpResponse<String> response) {
+                    public void onError(Exception e, Response<String> response) {
                         handleError(response);
                     }
 
                     @Override
-                    public void onSuccess(String s, HttpResponse<String> response) {
+                    public void onSuccess(String s, Response<String> response) {
                         handleResponse(response);
                     }
                 });
@@ -98,12 +98,12 @@ public class HttpsActivity extends BaseDetailActivity {
                     .params("param1", "paramValue1")//
                     .execute(new StringDialogCallback(this) {
                         @Override
-                        public void onError(Exception e, HttpResponse<String> response) {
+                        public void onError(Exception e, Response<String> response) {
                             handleError(response);
                         }
 
                         @Override
-                        public void onSuccess(String s, HttpResponse<String> response) {
+                        public void onSuccess(String s, Response<String> response) {
                             handleResponse(response);
                         }
                     });

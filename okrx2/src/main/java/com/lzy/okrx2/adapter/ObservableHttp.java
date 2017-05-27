@@ -3,7 +3,7 @@ package com.lzy.okrx2.adapter;
 import com.lzy.okgo.adapter.AdapterParam;
 import com.lzy.okgo.adapter.Call;
 import com.lzy.okgo.adapter.CallAdapter;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 
 import io.reactivex.Observable;
 
@@ -16,9 +16,9 @@ import io.reactivex.Observable;
  * 修订历史：
  * ================================================
  */
-public class ObservableHttp<T> implements CallAdapter<T, Observable<HttpResponse<T>>> {
+public class ObservableHttp<T> implements CallAdapter<T, Observable<Response<T>>> {
     @Override
-    public Observable<HttpResponse<T>> adapt(Call<T> call, AdapterParam param) {
+    public Observable<Response<T>> adapt(Call<T> call, AdapterParam param) {
         return AnalysisParams.analysis(call, param);
     }
 }

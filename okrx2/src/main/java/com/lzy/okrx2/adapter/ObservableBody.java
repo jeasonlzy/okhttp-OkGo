@@ -3,10 +3,8 @@ package com.lzy.okrx2.adapter;
 import com.lzy.okgo.adapter.AdapterParam;
 import com.lzy.okgo.adapter.Call;
 import com.lzy.okgo.adapter.CallAdapter;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 import com.lzy.okrx2.observable.BodyObservable;
-import com.lzy.okrx2.observable.CallEnqueueObservable;
-import com.lzy.okrx2.observable.CallExecuteObservable;
 
 import io.reactivex.Observable;
 
@@ -22,7 +20,7 @@ import io.reactivex.Observable;
 public class ObservableBody<T> implements CallAdapter<T, Observable<T>> {
     @Override
     public Observable<T> adapt(Call<T> call, AdapterParam param) {
-        Observable<HttpResponse<T>> observable = AnalysisParams.analysis(call, param);
+        Observable<Response<T>> observable = AnalysisParams.analysis(call, param);
         return new BodyObservable<>(observable);
     }
 }

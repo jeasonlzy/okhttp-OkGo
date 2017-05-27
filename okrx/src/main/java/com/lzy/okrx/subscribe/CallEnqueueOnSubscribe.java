@@ -17,15 +17,14 @@ package com.lzy.okrx.subscribe;
 
 import com.lzy.okgo.adapter.Call;
 import com.lzy.okgo.callback.Callback;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.HttpRequest;
 
-import okhttp3.Response;
 import rx.Observable.OnSubscribe;
 import rx.Subscriber;
 import rx.exceptions.Exceptions;
 
-public final class CallEnqueueOnSubscribe<T> implements OnSubscribe<HttpResponse<T>> {
+public final class CallEnqueueOnSubscribe<T> implements OnSubscribe<Response<T>> {
     private final Call<T> originalCall;
 
     public CallEnqueueOnSubscribe(Call<T> originalCall) {
@@ -33,7 +32,7 @@ public final class CallEnqueueOnSubscribe<T> implements OnSubscribe<HttpResponse
     }
 
     @Override
-    public void call(final Subscriber<? super HttpResponse<T>> subscriber) {
+    public void call(final Subscriber<? super Response<T>> subscriber) {
         // Since Call is a one-shot type, clone it for each new subscriber.
         Call<T> call = originalCall.clone();
         final CallArbiter<T> arbiter = new CallArbiter<>(call, subscriber);
@@ -42,7 +41,7 @@ public final class CallEnqueueOnSubscribe<T> implements OnSubscribe<HttpResponse
 
         call.execute(new Callback<T>() {
             @Override
-            public T convertResponse(Response response) throws Exception {
+            public T convertResponse(okhttp3.Response response) throws Exception {
                 // okrx 使用converter转换，不需要这个解析方法
                 return null;
             }
@@ -52,23 +51,23 @@ public final class CallEnqueueOnSubscribe<T> implements OnSubscribe<HttpResponse
             }
 
             @Override
-            public void onSuccess(T t, HttpResponse<T> response) {
+            public void onSuccess(T t, Response<T> response) {
                 arbiter.emitNext(response);
             }
 
             @Override
-            public void onCacheSuccess(T t, HttpResponse<T> response) {
+            public void onCacheSuccess(T t, Response<T> response) {
                 arbiter.emitNext(response);
             }
 
             @Override
-            public void onError(Exception e, HttpResponse<T> response) {
+            public void onError(Exception e, Response<T> response) {
                 Exceptions.throwIfFatal(e);
                 arbiter.emitError(e);
             }
 
             @Override
-            public void onFinish(HttpResponse<T> response) {
+            public void onFinish(Response<T> response) {
                 arbiter.emitComplete();
             }
 

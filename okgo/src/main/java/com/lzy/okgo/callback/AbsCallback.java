@@ -15,7 +15,7 @@
  */
 package com.lzy.okgo.callback;
 
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.HttpRequest;
 
 /**
@@ -34,15 +34,15 @@ public abstract class AbsCallback<T> implements Callback<T> {
     }
 
     @Override
-    public void onCacheSuccess(T t, HttpResponse<T> response) {
+    public void onCacheSuccess(T t, Response<T> response) {
     }
 
     @Override
-    public void onError(Exception e, HttpResponse<T> response) {
+    public void onError(Exception e, Response<T> response) {
     }
 
     @Override
-    public void onFinish(HttpResponse<T> response) {
+    public void onFinish(Response<T> response) {
         if (response.getException() != null) response.getException().printStackTrace();
     }
 

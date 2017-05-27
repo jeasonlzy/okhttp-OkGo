@@ -2,7 +2,7 @@ package com.lzy.okgo.cache.policy;
 
 import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.callback.Callback;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.HttpRequest;
 
 import okhttp3.Call;
@@ -23,7 +23,7 @@ public class NoCachePolicy<T> extends BaseCachePolicy<T> {
     }
 
     @Override
-    public void onSuccess(final HttpResponse<T> success) {
+    public void onSuccess(final Response<T> success) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -34,7 +34,7 @@ public class NoCachePolicy<T> extends BaseCachePolicy<T> {
     }
 
     @Override
-    public void onError(final HttpResponse<T> error) {
+    public void onError(final Response<T> error) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -45,7 +45,7 @@ public class NoCachePolicy<T> extends BaseCachePolicy<T> {
     }
 
     @Override
-    public HttpResponse<T> requestSync(CacheEntity<T> cacheEntity, Call rawCall) {
+    public Response<T> requestSync(CacheEntity<T> cacheEntity, Call rawCall) {
         return requestNetworkSync();
     }
 

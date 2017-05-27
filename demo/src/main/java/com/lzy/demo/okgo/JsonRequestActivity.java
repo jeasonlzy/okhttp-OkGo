@@ -25,7 +25,7 @@ import com.lzy.demo.model.LzyResponse;
 import com.lzy.demo.model.ServerModel;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 
 import java.util.List;
 
@@ -69,12 +69,12 @@ public class JsonRequestActivity extends BaseDetailActivity {
                 .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
 
                     @Override
-                    public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, HttpResponse<LzyResponse<ServerModel>> response) {
+                    public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, Response<LzyResponse<ServerModel>> response) {
                         handleResponse(response);
                     }
 
                     @Override
-                    public void onError(Exception e, HttpResponse<LzyResponse<ServerModel>> response) {
+                    public void onError(Exception e, Response<LzyResponse<ServerModel>> response) {
                         handleError(response);
                     }
                 });
@@ -91,12 +91,12 @@ public class JsonRequestActivity extends BaseDetailActivity {
                 .params("param1", "paramValue1")//
                 .execute(new DialogCallback<LzyResponse<List<ServerModel>>>(this) {
                     @Override
-                    public void onSuccess(LzyResponse<List<ServerModel>> serverModelLzyResponse, HttpResponse<LzyResponse<List<ServerModel>>> response) {
+                    public void onSuccess(LzyResponse<List<ServerModel>> serverModelLzyResponse, Response<LzyResponse<List<ServerModel>>> response) {
                         handleResponse(response);
                     }
 
                     @Override
-                    public void onError(Exception e, HttpResponse<LzyResponse<List<ServerModel>>> response) {
+                    public void onError(Exception e, Response<LzyResponse<List<ServerModel>>> response) {
                         handleError(response);
                     }
                 });

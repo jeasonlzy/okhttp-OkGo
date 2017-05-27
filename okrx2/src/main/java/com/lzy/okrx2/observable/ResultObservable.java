@@ -15,7 +15,7 @@
  */
 package com.lzy.okrx2.observable;
 
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 import com.lzy.okgo.model.Result;
 
 import io.reactivex.Observable;
@@ -26,9 +26,9 @@ import io.reactivex.exceptions.Exceptions;
 import io.reactivex.plugins.RxJavaPlugins;
 
 public class ResultObservable<T> extends Observable<Result<T>> {
-    private final Observable<HttpResponse<T>> upstream;
+    private final Observable<Response<T>> upstream;
 
-    public ResultObservable(Observable<HttpResponse<T>> upstream) {
+    public ResultObservable(Observable<Response<T>> upstream) {
         this.upstream = upstream;
     }
 
@@ -37,7 +37,7 @@ public class ResultObservable<T> extends Observable<Result<T>> {
         upstream.subscribe(new ResultObserver<T>(observer));
     }
 
-    private static class ResultObserver<R> implements Observer<HttpResponse<R>> {
+    private static class ResultObserver<R> implements Observer<Response<R>> {
         private final Observer<? super Result<R>> observer;
 
         ResultObserver(Observer<? super Result<R>> observer) {
@@ -50,7 +50,7 @@ public class ResultObservable<T> extends Observable<Result<T>> {
         }
 
         @Override
-        public void onNext(HttpResponse<R> response) {
+        public void onNext(Response<R> response) {
             observer.onNext(Result.response(response));
         }
 

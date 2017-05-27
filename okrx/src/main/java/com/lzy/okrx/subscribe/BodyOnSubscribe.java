@@ -16,7 +16,7 @@
 package com.lzy.okrx.subscribe;
 
 import com.lzy.okgo.exception.HttpException;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 
 import rx.Observable.OnSubscribe;
 import rx.Subscriber;
@@ -28,9 +28,9 @@ import rx.exceptions.OnErrorNotImplementedException;
 import rx.plugins.RxJavaHooks;
 
 public final class BodyOnSubscribe<T> implements OnSubscribe<T> {
-    private final OnSubscribe<HttpResponse<T>> upstream;
+    private final OnSubscribe<Response<T>> upstream;
 
-    public BodyOnSubscribe(OnSubscribe<HttpResponse<T>> upstream) {
+    public BodyOnSubscribe(OnSubscribe<Response<T>> upstream) {
         this.upstream = upstream;
     }
 
@@ -39,7 +39,7 @@ public final class BodyOnSubscribe<T> implements OnSubscribe<T> {
         upstream.call(new BodySubscriber<>(subscriber));
     }
 
-    private static class BodySubscriber<R> extends Subscriber<HttpResponse<R>> {
+    private static class BodySubscriber<R> extends Subscriber<Response<R>> {
 
         private final Subscriber<? super R> subscriber;
         private boolean subscriberTerminated;
@@ -50,7 +50,7 @@ public final class BodyOnSubscribe<T> implements OnSubscribe<T> {
         }
 
         @Override
-        public void onNext(HttpResponse<R> response) {
+        public void onNext(Response<R> response) {
             if (response.isSuccessful()) {
                 subscriber.onNext(response.body());
             } else {

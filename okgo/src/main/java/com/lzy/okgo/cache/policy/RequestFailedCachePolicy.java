@@ -2,7 +2,7 @@ package com.lzy.okgo.cache.policy;
 
 import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.callback.Callback;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.HttpRequest;
 
 import okhttp3.Call;
@@ -23,7 +23,7 @@ public class RequestFailedCachePolicy<T> extends BaseCachePolicy<T> {
     }
 
     @Override
-    public void onSuccess(final HttpResponse<T> success) {
+    public void onSuccess(final Response<T> success) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -34,10 +34,10 @@ public class RequestFailedCachePolicy<T> extends BaseCachePolicy<T> {
     }
 
     @Override
-    public void onError(final HttpResponse<T> error) {
+    public void onError(final Response<T> error) {
 
         if (cacheEntity != null) {
-            final HttpResponse<T> cacheSuccess = HttpResponse.success(true, cacheEntity.getData(), error.getRawCall(), error.getRawResponse());
+            final Response<T> cacheSuccess = Response.success(true, cacheEntity.getData(), error.getRawCall(), error.getRawResponse());
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -57,10 +57,10 @@ public class RequestFailedCachePolicy<T> extends BaseCachePolicy<T> {
     }
 
     @Override
-    public HttpResponse<T> requestSync(CacheEntity<T> cacheEntity, Call rawCall) {
-        HttpResponse<T> response = requestNetworkSync();
+    public Response<T> requestSync(CacheEntity<T> cacheEntity, Call rawCall) {
+        Response<T> response = requestNetworkSync();
         if (!response.isSuccessful() && cacheEntity != null) {
-            response = HttpResponse.success(true, cacheEntity.getData(), rawCall, response.getRawResponse());
+            response = Response.success(true, cacheEntity.getData(), rawCall, response.getRawResponse());
         }
         return response;
     }

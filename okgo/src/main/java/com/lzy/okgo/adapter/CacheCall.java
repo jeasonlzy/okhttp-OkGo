@@ -23,7 +23,7 @@ import com.lzy.okgo.cache.policy.NoCachePolicy;
 import com.lzy.okgo.cache.policy.NoneCacheRequestPolicy;
 import com.lzy.okgo.cache.policy.RequestFailedCachePolicy;
 import com.lzy.okgo.callback.Callback;
-import com.lzy.okgo.model.HttpResponse;
+import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.HttpRequest;
 import com.lzy.okgo.utils.TypeUtils;
 
@@ -46,7 +46,7 @@ public class CacheCall<T> implements Call<T> {
     }
 
     @Override
-    public HttpResponse<T> execute() {
+    public Response<T> execute() {
         policy = preparePolicy();
         CacheEntity<T> cacheEntity = policy.prepareCache();
         okhttp3.Call rawCall = policy.prepareRawCall();
