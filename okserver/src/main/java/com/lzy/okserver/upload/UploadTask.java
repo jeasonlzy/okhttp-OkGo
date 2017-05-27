@@ -129,7 +129,7 @@ public class UploadTask<T> extends PriorityAsyncTask<Void, UploadInfo, UploadInf
         }
 
         @Override
-        public void onSuccess(T t, Response<T> response) {
+        public void onSuccess(Response<T> response) {
         }
 
         @Override

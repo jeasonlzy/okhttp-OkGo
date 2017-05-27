@@ -69,12 +69,12 @@ public class JsonRequestActivity extends BaseDetailActivity {
                 .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
 
                     @Override
-                    public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, Response<LzyResponse<ServerModel>> response) {
+                    public void onSuccess(Response<LzyResponse<ServerModel>> response) {
                         handleResponse(response);
                     }
 
                     @Override
-                    public void onError(Exception e, Response<LzyResponse<ServerModel>> response) {
+                    public void onError(Response<LzyResponse<ServerModel>> response) {
                         handleError(response);
                     }
                 });
@@ -91,12 +91,12 @@ public class JsonRequestActivity extends BaseDetailActivity {
                 .params("param1", "paramValue1")//
                 .execute(new DialogCallback<LzyResponse<List<ServerModel>>>(this) {
                     @Override
-                    public void onSuccess(LzyResponse<List<ServerModel>> serverModelLzyResponse, Response<LzyResponse<List<ServerModel>>> response) {
+                    public void onSuccess(Response<LzyResponse<List<ServerModel>>> response) {
                         handleResponse(response);
                     }
 
                     @Override
-                    public void onError(Exception e, Response<LzyResponse<List<ServerModel>>> response) {
+                    public void onError(Response<LzyResponse<List<ServerModel>>> response) {
                         handleError(response);
                     }
                 });

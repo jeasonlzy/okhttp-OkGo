@@ -90,12 +90,12 @@ public class CookieActivity extends BaseDetailActivity {
                 .tag(this)//
                 .execute(new StringDialogCallback(this) {
                     @Override
-                    public void onSuccess(String s, Response<String> response) {
+                    public void onSuccess(Response<String> response) {
                         handleResponse(response);
                     }
 
                     @Override
-                    public void onError(Exception e, Response<String> response) {
+                    public void onError(Response<String> response) {
                         handleError(response);
                     }
                 });

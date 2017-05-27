@@ -56,13 +56,13 @@ public interface Callback<T> extends Converter<T> {
     void onStart(HttpRequest<T, ? extends HttpRequest> request);
 
     /** 对返回数据进行操作的回调， UI线程 */
-    void onSuccess(T t, Response<T> response);
+    void onSuccess(Response<T> response);
 
     /** 缓存成功的回调,UI线程 */
-    void onCacheSuccess(T t, Response<T> response);
+    void onCacheSuccess(Response<T> response);
 
     /** 请求失败，响应错误，数据解析错误等，都会回调该方法， UI线程 */
-    void onError(Exception e, Response<T> response);
+    void onError(Response<T> response);
 
     /** 请求网络结束后，UI线程 */
     void onFinish(Response<T> response);

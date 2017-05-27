@@ -34,11 +34,11 @@ public abstract class AbsCallback<T> implements Callback<T> {
     }
 
     @Override
-    public void onCacheSuccess(T t, Response<T> response) {
+    public void onCacheSuccess(Response<T> response) {
     }
 
     @Override
-    public void onError(Exception e, Response<T> response) {
+    public void onError(Response<T> response) {
     }
 
     @Override

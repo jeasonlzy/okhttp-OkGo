@@ -68,7 +68,7 @@ public class TestActivity extends BaseActivity {
                 .tag(this)//
                 .execute(new FileCallback() {
                     @Override
-                    public void onSuccess(File file, Response<File> response) {
+                    public void onSuccess(Response<File> response) {
                         System.out.println("onSuccess");
                     }
 
@@ -78,8 +78,8 @@ public class TestActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onError(Exception e, Response<File> response) {
-                        e.printStackTrace();
+                    public void onError(Response<File> response) {
+                        response.getException().printStackTrace();
                     }
 
                     @Override

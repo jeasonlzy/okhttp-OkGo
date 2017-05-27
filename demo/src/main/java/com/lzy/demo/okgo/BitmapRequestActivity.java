@@ -66,13 +66,13 @@ public class BitmapRequestActivity extends BaseDetailActivity {
                 .params("param1", "paramValue1")//
                 .execute(new BitmapDialogCallback(this) {
                     @Override
-                    public void onSuccess(Bitmap bitmap, Response<Bitmap> response) {
+                    public void onSuccess(Response<Bitmap> response) {
                         handleResponse(response);
-                        imageView.setImageBitmap(bitmap);
+                        imageView.setImageBitmap(response.body());
                     }
 
                     @Override
-                    public void onError(Exception e, Response<Bitmap> response) {
+                    public void onError(Response<Bitmap> response) {
                         handleError(response);
                     }
                 });

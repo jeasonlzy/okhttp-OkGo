@@ -150,21 +150,21 @@ public class CacheActivity extends BaseDetailActivity {
         }
 
         @Override
-        public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, Response<LzyResponse<ServerModel>> response) {
+        public void onSuccess(Response<LzyResponse<ServerModel>> response) {
             handleResponse(response);
             Call call = response.getRawCall();
             requestState.setText("请求成功  是否来自缓存：false  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
         }
 
         @Override
-        public void onCacheSuccess(LzyResponse<ServerModel> serverModelLzyResponse, Response<LzyResponse<ServerModel>> response) {
+        public void onCacheSuccess(Response<LzyResponse<ServerModel>> response) {
             handleResponse(response);
             Call call = response.getRawCall();
             requestState.setText("请求成功  是否来自缓存：true  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());
         }
 
         @Override
-        public void onError(Exception e, Response<LzyResponse<ServerModel>> response) {
+        public void onError(Response<LzyResponse<ServerModel>> response) {
             handleError(response);
             Call call = response.getRawCall();
             requestState.setText("请求失败  是否来自缓存：false  请求方式：" + call.request().method() + "\n" + "url：" + call.request().url());

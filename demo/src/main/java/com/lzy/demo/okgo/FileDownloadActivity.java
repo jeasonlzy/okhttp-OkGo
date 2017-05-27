@@ -81,13 +81,13 @@ public class FileDownloadActivity extends BaseDetailActivity {
                     }
 
                     @Override
-                    public void onSuccess(File file, Response<File> response) {
+                    public void onSuccess(Response<File> response) {
                         handleResponse(response);
                         btnFileDownload.setText("下载完成");
                     }
 
                     @Override
-                    public void onError(Exception e, Response<File> response) {
+                    public void onError(Response<File> response) {
                         handleError(response);
                         btnFileDownload.setText("下载出错");
                     }

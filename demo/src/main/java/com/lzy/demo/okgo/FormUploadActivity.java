@@ -140,13 +140,13 @@ public class FormUploadActivity extends BaseDetailActivity {
                     }
 
                     @Override
-                    public void onSuccess(LzyResponse<ServerModel> serverModelLzyResponse, Response<LzyResponse<ServerModel>> response) {
+                    public void onSuccess(Response<LzyResponse<ServerModel>> response) {
                         handleResponse(response);
                         btnFormUpload.setText("上传完成");
                     }
 
                     @Override
-                    public void onError(Exception e, Response<LzyResponse<ServerModel>> response) {
+                    public void onError(Response<LzyResponse<ServerModel>> response) {
                         handleError(response);
                         btnFormUpload.setText("上传出错");
                     }

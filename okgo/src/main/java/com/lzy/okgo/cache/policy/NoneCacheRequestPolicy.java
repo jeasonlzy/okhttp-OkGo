@@ -42,7 +42,7 @@ public class NoneCacheRequestPolicy<T> extends BaseCachePolicy<T> {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mCallback.onSuccess(success.body(), success);
+                mCallback.onSuccess(success);
                 mCallback.onFinish(success);
             }
         });
@@ -53,7 +53,7 @@ public class NoneCacheRequestPolicy<T> extends BaseCachePolicy<T> {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mCallback.onError(error.getException(), error);
+                mCallback.onError(error);
                 mCallback.onFinish(error);
             }
         });
@@ -85,7 +85,7 @@ public class NoneCacheRequestPolicy<T> extends BaseCachePolicy<T> {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mCallback.onCacheSuccess(success.body(), success);
+                    mCallback.onCacheSuccess(success);
                     mCallback.onFinish(success);
                 }
             });

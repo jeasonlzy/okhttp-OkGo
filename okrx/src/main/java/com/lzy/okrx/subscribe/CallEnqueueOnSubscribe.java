@@ -60,17 +60,18 @@ public final class CallEnqueueOnSubscribe<T> implements OnSubscribe<Response<T>>
             }
 
             @Override
-            public void onSuccess(T t, Response<T> response) {
+            public void onSuccess(Response<T> response) {
                 arbiter.emitNext(response);
             }
 
             @Override
-            public void onCacheSuccess(T t, Response<T> response) {
+            public void onCacheSuccess(Response<T> response) {
                 arbiter.emitNext(response);
             }
 
             @Override
-            public void onError(Exception e, Response<T> response) {
+            public void onError(Response<T> response) {
+                Exception e = response.getException();
                 Exceptions.throwIfFatal(e);
                 arbiter.emitError(e);
             }

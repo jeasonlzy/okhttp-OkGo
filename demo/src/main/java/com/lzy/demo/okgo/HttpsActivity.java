@@ -76,12 +76,12 @@ public class HttpsActivity extends BaseDetailActivity {
                 .execute(new StringDialogCallback(this) {
 
                     @Override
-                    public void onError(Exception e, Response<String> response) {
+                    public void onError(Response<String> response) {
                         handleError(response);
                     }
 
                     @Override
-                    public void onSuccess(String s, Response<String> response) {
+                    public void onSuccess(Response<String> response) {
                         handleResponse(response);
                     }
                 });
@@ -98,12 +98,12 @@ public class HttpsActivity extends BaseDetailActivity {
                     .params("param1", "paramValue1")//
                     .execute(new StringDialogCallback(this) {
                         @Override
-                        public void onError(Exception e, Response<String> response) {
+                        public void onError(Response<String> response) {
                             handleError(response);
                         }
 
                         @Override
-                        public void onSuccess(String s, Response<String> response) {
+                        public void onSuccess(Response<String> response) {
                             handleResponse(response);
                         }
                     });
