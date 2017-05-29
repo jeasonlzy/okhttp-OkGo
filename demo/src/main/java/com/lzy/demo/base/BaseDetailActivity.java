@@ -112,6 +112,12 @@ public abstract class BaseDetailActivity extends BaseActivity {
         rootContent.addView(view, params);
     }
 
+    protected <T> void handleResponse(T data) {
+        Response<T> response = new Response<>();
+        response.setBody(data);
+        handleResponse(response);
+    }
+
     protected <T> void handleResponse(Response<T> response) {
         StringBuilder sb;
         Call call = response.getRawCall();
@@ -181,6 +187,11 @@ public abstract class BaseDetailActivity extends BaseActivity {
         } else {
             responseHeader.setText("--");
         }
+    }
+
+    protected <T> void handleError() {
+        Response<T> response = new Response<>();
+        handleResponse(response);
     }
 
     protected <T> void handleError(Response<T> response) {

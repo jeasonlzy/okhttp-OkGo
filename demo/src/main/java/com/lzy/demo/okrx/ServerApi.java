@@ -17,19 +17,18 @@ package com.lzy.demo.okrx;
 
 import android.graphics.Bitmap;
 
-import com.lzy.demo.callback.JsonConvert;
-import com.lzy.demo.model.LzyResponse;
-import com.lzy.demo.model.ServerModel;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.convert.BitmapConvert;
 import com.lzy.okgo.convert.FileConvert;
-import com.lzy.okgo.convert.StringConvert;
+import com.lzy.okgo.model.HttpHeaders;
+import com.lzy.okgo.model.HttpMethod;
+import com.lzy.okgo.model.HttpParams;
 import com.lzy.okgo.model.Response;
 import com.lzy.okrx.adapter.ObservableResponse;
 
 import java.io.File;
-import java.util.List;
+import java.lang.reflect.Type;
 
 import rx.Observable;
 
@@ -44,28 +43,20 @@ import rx.Observable;
  */
 public class ServerApi {
 
-    public static Observable<Response<String>> getString(String header, String param) {
-        return OkGo.<String>post(Urls.URL_METHOD)//
-                .headers("aaa", header)//
-                .params("bbb", param)//
-                .converter(new StringConvert())//
-                .adapt(new ObservableResponse<String>());
+    public static Observable<String> getString(String header, String param) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("aaa", header);
+        HttpParams params = new HttpParams();
+        params.put("bbb", param);
+        return RxUtils.request(HttpMethod.GET, Urls.URL_METHOD, String.class, params, headers);
     }
 
-    public static Observable<Response<LzyResponse<ServerModel>>> getServerModel(String header, String param) {
-        return OkGo.<LzyResponse<ServerModel>>post(Urls.URL_JSONOBJECT)//
-                .headers("aaa", header)//
-                .params("bbb", param)//
-                .converter(new JsonConvert<LzyResponse<ServerModel>>())//
-                .adapt(new ObservableResponse<LzyResponse<ServerModel>>());
-    }
-
-    public static Observable<Response<LzyResponse<List<ServerModel>>>> getServerListModel(String header, String param) {
-        return OkGo.<LzyResponse<List<ServerModel>>>post(Urls.URL_JSONARRAY)//
-                .headers("aaa", header)//
-                .params("bbb", param)//
-                .converter(new JsonConvert<LzyResponse<List<ServerModel>>>())//
-                .adapt(new ObservableResponse<LzyResponse<List<ServerModel>>>());
+    public static <T> Observable<T> getData(Type type, String url, String header, String param) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("aaa", header);
+        HttpParams params = new HttpParams();
+        params.put("bbb", param);
+        return RxUtils.request(HttpMethod.POST, url, type, params, headers);
     }
 
     public static Observable<Response<Bitmap>> getBitmap(String header, String param) {

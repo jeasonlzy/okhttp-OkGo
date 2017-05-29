@@ -118,6 +118,9 @@ final class CallArbiter<T> extends AtomicInteger implements Subscription, Produc
                     break; // State transition failed. Try again.
 
                 case STATE_REQUESTED:
+                    synchronized (this) {
+                        responseList.add(response);
+                    }
                     if (STATE_REQUESTED == get()) {
                         emitResponse(responseList);
                         return;

@@ -43,11 +43,11 @@ public class CacheCall<T> implements Call<T> {
 
     public CacheCall(HttpRequest<T, ? extends HttpRequest> httpRequest) {
         this.httpRequest = httpRequest;
+        this.policy = preparePolicy();
     }
 
     @Override
     public Response<T> execute() {
-        policy = preparePolicy();
         CacheEntity<T> cacheEntity = policy.prepareCache();
         okhttp3.Call rawCall = policy.prepareRawCall();
         return policy.requestSync(cacheEntity, rawCall);
@@ -57,7 +57,6 @@ public class CacheCall<T> implements Call<T> {
     public void execute(Callback<T> callback) {
         HttpUtils.checkNotNull(callback, "callback == null");
 
-        policy = preparePolicy();
         CacheEntity<T> cacheEntity = policy.prepareCache();
         okhttp3.Call rawCall = policy.prepareRawCall();
         policy.requestAsync(cacheEntity, rawCall, callback);

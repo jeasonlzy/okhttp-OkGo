@@ -18,9 +18,9 @@ package com.lzy.demo.okrx;
 import android.os.Bundle;
 import android.view.View;
 
+import com.google.gson.reflect.TypeToken;
 import com.lzy.demo.R;
 import com.lzy.demo.base.BaseRxDetailActivity;
-import com.lzy.demo.callback.JsonConvert;
 import com.lzy.demo.model.LzyResponse;
 import com.lzy.demo.model.ServerModel;
 import com.lzy.demo.utils.Urls;
@@ -31,6 +31,7 @@ import com.lzy.okrx.adapter.ObservableResponse;
 
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 
@@ -106,7 +107,7 @@ public class RxCommonActivity extends BaseRxDetailActivity {
 
     @OnClick(R.id.retrofitRequest)
     public void retrofitRequest(View view) {
-        Subscription subscription = ServerApi.getServerModel("aaa", "bbb")//
+        Subscription subscription = ServerApi.getString("aaa", "bbb")//
                 .subscribeOn(Schedulers.io())//
                 .doOnSubscribe(new Action0() {
                     @Override
@@ -114,20 +115,8 @@ public class RxCommonActivity extends BaseRxDetailActivity {
                         showLoading();
                     }
                 })//
-                .map(new Func1<Response<LzyResponse<ServerModel>>, Response<ServerModel>>() {
-                    @Override
-                    public Response<ServerModel> call(Response<LzyResponse<ServerModel>> response) {
-                        Response<ServerModel> httpResponse = new Response<>();
-                        httpResponse.setException(response.getException());
-                        httpResponse.setFromCache(response.isFromCache());
-                        httpResponse.setRawResponse(response.getRawResponse());
-                        httpResponse.setRawCall(response.getRawCall());
-                        httpResponse.setBody(response.body().data);
-                        return httpResponse;
-                    }
-                })//
                 .observeOn(AndroidSchedulers.mainThread())  //
-                .subscribe(new Subscriber<Response<ServerModel>>() {
+                .subscribe(new Subscriber<String>() {
                     @Override
                     public void onCompleted() {
                         dismissLoading();
@@ -141,7 +130,7 @@ public class RxCommonActivity extends BaseRxDetailActivity {
                     }
 
                     @Override
-                    public void onNext(Response<ServerModel> response) {
+                    public void onNext(String response) {
                         handleResponse(response);
                     }
                 });
@@ -150,31 +139,23 @@ public class RxCommonActivity extends BaseRxDetailActivity {
 
     @OnClick(R.id.jsonRequest)
     public void jsonRequest(View view) {
-        Subscription subscription = OkGo.<LzyResponse<ServerModel>>post(Urls.URL_JSONOBJECT)//
-                .headers("aaa", "111")//
-                .params("bbb", "222")//
-                .converter(new JsonConvert<LzyResponse<ServerModel>>())//
-                .adapt(new ObservableResponse<LzyResponse<ServerModel>>())//
+        Type type = new TypeToken<LzyResponse<ServerModel>>() {}.getType();
+        Subscription subscription = ServerApi.<LzyResponse<ServerModel>>getData(type, Urls.URL_JSONOBJECT, "aaa", "bbb")//
+                .subscribeOn(Schedulers.io())//
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
                         showLoading();
                     }
                 })//
-                .map(new Func1<Response<LzyResponse<ServerModel>>, Response<ServerModel>>() {
+                .map(new Func1<LzyResponse<ServerModel>, ServerModel>() {
                     @Override
-                    public Response<ServerModel> call(Response<LzyResponse<ServerModel>> response) {
-                        Response<ServerModel> httpResponse = new Response<>();
-                        httpResponse.setException(response.getException());
-                        httpResponse.setFromCache(response.isFromCache());
-                        httpResponse.setRawResponse(response.getRawResponse());
-                        httpResponse.setRawCall(response.getRawCall());
-                        httpResponse.setBody(response.body().data);
-                        return httpResponse;
+                    public ServerModel call(LzyResponse<ServerModel> response) {
+                        return response.data;
                     }
                 })//
-                .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Subscriber<Response<ServerModel>>() {
+                .observeOn(AndroidSchedulers.mainThread())  //
+                .subscribe(new Subscriber<ServerModel>() {
                     @Override
                     public void onCompleted() {
                         dismissLoading();
@@ -188,7 +169,7 @@ public class RxCommonActivity extends BaseRxDetailActivity {
                     }
 
                     @Override
-                    public void onNext(Response<ServerModel> response) {
+                    public void onNext(ServerModel response) {
                         handleResponse(response);
                     }
                 });
@@ -197,33 +178,22 @@ public class RxCommonActivity extends BaseRxDetailActivity {
 
     @OnClick(R.id.jsonArrayRequest)
     public void jsonArrayRequest(View view) {
-        Subscription subscription = ServerApi.getServerListModel("aaa", "bbb")//
+        Type type = new TypeToken<LzyResponse<List<ServerModel>>>() {}.getType();
+        Subscription subscription = ServerApi.<LzyResponse<List<ServerModel>>>getData(type, Urls.URL_JSONARRAY, "aaa", "bbb")//
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
                         showLoading();
                     }
                 })//
-                .doOnSubscribe(new Action0() {
+                .map(new Func1<LzyResponse<List<ServerModel>>, List<ServerModel>>() {
                     @Override
-                    public void call() {
-                        showLoading();
-                    }
-                })//
-                .map(new Func1<Response<LzyResponse<List<ServerModel>>>, Response<List<ServerModel>>>() {
-                    @Override
-                    public Response<List<ServerModel>> call(Response<LzyResponse<List<ServerModel>>> response) {
-                        Response<List<ServerModel>> httpResponse = new Response<>();
-                        httpResponse.setException(response.getException());
-                        httpResponse.setFromCache(response.isFromCache());
-                        httpResponse.setRawResponse(response.getRawResponse());
-                        httpResponse.setRawCall(response.getRawCall());
-                        httpResponse.setBody(response.body().data);
-                        return httpResponse;
+                    public List<ServerModel> call(LzyResponse<List<ServerModel>> response) {
+                        return response.data;
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Subscriber<Response<List<ServerModel>>>() {
+                .subscribe(new Subscriber<List<ServerModel>>() {
                     @Override
                     public void onCompleted() {
                         dismissLoading();
@@ -237,7 +207,7 @@ public class RxCommonActivity extends BaseRxDetailActivity {
                     }
 
                     @Override
-                    public void onNext(Response<List<ServerModel>> response) {
+                    public void onNext(List<ServerModel> response) {
                         handleResponse(response);
                     }
                 });
