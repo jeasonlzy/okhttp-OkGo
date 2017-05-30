@@ -129,8 +129,7 @@ public class NewsTabFragment extends BaseFragment implements SwipeRefreshLayout.
                     }
 
                     @Override
-                    public void onFinish(Response<NewsResponse<NewsModel>> response) {
-                        super.onFinish(response);
+                    public void onFinish() {
                         //可能需要移除之前添加的布局
                         newsAdapter.removeAllFooterView();
                         //最后调用结束刷新的方法

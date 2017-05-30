@@ -20,7 +20,6 @@ import android.app.ProgressDialog;
 import android.view.Window;
 
 import com.lzy.okgo.callback.StringCallback;
-import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.HttpRequest;
 
 /**
@@ -52,8 +51,7 @@ public abstract class StringDialogCallback extends StringCallback {
     }
 
     @Override
-    public void onFinish(Response<String> response) {
-        super.onFinish(response);
+    public void onFinish() {
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
         }

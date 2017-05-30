@@ -19,7 +19,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.view.Window;
 
-import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.HttpRequest;
 
 /**
@@ -56,8 +55,7 @@ public abstract class DialogCallback<T> extends JsonCallback<T> {
     }
 
     @Override
-    public void onFinish(Response<T> response) {
-        super.onFinish(response);
+    public void onFinish() {
         //网络请求结束后关闭对话框
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();

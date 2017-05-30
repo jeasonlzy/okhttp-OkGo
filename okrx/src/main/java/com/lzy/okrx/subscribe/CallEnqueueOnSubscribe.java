@@ -77,7 +77,7 @@ public final class CallEnqueueOnSubscribe<T> implements OnSubscribe<Response<T>>
             }
 
             @Override
-            public void onFinish(Response<T> response) {
+            public void onFinish() {
                 arbiter.emitComplete();
             }
 

@@ -42,8 +42,7 @@ public abstract class AbsCallback<T> implements Callback<T> {
     }
 
     @Override
-    public void onFinish(Response<T> response) {
-        if (response.getException() != null) response.getException().printStackTrace();
+    public void onFinish() {
     }
 
     @Override

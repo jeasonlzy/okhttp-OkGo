@@ -117,7 +117,7 @@ public class CallEnqueueObservable<T> extends Observable<Response<T>> {
         }
 
         @Override
-        public void onFinish(Response<T> response) {
+        public void onFinish() {
             if (call.isCanceled()) return;
 
             try {

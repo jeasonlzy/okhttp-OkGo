@@ -43,7 +43,7 @@ public class RequestFailedCachePolicy<T> extends BaseCachePolicy<T> {
             @Override
             public void run() {
                 mCallback.onSuccess(success);
-                mCallback.onFinish(success);
+                mCallback.onFinish();
             }
         });
     }
@@ -57,7 +57,7 @@ public class RequestFailedCachePolicy<T> extends BaseCachePolicy<T> {
                 @Override
                 public void run() {
                     mCallback.onCacheSuccess(cacheSuccess);
-                    mCallback.onFinish(cacheSuccess);
+                    mCallback.onFinish();
                 }
             });
         } else {
@@ -65,7 +65,7 @@ public class RequestFailedCachePolicy<T> extends BaseCachePolicy<T> {
                 @Override
                 public void run() {
                     mCallback.onError(error);
-                    mCallback.onFinish(error);
+                    mCallback.onFinish();
                 }
             });
         }
