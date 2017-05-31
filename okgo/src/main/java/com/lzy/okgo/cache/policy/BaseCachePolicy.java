@@ -112,7 +112,7 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
             saveCache(response.headers(), body);
             return Response.success(false, body, rawCall, response);
         } catch (Throwable throwable) {
-            if (throwable instanceof SocketTimeoutException && currentRetryCount < OkGo.getInstance().getRetryCount()) {
+            if (throwable instanceof SocketTimeoutException && currentRetryCount < httpRequest.getRetryCount()) {
                 currentRetryCount++;
                 rawCall = httpRequest.getRawCall();
                 if (canceled) {
@@ -130,7 +130,7 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
         rawCall.enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(okhttp3.Call call, IOException e) {
-                if (e instanceof SocketTimeoutException && currentRetryCount < OkGo.getInstance().getRetryCount()) {
+                if (e instanceof SocketTimeoutException && currentRetryCount < httpRequest.getRetryCount()) {
                     //retry when timeout
                     currentRetryCount++;
                     rawCall = httpRequest.getRawCall();
@@ -166,11 +166,9 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
                     saveCache(response.headers(), body);
                     Response<T> success = Response.success(false, body, call, response);
                     onSuccess(success);
-                } catch (Exception e) {
-                    Response<T> error = Response.error(false, call, response, e);
-                    onError(error);
                 } catch (Throwable throwable) {
-                    throwable.printStackTrace();
+                    Response<T> error = Response.error(false, call, response, throwable);
+                    onError(error);
                 }
             }
         });

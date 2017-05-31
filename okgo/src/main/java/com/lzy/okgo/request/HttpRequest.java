@@ -56,6 +56,7 @@ public abstract class HttpRequest<T, R extends HttpRequest> {
     protected String baseUrl;
     protected OkHttpClient client;
     protected Object tag;
+    protected int retryCount;
     protected CacheMode cacheMode;
     protected String cacheKey;
     protected long cacheTime = CacheEntity.CACHE_NEVER_EXPIRE;      //默认缓存的超时时间
@@ -82,6 +83,7 @@ public abstract class HttpRequest<T, R extends HttpRequest> {
         if (go.getCommonParams() != null) params.put(go.getCommonParams());
         if (go.getCommonHeaders() != null) headers.put(go.getCommonHeaders());
         //添加缓存模式
+        retryCount = go.getRetryCount();
         cacheMode = go.getCacheMode();
         cacheTime = go.getCacheTime();
     }
@@ -89,6 +91,13 @@ public abstract class HttpRequest<T, R extends HttpRequest> {
     @SuppressWarnings("unchecked")
     public R tag(Object tag) {
         this.tag = tag;
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public R retryCount(int retryCount) {
+        if (retryCount < 0) throw new IllegalArgumentException("retryCount must > 0");
+        this.retryCount = retryCount;
         return (R) this;
     }
 
@@ -280,6 +289,10 @@ public abstract class HttpRequest<T, R extends HttpRequest> {
 
     public long getCacheTime() {
         return cacheTime;
+    }
+
+    public int getRetryCount() {
+        return retryCount;
     }
 
     public Request getRequest() {

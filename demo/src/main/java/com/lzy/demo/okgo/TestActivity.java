@@ -58,9 +58,17 @@ public class TestActivity extends BaseActivity {
         setTitle("测试页面");
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //Activity销毁时，取消网络请求
+        OkGo.getInstance().cancelTag(this);
+    }
+
+
     @OnClick(R.id.btn1)
     public void btn1(View view) {
-        OkGo.<JSONObject>get(Urls.URL_JSONOBJECT)
+        OkGo.<JSONObject>get(Urls.URL_JSONOBJECT)//
                 .execute(new JsonCallback<JSONObject>() {
                     @Override
                     public void onSuccess(Response<JSONObject> response) {
@@ -71,14 +79,15 @@ public class TestActivity extends BaseActivity {
 
     @OnClick(R.id.btn2)
     public void btn2(View view) {
-        OkGo.<String>get("https://www.qunar.com/")//
-                .tag(this)//
-                .execute(new StringCallback() {
-                    @Override
-                    public void onSuccess(Response<String> response) {
-                        System.out.println(response.body());
-                    }
-                });
+//        OkGo.<String>get("https://www.qunar.com/")//
+//                .tag(this)//
+//                .execute(new StringCallback() {
+//                    @Override
+//                    public void onSuccess(Response<String> response) {
+//                        System.out.println(response.body());
+//                    }
+//                });
+        OkGo.getInstance().cancelTag(this);
     }
 
     @OnClick(R.id.btn3)
