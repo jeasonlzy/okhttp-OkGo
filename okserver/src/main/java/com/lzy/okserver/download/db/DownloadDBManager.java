@@ -18,7 +18,7 @@ package com.lzy.okserver.download.db;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-import com.lzy.okgo.cache.BaseDao;
+import com.lzy.okgo.db.BaseDao;
 import com.lzy.okserver.download.DownloadInfo;
 
 import java.util.List;

@@ -64,7 +64,7 @@ public class HttpUtils {
             sb.deleteCharAt(sb.length() - 1);
             return sb.toString();
         } catch (UnsupportedEncodingException e) {
-            OkLogger.e(e);
+            OkLogger.printStackTrace(e);
         }
         return url;
     }
@@ -81,7 +81,7 @@ public class HttpUtils {
                 headerBuilder.add(entry.getKey(), entry.getValue());
             }
         } catch (Exception e) {
-            OkLogger.e(e);
+            OkLogger.printStackTrace(e);
         }
         requestBuilder.headers(headerBuilder.build());
         return requestBuilder;

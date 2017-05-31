@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzy.okgo.cache;
+package com.lzy.okgo.db;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -89,7 +89,7 @@ public abstract class BaseDao<T> {
             database.setTransactionSuccessful();
             return count;
         } catch (Exception e) {
-            OkLogger.e(e);
+            OkLogger.printStackTrace(e);
         } finally {
             database.endTransaction();
             closeDatabase(null, cursor);
@@ -107,7 +107,7 @@ public abstract class BaseDao<T> {
             database.setTransactionSuccessful();
             return id;
         } catch (Exception e) {
-            OkLogger.e(e);
+            OkLogger.printStackTrace(e);
         } finally {
             database.endTransaction();
             closeDatabase(null, null);
@@ -130,7 +130,7 @@ public abstract class BaseDao<T> {
             database.setTransactionSuccessful();
             return result;
         } catch (Exception e) {
-            OkLogger.e(e);
+            OkLogger.printStackTrace(e);
         } finally {
             database.endTransaction();
             closeDatabase(null, null);
@@ -148,7 +148,7 @@ public abstract class BaseDao<T> {
             database.setTransactionSuccessful();
             return count;
         } catch (Exception e) {
-            OkLogger.e(e);
+            OkLogger.printStackTrace(e);
         } finally {
             database.endTransaction();
             closeDatabase(null, null);
@@ -174,7 +174,7 @@ public abstract class BaseDao<T> {
             database.setTransactionSuccessful();
             return id;
         } catch (Exception e) {
-            OkLogger.e(e);
+            OkLogger.printStackTrace(e);
         } finally {
             database.endTransaction();
             closeDatabase(null, null);
@@ -206,7 +206,7 @@ public abstract class BaseDao<T> {
             }
             database.setTransactionSuccessful();
         } catch (Exception e) {
-            OkLogger.e(e);
+            OkLogger.printStackTrace(e);
         } finally {
             database.endTransaction();
             closeDatabase(null, cursor);

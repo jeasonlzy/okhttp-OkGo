@@ -119,12 +119,12 @@ public class FileConvert implements Converter<File> {
             try {
                 if (is != null) is.close();
             } catch (IOException e) {
-                OkLogger.e(e);
+                OkLogger.printStackTrace(e);
             }
             try {
                 if (fos != null) fos.close();
             } catch (IOException e) {
-                OkLogger.e(e);
+                OkLogger.printStackTrace(e);
             }
         }
     }

@@ -20,6 +20,7 @@ import android.text.TextUtils;
 
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.utils.HttpUtils;
+import com.lzy.okgo.utils.OkLogger;
 import com.lzy.okserver.download.db.DownloadDBManager;
 import com.lzy.okserver.listener.DownloadListener;
 import com.lzy.okserver.task.PriorityAsyncTask;
@@ -127,7 +128,7 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
         try {
             response = mDownloadInfo.getRequest().headers("RANGE", "bytes=" + startPos + "-").execute();
         } catch (IOException e) {
-            e.printStackTrace();
+            OkLogger.printStackTrace(e);
             mDownloadInfo.setNetworkSpeed(0);
             mDownloadInfo.setState(DownloadManager.ERROR);
             postMessage("网络异常", e);
@@ -174,7 +175,7 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
             randomAccessFile = new ProgressRandomAccessFile(file, "rw", startPos);
             randomAccessFile.seek(startPos);
         } catch (Exception e) {
-            e.printStackTrace();
+            OkLogger.printStackTrace(e);
             mDownloadInfo.setNetworkSpeed(0);
             mDownloadInfo.setState(DownloadManager.ERROR);
             postMessage("没有找到已存在的断点文件", e);
@@ -190,7 +191,7 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
         try {
             download(is, randomAccessFile);
         } catch (IOException e) {
-            e.printStackTrace();
+            OkLogger.printStackTrace(e);
             mDownloadInfo.setNetworkSpeed(0);
             mDownloadInfo.setState(DownloadManager.ERROR);
             postMessage("文件读写异常", e);
@@ -245,7 +246,7 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
                 in.close();
                 input.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                OkLogger.printStackTrace(e);
             }
         }
         return downloadSize;

@@ -72,7 +72,7 @@ public class ProgressRequestBody extends RequestBody {
         try {
             return delegate.contentLength();
         } catch (IOException e) {
-            OkLogger.e(e);
+            OkLogger.printStackTrace(e);
             return -1;
         }
     }

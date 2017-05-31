@@ -38,27 +38,23 @@ import java.io.Serializable;
  * ================================================
  */
 public class CacheEntity<T> implements Serializable {
-
     private static final long serialVersionUID = -4337711009801627866L;
+
+    //表中的五个字段
+    public static final String KEY = "key";
+    public static final String LOCAL_EXPIRE = "localExpire";
+    public static final String HEAD = "head";
+    public static final String DATA = "data";
 
     public static final long CACHE_NEVER_EXPIRE = -1;        //缓存永不过期
 
-    private long id;
     private String key;
+    private long localExpire;
     private HttpHeaders responseHeaders;
     private T data;
-    private long localExpire;
 
     //该变量不必保存到数据库,程序运行起来后会动态计算
     private boolean isExpire;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public String getKey() {
         return key;
@@ -114,8 +110,8 @@ public class CacheEntity<T> implements Serializable {
 
     public static <T> ContentValues getContentValues(CacheEntity<T> cacheEntity) {
         ContentValues values = new ContentValues();
-        values.put(CacheHelper.KEY, cacheEntity.getKey());
-        values.put(CacheHelper.LOCAL_EXPIRE, cacheEntity.getLocalExpire());
+        values.put(KEY, cacheEntity.getKey());
+        values.put(LOCAL_EXPIRE, cacheEntity.getLocalExpire());
 
         HttpHeaders headers = cacheEntity.getResponseHeaders();
         ByteArrayOutputStream headerBAOS = null;
@@ -127,16 +123,16 @@ public class CacheEntity<T> implements Serializable {
                 headerOOS.writeObject(headers);
                 headerOOS.flush();
                 byte[] headerData = headerBAOS.toByteArray();
-                values.put(CacheHelper.HEAD, headerData);
+                values.put(HEAD, headerData);
             }
         } catch (IOException e) {
-            OkLogger.e(e);
+            OkLogger.printStackTrace(e);
         } finally {
             try {
                 if (headerOOS != null) headerOOS.close();
                 if (headerBAOS != null) headerBAOS.close();
             } catch (IOException e) {
-                OkLogger.e(e);
+                OkLogger.printStackTrace(e);
             }
         }
 
@@ -150,16 +146,16 @@ public class CacheEntity<T> implements Serializable {
                 dataOOS.writeObject(data);
                 dataOOS.flush();
                 byte[] dataData = dataBAOS.toByteArray();
-                values.put(CacheHelper.DATA, dataData);
+                values.put(DATA, dataData);
             }
         } catch (IOException e) {
-            OkLogger.e(e);
+            OkLogger.printStackTrace(e);
         } finally {
             try {
                 if (dataOOS != null) dataOOS.close();
                 if (dataBAOS != null) dataBAOS.close();
             } catch (IOException e) {
-                OkLogger.e(e);
+                OkLogger.printStackTrace(e);
             }
         }
         return values;
@@ -167,11 +163,10 @@ public class CacheEntity<T> implements Serializable {
 
     public static <T> CacheEntity<T> parseCursorToBean(Cursor cursor) {
         CacheEntity<T> cacheEntity = new CacheEntity<>();
-        cacheEntity.setId(cursor.getInt(cursor.getColumnIndex(CacheHelper.ID)));
-        cacheEntity.setKey(cursor.getString(cursor.getColumnIndex(CacheHelper.KEY)));
-        cacheEntity.setLocalExpire(cursor.getLong(cursor.getColumnIndex(CacheHelper.LOCAL_EXPIRE)));
+        cacheEntity.setKey(cursor.getString(cursor.getColumnIndex(KEY)));
+        cacheEntity.setLocalExpire(cursor.getLong(cursor.getColumnIndex(LOCAL_EXPIRE)));
 
-        byte[] headerData = cursor.getBlob(cursor.getColumnIndex(CacheHelper.HEAD));
+        byte[] headerData = cursor.getBlob(cursor.getColumnIndex(HEAD));
         ByteArrayInputStream headerBAIS = null;
         ObjectInputStream headerOIS = null;
         try {
@@ -182,17 +177,17 @@ public class CacheEntity<T> implements Serializable {
                 cacheEntity.setResponseHeaders((HttpHeaders) header);
             }
         } catch (Exception e) {
-            OkLogger.e(e);
+            OkLogger.printStackTrace(e);
         } finally {
             try {
                 if (headerOIS != null) headerOIS.close();
                 if (headerBAIS != null) headerBAIS.close();
             } catch (IOException e) {
-                OkLogger.e(e);
+                OkLogger.printStackTrace(e);
             }
         }
 
-        byte[] dataData = cursor.getBlob(cursor.getColumnIndex(CacheHelper.DATA));
+        byte[] dataData = cursor.getBlob(cursor.getColumnIndex(DATA));
         ByteArrayInputStream dataBAIS = null;
         ObjectInputStream dataOIS = null;
         try {
@@ -203,13 +198,13 @@ public class CacheEntity<T> implements Serializable {
                 cacheEntity.setData(data);
             }
         } catch (Exception e) {
-            OkLogger.e(e);
+            OkLogger.printStackTrace(e);
         } finally {
             try {
                 if (dataOIS != null) dataOIS.close();
                 if (dataBAIS != null) dataBAIS.close();
             } catch (IOException e) {
-                OkLogger.e(e);
+                OkLogger.printStackTrace(e);
             }
         }
 
@@ -218,12 +213,10 @@ public class CacheEntity<T> implements Serializable {
 
     @Override
     public String toString() {
-        return "CacheEntity{" +
-                "id=" + id +
-                ", key='" + key + '\'' +
-                ", responseHeaders=" + responseHeaders +
-                ", data=" + data +
-                ", localExpire=" + localExpire +
-                '}';
+        return "CacheEntity{key='" + key + '\'' + //
+               ", responseHeaders=" + responseHeaders + //
+               ", data=" + data + //
+               ", localExpire=" + localExpire + //
+               '}';
     }
 }

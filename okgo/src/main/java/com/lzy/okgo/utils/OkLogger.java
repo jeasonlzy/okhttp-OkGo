@@ -80,7 +80,7 @@ public class OkLogger {
         if (isLogEnable) Log.e(tag, msg);
     }
 
-    public static void e(Throwable t) {
+    public static void printStackTrace(Throwable t) {
         if (isLogEnable) t.printStackTrace();
     }
 }

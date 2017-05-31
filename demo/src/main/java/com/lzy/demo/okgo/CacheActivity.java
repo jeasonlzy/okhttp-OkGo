@@ -28,7 +28,7 @@ import com.lzy.demo.model.ServerModel;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheEntity;
-import com.lzy.okgo.cache.CacheManager;
+import com.lzy.okgo.db.CacheManager;
 import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.model.Response;
 

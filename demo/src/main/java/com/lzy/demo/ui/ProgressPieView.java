@@ -486,7 +486,7 @@ public class ProgressPieView extends View {
 
     /**
      * Sets the text typeface.
-     * - i.e. fonts/Roboto/Roboto-Regular.ttf
+     * - i.printStackTrace. fonts/Roboto/Roboto-Regular.ttf
      *
      * @param typeface that the text is displayed in
      */

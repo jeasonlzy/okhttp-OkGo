@@ -21,12 +21,11 @@ import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.cookie.CookieJarImpl;
-import com.lzy.okgo.cookie.store.PersistentCookieStore;
+import com.lzy.okgo.cookie.store.DBCookieStore;
 import com.lzy.okgo.https.HttpsUtils;
 import com.lzy.okgo.interceptor.HttpLoggingInterceptor;
 import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.HttpParams;
-import com.readystatesoftware.chuck.ChuckInterceptor;
 
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -56,6 +55,13 @@ public class GApp extends Application {
     public void onCreate() {
         super.onCreate();
 
+//        System.setProperty("http.proxyHost", "192.168.1.104");   //个人测试网络时用的，删掉即可
+//        System.setProperty("http.proxyPort", "8888");
+
+        initOkGo();
+    }
+
+    private void initOkGo() {
         //---------这里给出的是示例代码,告诉你可以这么传,实际使用的时候,根据需要传,不需要就不传-------------//
         HttpHeaders headers = new HttpHeaders();
         headers.put("commonHeaderKey1", "commonHeaderValue1");    //header不支持中文，不允许有特殊字符
@@ -71,16 +77,17 @@ public class GApp extends Application {
         loggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.BODY);        //log打印级别，决定了log显示的详细程度
         loggingInterceptor.setColorLevel(Level.INFO);                               //log颜色级别，决定了log在控制台显示的颜色
         builder.addInterceptor(loggingInterceptor);
-//        builder.addInterceptor(new ChuckInterceptor(this));                         //第三方的开源库，使用通知显示当前请求的log
+        //builder.addInterceptor(new ChuckInterceptor(this));                       //第三方的开源库，使用通知显示当前请求的log
 
         //超时时间设置，默认60秒
         builder.readTimeout(OkGo.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);      //全局的读取超时时间
         builder.writeTimeout(OkGo.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);     //全局的写入超时时间
         builder.connectTimeout(OkGo.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);   //全局的连接超时时间
 
-        //自动管理cookie（或者叫session的保持），以下两种任选其一就行
-        builder.cookieJar(new CookieJarImpl(new PersistentCookieStore(this)));      //cookie持久化存储，如果cookie不过期，则一直有效
-        //builder.cookieJar(new CookieJarImpl(new MemoryCookieStore()));            //cookie使用内存缓存，app退出后，cookie消失
+        //自动管理cookie（或者叫session的保持），以下几种任选其一就行
+        //builder.cookieJar(new CookieJarImpl(new SPCookieStore(this)));            //使用sp保持cookie，如果cookie不过期，则一直有效
+        builder.cookieJar(new CookieJarImpl(new DBCookieStore(this)));              //使用数据库保持cookie，如果cookie不过期，则一直有效
+        //builder.cookieJar(new CookieJarImpl(new MemoryCookieStore()));            //使用内存保持cookie，app退出后，cookie消失
 
         //https相关设置，以下几种方案根据需要自己设置
         //方法一：信任所有证书,不安全有风险
@@ -104,7 +111,6 @@ public class GApp extends Application {
                 .setRetryCount(3)                               //全局统一超时重连次数，默认为三次，那么最差的情况会请求4次(一次原始请求，三次重连请求)，不需要可以设置为0
                 .addCommonHeaders(headers)                      //全局公共头
                 .addCommonParams(params);                       //全局公共参数
-
     }
 
     /**

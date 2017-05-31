@@ -126,7 +126,7 @@ public class HttpLoggingInterceptor implements Interceptor {
                 }
             }
         } catch (Exception e) {
-            OkLogger.e(e);
+            OkLogger.printStackTrace(e);
         } finally {
             log("--> END " + request.method());
         }
@@ -159,7 +159,7 @@ public class HttpLoggingInterceptor implements Interceptor {
                 }
             }
         } catch (Exception e) {
-            OkLogger.e(e);
+            OkLogger.printStackTrace(e);
         } finally {
             log("<-- END HTTP");
         }
@@ -178,10 +178,7 @@ public class HttpLoggingInterceptor implements Interceptor {
         String subtype = mediaType.subtype();
         if (subtype != null) {
             subtype = subtype.toLowerCase();
-            if (subtype.contains("x-www-form-urlencoded") ||
-                subtype.contains("json") ||
-                subtype.contains("xml") ||
-                subtype.contains("html")) //
+            if (subtype.contains("x-www-form-urlencoded") || subtype.contains("json") || subtype.contains("xml") || subtype.contains("html")) //
                 return true;
         }
         return false;
@@ -199,7 +196,7 @@ public class HttpLoggingInterceptor implements Interceptor {
             }
             log("\tbody:" + buffer.readString(charset));
         } catch (Exception e) {
-            e.printStackTrace();
+            OkLogger.printStackTrace(e);
         }
     }
 }

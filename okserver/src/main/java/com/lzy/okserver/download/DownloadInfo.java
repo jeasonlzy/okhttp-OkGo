@@ -107,13 +107,13 @@ public class DownloadInfo implements Comparable<DownloadInfo> {
             byte[] requestData = baos.toByteArray();
             values.put(DownloadInfo.DOWNLOAD_REQUEST, requestData);
         } catch (IOException e) {
-            OkLogger.e(e);
+            OkLogger.printStackTrace(e);
         } finally {
             try {
                 if (oos != null) oos.close();
                 if (baos != null) baos.close();
             } catch (IOException e) {
-                OkLogger.e(e);
+                OkLogger.printStackTrace(e);
             }
         }
 
@@ -125,13 +125,13 @@ public class DownloadInfo implements Comparable<DownloadInfo> {
             byte[] data = baos.toByteArray();
             values.put(DownloadInfo.DATA, data);
         } catch (IOException e) {
-            OkLogger.e(e);
+            OkLogger.printStackTrace(e);
         } finally {
             try {
                 if (oos != null) oos.close();
                 if (baos != null) baos.close();
             } catch (IOException e) {
-                OkLogger.e(e);
+                OkLogger.printStackTrace(e);
             }
         }
         return values;
@@ -171,13 +171,13 @@ public class DownloadInfo implements Comparable<DownloadInfo> {
                 }
             }
         } catch (Exception e) {
-            OkLogger.e(e);
+            OkLogger.printStackTrace(e);
         } finally {
             try {
                 if (ois != null) ois.close();
                 if (bais != null) bais.close();
             } catch (IOException e) {
-                OkLogger.e(e);
+                OkLogger.printStackTrace(e);
             }
         }
 
@@ -190,13 +190,13 @@ public class DownloadInfo implements Comparable<DownloadInfo> {
                 info.setData(serializableData);
             }
         } catch (Exception e) {
-            OkLogger.e(e);
+            OkLogger.printStackTrace(e);
         } finally {
             try {
                 if (ois != null) ois.close();
                 if (bais != null) bais.close();
             } catch (IOException e) {
-                OkLogger.e(e);
+                OkLogger.printStackTrace(e);
             }
         }
         return info;

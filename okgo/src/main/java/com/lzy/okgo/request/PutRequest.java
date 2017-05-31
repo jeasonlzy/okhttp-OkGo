@@ -50,7 +50,7 @@ public class PutRequest<T> extends HttpBodyRequest<T, PutRequest<T>> {
         try {
             headers.put(HttpHeaders.HEAD_KEY_CONTENT_LENGTH, String.valueOf(requestBody.contentLength()));
         } catch (IOException e) {
-            OkLogger.e(e);
+            OkLogger.printStackTrace(e);
         }
         Request.Builder requestBuilder = HttpUtils.appendHeaders(headers);
         if (isSpliceUrl) url = HttpUtils.createUrlFromParams(baseUrl, params.urlParamsMap);

@@ -132,7 +132,7 @@ public class HttpHeaders implements Serializable {
                 jsonObject.put(entry.getKey(), entry.getValue());
             }
         } catch (JSONException e) {
-            OkLogger.e(e);
+            OkLogger.printStackTrace(e);
         }
         return jsonObject.toString();
     }

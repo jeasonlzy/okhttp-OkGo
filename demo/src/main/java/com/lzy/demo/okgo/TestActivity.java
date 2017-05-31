@@ -24,6 +24,7 @@ import com.lzy.demo.R;
 import com.lzy.demo.base.BaseActivity;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.FileCallback;
+import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.HttpRequest;
 
@@ -59,6 +60,14 @@ public class TestActivity extends BaseActivity {
 
     @OnClick(R.id.btn2)
     public void btn2(View view) {
+        OkGo.<String>get("https://www.qunar.com/")//
+                .tag(this)//
+                .execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        System.out.println(response.body());
+                    }
+                });
     }
 
     @OnClick(R.id.btn3)

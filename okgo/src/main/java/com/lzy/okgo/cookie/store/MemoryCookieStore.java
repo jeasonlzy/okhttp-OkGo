@@ -18,6 +18,7 @@ package com.lzy.okgo.cookie.store;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import okhttp3.Cookie;
@@ -34,7 +35,7 @@ import okhttp3.HttpUrl;
  */
 public class MemoryCookieStore implements CookieStore {
 
-    private final HashMap<String, List<Cookie>> memoryCookies = new HashMap<>();
+    private final Map<String, List<Cookie>> memoryCookies = new HashMap<>();
 
     @Override
     public synchronized void saveCookie(HttpUrl url, List<Cookie> cookies) {

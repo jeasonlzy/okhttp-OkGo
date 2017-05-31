@@ -70,7 +70,7 @@ public class DownloadInfoHelper extends SQLiteOpenHelper {
             db.execSQL(SQL_CREATE_UNIQUE_INDEX);
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            OkLogger.e(e);
+            OkLogger.printStackTrace(e);
         } finally {
             db.endTransaction();
         }
@@ -89,7 +89,7 @@ public class DownloadInfoHelper extends SQLiteOpenHelper {
                 db.execSQL(SQL_CREATE_UNIQUE_INDEX);
                 db.setTransactionSuccessful();
             } catch (Exception e) {
-                OkLogger.e(e);
+                OkLogger.printStackTrace(e);
             } finally {
                 db.endTransaction();
             }

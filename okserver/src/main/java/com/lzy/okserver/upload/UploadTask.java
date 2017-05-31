@@ -20,6 +20,7 @@ import android.os.Message;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.HttpBodyRequest;
+import com.lzy.okgo.utils.OkLogger;
 import com.lzy.okserver.listener.UploadListener;
 import com.lzy.okserver.task.PriorityAsyncTask;
 
@@ -74,7 +75,7 @@ public class UploadTask<T> extends PriorityAsyncTask<Void, UploadInfo, UploadInf
             request.setCallback(new MergeListener());
             response = request.execute();
         } catch (IOException e) {
-            e.printStackTrace();
+            OkLogger.printStackTrace(e);
             mUploadInfo.setNetworkSpeed(0);
             mUploadInfo.setState(UploadManager.ERROR);
             postMessage(null, "网络异常", e);
@@ -90,7 +91,7 @@ public class UploadTask<T> extends PriorityAsyncTask<Void, UploadInfo, UploadInf
                 postMessage(t, null, null);
                 return mUploadInfo;
             } catch (Exception e) {
-                e.printStackTrace();
+                OkLogger.printStackTrace(e);
                 mUploadInfo.setNetworkSpeed(0);
                 mUploadInfo.setState(UploadManager.ERROR);
                 postMessage(null, "解析数据对象出错", e);

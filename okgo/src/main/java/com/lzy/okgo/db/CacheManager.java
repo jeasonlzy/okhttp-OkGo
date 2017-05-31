@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzy.okgo.cache;
+package com.lzy.okgo.db;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+
+import com.lzy.okgo.cache.CacheEntity;
 
 import java.util.List;
 
@@ -40,7 +42,7 @@ public class CacheManager extends BaseDao<CacheEntity<Object>> {
     }
 
     private CacheManager() {
-        super(new CacheHelper());
+        super(new DBHelper());
     }
 
     @Override
@@ -55,20 +57,20 @@ public class CacheManager extends BaseDao<CacheEntity<Object>> {
 
     @Override
     protected String getTableName() {
-        return CacheHelper.TABLE_NAME;
+        return DBHelper.TABLE_CACHE_NAME;
     }
 
     /** 根据key获取缓存 */
     public CacheEntity<Object> get(String key) {
         if (key == null) return null;
-        List<CacheEntity<Object>> cacheEntities = query(CacheHelper.KEY + "=?", new String[]{key});
+        List<CacheEntity<Object>> cacheEntities = query(CacheEntity.KEY + "=?", new String[]{key});
         return cacheEntities.size() > 0 ? cacheEntities.get(0) : null;
     }
 
     /** 移除一个缓存 */
     public boolean remove(String key) {
         if (key == null) return false;
-        int delete = delete(CacheHelper.KEY + "=?", new String[]{key});
+        int delete = delete(CacheEntity.KEY + "=?", new String[]{key});
         return delete > 0;
     }
 
