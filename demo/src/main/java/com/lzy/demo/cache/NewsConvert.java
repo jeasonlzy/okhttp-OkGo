@@ -37,7 +37,7 @@ import okhttp3.Response;
 public class NewsConvert<T> implements Converter<T> {
 
     @Override
-    public T convertResponse(Response response) throws Exception {
+    public T convertResponse(Response response) throws Throwable {
         //以下代码是通过泛型解析实际参数,泛型必须传
         Type genType = getClass().getGenericSuperclass();
         Type[] params = ((ParameterizedType) genType).getActualTypeArguments();

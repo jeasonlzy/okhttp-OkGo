@@ -134,7 +134,7 @@ public class UploadTask<T> extends PriorityAsyncTask<Void, UploadInfo, UploadInf
         }
 
         @Override
-        public T convertResponse(okhttp3.Response response) throws Exception {
+        public T convertResponse(okhttp3.Response response) throws Throwable {
             return null;
         }
     }

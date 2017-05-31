@@ -81,6 +81,6 @@ public class OkLogger {
     }
 
     public static void printStackTrace(Throwable t) {
-        if (isLogEnable) t.printStackTrace();
+        if (isLogEnable && t != null) t.printStackTrace();
     }
 }

@@ -19,9 +19,9 @@ import android.graphics.Bitmap;
 
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheEntity;
-import com.lzy.okgo.db.CacheManager;
 import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.callback.Callback;
+import com.lzy.okgo.db.CacheManager;
 import com.lzy.okgo.exception.HttpException;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.HttpRequest;
@@ -111,8 +111,8 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
             //save cache when request is successful
             saveCache(response.headers(), body);
             return Response.success(false, body, rawCall, response);
-        } catch (Exception e) {
-            if (e instanceof SocketTimeoutException && currentRetryCount < OkGo.getInstance().getRetryCount()) {
+        } catch (Throwable throwable) {
+            if (throwable instanceof SocketTimeoutException && currentRetryCount < OkGo.getInstance().getRetryCount()) {
                 currentRetryCount++;
                 rawCall = httpRequest.getRawCall();
                 if (canceled) {
@@ -122,7 +122,7 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
                     requestNetworkSync();
                 }
             }
-            return Response.error(false, rawCall, null, e);
+            return Response.error(false, rawCall, null, throwable);
         }
     }
 
@@ -169,6 +169,8 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
                 } catch (Exception e) {
                     Response<T> error = Response.error(false, call, response, e);
                     onError(error);
+                } catch (Throwable throwable) {
+                    throwable.printStackTrace();
                 }
             }
         });

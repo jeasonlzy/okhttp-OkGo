@@ -22,11 +22,15 @@ import android.widget.ImageView;
 
 import com.lzy.demo.R;
 import com.lzy.demo.base.BaseActivity;
+import com.lzy.demo.callback.JsonCallback;
+import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.FileCallback;
 import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.HttpRequest;
+
+import org.json.JSONObject;
 
 import java.io.File;
 
@@ -56,6 +60,13 @@ public class TestActivity extends BaseActivity {
 
     @OnClick(R.id.btn1)
     public void btn1(View view) {
+        OkGo.<JSONObject>get(Urls.URL_JSONOBJECT)
+                .execute(new JsonCallback<JSONObject>() {
+                    @Override
+                    public void onSuccess(Response<JSONObject> response) {
+
+                    }
+                });
     }
 
     @OnClick(R.id.btn2)

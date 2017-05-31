@@ -65,7 +65,7 @@ public class FileConvert implements Converter<File> {
     }
 
     @Override
-    public File convertResponse(Response value) throws Exception {
+    public File convertResponse(Response value) throws Throwable {
         if (TextUtils.isEmpty(destFileDir)) destFileDir = Environment.getExternalStorageDirectory() + DM_TARGET_FOLDER;
         if (TextUtils.isEmpty(destFileName)) destFileName = HttpUtils.getNetFileName(value, value.request().url().toString());
 

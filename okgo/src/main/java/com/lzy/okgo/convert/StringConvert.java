@@ -16,6 +16,7 @@
 package com.lzy.okgo.convert;
 
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 /**
  * ================================================
@@ -29,7 +30,9 @@ import okhttp3.Response;
 public class StringConvert implements Converter<String> {
 
     @Override
-    public String convertResponse(Response response) throws Exception {
-        return response.body().string();
+    public String convertResponse(Response response) throws Throwable {
+        ResponseBody body = response.body();
+        if (body == null) return null;
+        return body.string();
     }
 }

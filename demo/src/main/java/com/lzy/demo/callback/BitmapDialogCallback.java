@@ -37,6 +37,7 @@ public abstract class BitmapDialogCallback extends BitmapCallback {
     private ProgressDialog dialog;
 
     public BitmapDialogCallback(Activity activity) {
+        super(1000, 1000);
         dialog = new ProgressDialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCanceledOnTouchOutside(false);

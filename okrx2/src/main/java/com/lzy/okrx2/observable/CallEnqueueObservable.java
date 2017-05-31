@@ -73,7 +73,7 @@ public class CallEnqueueObservable<T> extends Observable<Response<T>> {
         }
 
         @Override
-        public T convertResponse(okhttp3.Response response) throws Exception {
+        public T convertResponse(okhttp3.Response response) throws Throwable {
             // okrx 使用converter转换，不需要这个解析方法
             return null;
         }
@@ -106,13 +106,13 @@ public class CallEnqueueObservable<T> extends Observable<Response<T>> {
         public void onError(Response<T> response) {
             if (call.isCanceled()) return;
 
-            Exception e = response.getException();
+            Throwable throwable = response.getException();
             try {
                 terminated = true;
-                observer.onError(e);
+                observer.onError(throwable);
             } catch (Throwable inner) {
                 Exceptions.throwIfFatal(inner);
-                RxJavaPlugins.onError(new CompositeException(e, inner));
+                RxJavaPlugins.onError(new CompositeException(throwable, inner));
             }
         }
 

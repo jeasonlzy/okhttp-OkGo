@@ -17,6 +17,7 @@ package com.lzy.okgo.callback;
 
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.HttpRequest;
+import com.lzy.okgo.utils.OkLogger;
 
 /**
  * ================================================
@@ -39,6 +40,7 @@ public abstract class AbsCallback<T> implements Callback<T> {
 
     @Override
     public void onError(Response<T> response) {
+        OkLogger.printStackTrace(response.getException());
     }
 
     @Override

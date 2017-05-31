@@ -67,7 +67,7 @@ public abstract class JsonCallback<T> extends AbsCallback<T> {
      * 这里的解析工作不同的业务逻辑基本都不一样,所以需要自己实现,以下给出的时模板代码,实际使用根据需要修改
      */
     @Override
-    public T convertResponse(Response response) throws Exception {
+    public T convertResponse(Response response) throws Throwable {
 
         // 重要的事情说三遍，不同的业务，这里的代码逻辑都不一样，如果你不修改，那么基本不可用
         // 重要的事情说三遍，不同的业务，这里的代码逻辑都不一样，如果你不修改，那么基本不可用

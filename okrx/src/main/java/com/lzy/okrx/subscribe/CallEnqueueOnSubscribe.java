@@ -50,7 +50,7 @@ public final class CallEnqueueOnSubscribe<T> implements OnSubscribe<Response<T>>
 
         call.execute(new Callback<T>() {
             @Override
-            public T convertResponse(okhttp3.Response response) throws Exception {
+            public T convertResponse(okhttp3.Response response) throws Throwable {
                 // okrx 使用converter转换，不需要这个解析方法
                 return null;
             }
@@ -71,9 +71,9 @@ public final class CallEnqueueOnSubscribe<T> implements OnSubscribe<Response<T>>
 
             @Override
             public void onError(Response<T> response) {
-                Exception e = response.getException();
-                Exceptions.throwIfFatal(e);
-                arbiter.emitError(e);
+                Throwable throwable = response.getException();
+                Exceptions.throwIfFatal(throwable);
+                arbiter.emitError(throwable);
             }
 
             @Override

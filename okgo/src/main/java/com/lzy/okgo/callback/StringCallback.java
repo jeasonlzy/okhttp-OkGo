@@ -37,7 +37,7 @@ public abstract class StringCallback extends AbsCallback<String> {
     }
 
     @Override
-    public String convertResponse(Response response) throws Exception {
+    public String convertResponse(Response response) throws Throwable {
         String s = convert.convertResponse(response);
         response.close();
         return s;

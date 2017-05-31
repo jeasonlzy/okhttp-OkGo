@@ -30,7 +30,7 @@ import okhttp3.Headers;
 public final class Response<T> {
 
     private T body;
-    private Exception exception;
+    private Throwable throwable;
     private boolean isFromCache;
     private okhttp3.Call rawCall;
     private okhttp3.Response rawResponse;
@@ -44,12 +44,12 @@ public final class Response<T> {
         return response;
     }
 
-    public static <T> Response<T> error(boolean isFromCache, Call rawCall, okhttp3.Response rawResponse, Exception exception) {
+    public static <T> Response<T> error(boolean isFromCache, Call rawCall, okhttp3.Response rawResponse, Throwable throwable) {
         Response<T> response = new Response<>();
         response.setFromCache(isFromCache);
         response.setRawCall(rawCall);
         response.setRawResponse(rawResponse);
-        response.setException(exception);
+        response.setException(throwable);
         return response;
     }
 
@@ -69,7 +69,7 @@ public final class Response<T> {
     }
 
     public boolean isSuccessful() {
-        return exception == null;
+        return throwable == null;
     }
 
     public void setBody(T body) {
@@ -80,12 +80,12 @@ public final class Response<T> {
         return body;
     }
 
-    public Exception getException() {
-        return exception;
+    public Throwable getException() {
+        return throwable;
     }
 
-    public void setException(Exception exception) {
-        this.exception = exception;
+    public void setException(Throwable exception) {
+        this.throwable = exception;
     }
 
     public Call getRawCall() {
