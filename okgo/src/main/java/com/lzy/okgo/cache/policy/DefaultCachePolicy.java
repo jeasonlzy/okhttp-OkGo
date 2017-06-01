@@ -19,7 +19,7 @@ import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.callback.Callback;
 import com.lzy.okgo.exception.CacheException;
 import com.lzy.okgo.model.Response;
-import com.lzy.okgo.request.HttpRequest;
+import com.lzy.okgo.request.Request;
 
 import okhttp3.Call;
 
@@ -34,7 +34,7 @@ import okhttp3.Call;
  */
 public class DefaultCachePolicy<T> extends BaseCachePolicy<T> {
 
-    public DefaultCachePolicy(HttpRequest<T, ? extends HttpRequest> request) {
+    public DefaultCachePolicy(Request<T, ? extends Request> request) {
         super(request);
     }
 
@@ -65,7 +65,7 @@ public class DefaultCachePolicy<T> extends BaseCachePolicy<T> {
         if (response.code() != 304) return false;
 
         if (cacheEntity == null) {
-            final Response<T> error = Response.error(true, call, response, CacheException.NON_AND_304(httpRequest.getCacheKey()));
+            final Response<T> error = Response.error(true, call, response, CacheException.NON_AND_304(request.getCacheKey()));
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -92,7 +92,7 @@ public class DefaultCachePolicy<T> extends BaseCachePolicy<T> {
         //HTTP cache protocol
         if (response.isSuccessful() && response.code() == 304) {
             if (cacheEntity == null) {
-                response = Response.error(true, rawCall, response.getRawResponse(), CacheException.NON_AND_304(httpRequest.getCacheKey()));
+                response = Response.error(true, rawCall, response.getRawResponse(), CacheException.NON_AND_304(request.getCacheKey()));
             } else {
                 response = Response.success(true, cacheEntity.getData(), rawCall, response.getRawResponse());
             }
@@ -106,7 +106,7 @@ public class DefaultCachePolicy<T> extends BaseCachePolicy<T> {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mCallback.onStart(httpRequest);
+                mCallback.onStart(request);
             }
         });
         requestNetworkAsync();

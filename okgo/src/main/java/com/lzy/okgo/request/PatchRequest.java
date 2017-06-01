@@ -34,7 +34,7 @@ import okhttp3.RequestBody;
  * 修订历史：
  * ================================================
  */
-public class PatchRequest<T> extends HttpBodyRequest<T, PatchRequest<T>> {
+public class PatchRequest<T> extends BodyRequest<T, PatchRequest<T>> {
 
     public PatchRequest(String url) {
         super(url);

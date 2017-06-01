@@ -36,7 +36,7 @@ import okhttp3.RequestBody;
  * 修订历史：
  * ================================================
  */
-public abstract class HttpBodyRequest<T, R extends HttpBodyRequest> extends HttpRequest<T, R> implements HasBody<R> {
+public abstract class BodyRequest<T, R extends BodyRequest> extends Request<T, R> implements HasBody<R> {
 
     protected MediaType mediaType;      //上传的MIME类型
     protected String content;           //上传的文本内容
@@ -47,7 +47,7 @@ public abstract class HttpBodyRequest<T, R extends HttpBodyRequest> extends Http
     protected boolean isSpliceUrl = false;  //是否拼接url参数
     protected RequestBody requestBody;
 
-    public HttpBodyRequest(String url) {
+    public BodyRequest(String url) {
         super(url);
     }
 

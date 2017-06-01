@@ -34,7 +34,7 @@ import okhttp3.RequestBody;
  * 修订历史：
  * ================================================
  */
-public class OptionsRequest<T> extends HttpBodyRequest<T, OptionsRequest<T>> {
+public class OptionsRequest<T> extends BodyRequest<T, OptionsRequest<T>> {
 
     public OptionsRequest(String url) {
         super(url);

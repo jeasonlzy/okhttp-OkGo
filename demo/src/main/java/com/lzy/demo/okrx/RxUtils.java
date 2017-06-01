@@ -20,7 +20,7 @@ import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.HttpMethod;
 import com.lzy.okgo.model.HttpParams;
-import com.lzy.okgo.request.HttpRequest;
+import com.lzy.okgo.request.Request;
 import com.lzy.okrx.adapter.ObservableBody;
 
 import java.lang.reflect.Type;
@@ -63,7 +63,7 @@ public class RxUtils {
     }
 
     public static <T> Observable<T> request(HttpMethod method, String url, Type type, Class<T> clazz, HttpParams params, HttpHeaders headers) {
-        HttpRequest<T, ? extends HttpRequest> request;
+        Request<T, ? extends Request> request;
         if (method == HttpMethod.GET) request = OkGo.get(url);
         else if (method == HttpMethod.POST) request = OkGo.post(url);
         else if (method == HttpMethod.PUT) request = OkGo.put(url);

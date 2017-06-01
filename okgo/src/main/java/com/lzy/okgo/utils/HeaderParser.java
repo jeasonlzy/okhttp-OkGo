@@ -20,7 +20,7 @@ import android.text.TextUtils;
 import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.model.HttpHeaders;
-import com.lzy.okgo.request.HttpRequest;
+import com.lzy.okgo.request.Request;
 
 import java.util.Locale;
 import java.util.StringTokenizer;
@@ -134,7 +134,7 @@ public class HeaderParser {
      * @param cacheEntity 缓存实体类
      * @param cacheMode   缓存模式
      */
-    public static <T> void addCacheHeaders(HttpRequest request, CacheEntity<T> cacheEntity, CacheMode cacheMode) {
+    public static <T> void addCacheHeaders(Request request, CacheEntity<T> cacheEntity, CacheMode cacheMode) {
         //1. 按照标准的 http 协议，添加304相关请求头
         if (cacheEntity != null && cacheMode == CacheMode.DEFAULT) {
             HttpHeaders responseHeaders = cacheEntity.getResponseHeaders();

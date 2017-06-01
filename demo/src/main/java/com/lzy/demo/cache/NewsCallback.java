@@ -20,7 +20,7 @@ import com.lzy.demo.model.NewsResponse;
 import com.lzy.demo.utils.Convert;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.callback.AbsCallback;
-import com.lzy.okgo.request.HttpRequest;
+import com.lzy.okgo.request.Request;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -39,7 +39,7 @@ import okhttp3.Response;
 public abstract class NewsCallback<T> extends AbsCallback<T> {
 
     @Override
-    public void onStart(HttpRequest<T, ? extends HttpRequest> request) {
+    public void onStart(Request<T, ? extends Request> request) {
         //缓存演示代码所有请求需要添加 apikey
         request.headers("apikey", Urls.APIKEY);
     }

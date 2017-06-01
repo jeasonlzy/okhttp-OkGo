@@ -34,7 +34,7 @@ import okhttp3.RequestBody;
  * 修订历史：
  * ================================================
  */
-public class DeleteRequest<T> extends HttpBodyRequest<T, DeleteRequest<T>> {
+public class DeleteRequest<T> extends BodyRequest<T, DeleteRequest<T>> {
 
     public DeleteRequest(String url) {
         super(url);

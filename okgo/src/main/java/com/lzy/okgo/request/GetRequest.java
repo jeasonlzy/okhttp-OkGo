@@ -18,7 +18,6 @@ package com.lzy.okgo.request;
 import com.lzy.okgo.model.HttpMethod;
 import com.lzy.okgo.utils.HttpUtils;
 
-import okhttp3.Request;
 import okhttp3.RequestBody;
 
 /**
@@ -30,7 +29,7 @@ import okhttp3.RequestBody;
  * 修订历史：
  * ================================================
  */
-public class GetRequest<T> extends HttpRequest<T, GetRequest<T>> {
+public class GetRequest<T> extends Request<T, GetRequest<T>> {
 
     public GetRequest(String url) {
         super(url);
@@ -47,8 +46,8 @@ public class GetRequest<T> extends HttpRequest<T, GetRequest<T>> {
     }
 
     @Override
-    public Request generateRequest(RequestBody requestBody) {
-        Request.Builder requestBuilder = HttpUtils.appendHeaders(headers);
+    public okhttp3.Request generateRequest(RequestBody requestBody) {
+        okhttp3.Request.Builder requestBuilder = HttpUtils.appendHeaders(headers);
         url = HttpUtils.createUrlFromParams(baseUrl, params.urlParamsMap);
         return requestBuilder.get().url(url).tag(tag).build();
     }

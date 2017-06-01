@@ -19,7 +19,7 @@ import android.os.Message;
 
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.Response;
-import com.lzy.okgo.request.HttpBodyRequest;
+import com.lzy.okgo.request.BodyRequest;
 import com.lzy.okgo.utils.OkLogger;
 import com.lzy.okserver.listener.UploadListener;
 import com.lzy.okserver.task.PriorityAsyncTask;
@@ -71,7 +71,7 @@ public class UploadTask<T> extends PriorityAsyncTask<Void, UploadInfo, UploadInf
         //构建请求体,默认使用post请求上传
         okhttp3.Response response;
         try {
-            HttpBodyRequest request = mUploadInfo.getRequest();
+            BodyRequest request = mUploadInfo.getRequest();
             request.setCallback(new MergeListener());
             response = request.execute();
         } catch (IOException e) {

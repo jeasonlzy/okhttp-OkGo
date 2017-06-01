@@ -24,7 +24,7 @@ import com.lzy.okgo.cache.policy.NoneCacheRequestPolicy;
 import com.lzy.okgo.cache.policy.RequestFailedCachePolicy;
 import com.lzy.okgo.callback.Callback;
 import com.lzy.okgo.model.Response;
-import com.lzy.okgo.request.HttpRequest;
+import com.lzy.okgo.request.Request;
 import com.lzy.okgo.utils.HttpUtils;
 
 /**
@@ -39,10 +39,10 @@ import com.lzy.okgo.utils.HttpUtils;
 public class CacheCall<T> implements Call<T> {
 
     private CachePolicy<T> policy = null;
-    private HttpRequest<T, ? extends HttpRequest> httpRequest;
+    private Request<T, ? extends Request> request;
 
-    public CacheCall(HttpRequest<T, ? extends HttpRequest> httpRequest) {
-        this.httpRequest = httpRequest;
+    public CacheCall(Request<T, ? extends Request> request) {
+        this.request = request;
         this.policy = preparePolicy();
     }
 
@@ -63,25 +63,25 @@ public class CacheCall<T> implements Call<T> {
     }
 
     private CachePolicy<T> preparePolicy() {
-        switch (httpRequest.getCacheMode()) {
+        switch (request.getCacheMode()) {
             case DEFAULT:
-                policy = new DefaultCachePolicy<>(httpRequest);
+                policy = new DefaultCachePolicy<>(request);
                 break;
             case NO_CACHE:
-                policy = new NoCachePolicy<>(httpRequest);
+                policy = new NoCachePolicy<>(request);
                 break;
             case IF_NONE_CACHE_REQUEST:
-                policy = new NoneCacheRequestPolicy<>(httpRequest);
+                policy = new NoneCacheRequestPolicy<>(request);
                 break;
             case FIRST_CACHE_THEN_REQUEST:
-                policy = new FirstCacheRequestPolicy<>(httpRequest);
+                policy = new FirstCacheRequestPolicy<>(request);
                 break;
             case REQUEST_FAILED_READ_CACHE:
-                policy = new RequestFailedCachePolicy<>(httpRequest);
+                policy = new RequestFailedCachePolicy<>(request);
                 break;
         }
-        if (httpRequest.getCachePolicy() != null) {
-            policy = httpRequest.getCachePolicy();
+        if (request.getCachePolicy() != null) {
+            policy = request.getCachePolicy();
         }
         HttpUtils.checkNotNull(policy, "policy == null");
         return policy;
@@ -105,10 +105,10 @@ public class CacheCall<T> implements Call<T> {
     @SuppressWarnings("CloneDoesntCallSuperClone")
     @Override
     public Call<T> clone() {
-        return new CacheCall<>(httpRequest);
+        return new CacheCall<>(request);
     }
 
-    public HttpRequest getHttpRequest() {
-        return httpRequest;
+    public Request getRequest() {
+        return request;
     }
 }

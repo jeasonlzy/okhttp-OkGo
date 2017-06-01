@@ -16,7 +16,7 @@
 package com.lzy.demo.callback;
 
 import com.lzy.okgo.callback.AbsCallback;
-import com.lzy.okgo.request.HttpRequest;
+import com.lzy.okgo.request.Request;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -49,7 +49,7 @@ public abstract class JsonCallback<T> extends AbsCallback<T> {
     }
 
     @Override
-    public void onStart(HttpRequest<T, ? extends HttpRequest> request) {
+    public void onStart(Request<T, ? extends Request> request) {
         super.onStart(request);
         // 主要用于在所有请求之前添加公共的请求头或请求参数
         // 例如登录授权的 token

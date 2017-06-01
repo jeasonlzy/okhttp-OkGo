@@ -18,7 +18,7 @@ package com.lzy.okrx2.observable;
 import com.lzy.okgo.adapter.Call;
 import com.lzy.okgo.callback.Callback;
 import com.lzy.okgo.model.Response;
-import com.lzy.okgo.request.HttpRequest;
+import com.lzy.okgo.request.Request;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -79,7 +79,7 @@ public class CallEnqueueObservable<T> extends Observable<Response<T>> {
         }
 
         @Override
-        public void onStart(HttpRequest<T, ? extends HttpRequest> request) {
+        public void onStart(Request<T, ? extends Request> request) {
         }
 
         @Override

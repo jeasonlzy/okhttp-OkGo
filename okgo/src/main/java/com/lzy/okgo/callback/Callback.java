@@ -18,7 +18,7 @@ package com.lzy.okgo.callback;
 import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.convert.Converter;
 import com.lzy.okgo.model.Response;
-import com.lzy.okgo.request.HttpRequest;
+import com.lzy.okgo.request.Request;
 
 /**
  * ================================================
@@ -53,7 +53,7 @@ import com.lzy.okgo.request.HttpRequest;
 public interface Callback<T> extends Converter<T> {
 
     /** 请求网络开始前，UI线程 */
-    void onStart(HttpRequest<T, ? extends HttpRequest> request);
+    void onStart(Request<T, ? extends Request> request);
 
     /** 对返回数据进行操作的回调， UI线程 */
     void onSuccess(Response<T> response);

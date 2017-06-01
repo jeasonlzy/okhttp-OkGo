@@ -28,7 +28,7 @@ import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.FileCallback;
 import com.lzy.okgo.model.Response;
-import com.lzy.okgo.request.HttpRequest;
+import com.lzy.okgo.request.Request;
 
 import java.io.File;
 
@@ -76,7 +76,7 @@ public class FileDownloadActivity extends BaseDetailActivity {
                 .execute(new FileCallback("OkGo.apk") {
 
                     @Override
-                    public void onStart(HttpRequest<File, ? extends HttpRequest> request) {
+                    public void onStart(Request<File, ? extends Request> request) {
                         btnFileDownload.setText("正在下载中");
                     }
 

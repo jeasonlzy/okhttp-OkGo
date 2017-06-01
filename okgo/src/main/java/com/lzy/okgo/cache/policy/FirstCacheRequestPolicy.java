@@ -18,7 +18,7 @@ package com.lzy.okgo.cache.policy;
 import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.callback.Callback;
 import com.lzy.okgo.model.Response;
-import com.lzy.okgo.request.HttpRequest;
+import com.lzy.okgo.request.Request;
 
 import okhttp3.Call;
 
@@ -32,7 +32,7 @@ import okhttp3.Call;
  * ================================================
  */
 public class FirstCacheRequestPolicy<T> extends BaseCachePolicy<T> {
-    public FirstCacheRequestPolicy(HttpRequest<T, ? extends HttpRequest> request) {
+    public FirstCacheRequestPolicy(Request<T, ? extends Request> request) {
         super(request);
     }
 
@@ -78,7 +78,7 @@ public class FirstCacheRequestPolicy<T> extends BaseCachePolicy<T> {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mCallback.onStart(httpRequest);
+                mCallback.onStart(request);
             }
         });
         if (cacheEntity != null) {

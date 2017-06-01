@@ -28,7 +28,7 @@ import com.lzy.okgo.OkGo;
 import com.lzy.okgo.adapter.Call;
 import com.lzy.okgo.callback.FileCallback;
 import com.lzy.okgo.model.Response;
-import com.lzy.okgo.request.HttpRequest;
+import com.lzy.okgo.request.Request;
 
 import org.json.JSONObject;
 
@@ -110,7 +110,7 @@ public class TestActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onStart(HttpRequest<File, ? extends HttpRequest> request) {
+                    public void onStart(Request<File, ? extends Request> request) {
                         System.out.println("onStart");
                     }
 

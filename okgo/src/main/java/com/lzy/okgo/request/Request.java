@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
@@ -50,7 +49,7 @@ import okhttp3.Response;
  * 修订历史：
  * ================================================
  */
-public abstract class HttpRequest<T, R extends HttpRequest> {
+public abstract class Request<T, R extends Request> {
 
     protected String url;
     protected String baseUrl;
@@ -63,13 +62,13 @@ public abstract class HttpRequest<T, R extends HttpRequest> {
     protected HttpParams params = new HttpParams();                 //添加的param
     protected HttpHeaders headers = new HttpHeaders();              //添加的header
 
-    protected Request mRequest;
+    protected okhttp3.Request mRequest;
     protected Callback<T> callback;
     protected Converter<T> converter;
     protected CachePolicy<T> cachePolicy;
     protected Call<T> call;
 
-    public HttpRequest(String url) {
+    public Request(String url) {
         this.url = url;
         baseUrl = url;
         OkGo go = OkGo.getInstance();
@@ -295,7 +294,7 @@ public abstract class HttpRequest<T, R extends HttpRequest> {
         return retryCount;
     }
 
-    public Request getRequest() {
+    public okhttp3.Request getRequest() {
         return mRequest;
     }
 
@@ -310,7 +309,7 @@ public abstract class HttpRequest<T, R extends HttpRequest> {
     public Converter<T> getConverter() {
         // converter 优先级高于 callback
         if (converter == null) converter = callback;
-        HttpUtils.checkNotNull(converter, "converter == null, do you forget call HttpRequest#converter(Converter<T>) ?");
+        HttpUtils.checkNotNull(converter, "converter == null, do you forget call Request#converter(Converter<T>) ?");
         return converter;
     }
 
@@ -337,7 +336,7 @@ public abstract class HttpRequest<T, R extends HttpRequest> {
     protected abstract RequestBody generateRequestBody();
 
     /** 根据不同的请求方式，将RequestBody转换成Request对象 */
-    public abstract Request generateRequest(RequestBody requestBody);
+    public abstract okhttp3.Request generateRequest(RequestBody requestBody);
 
     /** 获取okhttp的同步call对象 */
     public okhttp3.Call getRawCall() {

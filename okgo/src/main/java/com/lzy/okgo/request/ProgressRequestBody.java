@@ -41,13 +41,13 @@ import okio.Sink;
  * 修订历史：
  * ================================================
  */
-public class ProgressRequestBody extends RequestBody {
+class ProgressRequestBody extends RequestBody {
 
     protected RequestBody delegate;  //实际的待包装请求体
     protected Listener listener;     //进度回调接口
     protected CountingSink countingSink; //包装完成的BufferedSink
 
-    public ProgressRequestBody(RequestBody delegate) {
+    ProgressRequestBody(RequestBody delegate) {
         this.delegate = delegate;
     }
 
@@ -87,13 +87,13 @@ public class ProgressRequestBody extends RequestBody {
     }
 
     /** 包装 */
-    protected final class CountingSink extends ForwardingSink {
+    private final class CountingSink extends ForwardingSink {
         private long bytesWritten = 0;   //当前写入字节数
         private long contentLength = 0;  //总字节长度，避免多次调用contentLength()方法
         private long lastRefreshUiTime;  //最后一次刷新的时间
         private long lastWriteBytes;     //最后一次写入字节数据
 
-        public CountingSink(Sink delegate) {
+        CountingSink(Sink delegate) {
             super(delegate);
         }
 

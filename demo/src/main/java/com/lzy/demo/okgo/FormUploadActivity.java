@@ -36,7 +36,7 @@ import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.Response;
-import com.lzy.okgo.request.HttpRequest;
+import com.lzy.okgo.request.Request;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -135,7 +135,7 @@ public class FormUploadActivity extends BaseDetailActivity {
                 .addFileParams("file", files)           // 这种方式为同一个key，上传多个文件
                 .execute(new JsonCallback<LzyResponse<ServerModel>>() {
                     @Override
-                    public void onStart(HttpRequest<LzyResponse<ServerModel>, ? extends HttpRequest> request) {
+                    public void onStart(Request<LzyResponse<ServerModel>, ? extends Request> request) {
                         btnFormUpload.setText("正在上传中...");
                     }
 

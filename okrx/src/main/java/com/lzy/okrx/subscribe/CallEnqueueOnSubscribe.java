@@ -18,7 +18,7 @@ package com.lzy.okrx.subscribe;
 import com.lzy.okgo.adapter.Call;
 import com.lzy.okgo.callback.Callback;
 import com.lzy.okgo.model.Response;
-import com.lzy.okgo.request.HttpRequest;
+import com.lzy.okgo.request.Request;
 
 import rx.Observable.OnSubscribe;
 import rx.Subscriber;
@@ -56,7 +56,7 @@ public final class CallEnqueueOnSubscribe<T> implements OnSubscribe<Response<T>>
             }
 
             @Override
-            public void onStart(HttpRequest<T, ? extends HttpRequest> request) {
+            public void onStart(Request<T, ? extends Request> request) {
             }
 
             @Override

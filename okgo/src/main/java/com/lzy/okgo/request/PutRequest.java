@@ -34,7 +34,7 @@ import okhttp3.RequestBody;
  * 修订历史：
  * ================================================
  */
-public class PutRequest<T> extends HttpBodyRequest<T, PutRequest<T>> {
+public class PutRequest<T> extends BodyRequest<T, PutRequest<T>> {
 
     public PutRequest(String url) {
         super(url);

@@ -18,7 +18,7 @@ package com.lzy.okserver.download;
 import android.os.Environment;
 import android.text.TextUtils;
 
-import com.lzy.okgo.request.HttpRequest;
+import com.lzy.okgo.request.Request;
 import com.lzy.okserver.download.db.DownloadDBManager;
 import com.lzy.okserver.listener.DownloadListener;
 import com.lzy.okserver.task.ExecutorWithListener;
@@ -91,17 +91,17 @@ public class DownloadManager {
     }
 
     /** 添加一个下载任务,依据taskTag标识是否属于同一个任务 */
-    public void addTask(String taskTag, HttpRequest request, DownloadListener listener) {
+    public void addTask(String taskTag, Request request, DownloadListener listener) {
         addTask(null, taskTag, null, request, listener, false);
     }
 
     /** 添加一个下载任务,依据taskTag标识是否属于同一个任务 */
-    public void addTask(String taskTag, Serializable data, HttpRequest request, DownloadListener listener) {
+    public void addTask(String taskTag, Serializable data, Request request, DownloadListener listener) {
         addTask(null, taskTag, data, request, listener, false);
     }
 
     /** 添加一个下载任务,依据taskTag标识是否属于同一个任务 */
-    public void addTask(String fileName, String taskTag, HttpRequest request, DownloadListener listener) {
+    public void addTask(String fileName, String taskTag, Request request, DownloadListener listener) {
         addTask(fileName, taskTag, null, request, listener, false);
     }
 
@@ -112,7 +112,7 @@ public class DownloadManager {
      * @param listener  下载监听
      * @param isRestart 是否重新开始下载
      */
-    private void addTask(String fileName, String taskTag, Serializable data, HttpRequest request, DownloadListener listener, boolean isRestart) {
+    private void addTask(String fileName, String taskTag, Serializable data, Request request, DownloadListener listener, boolean isRestart) {
         DownloadInfo downloadInfo = getDownloadInfo(taskTag);
         if (downloadInfo == null) {
             downloadInfo = new DownloadInfo();

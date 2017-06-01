@@ -19,7 +19,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.view.Window;
 
-import com.lzy.okgo.request.HttpRequest;
+import com.lzy.okgo.request.Request;
 
 /**
  * ================================================
@@ -48,7 +48,7 @@ public abstract class DialogCallback<T> extends JsonCallback<T> {
     }
 
     @Override
-    public void onStart(HttpRequest<T, ? extends HttpRequest> request) {
+    public void onStart(Request<T, ? extends Request> request) {
         if (dialog != null && !dialog.isShowing()) {
             dialog.show();
         }

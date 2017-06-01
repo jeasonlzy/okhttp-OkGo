@@ -24,7 +24,7 @@ import com.lzy.okgo.callback.Callback;
 import com.lzy.okgo.db.CacheManager;
 import com.lzy.okgo.exception.HttpException;
 import com.lzy.okgo.model.Response;
-import com.lzy.okgo.request.HttpRequest;
+import com.lzy.okgo.request.Request;
 import com.lzy.okgo.utils.HeaderParser;
 import com.lzy.okgo.utils.HttpUtils;
 
@@ -45,7 +45,7 @@ import okhttp3.Headers;
  */
 public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
 
-    protected HttpRequest<T, ? extends HttpRequest> httpRequest;
+    protected Request<T, ? extends Request> request;
     protected volatile boolean canceled;
     protected volatile int currentRetryCount = 0;
     protected boolean executed;
@@ -53,8 +53,8 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
     protected Callback<T> mCallback;
     protected CacheEntity<T> cacheEntity;
 
-    public BaseCachePolicy(HttpRequest<T, ? extends HttpRequest> request) {
-        this.httpRequest = request;
+    public BaseCachePolicy(Request<T, ? extends Request> request) {
+        this.request = request;
     }
 
     @Override
@@ -65,19 +65,19 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
     @Override
     public CacheEntity<T> prepareCache() {
         //check the config of cache
-        if (httpRequest.getCacheKey() == null) {
-            httpRequest.cacheKey(HttpUtils.createUrlFromParams(httpRequest.getBaseUrl(), httpRequest.getParams().urlParamsMap));
+        if (request.getCacheKey() == null) {
+            request.cacheKey(HttpUtils.createUrlFromParams(request.getBaseUrl(), request.getParams().urlParamsMap));
         }
-        if (httpRequest.getCacheMode() == null) {
-            httpRequest.cacheMode(CacheMode.NO_CACHE);
+        if (request.getCacheMode() == null) {
+            request.cacheMode(CacheMode.NO_CACHE);
         }
 
-        CacheMode cacheMode = httpRequest.getCacheMode();
+        CacheMode cacheMode = request.getCacheMode();
         if (cacheMode != CacheMode.NO_CACHE) {
             //noinspection unchecked
-            cacheEntity = (CacheEntity<T>) CacheManager.getInstance().get(httpRequest.getCacheKey());
-            HeaderParser.addCacheHeaders(httpRequest, cacheEntity, cacheMode);
-            if (cacheEntity != null && cacheEntity.checkExpire(cacheMode, httpRequest.getCacheTime(), System.currentTimeMillis())) {
+            cacheEntity = (CacheEntity<T>) CacheManager.getInstance().get(request.getCacheKey());
+            HeaderParser.addCacheHeaders(request, cacheEntity, cacheMode);
+            if (cacheEntity != null && cacheEntity.checkExpire(cacheMode, request.getCacheTime(), System.currentTimeMillis())) {
                 cacheEntity.setExpire(true);
             }
         }
@@ -92,7 +92,7 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
     public synchronized okhttp3.Call prepareRawCall() {
         if (executed) throw HttpException.COMMON("Already executed!");
         executed = true;
-        rawCall = httpRequest.getRawCall();
+        rawCall = request.getRawCall();
         if (canceled) rawCall.cancel();
         return rawCall;
     }
@@ -107,14 +107,14 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
                 return Response.error(false, rawCall, response, HttpException.NET_ERROR());
             }
 
-            T body = httpRequest.getConverter().convertResponse(response);
+            T body = request.getConverter().convertResponse(response);
             //save cache when request is successful
             saveCache(response.headers(), body);
             return Response.success(false, body, rawCall, response);
         } catch (Throwable throwable) {
-            if (throwable instanceof SocketTimeoutException && currentRetryCount < httpRequest.getRetryCount()) {
+            if (throwable instanceof SocketTimeoutException && currentRetryCount < request.getRetryCount()) {
                 currentRetryCount++;
-                rawCall = httpRequest.getRawCall();
+                rawCall = request.getRawCall();
                 if (canceled) {
                     rawCall.cancel();
                 } else {
@@ -129,10 +129,10 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
         rawCall.enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(okhttp3.Call call, IOException e) {
-                if (e instanceof SocketTimeoutException && currentRetryCount < httpRequest.getRetryCount()) {
+                if (e instanceof SocketTimeoutException && currentRetryCount < request.getRetryCount()) {
                     //retry when timeout
                     currentRetryCount++;
-                    rawCall = httpRequest.getRawCall();
+                    rawCall = request.getRawCall();
                     if (canceled) {
                         rawCall.cancel();
                     } else {
@@ -160,7 +160,7 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
                 if (onAnalysisResponse(call, response)) return;
 
                 try {
-                    T body = httpRequest.getConverter().convertResponse(response);
+                    T body = request.getConverter().convertResponse(response);
                     //save cache when request is successful
                     saveCache(response.headers(), body);
                     Response<T> success = Response.success(false, body, call, response);
@@ -181,16 +181,16 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
      */
     @SuppressWarnings("unchecked")
     private void saveCache(Headers headers, T data) {
-        if (httpRequest.getCacheMode() == CacheMode.NO_CACHE) return;    //不需要缓存,直接返回
+        if (request.getCacheMode() == CacheMode.NO_CACHE) return;    //不需要缓存,直接返回
         if (data instanceof Bitmap) return;             //Bitmap没有实现Serializable,不能缓存
 
-        CacheEntity<T> cache = HeaderParser.createCacheEntity(headers, data, httpRequest.getCacheMode(), httpRequest.getCacheKey());
+        CacheEntity<T> cache = HeaderParser.createCacheEntity(headers, data, request.getCacheMode(), request.getCacheKey());
         if (cache == null) {
             //服务器不需要缓存，移除本地缓存
-            CacheManager.getInstance().remove(httpRequest.getCacheKey());
+            CacheManager.getInstance().remove(request.getCacheKey());
         } else {
             //缓存命中，更新缓存
-            CacheManager.getInstance().replace(httpRequest.getCacheKey(), (CacheEntity<Object>) cache);
+            CacheManager.getInstance().replace(request.getCacheKey(), (CacheEntity<Object>) cache);
         }
     }
 
