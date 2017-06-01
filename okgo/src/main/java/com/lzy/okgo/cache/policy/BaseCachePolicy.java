@@ -118,7 +118,6 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
                 if (canceled) {
                     rawCall.cancel();
                 } else {
-                    //TODO 这个递归可能有问题
                     requestNetworkSync();
                 }
             }

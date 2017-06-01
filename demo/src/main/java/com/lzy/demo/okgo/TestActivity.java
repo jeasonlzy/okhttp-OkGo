@@ -25,8 +25,8 @@ import com.lzy.demo.base.BaseActivity;
 import com.lzy.demo.callback.JsonCallback;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
+import com.lzy.okgo.adapter.Call;
 import com.lzy.okgo.callback.FileCallback;
-import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.HttpRequest;
 
@@ -65,34 +65,42 @@ public class TestActivity extends BaseActivity {
         OkGo.getInstance().cancelTag(this);
     }
 
-
     @OnClick(R.id.btn1)
     public void btn1(View view) {
         OkGo.<JSONObject>get(Urls.URL_JSONOBJECT)//
                 .execute(new JsonCallback<JSONObject>() {
                     @Override
                     public void onSuccess(Response<JSONObject> response) {
+                        System.out.println(response.body());
+                    }
 
+                    @Override
+                    public void onError(Response<JSONObject> response) {
+                        response.getException().printStackTrace();
                     }
                 });
     }
 
     @OnClick(R.id.btn2)
     public void btn2(View view) {
-//        OkGo.<String>get("https://www.qunar.com/")//
-//                .tag(this)//
-//                .execute(new StringCallback() {
-//                    @Override
-//                    public void onSuccess(Response<String> response) {
-//                        System.out.println(response.body());
-//                    }
-//                });
-        OkGo.getInstance().cancelTag(this);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Call<JSONObject> adapt = OkGo.<JSONObject>get(Urls.URL_JSONOBJECT).adapt();
+                    Response<JSONObject> response = adapt.execute();
+                    System.out.println("body " + response.body());
+                    Throwable exception = response.getException();
+                    if (exception != null) exception.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     @OnClick(R.id.btn3)
     public void btn3(View view) {
-
         OkGo.<File>get("http://www.apk3.com/uploads/soft/20160511/wshdyq.hit_1.15_25.apk")//
                 .tag(this)//
                 .execute(new FileCallback() {
