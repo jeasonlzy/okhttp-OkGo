@@ -17,15 +17,21 @@ import java.util.List;
  * ================================================
  */
 public class Progress {
-    public long totalSize;              //总字节长度
-    public float networkSpeed;          //网速
-    public float fraction;              //下载的进度，0-1
-    public long currentSize;            //本次下载的大小
-    public long lastDownloadLength;     //上次已下载的大小
+    /** 总字节长度, byte */
+    public long totalSize;
+    /** 本次下载的大小, byte */
+    public long currentSize;
+    /** 上次已下载的大小, byte */
+    public long lastSize;
+    /** 网速，byte/s */
+    public long speed;
+    /** 下载的进度，0-1 */
+    public float fraction;
+
     private long speedSize;             //每一小段时间间隔的网络流量
     private long lastRefreshTime;       //最后一次刷新的时间
 
-    private List<Float> speedBuffer;
+    private List<Long> speedBuffer;
 
     public Progress() {
         lastRefreshTime = SystemClock.elapsedRealtime();
@@ -45,8 +51,8 @@ public class Progress {
         boolean isNotify = (currentTime - progress.lastRefreshTime) >= OkGo.REFRESH_TIME;
         if (isNotify || progress.currentSize == totalSize) {
             long diffTime = currentTime - progress.lastRefreshTime;
-            progress.networkSpeed = progress.bufferSpeed(progress.speedSize * 1000.0f / diffTime);
-            progress.fraction = (progress.lastDownloadLength + progress.currentSize) * 1.0f / totalSize;
+            progress.speed = progress.bufferSpeed(progress.speedSize * 1000 / diffTime);
+            progress.fraction = (progress.lastSize + progress.currentSize) * 1.0f / totalSize;
             progress.lastRefreshTime = currentTime;
             progress.speedSize = 0;
             if (action != null) {
@@ -57,12 +63,12 @@ public class Progress {
     }
 
     /** 平滑网速，避免抖动过大 */
-    private float bufferSpeed(float speed) {
+    private long bufferSpeed(long speed) {
         speedBuffer.add(speed);
         if (speedBuffer.size() > 10) {
             speedBuffer.remove(0);
         }
-        float sum = 0;
+        long sum = 0;
         for (float speedTemp : speedBuffer) {
             sum += speedTemp;
         }

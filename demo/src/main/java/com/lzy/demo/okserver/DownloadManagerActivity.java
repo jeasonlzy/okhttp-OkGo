@@ -221,7 +221,7 @@ public class DownloadManagerActivity extends BaseActivity implements View.OnClic
                 }
                 netSpeed.setText("下载完成");
             } else if (downloadInfo.getState() == DownloadManager.DOWNLOADING) {
-                String networkSpeed = Formatter.formatFileSize(DownloadManagerActivity.this, (long) downloadInfo.getNetworkSpeed());
+                String networkSpeed = Formatter.formatFileSize(DownloadManagerActivity.this, downloadInfo.getNetworkSpeed());
                 netSpeed.setText(networkSpeed + "/s");
                 download.setText("暂停");
             }

@@ -35,7 +35,7 @@ public class UploadInfo {
     private long totalLength;                   //总大小
     private long uploadLength;                  //已上传大小
     private float progress;                     //上传进度
-    private float networkSpeed;                  //上传速度
+    private long networkSpeed;                  //上传速度
     private int state;                          //当前状态
     private BodyRequest request;            //当前任务的网络请求
 
@@ -82,11 +82,11 @@ public class UploadInfo {
         this.uploadLength = uploadLength;
     }
 
-    public float getNetworkSpeed() {
+    public long getNetworkSpeed() {
         return networkSpeed;
     }
 
-    public void setNetworkSpeed(float networkSpeed) {
+    public void setNetworkSpeed(long networkSpeed) {
         this.networkSpeed = networkSpeed;
     }
 

@@ -172,7 +172,7 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
         try {
             randomAccessFile = new RandomAccessFile(file, "rw");
             randomAccessFile.seek(startPos);
-            progress.lastDownloadLength = startPos;
+            progress.lastSize = startPos;
         } catch (Exception e) {
             OkLogger.printStackTrace(e);
             mDownloadInfo.setNetworkSpeed(0);
@@ -229,8 +229,8 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
                 Progress.changeProgress(progress, len, mDownloadInfo.getTotalLength(), new Progress.Action() {
                     @Override
                     public void call(Progress progress) {
-                        mDownloadInfo.setDownloadLength(progress.lastDownloadLength + progress.currentSize);
-                        mDownloadInfo.setNetworkSpeed(progress.networkSpeed);
+                        mDownloadInfo.setDownloadLength(progress.lastSize + progress.currentSize);
+                        mDownloadInfo.setNetworkSpeed(progress.speed);
                         mDownloadInfo.setProgress(progress.fraction);
                         postMessage(null, null);
                     }

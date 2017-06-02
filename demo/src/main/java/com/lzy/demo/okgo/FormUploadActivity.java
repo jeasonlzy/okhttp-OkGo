@@ -154,12 +154,12 @@ public class FormUploadActivity extends BaseDetailActivity {
 
                     @Override
                     public void uploadProgress(Progress progress) {
-                        System.out.println("uploadProgress -- " + progress.totalSize + "  " + progress.currentSize + "  " + progress.fraction + "  " + progress.networkSpeed);
+                        System.out.println("uploadProgress -- " + progress.totalSize + "  " + progress.currentSize + "  " + progress.fraction + "  " + progress.speed);
 
                         String downloadLength = Formatter.formatFileSize(getApplicationContext(), progress.currentSize);
                         String totalLength = Formatter.formatFileSize(getApplicationContext(), progress.totalSize);
                         tvDownloadSize.setText(downloadLength + "/" + totalLength);
-                        String netSpeed = Formatter.formatFileSize(getApplicationContext(), (long) progress.networkSpeed);
+                        String netSpeed = Formatter.formatFileSize(getApplicationContext(), progress.speed);
                         tvNetSpeed.setText(netSpeed + "/S");
                         tvProgress.setText((Math.round(progress.fraction * 10000) * 1.0f / 100) + "%");
                         pbProgress.setMax(100);

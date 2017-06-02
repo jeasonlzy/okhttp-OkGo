@@ -26,16 +26,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.lzy.okgo.OkGo;
 import com.lzy.demo.R;
 import com.lzy.demo.base.BaseActivity;
 import com.lzy.demo.model.ApkModel;
 import com.lzy.demo.utils.ApkUtils;
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.request.GetRequest;
 import com.lzy.okserver.download.DownloadInfo;
 import com.lzy.okserver.download.DownloadManager;
 import com.lzy.okserver.download.DownloadService;
 import com.lzy.okserver.listener.DownloadListener;
-import com.lzy.okgo.request.GetRequest;
 
 import java.io.File;
 
@@ -180,7 +180,7 @@ public class DesActivity extends BaseActivity implements View.OnClickListener {
         String downloadLength = Formatter.formatFileSize(DesActivity.this, downloadInfo.getDownloadLength());
         String totalLength = Formatter.formatFileSize(DesActivity.this, downloadInfo.getTotalLength());
         downloadSize.setText(downloadLength + "/" + totalLength);
-        String networkSpeed = Formatter.formatFileSize(DesActivity.this, (long) downloadInfo.getNetworkSpeed());
+        String networkSpeed = Formatter.formatFileSize(DesActivity.this, downloadInfo.getNetworkSpeed());
         netSpeed.setText(networkSpeed + "/s");
         tvProgress.setText((Math.round(downloadInfo.getProgress() * 10000) * 1.0f / 100) + "%");
         pbProgress.setMax((int) downloadInfo.getTotalLength());

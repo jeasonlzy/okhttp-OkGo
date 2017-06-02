@@ -115,7 +115,7 @@ public class UploadTask<T> extends PriorityAsyncTask<Void, UploadInfo, UploadInf
             mUploadInfo.setUploadLength(progress.currentSize);
             mUploadInfo.setTotalLength(progress.totalSize);
             mUploadInfo.setProgress(progress.fraction);
-            mUploadInfo.setNetworkSpeed(progress.networkSpeed);
+            mUploadInfo.setNetworkSpeed(progress.speed);
             postMessage(null, null, null);
         }
 

@@ -51,7 +51,7 @@ public class DownloadInfo implements Comparable<DownloadInfo> {
     public static final String PROGRESS = "progress";
     public static final String TOTAL_LENGTH = "totalLength";
     public static final String DOWNLOAD_LENGTH = "downloadLength";
-    public static final String NETWORK_SPEED = "networkSpeed";
+    public static final String NETWORK_SPEED = "speed";
     public static final String STATE = "state";
     public static final String DOWNLOAD_REQUEST = "downloadRequest";
     public static final String DATA = "data";
@@ -65,7 +65,7 @@ public class DownloadInfo implements Comparable<DownloadInfo> {
     private float progress;             //下载进度
     private long totalLength;           //总大小
     private long downloadLength;        //已下载大小
-    private float networkSpeed;         //下载速度
+    private long networkSpeed;         //下载速度
     private int state = 0;              //当前状态
     private Request request;            //当前任务的网络请求
     private Serializable data;          //额外的数据
@@ -148,7 +148,7 @@ public class DownloadInfo implements Comparable<DownloadInfo> {
         info.setProgress(cursor.getFloat(cursor.getColumnIndex(DownloadInfo.PROGRESS)));
         info.setTotalLength(cursor.getLong(cursor.getColumnIndex(DownloadInfo.TOTAL_LENGTH)));
         info.setDownloadLength(cursor.getLong(cursor.getColumnIndex(DownloadInfo.DOWNLOAD_LENGTH)));
-        info.setNetworkSpeed(cursor.getFloat(cursor.getColumnIndex(DownloadInfo.NETWORK_SPEED)));
+        info.setNetworkSpeed(cursor.getLong(cursor.getColumnIndex(DownloadInfo.NETWORK_SPEED)));
         info.setState(cursor.getInt(cursor.getColumnIndex(DownloadInfo.STATE)));
 
         ByteArrayInputStream bais = null;
@@ -274,11 +274,11 @@ public class DownloadInfo implements Comparable<DownloadInfo> {
         this.downloadLength = downloadLength;
     }
 
-    public float getNetworkSpeed() {
+    public long getNetworkSpeed() {
         return networkSpeed;
     }
 
-    public void setNetworkSpeed(float networkSpeed) {
+    public void setNetworkSpeed(long networkSpeed) {
         this.networkSpeed = networkSpeed;
     }
 

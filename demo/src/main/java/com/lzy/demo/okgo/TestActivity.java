@@ -122,7 +122,7 @@ public class TestActivity extends BaseActivity {
 
                     @Override
                     public void downloadProgress(Progress progress) {
-                        System.out.println(progress.currentSize + " " + progress.totalSize + " " + progress.fraction + " " + progress.networkSpeed);
+                        System.out.println(progress.currentSize + " " + progress.totalSize + " " + progress.fraction + " " + progress.speed);
                     }
                 });
     }
