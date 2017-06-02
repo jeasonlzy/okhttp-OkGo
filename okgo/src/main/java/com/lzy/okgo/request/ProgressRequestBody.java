@@ -15,7 +15,9 @@
  */
 package com.lzy.okgo.request;
 
-import com.lzy.okgo.OkGo;
+import com.lzy.okgo.callback.Callback;
+import com.lzy.okgo.model.Progress;
+import com.lzy.okgo.utils.HttpUtils;
 import com.lzy.okgo.utils.OkLogger;
 
 import java.io.IOException;
@@ -29,35 +31,22 @@ import okio.Okio;
 import okio.Sink;
 
 /**
- * 包装的请求体，处理进度，可以处理任何的 RequestBody，
- * 但是一般用在 multipart requests 上传大文件的时候
- */
-/**
  * ================================================
  * 作    者：jeasonlzy（廖子尧）Github地址：https://github.com/jeasonlzy
  * 版    本：1.0
  * 创建日期：16/9/11
- * 描    述：
+ * 描    述：包装的请求体，处理进度，可以处理任何的 RequestBody，
  * 修订历史：
  * ================================================
  */
-class ProgressRequestBody extends RequestBody {
+class ProgressRequestBody<T> extends RequestBody {
 
-    protected RequestBody delegate;  //实际的待包装请求体
-    protected Listener listener;     //进度回调接口
-    protected CountingSink countingSink; //包装完成的BufferedSink
+    private RequestBody delegate;         //实际的待包装请求体
+    private Callback<T> callback;
 
-    ProgressRequestBody(RequestBody delegate) {
+    ProgressRequestBody(RequestBody delegate, Callback<T> callback) {
         this.delegate = delegate;
-    }
-
-    public ProgressRequestBody(RequestBody delegate, Listener listener) {
-        this.delegate = delegate;
-        this.listener = listener;
-    }
-
-    public void setListener(Listener listener) {
-        this.listener = listener;
+        this.callback = callback;
     }
 
     /** 重写调用实际的响应体的contentType */
@@ -80,7 +69,7 @@ class ProgressRequestBody extends RequestBody {
     /** 重写进行写入 */
     @Override
     public void writeTo(BufferedSink sink) throws IOException {
-        countingSink = new CountingSink(sink);
+        CountingSink countingSink = new CountingSink(sink);
         BufferedSink bufferedSink = Okio.buffer(countingSink);
         delegate.writeTo(bufferedSink);
         bufferedSink.flush();  //必须调用flush，否则最后一部分数据可能不会被写入
@@ -88,39 +77,36 @@ class ProgressRequestBody extends RequestBody {
 
     /** 包装 */
     private final class CountingSink extends ForwardingSink {
-        private long bytesWritten = 0;   //当前写入字节数
-        private long contentLength = 0;  //总字节长度，避免多次调用contentLength()方法
-        private long lastRefreshUiTime;  //最后一次刷新的时间
-        private long lastWriteBytes;     //最后一次写入字节数据
+
+        private Progress progress;
 
         CountingSink(Sink delegate) {
             super(delegate);
+            progress = new Progress();
+            progress.totalSize = contentLength();
         }
 
         @Override
         public void write(Buffer source, long byteCount) throws IOException {
             super.write(source, byteCount);
-            if (contentLength <= 0) contentLength = contentLength(); //获得contentLength的值，后续不再调用
-            bytesWritten += byteCount;
 
-            long curTime = System.currentTimeMillis();
-            //每100毫秒刷新一次数据
-            if (curTime - lastRefreshUiTime >= OkGo.REFRESH_TIME || bytesWritten == contentLength) {
-                //计算下载速度
-                long diffTime = (curTime - lastRefreshUiTime) / 1000;
-                if (diffTime == 0) diffTime += 1;
-                long diffBytes = bytesWritten - lastWriteBytes;
-                long networkSpeed = diffBytes / diffTime;
-                if (listener != null) listener.onRequestProgress(bytesWritten, contentLength, networkSpeed);
-
-                lastRefreshUiTime = System.currentTimeMillis();
-                lastWriteBytes = bytesWritten;
-            }
+            Progress.changeProgress(progress, byteCount, new Progress.Action() {
+                @Override
+                public void call(Progress progress) {
+                    onProgress(progress);
+                }
+            });
         }
     }
 
-    /** 回调接口 */
-    public interface Listener {
-        void onRequestProgress(long bytesWritten, long contentLength, long networkSpeed);
+    private void onProgress(final Progress progress) {
+        HttpUtils.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (callback != null) {
+                    callback.uploadProgress(progress);
+                }
+            }
+        });
     }
 }

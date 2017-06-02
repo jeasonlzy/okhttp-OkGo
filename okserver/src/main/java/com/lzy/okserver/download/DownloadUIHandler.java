@@ -18,8 +18,8 @@ package com.lzy.okserver.download;
 import android.os.Handler;
 import android.os.Message;
 
-import com.lzy.okserver.listener.DownloadListener;
 import com.lzy.okgo.utils.OkLogger;
+import com.lzy.okserver.listener.DownloadListener;
 
 /**
  * ================================================
@@ -32,8 +32,6 @@ import com.lzy.okgo.utils.OkLogger;
  */
 public class DownloadUIHandler extends Handler {
 
-    private DownloadListener mGlobalDownloadListener;
-
     @Override
     public void handleMessage(Message msg) {
         MessageBean messageBean = (MessageBean) msg.obj;
@@ -41,9 +39,6 @@ public class DownloadUIHandler extends Handler {
             DownloadInfo info = messageBean.downloadInfo;
             String errorMsg = messageBean.errorMsg;
             Exception e = messageBean.e;
-            if (mGlobalDownloadListener != null) {
-                executeListener(mGlobalDownloadListener, info, errorMsg, e);
-            }
             DownloadListener listener = info.getListener();
             if (listener != null) executeListener(listener, info, errorMsg, e);
         } else {
@@ -69,10 +64,6 @@ public class DownloadUIHandler extends Handler {
                 listener.onError(info, errorMsg, e);
                 break;
         }
-    }
-
-    public void setGlobalDownloadListener(DownloadListener downloadListener) {
-        this.mGlobalDownloadListener = downloadListener;
     }
 
     public static class MessageBean {

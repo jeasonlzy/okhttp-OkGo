@@ -17,6 +17,7 @@ package com.lzy.okgo.utils;
 
 import android.text.TextUtils;
 
+import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.HttpParams;
 
@@ -187,5 +188,9 @@ public class HttpUtils {
             throw new NullPointerException(message);
         }
         return object;
+    }
+
+    public static void runOnUiThread(Runnable runnable) {
+        OkGo.getInstance().getDelivery().post(runnable);
     }
 }

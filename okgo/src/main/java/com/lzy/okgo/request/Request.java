@@ -102,18 +102,24 @@ public abstract class Request<T, R extends Request> {
 
     @SuppressWarnings("unchecked")
     public R client(OkHttpClient client) {
+        HttpUtils.checkNotNull(client, "OkHttpClient == null");
+
         this.client = client;
         return (R) this;
     }
 
     @SuppressWarnings("unchecked")
     public R call(Call<T> call) {
+        HttpUtils.checkNotNull(call, "call == null");
+
         this.call = call;
         return (R) this;
     }
 
     @SuppressWarnings("unchecked")
     public R converter(Converter<T> converter) {
+        HttpUtils.checkNotNull(converter, "converter == null");
+
         this.converter = converter;
         return (R) this;
     }
@@ -126,12 +132,16 @@ public abstract class Request<T, R extends Request> {
 
     @SuppressWarnings("unchecked")
     public R cachePolicy(CachePolicy<T> cachePolicy) {
+        HttpUtils.checkNotNull(cachePolicy, "cachePolicy == null");
+
         this.cachePolicy = cachePolicy;
         return (R) this;
     }
 
     @SuppressWarnings("unchecked")
     public R cacheKey(String cacheKey) {
+        HttpUtils.checkNotNull(cacheKey, "cacheKey == null");
+
         this.cacheKey = cacheKey;
         return (R) this;
     }
@@ -298,10 +308,6 @@ public abstract class Request<T, R extends Request> {
         return mRequest;
     }
 
-    public Callback<T> getCallback() {
-        return callback;
-    }
-
     public void setCallback(Callback<T> callback) {
         this.callback = callback;
     }
@@ -315,23 +321,6 @@ public abstract class Request<T, R extends Request> {
 
     public abstract HttpMethod getMethod();
 
-    /** 对请求body进行包装，用于回调上传进度 */
-    private RequestBody wrapRequestBody(RequestBody requestBody) {
-        ProgressRequestBody progressRequestBody = new ProgressRequestBody(requestBody);
-        progressRequestBody.setListener(new ProgressRequestBody.Listener() {
-            @Override
-            public void onRequestProgress(final long bytesWritten, final long contentLength, final long networkSpeed) {
-                OkGo.getInstance().getDelivery().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (callback != null) callback.upProgress(bytesWritten, contentLength, bytesWritten * 1.0f / contentLength, networkSpeed);
-                    }
-                });
-            }
-        });
-        return progressRequestBody;
-    }
-
     /** 根据不同的请求方式和参数，生成不同的RequestBody */
     protected abstract RequestBody generateRequestBody();
 
@@ -342,7 +331,8 @@ public abstract class Request<T, R extends Request> {
     public okhttp3.Call getRawCall() {
         //构建请求体，返回call对象
         RequestBody requestBody = generateRequestBody();
-        mRequest = generateRequest(wrapRequestBody(requestBody));
+        ProgressRequestBody<T> progressRequestBody = new ProgressRequestBody<>(requestBody, callback);
+        mRequest = generateRequest(progressRequestBody);
         if (client == null) client = OkGo.getInstance().getOkHttpClient();
         return client.newCall(mRequest);
     }
@@ -381,6 +371,8 @@ public abstract class Request<T, R extends Request> {
 
     /** 非阻塞方法，异步请求，但是回调在子线程中执行 */
     public void execute(Callback<T> callback) {
+        HttpUtils.checkNotNull(callback, "callback == null");
+
         this.callback = callback;
         Call<T> call = adapt();
         call.execute(callback);

@@ -180,7 +180,7 @@ public class DesActivity extends BaseActivity implements View.OnClickListener {
         String downloadLength = Formatter.formatFileSize(DesActivity.this, downloadInfo.getDownloadLength());
         String totalLength = Formatter.formatFileSize(DesActivity.this, downloadInfo.getTotalLength());
         downloadSize.setText(downloadLength + "/" + totalLength);
-        String networkSpeed = Formatter.formatFileSize(DesActivity.this, downloadInfo.getNetworkSpeed());
+        String networkSpeed = Formatter.formatFileSize(DesActivity.this, (long) downloadInfo.getNetworkSpeed());
         netSpeed.setText(networkSpeed + "/s");
         tvProgress.setText((Math.round(downloadInfo.getProgress() * 10000) * 1.0f / 100) + "%");
         pbProgress.setMax((int) downloadInfo.getTotalLength());

@@ -27,6 +27,7 @@ import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.adapter.Call;
 import com.lzy.okgo.callback.FileCallback;
+import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.Request;
 
@@ -120,8 +121,8 @@ public class TestActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void downloadProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
-                        System.out.println(currentSize + " " + totalSize + " " + progress + " " + networkSpeed);
+                    public void downloadProgress(Progress progress) {
+                        System.out.println(progress.currentSize + " " + progress.totalSize + " " + progress.fraction + " " + progress.networkSpeed);
                     }
                 });
     }

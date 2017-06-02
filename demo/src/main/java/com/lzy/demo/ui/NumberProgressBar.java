@@ -29,9 +29,6 @@ import android.view.View;
 import com.lzy.demo.R;
 
 /**
- * Created by daimajia on 14-4-30.
- */
-/**
  * ================================================
  * 作    者：jeasonlzy（廖子尧）Github地址：https://github.com/jeasonlzy
  * 版    本：1.0

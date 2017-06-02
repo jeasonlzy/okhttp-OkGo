@@ -15,9 +15,9 @@
  */
 package com.lzy.okserver.upload;
 
+import com.lzy.okgo.request.BodyRequest;
 import com.lzy.okserver.download.DownloadInfo;
 import com.lzy.okserver.listener.UploadListener;
-import com.lzy.okgo.request.BodyRequest;
 
 /**
  * ================================================
@@ -32,10 +32,10 @@ public class UploadInfo {
 
     private String url;                         //文件URL
     private String taskKey;                     //下载的标识键
-    private float progress;                     //上传进度
     private long totalLength;                   //总大小
     private long uploadLength;                  //已上传大小
-    private long networkSpeed;                  //上传速度
+    private float progress;                     //上传进度
+    private float networkSpeed;                  //上传速度
     private int state;                          //当前状态
     private BodyRequest request;            //当前任务的网络请求
 
@@ -82,11 +82,11 @@ public class UploadInfo {
         this.uploadLength = uploadLength;
     }
 
-    public long getNetworkSpeed() {
+    public float getNetworkSpeed() {
         return networkSpeed;
     }
 
-    public void setNetworkSpeed(long networkSpeed) {
+    public void setNetworkSpeed(float networkSpeed) {
         this.networkSpeed = networkSpeed;
     }
 

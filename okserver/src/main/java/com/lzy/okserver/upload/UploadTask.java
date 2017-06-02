@@ -18,6 +18,7 @@ package com.lzy.okserver.upload;
 import android.os.Message;
 
 import com.lzy.okgo.callback.AbsCallback;
+import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.BodyRequest;
 import com.lzy.okgo.utils.OkLogger;
@@ -107,26 +108,15 @@ public class UploadTask<T> extends PriorityAsyncTask<Void, UploadInfo, UploadInf
 
     private class MergeListener extends AbsCallback<T> {
 
-        private long lastRefreshUiTime;
-
-        MergeListener() {
-            lastRefreshUiTime = System.currentTimeMillis();
-        }
-
         //只有这个方法会被调用，主要是为了对接接口，获取进度
         @Override
-        public void upProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
-            long curTime = System.currentTimeMillis();
-            //每200毫秒刷新一次数据
-            if (curTime - lastRefreshUiTime >= 200 || progress == 1.0f) {
-                mUploadInfo.setState(UploadManager.UPLOADING);
-                mUploadInfo.setUploadLength(currentSize);
-                mUploadInfo.setTotalLength(totalSize);
-                mUploadInfo.setProgress(progress);
-                mUploadInfo.setNetworkSpeed(networkSpeed);
-                postMessage(null, null, null);
-                lastRefreshUiTime = System.currentTimeMillis();
-            }
+        public void uploadProgress(Progress progress) {
+            mUploadInfo.setState(UploadManager.UPLOADING);
+            mUploadInfo.setUploadLength(progress.currentSize);
+            mUploadInfo.setTotalLength(progress.totalSize);
+            mUploadInfo.setProgress(progress.fraction);
+            mUploadInfo.setNetworkSpeed(progress.networkSpeed);
+            postMessage(null, null, null);
         }
 
         @Override
@@ -137,6 +127,7 @@ public class UploadTask<T> extends PriorityAsyncTask<Void, UploadInfo, UploadInf
         public T convertResponse(okhttp3.Response response) throws Throwable {
             return null;
         }
+
     }
 
     private void postMessage(T data, String errorMsg, Exception e) {

@@ -17,6 +17,7 @@ package com.lzy.okrx.subscribe;
 
 import com.lzy.okgo.adapter.Call;
 import com.lzy.okgo.callback.Callback;
+import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.Request;
 
@@ -82,11 +83,11 @@ public final class CallEnqueueOnSubscribe<T> implements OnSubscribe<Response<T>>
             }
 
             @Override
-            public void upProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
+            public void uploadProgress(Progress progress) {
             }
 
             @Override
-            public void downloadProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
+            public void downloadProgress(Progress progress) {
             }
         });
     }

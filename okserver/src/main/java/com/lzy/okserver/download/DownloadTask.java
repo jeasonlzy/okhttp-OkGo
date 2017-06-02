@@ -18,7 +18,7 @@ package com.lzy.okserver.download;
 import android.os.Message;
 import android.text.TextUtils;
 
-import com.lzy.okgo.OkGo;
+import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.utils.HttpUtils;
 import com.lzy.okgo.utils.OkLogger;
 import com.lzy.okserver.download.db.DownloadDBManager;
@@ -27,7 +27,6 @@ import com.lzy.okserver.task.PriorityAsyncTask;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -49,7 +48,6 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
 
     private DownloadUIHandler mDownloadUIHandler;    //下载UI回调
     private DownloadInfo mDownloadInfo;              //当前任务的信息
-    private long mPreviousTime;                      //上次更新的时间，用于计算下载速度
     private boolean isRestartTask;                   //是否重新下载的标识位
     private boolean isPause;                         //当前任务是暂停还是停止， true 暂停， false 停止
 
@@ -57,7 +55,7 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
         mDownloadInfo = downloadInfo;
         isRestartTask = isRestart;
         mDownloadInfo.setListener(downloadListener);
-        mDownloadUIHandler = DownloadManager.getInstance().getHandler();
+        mDownloadUIHandler = new DownloadUIHandler();
         //将当前任务在定义的线程池中执行
         executeOnExecutor(DownloadManager.getInstance().getThreadPool().getExecutor());
     }
@@ -118,11 +116,11 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
     @Override
     protected DownloadInfo doInBackground(Void... params) {
         if (isCancelled()) return mDownloadInfo;
-        mPreviousTime = System.currentTimeMillis();
         mDownloadInfo.setNetworkSpeed(0);
         mDownloadInfo.setState(DownloadManager.DOWNLOADING);
         postMessage(null, null);
 
+        Progress progress = new Progress();
         long startPos = mDownloadInfo.getDownloadLength();
         Response response;
         try {
@@ -170,10 +168,11 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
         }
         //设置断点写文件
         File file = new File(mDownloadInfo.getTargetPath());
-        ProgressRandomAccessFile randomAccessFile;
+        RandomAccessFile randomAccessFile;
         try {
-            randomAccessFile = new ProgressRandomAccessFile(file, "rw", startPos);
+            randomAccessFile = new RandomAccessFile(file, "rw");
             randomAccessFile.seek(startPos);
+            progress.lastDownloadLength = startPos;
         } catch (Exception e) {
             OkLogger.printStackTrace(e);
             mDownloadInfo.setNetworkSpeed(0);
@@ -189,7 +188,7 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
         InputStream is = response.body().byteStream();
         //读写文件流
         try {
-            download(is, randomAccessFile);
+            download(is, randomAccessFile, progress);
         } catch (IOException e) {
             OkLogger.printStackTrace(e);
             mDownloadInfo.setNetworkSpeed(0);
@@ -216,29 +215,26 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
         return mDownloadInfo;
     }
 
-    private void postMessage(String errorMsg, Exception e) {
-        DownloadDBManager.getInstance().update(mDownloadInfo); //发消息前首先更新数据库
-        DownloadUIHandler.MessageBean messageBean = new DownloadUIHandler.MessageBean();
-        messageBean.downloadInfo = mDownloadInfo;
-        messageBean.errorMsg = errorMsg;
-        messageBean.e = e;
-        Message msg = mDownloadUIHandler.obtainMessage();
-        msg.obj = messageBean;
-        mDownloadUIHandler.sendMessage(msg);
-    }
-
     /** 执行文件下载 */
-    private int download(InputStream input, RandomAccessFile out) throws IOException {
-        if (input == null || out == null) return -1;
+    private void download(InputStream input, RandomAccessFile out, Progress progress) throws IOException {
+        if (input == null || out == null) return;
 
         byte[] buffer = new byte[BUFFER_SIZE];
         BufferedInputStream in = new BufferedInputStream(input, BUFFER_SIZE);
-        int downloadSize = 0;
         int len;
         try {
             while ((len = in.read(buffer, 0, BUFFER_SIZE)) != -1 && !isCancelled()) {
                 out.write(buffer, 0, len);
-                downloadSize += len;
+
+                Progress.changeProgress(progress, len, mDownloadInfo.getTotalLength(), new Progress.Action() {
+                    @Override
+                    public void call(Progress progress) {
+                        mDownloadInfo.setDownloadLength(progress.lastDownloadLength + progress.currentSize);
+                        mDownloadInfo.setNetworkSpeed(progress.networkSpeed);
+                        mDownloadInfo.setProgress(progress.fraction);
+                        postMessage(null, null);
+                    }
+                });
             }
         } finally {
             try {
@@ -249,49 +245,16 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
                 OkLogger.printStackTrace(e);
             }
         }
-        return downloadSize;
     }
 
-    /** 文件读写 */
-    private final class ProgressRandomAccessFile extends RandomAccessFile {
-        private long lastDownloadLength = 0; //总共已下载的大小
-        private long curDownloadLength = 0;  //当前已下载的大小（可能分几次下载）
-        private long lastRefreshUiTime;
-
-        public ProgressRandomAccessFile(File file, String mode, long lastDownloadLength) throws FileNotFoundException {
-            super(file, mode);
-            this.lastDownloadLength = lastDownloadLength;
-            this.lastRefreshUiTime = System.currentTimeMillis();
-        }
-
-        @Override
-        public void write(byte[] buffer, int offset, int count) throws IOException {
-            super.write(buffer, offset, count);
-
-            //已下载大小
-            long downloadLength = lastDownloadLength + count;
-            curDownloadLength += count;
-            lastDownloadLength = downloadLength;
-            mDownloadInfo.setDownloadLength(downloadLength);
-
-            //计算下载速度
-            long totalTime = (System.currentTimeMillis() - mPreviousTime) / 1000;
-            if (totalTime == 0) {
-                totalTime += 1;
-            }
-            long networkSpeed = curDownloadLength / totalTime;
-            mDownloadInfo.setNetworkSpeed(networkSpeed);
-
-            //下载进度
-            float progress = downloadLength * 1.0f / mDownloadInfo.getTotalLength();
-            mDownloadInfo.setProgress(progress);
-            long curTime = System.currentTimeMillis();
-
-            //每200毫秒刷新一次数据
-            if (curTime - lastRefreshUiTime >= OkGo.REFRESH_TIME || progress == 1.0f) {
-                postMessage(null, null);
-                lastRefreshUiTime = System.currentTimeMillis();
-            }
-        }
+    private void postMessage(String errorMsg, Exception e) {
+        DownloadDBManager.getInstance().update(mDownloadInfo); //发消息前首先更新数据库
+        DownloadUIHandler.MessageBean messageBean = new DownloadUIHandler.MessageBean();
+        messageBean.downloadInfo = mDownloadInfo;
+        messageBean.errorMsg = errorMsg;
+        messageBean.e = e;
+        Message msg = mDownloadUIHandler.obtainMessage();
+        msg.obj = messageBean;
+        mDownloadUIHandler.sendMessage(msg);
     }
 }

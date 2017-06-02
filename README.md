@@ -236,7 +236,7 @@ callback一共有以下 10 个回调,除`onSuccess`必须实现以外,其余均�
  * onError():网络请求失败的回调
  * onCacheError():网络缓存读取失败的回调
  * onFinish():网络请求结束的回调,无论成功失败一定会执行
- * upProgress():上传进度的回调
+ * uploadProgress():上传进度的回调
  * downloadProgress():下载进度的回调
 
 ### Callback回调具有如下顺序,虽然顺序写的很复杂,但是理解后,是很简单,并且合情合理的
@@ -339,7 +339,7 @@ OkGo.post(Urls.URL_TEXT_UPLOAD)//
 	    }
 	    
 	    @Override
-        public void upProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
+        public void uploadProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
             //这里回调上传进度(该回调在主线程,可以直接更新ui)
         }
 	});
@@ -371,7 +371,7 @@ OkGo.post(Urls.URL_TEXT_UPLOAD)//
 	    
 	    	    
 	    @Override
-        public void upProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
+        public void uploadProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
             //这里回调上传进度(该回调在主线程,可以直接更新ui)
         }
 	});
@@ -407,7 +407,7 @@ OkGo.post(URL_FORM_UPLOAD)//
 	    
 	    	    
 	    @Override
-        public void upProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
+        public void uploadProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
             //这里回调上传进度(该回调在主线程,可以直接更新ui)
         }
 	});
@@ -517,7 +517,7 @@ OkGo.post(Urls.URL_METHOD)    // 请求方式和请求url, get请求不需要拼
 		}
 	
 		@Override
-		public void upProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
+		public void uploadProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
 		    // UI 线程，文件上传过程中回调，只有请求方式包含请求体才回调（GET,HEAD不会回调）
 		    // currentSize  当前上传的大小（单位字节）
 		    // totalSize 　 需要上传的总大小（单位字节）

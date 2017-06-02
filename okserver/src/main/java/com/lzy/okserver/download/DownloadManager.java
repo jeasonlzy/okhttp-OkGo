@@ -52,7 +52,6 @@ public class DownloadManager {
     public static final int ERROR = 5;        //错误    --> 等待
 
     private List<DownloadInfo> mDownloadInfoList;   //维护了所有下载任务的集合
-    private DownloadUIHandler mDownloadUIHandler;   //主线程执行的handler
     private String mTargetFolder;                   //下载目录
     private static DownloadManager mInstance;       //使用单例模式
     private DownloadThreadPool threadPool;          //下载的线程池
@@ -70,7 +69,6 @@ public class DownloadManager {
 
     private DownloadManager() {
         mDownloadInfoList = Collections.synchronizedList(new ArrayList<DownloadInfo>());
-        mDownloadUIHandler = new DownloadUIHandler();
         threadPool = new DownloadThreadPool();
         //初始化目标Download保存目录
         String folder = Environment.getExternalStorageDirectory() + DM_TARGET_FOLDER;
@@ -289,10 +287,6 @@ public class DownloadManager {
 
     public DownloadThreadPool getThreadPool() {
         return threadPool;
-    }
-
-    public DownloadUIHandler getHandler() {
-        return mDownloadUIHandler;
     }
 
     public List<DownloadInfo> getAllTask() {

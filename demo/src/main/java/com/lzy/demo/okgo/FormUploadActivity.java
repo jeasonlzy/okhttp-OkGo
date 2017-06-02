@@ -35,6 +35,7 @@ import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.okgo.OkGo;
+import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.Request;
 
@@ -152,17 +153,17 @@ public class FormUploadActivity extends BaseDetailActivity {
                     }
 
                     @Override
-                    public void upProgress(long currentSize, long totalSize, float progress, long networkSpeed) {
-                        System.out.println("upProgress -- " + totalSize + "  " + currentSize + "  " + progress + "  " + networkSpeed);
+                    public void uploadProgress(Progress progress) {
+                        System.out.println("uploadProgress -- " + progress.totalSize + "  " + progress.currentSize + "  " + progress.fraction + "  " + progress.networkSpeed);
 
-                        String downloadLength = Formatter.formatFileSize(getApplicationContext(), currentSize);
-                        String totalLength = Formatter.formatFileSize(getApplicationContext(), totalSize);
+                        String downloadLength = Formatter.formatFileSize(getApplicationContext(), progress.currentSize);
+                        String totalLength = Formatter.formatFileSize(getApplicationContext(), progress.totalSize);
                         tvDownloadSize.setText(downloadLength + "/" + totalLength);
-                        String netSpeed = Formatter.formatFileSize(getApplicationContext(), networkSpeed);
+                        String netSpeed = Formatter.formatFileSize(getApplicationContext(), (long) progress.networkSpeed);
                         tvNetSpeed.setText(netSpeed + "/S");
-                        tvProgress.setText((Math.round(progress * 10000) * 1.0f / 100) + "%");
+                        tvProgress.setText((Math.round(progress.fraction * 10000) * 1.0f / 100) + "%");
                         pbProgress.setMax(100);
-                        pbProgress.setProgress((int) (progress * 100));
+                        pbProgress.setProgress((int) (progress.fraction * 100));
                     }
                 });
     }
