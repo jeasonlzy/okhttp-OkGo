@@ -59,8 +59,6 @@ public class DownloadListActivity extends BaseActivity {
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.targetFolder) TextView folder;
-    @Bind(R.id.tvCorePoolSize) TextView tvCorePoolSize;
-    @Bind(R.id.sbCorePoolSize) SeekBar sbCorePoolSize;
     @Bind(R.id.recyclerView) RecyclerView recyclerView;
     @Bind(R.id.openManager) Button openManager;
 

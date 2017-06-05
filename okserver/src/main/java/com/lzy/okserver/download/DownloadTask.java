@@ -114,7 +114,9 @@ public class DownloadTask extends PriorityAsyncTask<Void, Progress, Progress> {
             downloadTask = this;
             taskMap.put(progress.tag, downloadTask);
         }
-        downloadTask.listenerMap.put(listener.tag, listener);
+        if (listener != null) {
+            downloadTask.listenerMap.put(listener.tag, listener);
+        }
         return this;
     }
 

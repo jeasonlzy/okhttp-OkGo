@@ -119,7 +119,7 @@ public class OkGo {
 
     /** 获取全局上下文 */
     public Context getContext() {
-        if (context == null) throw new IllegalStateException("请先在全局Application中调用 OkGo.getInstance().init() 初始化！");
+        if (context == null) throw new IllegalStateException("please call OkGo.getInstance().init() first in application!");
         return context;
     }
 

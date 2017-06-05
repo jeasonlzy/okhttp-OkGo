@@ -40,37 +40,6 @@
         android:padding="5dp"
         android:text="下载路径文件夹:"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="5dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="同时下载数量"/>
-
-        <TextView
-            android:id="@+id/tvCorePoolSize"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:text="3"/>
-
-        <SeekBar
-            android:id="@+id/sbCorePoolSize"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:text="下载数量的设置，只在第一次添加下载任务前有效，后修改无效"
-        android:textSize="10sp"/>
-
     <Button
         android:id="@+id/openManager"
         android:layout_width="match_parent"

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Yan Zhenjie
+ * Copyright 2016 jeasonlzy(廖子尧)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,15 @@
  */
 package com.lzy.okgo.exception;
 
+/**
+ * ================================================
+ * 作    者：jeasonlzy（廖子尧）Github地址：https://github.com/jeasonlzy
+ * 版    本：1.0
+ * 创建日期：16/9/11
+ * 描    述：
+ * 修订历史：
+ * ================================================
+ */
 public class StorageException extends Exception {
 
     private static final long serialVersionUID = 178946465L;

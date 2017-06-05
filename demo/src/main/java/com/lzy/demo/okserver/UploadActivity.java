@@ -20,8 +20,6 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.GridView;
-import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.lzy.demo.R;
 import com.lzy.demo.base.BaseActivity;
@@ -56,8 +54,6 @@ public class UploadActivity extends BaseActivity implements ExecutorWithListener
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.gridView) GridView gridView;
-    @Bind(R.id.tvCorePoolSize) TextView tvCorePoolSize;
-    @Bind(R.id.sbCorePoolSize) SeekBar sbCorePoolSize;
 
     private List<ImageItem> images;
     private OkUpload okUpload;
