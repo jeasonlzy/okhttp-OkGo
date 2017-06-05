@@ -39,10 +39,11 @@ import okio.Sink;
  * 修订历史：
  * ================================================
  */
-class ProgressRequestBody<T> extends RequestBody {
+public class ProgressRequestBody<T> extends RequestBody {
 
     private RequestBody delegate;         //实际的待包装请求体
     private Callback<T> callback;
+    private UploadInterceptor interceptor;
 
     ProgressRequestBody(RequestBody delegate, Callback<T> callback) {
         this.delegate = delegate;
@@ -93,7 +94,11 @@ class ProgressRequestBody<T> extends RequestBody {
             Progress.changeProgress(progress, byteCount, new Progress.Action() {
                 @Override
                 public void call(Progress progress) {
-                    onProgress(progress);
+                    if (interceptor != null) {
+                        interceptor.uploadProgress(progress);
+                    } else {
+                        onProgress(progress);
+                    }
                 }
             });
         }
@@ -108,5 +113,17 @@ class ProgressRequestBody<T> extends RequestBody {
                 }
             }
         });
+    }
+
+    public UploadInterceptor getInterceptor() {
+        return interceptor;
+    }
+
+    public void setInterceptor(UploadInterceptor interceptor) {
+        this.interceptor = interceptor;
+    }
+
+    public interface UploadInterceptor {
+        void uploadProgress(Progress progress);
     }
 }

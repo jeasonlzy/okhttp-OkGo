@@ -56,8 +56,12 @@ public class CacheManager extends BaseDao<CacheEntity<Object>> {
     }
 
     @Override
-    protected String getTableName() {
-        return DBHelper.TABLE_CACHE_NAME;
+    public String getTableName() {
+        return DBHelper.TABLE_CACHE;
+    }
+
+    @Override
+    public void unInit() {
     }
 
     /** 根据key获取缓存 */
@@ -70,8 +74,7 @@ public class CacheManager extends BaseDao<CacheEntity<Object>> {
     /** 移除一个缓存 */
     public boolean remove(String key) {
         if (key == null) return false;
-        int delete = delete(CacheEntity.KEY + "=?", new String[]{key});
-        return delete > 0;
+        return delete(CacheEntity.KEY + "=?", new String[]{key});
     }
 
     /** 返回带泛型的对象,注意必须确保泛型和对象对应才不会发生类型转换异常 */
@@ -101,6 +104,6 @@ public class CacheManager extends BaseDao<CacheEntity<Object>> {
 
     /** 清空缓存 */
     public boolean clear() {
-        return deleteAll() > 0;
+        return deleteAll();
     }
 }

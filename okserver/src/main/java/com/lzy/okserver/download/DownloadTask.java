@@ -15,14 +15,18 @@
  */
 package com.lzy.okserver.download;
 
-import android.os.Message;
 import android.text.TextUtils;
 
+import com.lzy.okgo.db.DownloadManager;
+import com.lzy.okgo.exception.HttpException;
+import com.lzy.okgo.exception.OkGoException;
+import com.lzy.okgo.exception.StorageException;
+import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.Progress;
+import com.lzy.okgo.request.Request;
 import com.lzy.okgo.utils.HttpUtils;
-import com.lzy.okgo.utils.OkLogger;
-import com.lzy.okserver.download.db.DownloadDBManager;
-import com.lzy.okserver.listener.DownloadListener;
+import com.lzy.okgo.utils.IOUtils;
+import com.lzy.okserver.OkDownload;
 import com.lzy.okserver.task.PriorityAsyncTask;
 
 import java.io.BufferedInputStream;
@@ -30,8 +34,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.Response;
+import okhttp3.ResponseBody;
+
+import static com.lzy.okgo.utils.OkLogger.tag;
 
 /**
  * ================================================
@@ -42,31 +52,102 @@ import okhttp3.Response;
  * 修订历史：
  * ================================================
  */
-public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, DownloadInfo> {
+public class DownloadTask extends PriorityAsyncTask<Void, Progress, Progress> {
 
-    private static final int BUFFER_SIZE = 1024 * 8; //读写缓存大小
+    private static final int BUFFER_SIZE = 1024 * 8;    //读写缓存大小
 
-    private DownloadUIHandler mDownloadUIHandler;    //下载UI回调
-    private DownloadInfo mDownloadInfo;              //当前任务的信息
-    private boolean isRestartTask;                   //是否重新下载的标识位
-    private boolean isPause;                         //当前任务是暂停还是停止， true 暂停， false 停止
+    private boolean isPause;                            //当前任务是暂停还是停止， true 暂停， false 停止
+    public Progress progress;                           //当前任务的信息
+    public Request<File, ? extends Request> request;
+    public Map<Object, DownloadListener> listenerMap;
 
-    public DownloadTask(DownloadInfo downloadInfo, boolean isRestart, DownloadListener downloadListener) {
-        mDownloadInfo = downloadInfo;
-        isRestartTask = isRestart;
-        mDownloadInfo.setListener(downloadListener);
-        mDownloadUIHandler = new DownloadUIHandler();
-        //将当前任务在定义的线程池中执行
-        executeOnExecutor(DownloadManager.getInstance().getThreadPool().getExecutor());
+    public DownloadTask(String tag, Request<File, ? extends Request> request) {
+        listenerMap = new HashMap<>();
+        progress = new Progress();
+        progress.tag = tag;
+        progress.url = request.getBaseUrl();
+        progress.status = Progress.NONE;
+        this.request = request;
+    }
+
+    public DownloadTask(Progress progress, Request<File, ? extends Request> request) {
+        listenerMap = new HashMap<>();
+        this.progress = progress;
+        this.request = request;
+    }
+
+    public DownloadTask folder(String folder) {
+        progress.folder = folder;
+        return this;
+    }
+
+    public DownloadTask fileName(String fileName) {
+        progress.fileName = fileName;
+        return this;
+    }
+
+    public DownloadTask extra1(Serializable extra1) {
+        progress.extra1 = extra1;
+        return this;
+    }
+
+    public DownloadTask extra2(Serializable extra2) {
+        progress.extra2 = extra2;
+        return this;
+    }
+
+    public DownloadTask extra3(Serializable extra3) {
+        progress.extra3 = extra3;
+        return this;
+    }
+
+    public DownloadTask register(DownloadListener listener) {
+        Progress progress = DownloadManager.getInstance().get(tag);
+        if (progress == null) {
+            progress = this.progress;
+            DownloadManager.getInstance().insert(progress);
+        }
+
+        Map<String, DownloadTask> taskMap = OkDownload.getInstance().getTaskMap();
+        DownloadTask downloadTask = taskMap.get(progress.tag);
+        if (downloadTask == null) {
+            downloadTask = this;
+            taskMap.put(progress.tag, downloadTask);
+        }
+        downloadTask.listenerMap.put(listener.tag, listener);
+        return this;
+    }
+
+    public void unRegister(DownloadListener listener) {
+        listenerMap.remove(listener.tag);
+    }
+
+    public void unRegister(String tag) {
+        listenerMap.remove(tag);
+    }
+
+    public void start() {
+        executeOnExecutor(OkDownload.getInstance().getThreadPool().getExecutor());
+    }
+
+    public void restart() {
+        //如果是重新下载，需要删除临时文件
+        IOUtils.delFileOrFolder(progress.filePath);
+
+        progress.fraction = 0;
+        progress.currentSize = 0;
+        progress.totalSize = -1;
+        progress.speed = 0;
+        progress.status = Progress.NONE;
+        start();
     }
 
     /** 暂停的方法 */
     public void pause() {
-        if (mDownloadInfo.getState() == DownloadManager.WAITING) {
-            //如果是等待状态的,因为该状态取消不会回调任何方法，需要手动触发
-            mDownloadInfo.setNetworkSpeed(0);
-            mDownloadInfo.setState(DownloadManager.PAUSE);
-            postMessage(null, null);
+        if (progress.status == Progress.WAITING) {
+            progress.speed = 0;
+            progress.status = Progress.PAUSE;
+            postMessage(null, progress);
         } else {
             isPause = true;
         }
@@ -75,11 +156,10 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
 
     /** 停止的方法 */
     public void stop() {
-        if (mDownloadInfo.getState() == DownloadManager.PAUSE || mDownloadInfo.getState() == DownloadManager.ERROR || mDownloadInfo.getState() == DownloadManager.WAITING) {
-            //如果状态是暂停或错误的,停止不会回调任何方法，需要手动触发
-            mDownloadInfo.setNetworkSpeed(0);
-            mDownloadInfo.setState(DownloadManager.NONE);
-            postMessage(null, null);
+        if (progress.status == Progress.PAUSE || progress.status == Progress.ERROR || progress.status == Progress.WAITING) {
+            progress.speed = 0;
+            progress.status = Progress.NONE;
+            postMessage(null, progress);
         } else {
             isPause = false;
         }
@@ -89,130 +169,132 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
     /** 每个任务进队列的时候，都会执行该方法 */
     @Override
     protected void onPreExecute() {
-        //添加成功的回调
-        DownloadListener listener = mDownloadInfo.getListener();
-        if (listener != null) listener.onAdd(mDownloadInfo);
-
-        //如果是重新下载，需要删除临时文件
-        if (isRestartTask) {
-            HttpUtils.deleteFile(mDownloadInfo.getTargetPath());
-            mDownloadInfo.setProgress(0);
-            mDownloadInfo.setDownloadLength(0);
-            mDownloadInfo.setTotalLength(0);
-            isRestartTask = false;
+        for (DownloadListener listener : listenerMap.values()) {
+            listener.onAdd(progress);
         }
 
-        mDownloadInfo.setNetworkSpeed(0);
-        mDownloadInfo.setState(DownloadManager.WAITING);
-        postMessage(null, null);
+        progress.speed = 0;
+        progress.status = Progress.WAITING;
+        postMessage(null, progress);
     }
 
     /** 如果调用了Cancel，就不会执行该方法，所以任务结束的回调不放在这里面 */
     @Override
-    protected void onPostExecute(DownloadInfo downloadInfo) {
+    protected void onPostExecute(Progress progress) {
     }
 
     /** 一旦该方法执行，意味着开始下载了 */
     @Override
-    protected DownloadInfo doInBackground(Void... params) {
-        if (isCancelled()) return mDownloadInfo;
-        mDownloadInfo.setNetworkSpeed(0);
-        mDownloadInfo.setState(DownloadManager.DOWNLOADING);
-        postMessage(null, null);
+    protected Progress doInBackground(Void... params) {
+        if (isCancelled()) return progress;
+        progress.speed = 0;
+        progress.status = Progress.LOADING;
+        postMessage(null, progress);
 
-        Progress progress = new Progress();
-        long startPos = mDownloadInfo.getDownloadLength();
+        long startPosition = progress.currentSize;
         Response response;
         try {
-            response = mDownloadInfo.getRequest().headers("RANGE", "bytes=" + startPos + "-").execute();
+            response = request.headers(HttpHeaders.HEAD_KEY_RANGE, "bytes=" + startPosition + "-").execute();
         } catch (IOException e) {
-            OkLogger.printStackTrace(e);
-            mDownloadInfo.setNetworkSpeed(0);
-            mDownloadInfo.setState(DownloadManager.ERROR);
-            postMessage("网络异常", e);
-            return mDownloadInfo;
+            progress.speed = 0;
+            progress.status = Progress.ERROR;
+            progress.exception = e;
+            postMessage(null, progress);
+            return progress;
         }
         int code = response.code();
         if (code == 404 || code >= 500) {
-            mDownloadInfo.setNetworkSpeed(0);
-            mDownloadInfo.setState(DownloadManager.ERROR);
-            postMessage("服务器数据错误", null);
-            return mDownloadInfo;
+            progress.speed = 0;
+            progress.status = Progress.ERROR;
+            progress.exception = HttpException.NET_ERROR();
+            postMessage(null, progress);
+            return progress;
         }
         //构建下载文件路径，如果有设置，就用设置的，否者就自己创建
-        String url = mDownloadInfo.getUrl();
-        String fileName = mDownloadInfo.getFileName();
+        String fileName = progress.fileName;
         if (TextUtils.isEmpty(fileName)) {
-            fileName = HttpUtils.getNetFileName(response, url);
-            mDownloadInfo.setFileName(fileName);
+            fileName = HttpUtils.getNetFileName(response, progress.url);
+            progress.fileName = fileName;
         }
-        if (TextUtils.isEmpty(mDownloadInfo.getTargetPath())) {
-            File targetFolder = new File(mDownloadInfo.getTargetFolder());
-            if (!targetFolder.exists()) targetFolder.mkdirs();
-            File file = new File(targetFolder, fileName);
-            mDownloadInfo.setTargetPath(file.getAbsolutePath());
+        if (!IOUtils.createFolder(progress.folder)) {
+            progress.speed = 0;
+            progress.status = Progress.ERROR;
+            progress.exception = StorageException.NOT_AVAILABLE();
+            postMessage(null, progress);
+            return progress;
+        }
+        File file = null;
+        if (TextUtils.isEmpty(progress.filePath)) {
+            file = new File(progress.folder, fileName);
+            progress.filePath = file.getAbsolutePath();
         }
         //检查文件有效性，文件大小大于总文件大小
-        if (startPos > mDownloadInfo.getTotalLength()) {
-            mDownloadInfo.setNetworkSpeed(0);
-            mDownloadInfo.setState(DownloadManager.ERROR);
-            postMessage("断点文件异常，需要删除后重新下载", null);
-            return mDownloadInfo;
+        if (startPosition > progress.totalSize) {
+            progress.speed = 0;
+            progress.status = Progress.ERROR;
+            progress.exception = new OkGoException("Breakpoint file has expired");
+            postMessage(null, progress);
+            return progress;
         }
-        if (startPos == mDownloadInfo.getTotalLength() && startPos > 0) {
-            mDownloadInfo.setProgress(1.0f);
-            mDownloadInfo.setNetworkSpeed(0);
-            mDownloadInfo.setState(DownloadManager.FINISH);
-            postMessage(null, null);
-            return mDownloadInfo;
+        if (startPosition == progress.totalSize && startPosition > 0) {
+            progress.fraction = 1.0f;
+            progress.speed = 0;
+            progress.status = Progress.FINISH;
+            postMessage(file, progress);
+            return progress;
         }
         //设置断点写文件
-        File file = new File(mDownloadInfo.getTargetPath());
+        file = new File(progress.filePath);
         RandomAccessFile randomAccessFile;
         try {
             randomAccessFile = new RandomAccessFile(file, "rw");
-            randomAccessFile.seek(startPos);
-            progress.lastSize = startPos;
+            randomAccessFile.seek(startPosition);
+            progress.currentSize = startPosition;
         } catch (Exception e) {
-            OkLogger.printStackTrace(e);
-            mDownloadInfo.setNetworkSpeed(0);
-            mDownloadInfo.setState(DownloadManager.ERROR);
-            postMessage("没有找到已存在的断点文件", e);
-            return mDownloadInfo;
+            progress.speed = 0;
+            progress.status = Progress.ERROR;
+            progress.exception = new OkGoException("Breakpoint file does not exist");
+            postMessage(null, progress);
+            return progress;
         }
         //获取流对象，准备进行读写文件
-        long totalLength = response.body().contentLength();
-        if (mDownloadInfo.getTotalLength() == 0) {
-            mDownloadInfo.setTotalLength(totalLength);
+        ResponseBody body = response.body();
+        if (body == null) {
+            progress.speed = 0;
+            progress.status = Progress.ERROR;
+            progress.exception = new HttpException("response body is null");
+            postMessage(null, progress);
+            return progress;
         }
-        InputStream is = response.body().byteStream();
+        progress.totalSize = body.contentLength();
+        InputStream is = body.byteStream();
         //读写文件流
         try {
             download(is, randomAccessFile, progress);
         } catch (IOException e) {
-            OkLogger.printStackTrace(e);
-            mDownloadInfo.setNetworkSpeed(0);
-            mDownloadInfo.setState(DownloadManager.ERROR);
-            postMessage("文件读写异常", e);
-            return mDownloadInfo;
+            progress.speed = 0;
+            progress.status = Progress.ERROR;
+            progress.exception = new StorageException("File read or write exception");
+            postMessage(null, progress);
+            return progress;
         }
 
-        //循环结束走到这里，a.下载完成     b.暂停      c.判断是否下载出错
         if (isCancelled()) {
-            mDownloadInfo.setNetworkSpeed(0);
-            if (isPause) mDownloadInfo.setState(DownloadManager.PAUSE); //暂停
-            else mDownloadInfo.setState(DownloadManager.NONE);          //停止
-            postMessage(null, null);
-        } else if (file.length() == mDownloadInfo.getTotalLength() && mDownloadInfo.getState() == DownloadManager.DOWNLOADING) {
-            mDownloadInfo.setNetworkSpeed(0);
-            mDownloadInfo.setState(DownloadManager.FINISH); //下载完成
-            postMessage(null, null);
-        } else if (file.length() != mDownloadInfo.getDownloadLength()) {
-            mDownloadInfo.setNetworkSpeed(0);
-            mDownloadInfo.setState(DownloadManager.ERROR); //由于不明原因，文件保存有误
-            postMessage("未知原因", null);
+            progress.speed = 0;
+            if (isPause) progress.status = Progress.PAUSE;  //暂停
+            else progress.status = Progress.NONE;           //停止
+            postMessage(null, progress);
+        } else if (file.length() == progress.totalSize && progress.status == Progress.LOADING) {
+            progress.speed = 0;
+            progress.status = Progress.FINISH;              //下载完成
+            postMessage(file, progress);
+        } else if (file.length() != progress.currentSize) {
+            progress.speed = 0;
+            progress.status = Progress.ERROR;               //由于不明原因，文件保存有误
+            progress.exception = OkGoException.UNKNOWN();
+            postMessage(null, progress);
         }
-        return mDownloadInfo;
+        return progress;
     }
 
     /** 执行文件下载 */
@@ -226,35 +308,47 @@ public class DownloadTask extends PriorityAsyncTask<Void, DownloadInfo, Download
             while ((len = in.read(buffer, 0, BUFFER_SIZE)) != -1 && !isCancelled()) {
                 out.write(buffer, 0, len);
 
-                Progress.changeProgress(progress, len, mDownloadInfo.getTotalLength(), new Progress.Action() {
+                Progress.changeProgress(progress, len, progress.totalSize, new Progress.Action() {
                     @Override
                     public void call(Progress progress) {
-                        mDownloadInfo.setDownloadLength(progress.lastSize + progress.currentSize);
-                        mDownloadInfo.setNetworkSpeed(progress.speed);
-                        mDownloadInfo.setProgress(progress.fraction);
-                        postMessage(null, null);
+                        postMessage(null, progress);
                     }
                 });
             }
         } finally {
-            try {
-                out.close();
-                in.close();
-                input.close();
-            } catch (Exception e) {
-                OkLogger.printStackTrace(e);
-            }
+            IOUtils.closeQuietly(out);
+            IOUtils.closeQuietly(in);
+            IOUtils.closeQuietly(input);
         }
     }
 
-    private void postMessage(String errorMsg, Exception e) {
-        DownloadDBManager.getInstance().update(mDownloadInfo); //发消息前首先更新数据库
-        DownloadUIHandler.MessageBean messageBean = new DownloadUIHandler.MessageBean();
-        messageBean.downloadInfo = mDownloadInfo;
-        messageBean.errorMsg = errorMsg;
-        messageBean.e = e;
-        Message msg = mDownloadUIHandler.obtainMessage();
-        msg.obj = messageBean;
-        mDownloadUIHandler.sendMessage(msg);
+    private void postMessage(final File file, final Progress progress) {
+        HttpUtils.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                switch (progress.status) {
+                    case Progress.NONE:
+                    case Progress.WAITING:
+                    case Progress.LOADING:
+                    case Progress.PAUSE:
+                        for (DownloadListener listener : listenerMap.values()) {
+                            listener.onProgress(progress);
+                        }
+                        break;
+                    case Progress.FINISH:
+                        for (DownloadListener listener : listenerMap.values()) {
+                            listener.onProgress(progress);
+                            listener.onFinish(file, progress);
+                        }
+                        break;
+                    case Progress.ERROR:
+                        for (DownloadListener listener : listenerMap.values()) {
+                            listener.onProgress(progress);
+                            listener.onError(progress);
+                        }
+                        break;
+                }
+            }
+        });
     }
 }

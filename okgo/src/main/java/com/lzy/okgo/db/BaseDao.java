@@ -1,24 +1,10 @@
-/*
- * Copyright 2016 jeasonlzy(廖子尧)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.lzy.okgo.db;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Pair;
 
 import com.lzy.okgo.utils.OkLogger;
 
@@ -26,41 +12,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
-/**
- * ================================================
- * 作    者：jeasonlzy（廖子尧）Github地址：https://github.com/jeasonlzy
- * 版    本：1.0
- * 创建日期：16/9/11
- * 描    述：
- * 修订历史：
- * ================================================
- */
 public abstract class BaseDao<T> {
 
-    private ReentrantLock lock;
-    private SQLiteOpenHelper helper;
-    private SQLiteDatabase database;
+    protected static String TAG;
+    protected ReentrantLock lock;
+    protected SQLiteOpenHelper helper;
+    protected SQLiteDatabase database;
 
     public BaseDao(SQLiteOpenHelper helper) {
-        this.helper = helper;
+        TAG = getClass().getSimpleName();
         lock = new ReentrantLock();
-        database = openWriter();
+        this.helper = helper;
+        this.database = openWriter();
     }
 
-    /** 获取对应的表名 */
-    protected abstract String getTableName();
-
-    /** 将Cursor解析成对应的JavaBean */
-    public abstract T parseCursorToBean(Cursor cursor);
-
-    /** 需要替换的列 */
-    public abstract ContentValues getContentValues(T t);
-
-    protected final SQLiteDatabase openReader() {
+    public SQLiteDatabase openReader() {
         return helper.getReadableDatabase();
     }
 
-    protected final SQLiteDatabase openWriter() {
+    public SQLiteDatabase openWriter() {
         return helper.getWritableDatabase();
     }
 
@@ -69,92 +39,117 @@ public abstract class BaseDao<T> {
         if (database != null && database.isOpen()) database.close();
     }
 
-    /** 需要数据库中有个 _id 的字段 */
-    public int count() {
-        return countColumn("_id");
-    }
-
-    /** 返回一列的总记录数量 */
-    public int countColumn(String columnName) {
+    /** 插入一条记录 */
+    public boolean insert(T t) {
+        if (t == null) return false;
+        long start = System.currentTimeMillis();
         lock.lock();
-        String sql = "SELECT COUNT(?) FROM " + getTableName();
-        Cursor cursor = null;
         try {
             database.beginTransaction();
-            cursor = database.rawQuery(sql, new String[]{columnName});
-            int count = 0;
-            if (cursor.moveToNext()) {
-                count = cursor.getInt(0);
+            database.insert(getTableName(), null, getContentValues(t));
+            database.setTransactionSuccessful();
+            return true;
+        } catch (Exception e) {
+            OkLogger.printStackTrace(e);
+        } finally {
+            database.endTransaction();
+            lock.unlock();
+        }
+        OkLogger.v(TAG, System.currentTimeMillis() - start + " insertT");
+        return false;
+    }
+
+    /** 插入一条记录 */
+    public long insert(SQLiteDatabase database, T t) {
+        return database.insert(getTableName(), null, getContentValues(t));
+    }
+
+    /** 插入多条记录 */
+    public boolean insert(List<T> ts) {
+        if (ts == null) return false;
+        long start = System.currentTimeMillis();
+        lock.lock();
+        try {
+            database.beginTransaction();
+            for (T t : ts) {
+                database.insert(getTableName(), null, getContentValues(t));
             }
             database.setTransactionSuccessful();
-            return count;
+            return true;
         } catch (Exception e) {
             OkLogger.printStackTrace(e);
         } finally {
             database.endTransaction();
-            closeDatabase(null, cursor);
             lock.unlock();
         }
-        return 0;
+        OkLogger.v(TAG, System.currentTimeMillis() - start + " insertList");
+        return false;
     }
 
-    /** 创建一条记录 */
-    public long insert(T t) {
-        lock.lock();
+    public boolean insert(SQLiteDatabase database, List<T> ts) {
         try {
-            database.beginTransaction();
-            long id = database.insert(getTableName(), null, getContentValues(t));
-            database.setTransactionSuccessful();
-            return id;
+            for (T t : ts) {
+                database.insert(getTableName(), null, getContentValues(t));
+            }
+            return true;
         } catch (Exception e) {
             OkLogger.printStackTrace(e);
-        } finally {
-            database.endTransaction();
-            closeDatabase(null, null);
-            lock.unlock();
+            return false;
         }
-        return 0;
     }
 
     /** 删除所有数据 */
-    public int deleteAll() {
+    public boolean deleteAll() {
         return delete(null, null);
     }
 
-    /** 根据条件删除数据库中的数据 */
-    public int delete(String whereClause, String[] whereArgs) {
-        lock.lock();
-        try {
-            database.beginTransaction();
-            int result = database.delete(getTableName(), whereClause, whereArgs);
-            database.setTransactionSuccessful();
-            return result;
-        } catch (Exception e) {
-            OkLogger.printStackTrace(e);
-        } finally {
-            database.endTransaction();
-            closeDatabase(null, null);
-            lock.unlock();
-        }
-        return 0;
+    /** 删除所有数据 */
+    public long deleteAll(SQLiteDatabase database) {
+        return delete(database, null, null);
     }
 
-    /** 更新一条记录 */
-    public int update(T t, String whereClause, String[] whereArgs) {
+    /** 根据条件删除数据库中的数据 */
+    public boolean delete(String whereClause, String[] whereArgs) {
+        long start = System.currentTimeMillis();
         lock.lock();
         try {
             database.beginTransaction();
-            int count = database.update(getTableName(), getContentValues(t), whereClause, whereArgs);
+            database.delete(getTableName(), whereClause, whereArgs);
             database.setTransactionSuccessful();
-            return count;
+            return true;
         } catch (Exception e) {
             OkLogger.printStackTrace(e);
         } finally {
             database.endTransaction();
-            closeDatabase(null, null);
             lock.unlock();
         }
-        return 0;
+        OkLogger.v(TAG, System.currentTimeMillis() - start + " delete");
+        return false;
+    }
+
+    /** 根据条件删除数据库中的数据 */
+    public long delete(SQLiteDatabase database, String whereClause, String[] whereArgs) {
+        return database.delete(getTableName(), whereClause, whereArgs);
+    }
+
+    public boolean deleteList(List<Pair<String, String[]>> where) {
+        long start = System.currentTimeMillis();
+        lock.lock();
+        try {
+            database.beginTransaction();
+            for (Pair<String, String[]> pair : where) {
+                database.delete(getTableName(), pair.first, pair.second);
+            }
+            database.setTransactionSuccessful();
+            return true;
+        } catch (Exception e) {
+            OkLogger.printStackTrace(e);
+        } finally {
+            database.endTransaction();
+            lock.unlock();
+        }
+        OkLogger.v(TAG, System.currentTimeMillis() - start + " deleteList");
+        return false;
     }
 
     /**
@@ -166,21 +161,165 @@ public abstract class BaseDao<T> {
      * 5. replace语句不能根据where子句来定位要被替换的记录
      * 6. 如果新插入的或替换的记录中， 有字段和表中的其他记录冲突， 那么会删除那条其他记录。
      */
-    public long replace(T t) {
+    public boolean replace(T t) {
+        if (t == null) return false;
+        long start = System.currentTimeMillis();
         lock.lock();
         try {
             database.beginTransaction();
-            long id = database.replace(getTableName(), null, getContentValues(t));
+            database.replace(getTableName(), null, getContentValues(t));
             database.setTransactionSuccessful();
-            return id;
+            return true;
         } catch (Exception e) {
             OkLogger.printStackTrace(e);
         } finally {
             database.endTransaction();
-            closeDatabase(null, null);
             lock.unlock();
         }
-        return 0;
+        OkLogger.v(TAG, System.currentTimeMillis() - start + " replaceT");
+        return false;
+    }
+
+    public long replace(SQLiteDatabase database, T t) {
+        return database.replace(getTableName(), null, getContentValues(t));
+    }
+
+    public boolean replace(ContentValues contentValues) {
+        long start = System.currentTimeMillis();
+        lock.lock();
+        try {
+            database.beginTransaction();
+            database.replace(getTableName(), null, contentValues);
+            database.setTransactionSuccessful();
+            return true;
+        } catch (Exception e) {
+            OkLogger.printStackTrace(e);
+        } finally {
+            database.endTransaction();
+            lock.unlock();
+        }
+        OkLogger.v(TAG, System.currentTimeMillis() - start + " replaceContentValues");
+        return false;
+    }
+
+    public long replace(SQLiteDatabase database, ContentValues contentValues) {
+        return database.replace(getTableName(), null, contentValues);
+    }
+
+    public boolean replace(List<T> ts) {
+        if (ts == null) return false;
+        long start = System.currentTimeMillis();
+        lock.lock();
+        try {
+            database.beginTransaction();
+            for (T t : ts) {
+                database.replace(getTableName(), null, getContentValues(t));
+            }
+            database.setTransactionSuccessful();
+            return true;
+        } catch (Exception e) {
+            OkLogger.printStackTrace(e);
+        } finally {
+            database.endTransaction();
+            lock.unlock();
+        }
+        OkLogger.v(TAG, System.currentTimeMillis() - start + " replaceList");
+        return false;
+    }
+
+    public boolean replace(SQLiteDatabase database, List<T> ts) {
+        try {
+            for (T t : ts) {
+                database.replace(getTableName(), null, getContentValues(t));
+            }
+            return true;
+        } catch (Exception e) {
+            OkLogger.printStackTrace(e);
+            return false;
+        }
+    }
+
+    /** 更新一条记录 */
+    public boolean update(T t, String whereClause, String[] whereArgs) {
+        if (t == null) return false;
+        long start = System.currentTimeMillis();
+        lock.lock();
+        try {
+            database.beginTransaction();
+            database.update(getTableName(), getContentValues(t), whereClause, whereArgs);
+            database.setTransactionSuccessful();
+            return true;
+        } catch (Exception e) {
+            OkLogger.printStackTrace(e);
+        } finally {
+            database.endTransaction();
+            lock.unlock();
+        }
+        OkLogger.v(TAG, System.currentTimeMillis() - start + " updateT");
+        return false;
+    }
+
+    /** 更新一条记录 */
+    public long update(SQLiteDatabase database, T t, String whereClause, String[] whereArgs) {
+        return database.update(getTableName(), getContentValues(t), whereClause, whereArgs);
+    }
+
+    /** 更新一条记录 */
+    public boolean update(ContentValues contentValues, String whereClause, String[] whereArgs) {
+        long start = System.currentTimeMillis();
+        lock.lock();
+        try {
+            database.beginTransaction();
+            database.update(getTableName(), contentValues, whereClause, whereArgs);
+            database.setTransactionSuccessful();
+            return true;
+        } catch (Exception e) {
+            OkLogger.printStackTrace(e);
+        } finally {
+            database.endTransaction();
+            lock.unlock();
+        }
+        OkLogger.v(TAG, System.currentTimeMillis() - start + " updateContentValues");
+        return false;
+    }
+
+    /** 更新一条记录 */
+    public long update(SQLiteDatabase database, ContentValues contentValues, String whereClause, String[] whereArgs) {
+        return database.update(getTableName(), contentValues, whereClause, whereArgs);
+    }
+
+    /** 查询并返回所有对象的集合 */
+    public List<T> queryAll(SQLiteDatabase database) {
+        return query(database, null, null);
+    }
+
+    /** 按条件查询对象并返回集合 */
+    public List<T> query(SQLiteDatabase database, String selection, String[] selectionArgs) {
+        return query(database, null, selection, selectionArgs, null, null, null, null);
+    }
+
+    /** 查询满足条件的一个结果 */
+    public T queryOne(SQLiteDatabase database, String selection, String[] selectionArgs) {
+        List<T> query = query(database, null, selection, selectionArgs, null, null, null, "1");
+        if (query.size() > 0) return query.get(0);
+        return null;
+    }
+
+    /** 按条件查询对象并返回集合 */
+    public List<T> query(SQLiteDatabase database, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
+        List<T> list = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            cursor = database.query(getTableName(), columns, selection, selectionArgs, groupBy, having, orderBy, limit);
+            while (!cursor.isClosed() && cursor.moveToNext()) {
+                list.add(parseCursorToBean(cursor));
+            }
+        } catch (Exception e) {
+            OkLogger.printStackTrace(e);
+        } finally {
+            closeDatabase(null, cursor);
+        }
+        return list;
     }
 
     /** 查询并返回所有对象的集合 */
@@ -193,8 +332,17 @@ public abstract class BaseDao<T> {
         return query(null, selection, selectionArgs, null, null, null, null);
     }
 
+    /** 查询满足条件的一个结果 */
+    public T queryOne(String selection, String[] selectionArgs) {
+        long start = System.currentTimeMillis();
+        List<T> query = query(null, selection, selectionArgs, null, null, null, "1");
+        OkLogger.v(TAG, System.currentTimeMillis() - start + " queryOne");
+        return query.size() > 0 ? query.get(0) : null;
+    }
+
     /** 按条件查询对象并返回集合 */
     public List<T> query(String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
+        long start = System.currentTimeMillis();
         lock.lock();
         List<T> list = new ArrayList<>();
         Cursor cursor = null;
@@ -208,10 +356,41 @@ public abstract class BaseDao<T> {
         } catch (Exception e) {
             OkLogger.printStackTrace(e);
         } finally {
-            database.endTransaction();
             closeDatabase(null, cursor);
+            database.endTransaction();
             lock.unlock();
         }
+        OkLogger.v(TAG, System.currentTimeMillis() - start + " query");
         return list;
     }
+
+    public interface Action {
+        void call(SQLiteDatabase database);
+    }
+
+    /** 用于给外界提供事物开启的模板 */
+    public void startTransaction(Action action) {
+        lock.lock();
+        try {
+            database.beginTransaction();
+            action.call(database);
+            database.setTransactionSuccessful();
+        } catch (Exception e) {
+            OkLogger.printStackTrace(e);
+        } finally {
+            database.endTransaction();
+            lock.unlock();
+        }
+    }
+
+    /** 获取对应的表名 */
+    public abstract String getTableName();
+
+    public abstract void unInit();
+
+    /** 将Cursor解析成对应的JavaBean */
+    public abstract T parseCursorToBean(Cursor cursor);
+
+    /** 需要替换的列 */
+    public abstract ContentValues getContentValues(T t);
 }

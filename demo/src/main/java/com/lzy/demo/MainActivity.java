@@ -35,8 +35,7 @@ import com.lzy.demo.okgo.FormUploadActivity;
 import com.lzy.demo.okgo.JsonRequestActivity;
 import com.lzy.demo.okgo.OkHttpActivity;
 import com.lzy.demo.okrx.RxActivity;
-import com.lzy.demo.okrx.RxCommonActivity;
-import com.lzy.demo.okserver.DownloadActivity;
+import com.lzy.demo.okserver.DownloadListActivity;
 import com.lzy.demo.okserver.UploadActivity;
 
 import java.util.ArrayList;
@@ -233,7 +232,7 @@ public class MainActivity extends BaseActivity {
             if (position == 5) startActivity(new Intent(MainActivity.this, FileDownloadActivity.class));
             if (position == 6) startActivity(new Intent(MainActivity.this, FormUploadActivity.class));
             if (position == 7) startActivity(new Intent(MainActivity.this, CacheDemoActivity.class));
-            if (position == 9) startActivity(new Intent(MainActivity.this, DownloadActivity.class));
+            if (position == 9) startActivity(new Intent(MainActivity.this, DownloadListActivity.class));
             if (position == 10) startActivity(new Intent(MainActivity.this, UploadActivity.class));
         }
     }

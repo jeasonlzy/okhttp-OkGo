@@ -63,10 +63,11 @@ public abstract class Request<T, R extends Request> {
     protected HttpHeaders headers = new HttpHeaders();              //添加的header
 
     protected okhttp3.Request mRequest;
+    protected Call<T> call;
     protected Callback<T> callback;
     protected Converter<T> converter;
     protected CachePolicy<T> cachePolicy;
-    protected Call<T> call;
+    protected ProgressRequestBody.UploadInterceptor uploadInterceptor;
 
     public Request(String url) {
         this.url = url;
@@ -247,6 +248,12 @@ public abstract class Request<T, R extends Request> {
     @SuppressWarnings("unchecked")
     public R removeAllParams() {
         params.clear();
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public R uploadInterceptor(ProgressRequestBody.UploadInterceptor uploadInterceptor) {
+        this.uploadInterceptor = uploadInterceptor;
         return (R) this;
     }
 

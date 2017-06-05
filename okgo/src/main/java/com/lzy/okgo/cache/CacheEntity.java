@@ -19,13 +19,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 
 import com.lzy.okgo.model.HttpHeaders;
-import com.lzy.okgo.utils.OkLogger;
+import com.lzy.okgo.utils.IOUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
@@ -112,52 +107,8 @@ public class CacheEntity<T> implements Serializable {
         ContentValues values = new ContentValues();
         values.put(KEY, cacheEntity.getKey());
         values.put(LOCAL_EXPIRE, cacheEntity.getLocalExpire());
-
-        HttpHeaders headers = cacheEntity.getResponseHeaders();
-        ByteArrayOutputStream headerBAOS = null;
-        ObjectOutputStream headerOOS = null;
-        try {
-            if (headers != null) {
-                headerBAOS = new ByteArrayOutputStream();
-                headerOOS = new ObjectOutputStream(headerBAOS);
-                headerOOS.writeObject(headers);
-                headerOOS.flush();
-                byte[] headerData = headerBAOS.toByteArray();
-                values.put(HEAD, headerData);
-            }
-        } catch (IOException e) {
-            OkLogger.printStackTrace(e);
-        } finally {
-            try {
-                if (headerOOS != null) headerOOS.close();
-                if (headerBAOS != null) headerBAOS.close();
-            } catch (IOException e) {
-                OkLogger.printStackTrace(e);
-            }
-        }
-
-        T data = cacheEntity.getData();
-        ByteArrayOutputStream dataBAOS = null;
-        ObjectOutputStream dataOOS = null;
-        try {
-            if (data != null) {
-                dataBAOS = new ByteArrayOutputStream();
-                dataOOS = new ObjectOutputStream(dataBAOS);
-                dataOOS.writeObject(data);
-                dataOOS.flush();
-                byte[] dataData = dataBAOS.toByteArray();
-                values.put(DATA, dataData);
-            }
-        } catch (IOException e) {
-            OkLogger.printStackTrace(e);
-        } finally {
-            try {
-                if (dataOOS != null) dataOOS.close();
-                if (dataBAOS != null) dataBAOS.close();
-            } catch (IOException e) {
-                OkLogger.printStackTrace(e);
-            }
-        }
+        values.put(HEAD, IOUtils.toByteArray(cacheEntity.getResponseHeaders()));
+        values.put(DATA, IOUtils.toByteArray(cacheEntity.getData()));
         return values;
     }
 
@@ -165,49 +116,9 @@ public class CacheEntity<T> implements Serializable {
         CacheEntity<T> cacheEntity = new CacheEntity<>();
         cacheEntity.setKey(cursor.getString(cursor.getColumnIndex(KEY)));
         cacheEntity.setLocalExpire(cursor.getLong(cursor.getColumnIndex(LOCAL_EXPIRE)));
-
-        byte[] headerData = cursor.getBlob(cursor.getColumnIndex(HEAD));
-        ByteArrayInputStream headerBAIS = null;
-        ObjectInputStream headerOIS = null;
-        try {
-            if (headerData != null) {
-                headerBAIS = new ByteArrayInputStream(headerData);
-                headerOIS = new ObjectInputStream(headerBAIS);
-                Object header = headerOIS.readObject();
-                cacheEntity.setResponseHeaders((HttpHeaders) header);
-            }
-        } catch (Exception e) {
-            OkLogger.printStackTrace(e);
-        } finally {
-            try {
-                if (headerOIS != null) headerOIS.close();
-                if (headerBAIS != null) headerBAIS.close();
-            } catch (IOException e) {
-                OkLogger.printStackTrace(e);
-            }
-        }
-
-        byte[] dataData = cursor.getBlob(cursor.getColumnIndex(DATA));
-        ByteArrayInputStream dataBAIS = null;
-        ObjectInputStream dataOIS = null;
-        try {
-            if (dataData != null) {
-                dataBAIS = new ByteArrayInputStream(dataData);
-                dataOIS = new ObjectInputStream(dataBAIS);
-                T data = (T) dataOIS.readObject();
-                cacheEntity.setData(data);
-            }
-        } catch (Exception e) {
-            OkLogger.printStackTrace(e);
-        } finally {
-            try {
-                if (dataOIS != null) dataOIS.close();
-                if (dataBAIS != null) dataBAIS.close();
-            } catch (IOException e) {
-                OkLogger.printStackTrace(e);
-            }
-        }
-
+        cacheEntity.setResponseHeaders((HttpHeaders) IOUtils.toObject(cursor.getBlob(cursor.getColumnIndex(HEAD))));
+        //noinspection unchecked
+        cacheEntity.setData((T) IOUtils.toObject(cursor.getBlob(cursor.getColumnIndex(DATA))));
         return cacheEntity;
     }
 

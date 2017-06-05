@@ -15,17 +15,16 @@
  */
 package com.lzy.okserver.upload;
 
-import android.os.Message;
-
-import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.model.Response;
-import com.lzy.okgo.request.BodyRequest;
-import com.lzy.okgo.utils.OkLogger;
-import com.lzy.okserver.listener.UploadListener;
+import com.lzy.okgo.request.ProgressRequestBody;
+import com.lzy.okgo.request.Request;
+import com.lzy.okgo.utils.HttpUtils;
+import com.lzy.okserver.OkUpload;
 import com.lzy.okserver.task.PriorityAsyncTask;
 
-import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * ================================================
@@ -36,108 +35,128 @@ import java.io.IOException;
  * 修订历史：
  * ================================================
  */
-public class UploadTask<T> extends PriorityAsyncTask<Void, UploadInfo, UploadInfo> {
+public class UploadTask<T> extends PriorityAsyncTask<Void, Progress, Progress> {
 
-    private UploadUIHandler mUploadUIHandler;    //下载UI回调
-    private UploadInfo mUploadInfo;              //当前任务的信息
+    public Progress progress;                           //当前任务的信息
+    public Request<T, ? extends Request> request;
+    public Map<Object, UploadListener<T>> listenerMap;
 
-    public UploadTask(UploadInfo downloadInfo, UploadListener<T> uploadListener) {
-        mUploadInfo = downloadInfo;
-        mUploadInfo.setListener(uploadListener);
-        mUploadUIHandler = UploadManager.getInstance().getHandler();
-        //将当前任务在定义的线程池中执行
-        executeOnExecutor(UploadManager.getInstance().getThreadPool().getExecutor());
+    public UploadTask(String tag, Request<T, ? extends Request> request) {
+        listenerMap = new HashMap<>();
+        progress = new Progress();
+        progress.tag = tag;
+        progress.url = request.getBaseUrl();
+        progress.status = Progress.NONE;
+        this.request = request;
+    }
+
+    public UploadTask(Progress progress, Request<T, ? extends Request> request) {
+        listenerMap = new HashMap<>();
+        this.progress = progress;
+        this.request = request;
+    }
+
+    public UploadTask<T> register(UploadListener<T> listener) {
+        Map<String, UploadTask<?>> taskMap = OkUpload.getInstance().getTaskMap();
+        //noinspection unchecked
+        UploadTask<T> uploadTask = (UploadTask<T>) taskMap.get(progress.tag);
+        if (uploadTask == null) {
+            uploadTask = new UploadTask<>(progress, request);
+            taskMap.put(progress.tag, uploadTask);
+        }
+        uploadTask.listenerMap.put(listener.tag, listener);
+        return this;
+    }
+
+    public void start() {
+        executeOnExecutor(OkUpload.getInstance().getThreadPool().getExecutor());
     }
 
     /** 每个任务进队列的时候，都会执行该方法 */
     @Override
     protected void onPreExecute() {
-        //添加成功的回调
-        UploadListener listener = mUploadInfo.getListener();
-        if (listener != null) listener.onAdd(mUploadInfo);
+        for (UploadListener<T> listener : listenerMap.values()) {
+            listener.onAdd(progress);
+        }
 
-        mUploadInfo.setNetworkSpeed(0);
-        mUploadInfo.setState(UploadManager.WAITING);
-        postMessage(null, null, null);
+        progress.speed = 0;
+        progress.status = Progress.WAITING;
+        postMessage(null, progress);
     }
 
     /** 一旦该方法执行，意味着开始下载了 */
     @Override
-    protected UploadInfo doInBackground(Void... params) {
-        if (isCancelled()) return mUploadInfo;
-        mUploadInfo.setNetworkSpeed(0);
-        mUploadInfo.setState(UploadManager.UPLOADING);
-        postMessage(null, null, null);
+    protected Progress doInBackground(Void... params) {
+        if (isCancelled()) return progress;
+        progress.speed = 0;
+        progress.status = Progress.LOADING;
+        postMessage(null, progress);
 
-        //构建请求体,默认使用post请求上传
-        okhttp3.Response response;
+        Response<T> response;
         try {
-            BodyRequest request = mUploadInfo.getRequest();
-            request.setCallback(new MergeListener());
-            response = request.execute();
-        } catch (IOException e) {
-            OkLogger.printStackTrace(e);
-            mUploadInfo.setNetworkSpeed(0);
-            mUploadInfo.setState(UploadManager.ERROR);
-            postMessage(null, "网络异常", e);
-            return mUploadInfo;
+            request.uploadInterceptor(new ProgressRequestBody.UploadInterceptor() {
+                @Override
+                public void uploadProgress(Progress progress) {
+                    postMessage(null, progress);
+                }
+            });
+            response = request.adapt().execute();
+        } catch (Exception e) {
+            progress.speed = 0;
+            progress.status = Progress.ERROR;
+            progress.exception = e;
+            postMessage(null, progress);
+            return progress;
         }
 
         if (response.isSuccessful()) {
-            //解析过程中抛出异常，一般为 json 格式错误，或者数据解析异常
             try {
-                T t = (T) mUploadInfo.getListener().parseNetworkResponse(response);
-                mUploadInfo.setNetworkSpeed(0);
-                mUploadInfo.setState(UploadManager.FINISH); //上传成功
-                postMessage(t, null, null);
-                return mUploadInfo;
-            } catch (Exception e) {
-                OkLogger.printStackTrace(e);
-                mUploadInfo.setNetworkSpeed(0);
-                mUploadInfo.setState(UploadManager.ERROR);
-                postMessage(null, "解析数据对象出错", e);
-                return mUploadInfo;
+                progress.speed = 0;
+                progress.status = Progress.FINISH;
+                postMessage(response.body(), progress);
+                return progress;
+            } catch (Throwable e) {
+                progress.speed = 0;
+                progress.status = Progress.ERROR;
+                progress.exception = e;
+                postMessage(null, progress);
+                return progress;
             }
         } else {
-            mUploadInfo.setNetworkSpeed(0);
-            mUploadInfo.setState(UploadManager.ERROR);
-            postMessage(null, "数据返回失败", null);
-            return mUploadInfo;
+            progress.speed = 0;
+            progress.status = Progress.ERROR;
+            progress.exception = response.getException();
+            postMessage(null, progress);
+            return progress;
         }
     }
 
-    private class MergeListener extends AbsCallback<T> {
-
-        //只有这个方法会被调用，主要是为了对接接口，获取进度
-        @Override
-        public void uploadProgress(Progress progress) {
-            mUploadInfo.setState(UploadManager.UPLOADING);
-            mUploadInfo.setUploadLength(progress.currentSize);
-            mUploadInfo.setTotalLength(progress.totalSize);
-            mUploadInfo.setProgress(progress.fraction);
-            mUploadInfo.setNetworkSpeed(progress.speed);
-            postMessage(null, null, null);
-        }
-
-        @Override
-        public void onSuccess(Response<T> response) {
-        }
-
-        @Override
-        public T convertResponse(okhttp3.Response response) throws Throwable {
-            return null;
-        }
-
-    }
-
-    private void postMessage(T data, String errorMsg, Exception e) {
-        UploadUIHandler.MessageBean<T> messageBean = new UploadUIHandler.MessageBean<>();
-        messageBean.uploadInfo = mUploadInfo;
-        messageBean.errorMsg = errorMsg;
-        messageBean.e = e;
-        messageBean.data = data;
-        Message msg = mUploadUIHandler.obtainMessage();
-        msg.obj = messageBean;
-        mUploadUIHandler.sendMessage(msg);
+    private void postMessage(final T data, final Progress progress) {
+        HttpUtils.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                switch (progress.status) {
+                    case Progress.NONE:
+                    case Progress.WAITING:
+                    case Progress.LOADING:
+                        for (UploadListener<T> listener : listenerMap.values()) {
+                            listener.onProgress(progress);
+                        }
+                        break;
+                    case Progress.FINISH:
+                        for (UploadListener<T> listener : listenerMap.values()) {
+                            listener.onProgress(progress);
+                            listener.onFinish(data, progress);
+                        }
+                        break;
+                    case Progress.ERROR:
+                        for (UploadListener<T> listener : listenerMap.values()) {
+                            listener.onProgress(progress);
+                            listener.onError(progress);
+                        }
+                        break;
+                }
+            }
+        });
     }
 }

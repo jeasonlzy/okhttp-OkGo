@@ -65,7 +65,11 @@ public class CookieManager extends BaseDao<SerializableCookie> {
     }
 
     @Override
-    protected String getTableName() {
-        return DBHelper.TABLE_COOKIE_NAME;
+    public String getTableName() {
+        return DBHelper.TABLE_COOKIE;
+    }
+
+    @Override
+    public void unInit() {
     }
 }

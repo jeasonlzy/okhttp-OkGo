@@ -22,6 +22,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.cookie.SerializableCookie;
+import com.lzy.okgo.model.Progress;
 
 /**
  * ================================================
@@ -36,11 +37,15 @@ class DBHelper extends SQLiteOpenHelper {
 
     private static final String DB_CACHE_NAME = "okgo.db";
     private static final int DB_CACHE_VERSION = 1;
-    static final String TABLE_CACHE_NAME = "cache";
-    static final String TABLE_COOKIE_NAME = "cookie";
+    static final String TABLE_CACHE = "cache";
+    static final String TABLE_COOKIE = "cookie";
+    static final String TABLE_DOWNLOAD = "download";
+    static final String TABLE_UPLOAD = "upload";
 
-    private TableEntity cacheTableEntity = new TableEntity(TABLE_CACHE_NAME);
-    private TableEntity cookieTableEntity = new TableEntity(TABLE_COOKIE_NAME);
+    private TableEntity cacheTableEntity = new TableEntity(TABLE_CACHE);
+    private TableEntity cookieTableEntity = new TableEntity(TABLE_COOKIE);
+    private TableEntity downloadTableEntity = new TableEntity(TABLE_DOWNLOAD);
+    private TableEntity uploadTableEntity = new TableEntity(TABLE_UPLOAD);
 
     DBHelper() {
         this(OkGo.getInstance().getContext());
@@ -59,22 +64,34 @@ class DBHelper extends SQLiteOpenHelper {
                 .addColumn(new ColumnEntity(SerializableCookie.DOMAIN, "VARCHAR"))//
                 .addColumn(new ColumnEntity(SerializableCookie.COOKIE, "BLOB"))//
                 .addColumn(new ColumnEntity(SerializableCookie.HOST, SerializableCookie.NAME, SerializableCookie.DOMAIN));
+
+        downloadTableEntity.addColumn(new ColumnEntity(Progress.TAG, "VARCHAR", true, true))//
+                .addColumn(new ColumnEntity(Progress.URL, "VARCHAR"))//
+                .addColumn(new ColumnEntity(Progress.FOLDER, "VARCHAR"))//
+                .addColumn(new ColumnEntity(Progress.FILE_PATH, "VARCHAR"))//
+                .addColumn(new ColumnEntity(Progress.FILE_NAME, "VARCHAR"))//
+                .addColumn(new ColumnEntity(Progress.FRACTION, "VARCHAR"))//
+                .addColumn(new ColumnEntity(Progress.TOTAL_SIZE, "INTEGER"))//
+                .addColumn(new ColumnEntity(Progress.CURRENT_SIZE, "INTEGER"))//
+                .addColumn(new ColumnEntity(Progress.STATUS, "INTEGER"))//
+                .addColumn(new ColumnEntity(Progress.DATE, "INTEGER"))//
+                .addColumn(new ColumnEntity(Progress.EXTRA1, "BLOB"))//
+                .addColumn(new ColumnEntity(Progress.EXTRA2, "BLOB"))//
+                .addColumn(new ColumnEntity(Progress.EXTRA3, "BLOB"));
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(cacheTableEntity.buildTableString());
         db.execSQL(cookieTableEntity.buildTableString());
+        db.execSQL(downloadTableEntity.buildTableString());
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (DBUtils.isNeedUpgradeTable(db, cacheTableEntity)) {
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_CACHE_NAME);
-        }
-        if (DBUtils.isNeedUpgradeTable(db, cookieTableEntity)) {
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_COOKIE_NAME);
-        }
+        if (DBUtils.isNeedUpgradeTable(db, cacheTableEntity)) db.execSQL("DROP TABLE IF EXISTS " + TABLE_CACHE);
+        if (DBUtils.isNeedUpgradeTable(db, cookieTableEntity)) db.execSQL("DROP TABLE IF EXISTS " + TABLE_COOKIE);
+        if (DBUtils.isNeedUpgradeTable(db, downloadTableEntity)) db.execSQL("DROP TABLE IF EXISTS " + TABLE_DOWNLOAD);
         onCreate(db);
     }
 

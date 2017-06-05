@@ -13,25 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzy.okgo.exception;
+package com.lzy.okserver.download;
+
+import com.lzy.okgo.model.Progress;
+import com.lzy.okserver.ProgressListener;
+
+import java.io.File;
 
 /**
  * ================================================
  * 作    者：jeasonlzy（廖子尧）Github地址：https://github.com/jeasonlzy
  * 版    本：1.0
- * 创建日期：16/8/28
- * 描    述：
+ * 创建日期：2016/1/19
+ * 描    述：全局的下载监听
  * 修订历史：
  * ================================================
  */
-public class OkGoException extends Exception {
-    private static final long serialVersionUID = -8641198158155821498L;
+public abstract class DownloadListener implements ProgressListener<File> {
 
-    public OkGoException(String detailMessage) {
-        super(detailMessage);
+    public final Object tag;
+
+    public DownloadListener(Object tag) {
+        this.tag = tag;
     }
 
-    public static OkGoException UNKNOWN() {
-        return new OkGoException("unknown exception!");
+    /** 成功添加任务的回调 */
+    @Override
+    public void onAdd(Progress progress) {
+    }
+
+    /** 成功移除任务回调 */
+    @Override
+    public void onRemove(Progress progress) {
     }
 }

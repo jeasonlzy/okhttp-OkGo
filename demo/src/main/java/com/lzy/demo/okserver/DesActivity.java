@@ -18,28 +18,27 @@ package com.lzy.demo.okserver;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.format.Formatter;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.lzy.demo.R;
 import com.lzy.demo.base.BaseActivity;
 import com.lzy.demo.model.ApkModel;
 import com.lzy.demo.utils.ApkUtils;
 import com.lzy.okgo.OkGo;
+import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.request.GetRequest;
-import com.lzy.okserver.download.DownloadInfo;
-import com.lzy.okserver.download.DownloadManager;
-import com.lzy.okserver.download.DownloadService;
-import com.lzy.okserver.listener.DownloadListener;
+import com.lzy.okserver.OkDownload;
+import com.lzy.okserver.download.DownloadListener;
+import com.lzy.okserver.download.DownloadTask;
 
 import java.io.File;
+import java.text.NumberFormat;
 
 import butterknife.Bind;
+import butterknife.OnClick;
 
 /**
  * ================================================
@@ -50,7 +49,7 @@ import butterknife.Bind;
  * 修订历史：
  * ================================================
  */
-public class DesActivity extends BaseActivity implements View.OnClickListener {
+public class DesActivity extends BaseActivity {
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.icon) ImageView icon;
@@ -64,9 +63,9 @@ public class DesActivity extends BaseActivity implements View.OnClickListener {
     @Bind(R.id.restart) Button restart;
 
     private MyListener listener;
-    private DownloadInfo downloadInfo;
-    private ApkModel apk;
-    private DownloadManager downloadManager;
+    private OkDownload okDownload;
+    private NumberFormat numberFormat;
+    private DownloadTask task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,140 +73,132 @@ public class DesActivity extends BaseActivity implements View.OnClickListener {
         setContentView(R.layout.activity_download_details);
         initToolBar(toolbar, true, "下载管理");
 
-        apk = (ApkModel) getIntent().getSerializableExtra("apk");
-        downloadManager = DownloadService.getDownloadManager();
+        ApkModel apk = (ApkModel) getIntent().getSerializableExtra("apk");
+        okDownload = OkDownload.getInstance();
+        numberFormat = NumberFormat.getPercentInstance();
+        numberFormat.setMinimumFractionDigits(2);
 
-        Glide.with(this).load(apk.getIconUrl()).error(R.mipmap.ic_launcher).into(icon);
+        listener = new MyListener(getClass().getSimpleName());
+        task = okDownload.getTaskMap().get(apk.getUrl());
+        if (task == null) {
+            GetRequest<File> request = OkGo.get(apk.getUrl());
+            task = OkDownload.request(apk.getUrl(), request)//
+                    .extra1(apk)//
+                    .register(listener);
+        } else {
+            task.register(listener);
+        }
+
+        displayImage(apk.getIconUrl(), icon);
         name.setText(apk.getName());
-        download.setOnClickListener(this);
-        remove.setOnClickListener(this);
-        restart.setOnClickListener(this);
-        listener = new MyListener();
+        refreshUi(task.progress);
+    }
 
-        downloadInfo = downloadManager.getDownloadInfo(apk.getUrl());
-        if (downloadInfo != null) {
-            //如果任务存在，把任务的监听换成当前页面需要的监听
-            downloadInfo.setListener(listener);
-            //需要第一次手动刷一次，因为任务可能处于下载完成，暂停，等待状态，此时是不会回调进度方法的
-            refreshUi(downloadInfo);
+    private void refreshUi(Progress progress) {
+        String currentSize = Formatter.formatFileSize(this, progress.currentSize);
+        String totalSize = Formatter.formatFileSize(this, progress.totalSize);
+        downloadSize.setText(currentSize + "/" + totalSize);
+        String speed = Formatter.formatFileSize(this, progress.speed);
+        netSpeed.setText(String.format("%s/s", speed));
+        tvProgress.setText(numberFormat.format(progress.fraction));
+        pbProgress.setMax(10000);
+        pbProgress.setProgress((int) (progress.fraction * 10000));
+        switch (progress.status) {
+            case Progress.NONE:
+                download.setText("下载");
+                break;
+            case Progress.LOADING:
+                download.setText("暂停");
+                break;
+            case Progress.PAUSE:
+                download.setText("继续");
+                break;
+            case Progress.WAITING:
+                download.setText("等待");
+                break;
+            case Progress.ERROR:
+                download.setText("出错");
+                break;
+            case Progress.FINISH:
+                if (ApkUtils.isAvailable(this, new File(progress.filePath))) {
+                    download.setText("卸载");
+                } else {
+                    download.setText("安装");
+                }
+                break;
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (downloadInfo != null) refreshUi(downloadInfo);
+        refreshUi(task.progress);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (downloadInfo != null) downloadInfo.removeListener();
+        task.unRegister(listener);
     }
 
-    @Override
-    public void onClick(View v) {
-        //每次点击的时候，需要更新当前对象
-        downloadInfo = downloadManager.getDownloadInfo(apk.getUrl());
-        if (v.getId() == download.getId()) {
-            if (downloadInfo == null) {
-                GetRequest request = OkGo.get(apk.getUrl())//
-                        .headers("headerKey1", "headerValue1")//
-                        .headers("headerKey2", "headerValue2")//
-                        .params("paramKey1", "paramValue1")//
-                        .params("paramKey2", "paramValue2");
-                downloadManager.addTask(apk.getUrl(), request, listener);
-                return;
-            }
-            switch (downloadInfo.getState()) {
-                case DownloadManager.PAUSE:
-                case DownloadManager.NONE:
-                case DownloadManager.ERROR:
-                    downloadManager.addTask(downloadInfo.getUrl(), downloadInfo.getRequest(), listener);
-                    break;
-                case DownloadManager.DOWNLOADING:
-                    downloadManager.pauseTask(downloadInfo.getUrl());
-                    break;
-                case DownloadManager.FINISH:
-                    if (ApkUtils.isAvailable(this, new File(downloadInfo.getTargetPath()))) {
-                        ApkUtils.uninstall(this, ApkUtils.getPackageName(this, downloadInfo.getTargetPath()));
-                    } else {
-                        ApkUtils.install(this, new File(downloadInfo.getTargetPath()));
-                    }
-                    break;
-            }
-        } else if (v.getId() == remove.getId()) {
-            if (downloadInfo == null) {
-                Toast.makeText(this, "请先下载任务", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            downloadManager.removeTask(downloadInfo.getUrl());
-            downloadSize.setText("--M/--M");
-            netSpeed.setText("---/s");
-            tvProgress.setText("--.--%");
-            pbProgress.setProgress(0);
-            download.setText("下载");
-        } else if (v.getId() == restart.getId()) {
-            if (downloadInfo == null) {
-                Toast.makeText(this, "请先下载任务", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            downloadManager.restartTask(downloadInfo.getUrl());
+    @OnClick(R.id.start)
+    public void start() {
+        switch (task.progress.status) {
+            case Progress.PAUSE:
+            case Progress.NONE:
+            case Progress.ERROR:
+                task.start();
+                break;
+            case Progress.LOADING:
+                task.pause();
+                break;
+            case Progress.FINISH:
+                File file = new File(task.progress.filePath);
+                if (ApkUtils.isAvailable(this, file)) {
+                    ApkUtils.uninstall(this, ApkUtils.getPackageName(this, file.getAbsolutePath()));
+                } else {
+                    ApkUtils.install(this, file);
+                }
+                break;
         }
+    }
+
+    @OnClick(R.id.remove)
+    public void remove() {
+        okDownload.remove(task.progress.tag);
+        downloadSize.setText("--M/--M");
+        netSpeed.setText("---/s");
+        tvProgress.setText("--.--%");
+        pbProgress.setProgress(0);
+        download.setText("下载");
+    }
+
+    @OnClick(R.id.restart)
+    public void restart() {
+        okDownload.restart(task.progress.tag);
     }
 
     private class MyListener extends DownloadListener {
 
-        @Override
-        public void onProgress(DownloadInfo downloadInfo) {
-            refreshUi(downloadInfo);
+        MyListener(String tag) {
+            super(tag);
         }
 
         @Override
-        public void onFinish(DownloadInfo downloadInfo) {
+        public void onProgress(Progress progress) {
+            refreshUi(progress);
+        }
+
+        @Override
+        public void onFinish(File file, Progress progress) {
             System.out.println("onFinish");
-            Toast.makeText(DesActivity.this, "下载完成:" + downloadInfo.getTargetPath(), Toast.LENGTH_SHORT).show();
+            showToast("下载完成:" + progress.filePath);
         }
 
         @Override
-        public void onError(DownloadInfo downloadInfo, String errorMsg, Exception e) {
-            System.out.println("onError");
-            if (errorMsg != null) Toast.makeText(DesActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void refreshUi(DownloadInfo downloadInfo) {
-        String downloadLength = Formatter.formatFileSize(DesActivity.this, downloadInfo.getDownloadLength());
-        String totalLength = Formatter.formatFileSize(DesActivity.this, downloadInfo.getTotalLength());
-        downloadSize.setText(downloadLength + "/" + totalLength);
-        String networkSpeed = Formatter.formatFileSize(DesActivity.this, downloadInfo.getNetworkSpeed());
-        netSpeed.setText(networkSpeed + "/s");
-        tvProgress.setText((Math.round(downloadInfo.getProgress() * 10000) * 1.0f / 100) + "%");
-        pbProgress.setMax((int) downloadInfo.getTotalLength());
-        pbProgress.setProgress((int) downloadInfo.getDownloadLength());
-        switch (downloadInfo.getState()) {
-            case DownloadManager.NONE:
-                download.setText("下载");
-                break;
-            case DownloadManager.DOWNLOADING:
-                download.setText("暂停");
-                break;
-            case DownloadManager.PAUSE:
-                download.setText("继续");
-                break;
-            case DownloadManager.WAITING:
-                download.setText("等待");
-                break;
-            case DownloadManager.ERROR:
-                download.setText("出错");
-                break;
-            case DownloadManager.FINISH:
-                if (ApkUtils.isAvailable(DesActivity.this, new File(downloadInfo.getTargetPath()))) {
-                    download.setText("卸载");
-                } else {
-                    download.setText("安装");
-                }
-                break;
+        public void onError(Progress progress) {
+            Throwable throwable = progress.exception;
+            if (throwable != null) throwable.printStackTrace();
         }
     }
 }

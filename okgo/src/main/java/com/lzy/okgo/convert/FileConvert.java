@@ -66,9 +66,9 @@ public class FileConvert implements Converter<File> {
     }
 
     @Override
-    public File convertResponse(Response value) throws Throwable {
+    public File convertResponse(Response response) throws Throwable {
         if (TextUtils.isEmpty(destFileDir)) destFileDir = Environment.getExternalStorageDirectory() + DM_TARGET_FOLDER;
-        if (TextUtils.isEmpty(destFileName)) destFileName = HttpUtils.getNetFileName(value, value.request().url().toString());
+        if (TextUtils.isEmpty(destFileName)) destFileName = HttpUtils.getNetFileName(response, response.request().url().toString());
 
         File dir = new File(destFileDir);
         if (!dir.exists()) dir.mkdirs();
@@ -76,10 +76,10 @@ public class FileConvert implements Converter<File> {
         if (file.exists()) file.delete();
 
         InputStream bodyStream = null;
-        byte[] buffer = new byte[8096];
+        byte[] buffer = new byte[8192];
         FileOutputStream fileOutputStream = null;
         try {
-            ResponseBody body = value.body();
+            ResponseBody body = response.body();
             if (body == null) return null;
 
             bodyStream = body.byteStream();

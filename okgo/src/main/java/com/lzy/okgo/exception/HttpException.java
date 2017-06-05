@@ -30,22 +30,9 @@ import com.lzy.okgo.utils.HttpUtils;
 public class HttpException extends RuntimeException {
     private static final long serialVersionUID = 8773734741709178425L;
 
-    public static HttpException NET_ERROR() {
-        return new HttpException("network error! http response code is 404 or 5xx!");
-    }
-
-    public static HttpException COMMON(String message) {
-        return new HttpException(message);
-    }
-
-    private static String getMessage(Response<?> response) {
-        HttpUtils.checkNotNull(response, "response == null");
-        return "HTTP " + response.code() + " " + response.message();
-    }
-
-    private int code;
-    private String message;
-    private transient Response<?> response;
+    private int code;                               //HTTP status code
+    private String message;                         //HTTP status message
+    private transient Response<?> response;         //The full HTTP response. This may be null if the exception was serialized
 
     public HttpException(String message) {
         super(message);
@@ -58,20 +45,28 @@ public class HttpException extends RuntimeException {
         this.response = response;
     }
 
-    /** HTTP status code. */
+    private static String getMessage(Response<?> response) {
+        HttpUtils.checkNotNull(response, "response == null");
+        return "HTTP " + response.code() + " " + response.message();
+    }
+
     public int code() {
         return code;
     }
 
-    /** HTTP status message. */
     public String message() {
         return message;
     }
 
-    /**
-     * The full HTTP response. This may be null if the exception was serialized.
-     */
     public Response<?> response() {
         return response;
+    }
+
+    public static HttpException NET_ERROR() {
+        return new HttpException("network error! http response code is 404 or 5xx!");
+    }
+
+    public static HttpException COMMON(String message) {
+        return new HttpException(message);
     }
 }

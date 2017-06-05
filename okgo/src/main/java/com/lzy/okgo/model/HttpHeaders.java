@@ -62,6 +62,7 @@ public class HttpHeaders implements Serializable {
     public static final String HEAD_KEY_CONTENT_ENCODING = "Content-Encoding";
     public static final String HEAD_KEY_CONTENT_DISPOSITION = "Content-Disposition";
     public static final String HEAD_KEY_CONTENT_RANGE = "Content-Range";
+    public static final String HEAD_KEY_RANGE = "Range";
     public static final String HEAD_KEY_CACHE_CONTROL = "Cache-Control";
     public static final String HEAD_KEY_CONNECTION = "Connection";
     public static final String HEAD_VALUE_CONNECTION_KEEP_ALIVE = "keep-alive";

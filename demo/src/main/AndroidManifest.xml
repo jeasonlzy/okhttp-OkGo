@@ -60,13 +60,13 @@
             android:name=".okgo.OkHttpActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".okserver.DownloadManagerActivity"
+            android:name=".okserver.DownloadActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".okserver.DesActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".okserver.DownloadActivity"
+            android:name=".okserver.DownloadListActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".okserver.UploadActivity"

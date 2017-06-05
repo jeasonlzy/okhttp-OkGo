@@ -28,8 +28,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.lzy.demo.R;
 import com.lzy.imagepicker.view.SystemBarTintManager;
 
@@ -170,5 +172,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
         }
+    }
+
+    public void displayImage(String url, ImageView imageView) {
+        Glide.with(getApplicationContext())//
+                .load(url)//
+                .error(R.mipmap.ic_launcher)//
+                .into(imageView);
     }
 }
