@@ -88,11 +88,6 @@ public class DownloadActivity extends BaseActivity implements ExecutorWithListen
         okDownload.pauseAll();
     }
 
-    @OnClick(R.id.stopAll)
-    public void stopAll(View view) {
-        okDownload.stopAll();
-    }
-
     @OnClick(R.id.startAll)
     public void startAll(View view) {
         okDownload.startAll();

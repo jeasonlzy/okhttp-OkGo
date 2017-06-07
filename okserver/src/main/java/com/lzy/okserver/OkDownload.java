@@ -22,7 +22,6 @@ import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.request.Request;
 import com.lzy.okgo.utils.IOUtils;
 import com.lzy.okgo.utils.OkLogger;
-import com.lzy.okserver.download.DownloadListener;
 import com.lzy.okserver.download.DownloadTask;
 import com.lzy.okserver.download.DownloadThreadPool;
 
@@ -71,40 +70,24 @@ public class OkDownload {
     }
 
     public static DownloadTask request(String tag, Request<File, ? extends Request> request) {
-        return new DownloadTask(tag, request);
-    }
-
-    public static DownloadTask request(Progress progress, Request<File, ? extends Request> request) {
-        return new DownloadTask(progress, request);
-    }
-
-    public Map<String, DownloadTask> getTaskMap() {
-        return taskMap;
-    }
-
-    public DownloadTask getTask(String tag) {
-        return taskMap.get(tag);
+        Map<String, DownloadTask> taskMap = OkDownload.getInstance().getTaskMap();
+        DownloadTask task = taskMap.get(tag);
+        if (task == null) {
+            task = new DownloadTask(tag, request);
+            taskMap.put(tag, task);
+        }
+        return task;
     }
 
     /** 开始所有任务 */
     public void startAll() {
-        for (DownloadTask task : taskMap.values()) {
+        for (Map.Entry<String, DownloadTask> entry : taskMap.entrySet()) {
+            DownloadTask task = entry.getValue();
+            if (task == null) {
+                OkLogger.w("can't find task with tag = " + entry.getKey());
+                continue;
+            }
             task.start();
-        }
-    }
-
-    /** 暂停下载 */
-    public void pause(String tag) {
-        DownloadTask task = taskMap.get(tag);
-        if (task == null) {
-            OkLogger.w("can't find task with tag = " + tag);
-            return;
-        }
-        Progress progress = task.progress;
-        if (progress.status == Progress.LOADING || progress.status == Progress.WAITING) {
-            task.pause();
-        } else {
-            OkLogger.w("only the task with status LOADING(2) or WAITING(1) can pause, current status is " + progress.status);
         }
     }
 
@@ -120,79 +103,26 @@ public class OkDownload {
         }
     }
 
-    /** 停止 */
-    public void stop(String tag) {
-        DownloadTask task = taskMap.get(tag);
-        if (task == null) {
-            OkLogger.w("can't find task with tag = " + tag);
-            return;
-        }
-        Progress progress = task.progress;
-        if (progress.status != Progress.NONE && progress.status != Progress.FINISH) {
-            task.pause();
-        } else {
-            OkLogger.w("only the task with status isn't NONE(0) and FINISH(4) can stop, current status is " + progress.status);
-        }
-    }
-
-    /** 停止全部任务,先停止没有下载的，再停止下载中的 */
-    public void stopAll() {
-        for (Map.Entry<String, DownloadTask> entry : taskMap.entrySet()) {
-            DownloadTask task = entry.getValue();
-            if (task == null) {
-                OkLogger.w("can't find task with tag = " + entry.getKey());
-                continue;
-            }
-            task.stop();
-        }
-    }
-
-    /** 删除一个任务,会删除下载文件 */
-    public void remove(String tag) {
-        remove(tag, false);
-    }
-
-    /** 删除一个任务,会删除下载文件 */
-    public void remove(String tag, boolean isDeleteFile) {
-        DownloadTask task = taskMap.get(tag);
-        if (task == null) {
-            OkLogger.w("can't find task with tag = " + tag);
-            return;
-        }
-
-        task.pause();
-        for (DownloadListener listener : task.listenerMap.values()) {
-            listener.onRemove(task.progress);
-        }
-        task.listenerMap.remove(tag);
-        if (isDeleteFile) IOUtils.delFileOrFolder(task.progress.filePath);
-        DownloadManager.getInstance().delete(tag);
-    }
-
     /** 删除所有任务 */
     public void removeAll() {
-        for (Map.Entry<String, DownloadTask> entry : taskMap.entrySet()) {
+        removeAll(false);
+    }
+
+    /**
+     * 删除所有任务
+     *
+     * @param isDeleteFile 删除任务是否删除文件
+     */
+    public void removeAll(boolean isDeleteFile) {
+        Map<String, DownloadTask> map = new HashMap<>(taskMap);
+        for (Map.Entry<String, DownloadTask> entry : map.entrySet()) {
             DownloadTask task = entry.getValue();
             if (task == null) {
                 OkLogger.w("can't find task with tag = " + entry.getKey());
                 continue;
             }
-            for (DownloadListener listener : task.listenerMap.values()) {
-                listener.onRemove(task.progress);
-            }
-            task.listenerMap.clear();
+            task.remove(isDeleteFile);
         }
-        taskMap.clear();
-    }
-
-    /** 重新下载 */
-    public void restart(String tag) {
-        DownloadTask task = taskMap.get(tag);
-        if (task == null) {
-            OkLogger.w("can't find task with tag = " + tag);
-            return;
-        }
-        task.restart();
     }
 
     /** 设置下载目录 */
@@ -207,5 +137,25 @@ public class OkDownload {
 
     public DownloadThreadPool getThreadPool() {
         return threadPool;
+    }
+
+    public Map<String, DownloadTask> getTaskMap() {
+        return taskMap;
+    }
+
+    public DownloadTask getTask(String tag) {
+        return taskMap.get(tag);
+    }
+
+    public void addTask(DownloadTask task) {
+        taskMap.put(task.progress.tag, task);
+    }
+
+    public DownloadTask removeTask(String tag) {
+        return taskMap.remove(tag);
+    }
+
+    public Progress getProgress(String tag) {
+        return DownloadManager.getInstance().get(tag);
     }
 }

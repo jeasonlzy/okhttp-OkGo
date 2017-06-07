@@ -62,10 +62,9 @@ public class DesActivity extends BaseActivity {
     @Bind(R.id.remove) Button remove;
     @Bind(R.id.restart) Button restart;
 
-    private MyListener listener;
-    private OkDownload okDownload;
     private NumberFormat numberFormat;
     private DownloadTask task;
+    private ApkModel apk;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,25 +72,19 @@ public class DesActivity extends BaseActivity {
         setContentView(R.layout.activity_download_details);
         initToolBar(toolbar, true, "下载管理");
 
-        ApkModel apk = (ApkModel) getIntent().getSerializableExtra("apk");
-        okDownload = OkDownload.getInstance();
+        apk = (ApkModel) getIntent().getSerializableExtra("apk");
         numberFormat = NumberFormat.getPercentInstance();
         numberFormat.setMinimumFractionDigits(2);
 
-        listener = new MyListener(getClass().getSimpleName());
-        task = okDownload.getTaskMap().get(apk.getUrl());
-        if (task == null) {
-            GetRequest<File> request = OkGo.get(apk.getUrl());
-            task = OkDownload.request(apk.getUrl(), request)//
-                    .extra1(apk)//
-                    .register(listener);
-        } else {
-            task.register(listener);
+        task = OkDownload.getInstance().getTask(apk.getUrl());
+        if (task != null) {
+            task.register(new DesListener("DesActivity1"))//
+                    .register(new LogListener("DesActivity2"));
         }
 
         displayImage(apk.getIconUrl(), icon);
         name.setText(apk.getName());
-        refreshUi(task.progress);
+        if (task != null) refreshUi(task.progress);
     }
 
     private void refreshUi(Progress progress) {
@@ -130,19 +123,24 @@ public class DesActivity extends BaseActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        refreshUi(task.progress);
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
-        task.unRegister(listener);
+        if (task != null) {
+            task.unRegister("DesActivity1");
+            task.unRegister("DesActivity2");
+        }
     }
 
     @OnClick(R.id.start)
     public void start() {
+        if (task == null) {
+            GetRequest<File> request = OkGo.get(apk.getUrl());
+            task = OkDownload.request(apk.getUrl(), request)//
+                    .extra1(apk)//
+                    .register(new DesListener("DesActivity1"))//
+                    .register(new LogListener("DesActivity2"));
+        }
+
         switch (task.progress.status) {
             case Progress.PAUSE:
             case Progress.NONE:
@@ -165,7 +163,7 @@ public class DesActivity extends BaseActivity {
 
     @OnClick(R.id.remove)
     public void remove() {
-        okDownload.remove(task.progress.tag);
+        if (task != null) task.remove();
         downloadSize.setText("--M/--M");
         netSpeed.setText("---/s");
         tvProgress.setText("--.--%");
@@ -175,13 +173,17 @@ public class DesActivity extends BaseActivity {
 
     @OnClick(R.id.restart)
     public void restart() {
-        okDownload.restart(task.progress.tag);
+        if (task != null) task.restart();
     }
 
-    private class MyListener extends DownloadListener {
+    private class DesListener extends DownloadListener {
 
-        MyListener(String tag) {
+        DesListener(String tag) {
             super(tag);
+        }
+
+        @Override
+        public void onStart(Progress progress) {
         }
 
         @Override
@@ -191,8 +193,6 @@ public class DesActivity extends BaseActivity {
 
         @Override
         public void onFinish(File file, Progress progress) {
-            System.out.println("onFinish");
-            showToast("下载完成:" + progress.filePath);
         }
 
         @Override

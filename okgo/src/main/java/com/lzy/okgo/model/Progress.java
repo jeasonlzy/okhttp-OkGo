@@ -40,10 +40,10 @@ public class Progress implements Serializable {
 
     public static final int NONE = 0;         //无状态
     public static final int WAITING = 1;      //等待
-    public static final int LOADING = 2;  //下载中
+    public static final int LOADING = 2;      //下载中
     public static final int PAUSE = 3;        //暂停
-    public static final int FINISH = 4;       //完成
-    public static final int ERROR = 5;        //错误
+    public static final int ERROR = 4;        //错误
+    public static final int FINISH = 5;       //完成
 
     public static final String TAG = "tag";
     public static final String URL = "url";
@@ -75,13 +75,14 @@ public class Progress implements Serializable {
     public Serializable extra3;         //额外的数据
     public Throwable exception;         //当前进度出现的异常
 
-    private transient long lastSize;              //上次已下载的大小, byte
     private transient long tempSize;              //每一小段时间间隔的网络流量
     private transient long lastRefreshTime;       //最后一次刷新的时间
     private transient List<Long> speedBuffer;     //网速做平滑的缓存，避免抖动过快
 
     public Progress() {
         lastRefreshTime = SystemClock.elapsedRealtime();
+        totalSize = -1;
+        date = System.currentTimeMillis();
         speedBuffer = new ArrayList<>();
     }
 
@@ -91,16 +92,14 @@ public class Progress implements Serializable {
 
     public static Progress changeProgress(final Progress progress, long writeSize, long totalSize, final Action action) {
         progress.totalSize = totalSize;
-        progress.lastSize += writeSize;
+        progress.currentSize += writeSize;
         progress.tempSize += writeSize;
 
         long currentTime = SystemClock.elapsedRealtime();
         boolean isNotify = (currentTime - progress.lastRefreshTime) >= OkGo.REFRESH_TIME;
-        if (isNotify || progress.lastSize == totalSize) {
+        if (isNotify || progress.currentSize == totalSize) {
             long diffTime = currentTime - progress.lastRefreshTime;
             if (diffTime == 0) diffTime = 1;
-            progress.status = Progress.LOADING;
-            progress.currentSize += progress.tempSize;
             progress.fraction = progress.currentSize * 1.0f / totalSize;
             progress.speed = progress.bufferSpeed(progress.tempSize * 1000 / diffTime);
             progress.lastRefreshTime = currentTime;
@@ -178,5 +177,21 @@ public class Progress implements Serializable {
     @Override
     public int hashCode() {
         return tag != null ? tag.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Progress{" +//
+               "fraction=" + fraction +//
+               ", totalSize=" + totalSize +//
+               ", currentSize=" + currentSize +//
+               ", speed=" + speed +//
+               ", status=" + status +//
+               ", folder=" + folder +//
+               ", filePath=" + filePath +//
+               ", fileName=" + fileName +//
+               ", tag=" + tag +//
+               ", url=" + url +//
+               '}';
     }
 }

@@ -61,7 +61,7 @@ public class UploadTask<T> extends PriorityAsyncTask<Void, Progress, Progress> {
         //noinspection unchecked
         UploadTask<T> uploadTask = (UploadTask<T>) taskMap.get(progress.tag);
         if (uploadTask == null) {
-            uploadTask = new UploadTask<>(progress, request);
+            uploadTask = this;
             taskMap.put(progress.tag, uploadTask);
         }
         uploadTask.listenerMap.put(listener.tag, listener);
@@ -76,7 +76,7 @@ public class UploadTask<T> extends PriorityAsyncTask<Void, Progress, Progress> {
     @Override
     protected void onPreExecute() {
         for (UploadListener<T> listener : listenerMap.values()) {
-            listener.onAdd(progress);
+            listener.onStart(progress);
         }
 
         progress.speed = 0;

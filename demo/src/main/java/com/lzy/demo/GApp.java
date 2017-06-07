@@ -38,8 +38,6 @@ import javax.net.ssl.X509TrustManager;
 
 import okhttp3.OkHttpClient;
 
-import static com.lzy.okgo.utils.OkLogger.tag;
-
 /**
  * ================================================
  * 作    者：廖子尧   github 地址  https://github.com/jeasonlzy/
@@ -73,7 +71,7 @@ public class GApp extends Application {
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         //log相关
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(tag);
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor("OkGo");
         loggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.BODY);        //log打印级别，决定了log显示的详细程度
         loggingInterceptor.setColorLevel(Level.INFO);                               //log颜色级别，决定了log在控制台显示的颜色
         builder.addInterceptor(loggingInterceptor);

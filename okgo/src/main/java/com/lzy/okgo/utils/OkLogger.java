@@ -29,7 +29,7 @@ import android.util.Log;
 public class OkLogger {
     private static boolean isLogEnable = true;
 
-    public static String tag = "OkGo";
+    private static String tag = "OkGo";
 
     public static void debug(boolean isEnable) {
         debug(tag, isEnable);

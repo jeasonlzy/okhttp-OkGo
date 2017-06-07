@@ -196,7 +196,7 @@ public class DownloadAdapter extends BaseAdapter {
 
         @OnClick(R.id.remove)
         public void remove() {
-            OkDownload.getInstance().remove(task.progress.tag);
+            task.remove(true);
             values = new ArrayList<>(OkDownload.getInstance().getTaskMap().values());
             notifyDataSetChanged();
         }
@@ -222,6 +222,11 @@ public class DownloadAdapter extends BaseAdapter {
         public void onError(Progress progress) {
             Throwable throwable = progress.exception;
             if (throwable != null) throwable.printStackTrace();
+        }
+
+        @Override
+        public void onStart(Progress progress) {
+            System.out.println("onStart");
         }
 
         @Override

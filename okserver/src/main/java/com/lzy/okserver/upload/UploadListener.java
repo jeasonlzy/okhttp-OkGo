@@ -15,7 +15,6 @@
  */
 package com.lzy.okserver.upload;
 
-import com.lzy.okgo.model.Progress;
 import com.lzy.okserver.ProgressListener;
 
 /**
@@ -33,13 +32,5 @@ public abstract class UploadListener<T> implements ProgressListener<T> {
 
     public UploadListener(Object tag) {
         this.tag = tag;
-    }
-
-    /** 成功添加任务的回调 */
-    public void onAdd(Progress progress) {
-    }
-
-    /** 成功移除任务回调 */
-    public void onRemove(Progress progress) {
     }
 }

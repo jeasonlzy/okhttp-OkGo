@@ -36,14 +36,4 @@ public abstract class DownloadListener implements ProgressListener<File> {
     public DownloadListener(Object tag) {
         this.tag = tag;
     }
-
-    /** 成功添加任务的回调 */
-    @Override
-    public void onAdd(Progress progress) {
-    }
-
-    /** 成功移除任务回调 */
-    @Override
-    public void onRemove(Progress progress) {
-    }
 }

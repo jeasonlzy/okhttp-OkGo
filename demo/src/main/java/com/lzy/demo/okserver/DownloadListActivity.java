@@ -27,7 +27,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.lzy.demo.R;
@@ -63,7 +62,6 @@ public class DownloadListActivity extends BaseActivity {
     @Bind(R.id.openManager) Button openManager;
 
     private ArrayList<ApkModel> apks;
-    private OkDownload okDownload;
     private MainAdapter adapter;
 
     @Override
@@ -73,11 +71,10 @@ public class DownloadListActivity extends BaseActivity {
         initToolBar(toolbar, true, "下载管理");
 
         initData();
-        okDownload = OkDownload.getInstance();
-        okDownload.setFolder(Environment.getExternalStorageDirectory().getAbsolutePath() + "/aaa/");
-        okDownload.getThreadPool().setCorePoolSize(3);
+        OkDownload.getInstance().setFolder(Environment.getExternalStorageDirectory().getAbsolutePath() + "/aaa/");
+        OkDownload.getInstance().getThreadPool().setCorePoolSize(3);
 
-        folder.setText("下载路径: " + okDownload.getFolder());
+        folder.setText(String.format("下载路径: %s", OkDownload.getInstance().getFolder()));
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
@@ -130,7 +127,7 @@ public class DownloadListActivity extends BaseActivity {
 
         public void bind(ApkModel apkModel) {
             this.apk = apkModel;
-            if (okDownload.getTaskMap().containsKey(apkModel.getUrl())) {
+            if (OkDownload.getInstance().getProgress(apk.getUrl()) != null) {
                 download.setText("已在队列");
                 download.setEnabled(false);
             } else {
@@ -144,19 +141,13 @@ public class DownloadListActivity extends BaseActivity {
 
         @OnClick(R.id.download)
         public void download() {
-            if (okDownload.getTaskMap().containsKey(apk.getUrl())) {
-                showToast("任务已经在下载列表中");
-            } else {
-                GetRequest<File> request = OkGo.get(apk.getUrl());
-                //这里第一个参数是tag，代表下载任务的唯一标识，传任意字符串都行，需要保证唯一
-                OkDownload.request(apk.getUrl(), request)//
-                        .extra1(apk)//
-                        .register(null)//
-                        .start();
-
-                download.setText("已在队列");
-                download.setEnabled(false);
-            }
+            GetRequest<File> request = OkGo.get(apk.getUrl());
+            //这里第一个参数是tag，代表下载任务的唯一标识，传任意字符串都行，需要保证唯一,我这里用url作为了tag
+            OkDownload.request(apk.getUrl(), request)//
+                    .extra1(apk)//
+                    .register(new LogListener("DownloadListActivity"))//
+                    .start();
+            adapter.notifyDataSetChanged();
         }
 
         @Override

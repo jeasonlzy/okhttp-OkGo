@@ -274,8 +274,7 @@ public class NumberProgressBar extends View {
             canvas.drawRect(mUnreachedRectF, mUnreachedBarPaint);
         }
 
-        if (mIfDrawText)
-            canvas.drawText(mCurrentDrawText, mDrawTextStart, mDrawTextEnd, mTextPaint);
+        if (mIfDrawText) canvas.drawText(mCurrentDrawText, mDrawTextStart, mDrawTextEnd, mTextPaint);
     }
 
     private void initializePainters() {

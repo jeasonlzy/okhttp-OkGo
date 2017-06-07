@@ -29,7 +29,6 @@ import android.view.animation.Transformation;
 
 import com.lzy.demo.R;
 
-@SuppressWarnings("unused")
 /**
  * ================================================
  * 作    者：jeasonlzy（廖子尧）Github地址：https://github.com/jeasonlzy
@@ -39,6 +38,7 @@ import com.lzy.demo.R;
  * 修订历史：
  * ================================================
  */
+@SuppressWarnings("unused")
 public class SimpleViewBehavior extends CoordinatorLayout.Behavior<View> {
 
     private static final int UNSPECIFIED_INT = Integer.MAX_VALUE;
@@ -281,10 +281,10 @@ public class SimpleViewBehavior extends CoordinatorLayout.Behavior<View> {
         int endG = (endColor >> 8) & 0xff;
         int endB = endColor & 0xff;
 
-        return ((startA + (int) (percent * (endA - startA))) << 24) |
-                ((startR + (int) (percent * (endR - startR))) << 16) |
-                ((startG + (int) (percent * (endG - startG))) << 8) |
-                ((startB + (int) (percent * (endB - startB))));
+        return ((startA + (int) (percent * (endA - startA))) << 24) |//
+               ((startR + (int) (percent * (endR - startR))) << 16) |//
+               ((startG + (int) (percent * (endG - startG))) << 8) |//
+               ((startB + (int) (percent * (endB - startB))));
     }
 
     /** 获取状态栏的高度 */

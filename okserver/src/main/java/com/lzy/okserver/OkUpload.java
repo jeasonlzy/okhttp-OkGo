@@ -15,7 +15,6 @@
  */
 package com.lzy.okserver;
 
-import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.request.Request;
 import com.lzy.okserver.upload.UploadTask;
 import com.lzy.okserver.upload.UploadThreadPool;
@@ -52,10 +51,6 @@ public class OkUpload {
 
     public static <T> UploadTask<T> request(String tag, Request<T, ? extends Request> request) {
         return new UploadTask<>(tag, request);
-    }
-
-    public static <T> UploadTask<T> request(Progress progress, Request<T, ? extends Request> request) {
-        return new UploadTask<>(progress, request);
     }
 
     public UploadThreadPool getThreadPool() {

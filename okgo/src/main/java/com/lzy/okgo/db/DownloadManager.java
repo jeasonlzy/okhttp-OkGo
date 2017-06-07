@@ -90,7 +90,7 @@ public class DownloadManager extends BaseDao<Progress> {
     }
     /** 获取所有下载信息 */
     public List<Progress> getDownloading() {
-        return query(null, "status not exists(?)", new String[]{Progress.FINISH + ""}, null, null, Progress.DATE + " DESC", null);
+        return query(null, "status not in(?)", new String[]{Progress.FINISH + ""}, null, null, Progress.DATE + " DESC", null);
     }
 
     /** 清空下载任务 */

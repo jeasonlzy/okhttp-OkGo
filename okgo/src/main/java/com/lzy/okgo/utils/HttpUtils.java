@@ -128,7 +128,7 @@ public class HttpUtils {
     public static String getNetFileName(Response response, String url) {
         String fileName = getHeaderFileName(response);
         if (TextUtils.isEmpty(fileName)) fileName = getUrlFileName(url);
-        if (TextUtils.isEmpty(fileName)) fileName = "nofilename";
+        if (TextUtils.isEmpty(fileName)) fileName = "unknownfile_" + System.currentTimeMillis();
         return fileName;
     }
 
@@ -149,12 +149,17 @@ public class HttpUtils {
 
     /** 通过 ‘？’ 和 ‘/’ 判断文件名 */
     private static String getUrlFileName(String url) {
-        int index = url.lastIndexOf('?');
-        String filename;
-        if (index > 1) {
-            filename = url.substring(url.lastIndexOf('/') + 1, index);
-        } else {
-            filename = url.substring(url.lastIndexOf('/') + 1);
+        int endIndex = url.lastIndexOf('?');
+        int beginIndex = url.lastIndexOf('/') + 1;
+        String filename = null;
+        if (beginIndex != -1) {
+            if (endIndex != -1) {
+                if (endIndex > beginIndex) {
+                    filename = url.substring(beginIndex, endIndex);
+                }
+            } else {
+                filename = url.substring(beginIndex);
+            }
         }
         return filename;
     }

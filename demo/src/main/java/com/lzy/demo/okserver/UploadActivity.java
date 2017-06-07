@@ -129,6 +129,11 @@ public class UploadActivity extends BaseActivity implements ExecutorWithListener
         }
 
         @Override
+        public void onStart(Progress progress) {
+            System.out.println("onStart");
+        }
+
+        @Override
         public void onProgress(Progress progress) {
             System.out.println("onProgress:" + progress.totalSize + " " + progress.currentSize + " " + progress.fraction);
             holder = (UploadAdapter.ViewHolder) ((View) tag).getTag();
