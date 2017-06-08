@@ -16,6 +16,7 @@
 package com.lzy.demo.model;
 
 import java.io.Serializable;
+import java.util.Random;
 
 /**
  * ================================================
@@ -26,43 +27,16 @@ import java.io.Serializable;
  * 修订历史：
  * ================================================
  */
-public class ApkModel implements Serializable{
+public class ApkModel implements Serializable {
     private static final long serialVersionUID = 2072893447591548402L;
 
-    private String name;
-    private String url;
-    private String iconUrl;
+    public String name;
+    public String url;
+    public String iconUrl;
+    public int priority;
 
     public ApkModel() {
-    }
-
-    public ApkModel(String name, String url, String iconUrl) {
-        this.name = name;
-        this.url = url;
-        this.iconUrl = iconUrl;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getIconUrl() {
-        return iconUrl;
-    }
-
-    public void setIconUrl(String iconUrl) {
-        this.iconUrl = iconUrl;
+        Random random = new Random();
+        priority = random.nextInt(100);
     }
 }

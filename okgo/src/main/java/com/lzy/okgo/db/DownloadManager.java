@@ -79,18 +79,24 @@ public class DownloadManager extends BaseDao<Progress> {
         return update(progress, Progress.TAG + "=?", new String[]{progress.tag});
     }
 
+    /** 更新下载任务 */
+    public boolean update(ContentValues contentValues, String tag) {
+        return update(contentValues, Progress.TAG + "=?", new String[]{tag});
+    }
+
     /** 获取所有下载信息 */
     public List<Progress> getAll() {
-        return query(null, null, null, null, null, Progress.DATE + " DESC", null);
+        return query(null, null, null, null, null, Progress.DATE + " ASC", null);
     }
 
     /** 获取所有下载信息 */
     public List<Progress> getFinished() {
-        return query(null, "status=?", new String[]{Progress.FINISH + ""}, null, null, Progress.DATE + " DESC", null);
+        return query(null, "status=?", new String[]{Progress.FINISH + ""}, null, null, Progress.DATE + " ASC", null);
     }
+
     /** 获取所有下载信息 */
     public List<Progress> getDownloading() {
-        return query(null, "status not in(?)", new String[]{Progress.FINISH + ""}, null, null, Progress.DATE + " DESC", null);
+        return query(null, "status not in(?)", new String[]{Progress.FINISH + ""}, null, null, Progress.DATE + " ASC", null);
     }
 
     /** 清空下载任务 */

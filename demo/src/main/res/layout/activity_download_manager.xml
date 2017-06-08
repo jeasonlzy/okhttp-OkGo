@@ -17,6 +17,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -54,13 +55,6 @@
             android:text="暂停所有"/>
 
         <Button
-            android:id="@+id/stopAll"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="停止所有"/>
-
-        <Button
             android:id="@+id/startAll"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -68,9 +62,10 @@
             android:text="开始所有"/>
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/listView"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        tools:listitem="@layout/item_download_manager"/>
 
 </LinearLayout>

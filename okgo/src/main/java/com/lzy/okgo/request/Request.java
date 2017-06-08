@@ -33,6 +33,7 @@ import com.lzy.okgo.model.HttpParams;
 import com.lzy.okgo.utils.HttpUtils;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -49,12 +50,13 @@ import okhttp3.Response;
  * 修订历史：
  * ================================================
  */
-public abstract class Request<T, R extends Request> {
+public abstract class Request<T, R extends Request> implements Serializable{
+    private static final long serialVersionUID = -7174118653689916252L;
 
     protected String url;
     protected String baseUrl;
-    protected OkHttpClient client;
-    protected Object tag;
+    protected transient OkHttpClient client;
+    protected transient Object tag;
     protected int retryCount;
     protected CacheMode cacheMode;
     protected String cacheKey;
@@ -62,12 +64,12 @@ public abstract class Request<T, R extends Request> {
     protected HttpParams params = new HttpParams();                 //添加的param
     protected HttpHeaders headers = new HttpHeaders();              //添加的header
 
-    protected okhttp3.Request mRequest;
-    protected Call<T> call;
-    protected Callback<T> callback;
-    protected Converter<T> converter;
-    protected CachePolicy<T> cachePolicy;
-    protected ProgressRequestBody.UploadInterceptor uploadInterceptor;
+    protected transient okhttp3.Request mRequest;
+    protected transient Call<T> call;
+    protected transient Callback<T> callback;
+    protected transient Converter<T> converter;
+    protected transient CachePolicy<T> cachePolicy;
+    protected transient ProgressRequestBody.UploadInterceptor uploadInterceptor;
 
     public Request(String url) {
         this.url = url;

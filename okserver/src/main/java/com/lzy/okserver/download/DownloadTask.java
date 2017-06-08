@@ -15,6 +15,7 @@
  */
 package com.lzy.okserver.download;
 
+import android.content.ContentValues;
 import android.text.TextUtils;
 
 import com.lzy.okgo.db.DownloadManager;
@@ -28,7 +29,7 @@ import com.lzy.okgo.utils.HttpUtils;
 import com.lzy.okgo.utils.IOUtils;
 import com.lzy.okgo.utils.OkLogger;
 import com.lzy.okserver.OkDownload;
-import com.lzy.okserver.task.ExecutorWithListener;
+import com.lzy.okserver.task.PriorityRunnable;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -38,6 +39,7 @@ import java.io.RandomAccessFile;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import okhttp3.Response;
 import okhttp3.ResponseBody;
@@ -56,20 +58,29 @@ public class DownloadTask implements Runnable {
     private static final int BUFFER_SIZE = 1024 * 8;
 
     public Progress progress;
-    public Request<File, ? extends Request> request;
     public Map<Object, DownloadListener> listeners;
-    private ExecutorWithListener executor;
+    private ThreadPoolExecutor executor;
+    private PriorityRunnable priorityRunnable;
 
     public DownloadTask(String tag, Request<File, ? extends Request> request) {
-        executor = OkDownload.getInstance().getThreadPool().getExecutor();
-        listeners = new HashMap<>();
+        HttpUtils.checkNotNull(tag, "tag == null");
         progress = new Progress();
         progress.tag = tag;
         progress.folder = OkDownload.getInstance().getFolder();
         progress.url = request.getBaseUrl();
         progress.status = Progress.NONE;
         progress.totalSize = -1;
-        this.request = request;
+        progress.request = request;
+
+        executor = OkDownload.getInstance().getThreadPool().getExecutor();
+        listeners = new HashMap<>();
+    }
+
+    public DownloadTask(Progress progress) {
+        HttpUtils.checkNotNull(progress, "progress == null");
+        this.progress = progress;
+        executor = OkDownload.getInstance().getThreadPool().getExecutor();
+        listeners = new HashMap<>();
     }
 
     public DownloadTask folder(String folder) {
@@ -87,6 +98,11 @@ public class DownloadTask implements Runnable {
         } else {
             OkLogger.w("fileName is null, ignored!");
         }
+        return this;
+    }
+
+    public DownloadTask priority(int priority) {
+        progress.priority = priority;
         return this;
     }
 
@@ -125,9 +141,11 @@ public class DownloadTask implements Runnable {
 
     public DownloadTask start() {
         if (progress.status == Progress.NONE || progress.status == Progress.PAUSE || progress.status == Progress.ERROR) {
+//            DownloadManager.getInstance().replace(progress);
             postOnStart(progress);
             postWaiting(progress);
-            executor.submit(this);
+            priorityRunnable = new PriorityRunnable(progress.priority, this);
+            executor.execute(priorityRunnable);
         } else if (progress.status == Progress.FINISH) {
             postOnFinish(progress, new File(progress.filePath));
         } else {
@@ -149,7 +167,7 @@ public class DownloadTask implements Runnable {
 
     /** 暂停的方法 */
     public void pause() {
-        executor.remove(this);
+        executor.remove(priorityRunnable);
         if (progress.status == Progress.WAITING) {
             postPause(progress);
         } else if (progress.status == Progress.LOADING) {
@@ -186,6 +204,7 @@ public class DownloadTask implements Runnable {
         //request network from startPosition
         Response response;
         try {
+            Request<?, ? extends Request> request = progress.request;
             request.headers(HttpHeaders.HEAD_KEY_RANGE, "bytes=" + startPosition + "-");
             response = request.execute();
         } catch (IOException e) {
@@ -299,12 +318,12 @@ public class DownloadTask implements Runnable {
     }
 
     private void postOnStart(final Progress progress) {
-        DownloadManager.getInstance().update(progress);
+        progress.speed = 0;
+        progress.status = Progress.NONE;
+        updateDatabase(progress);
         HttpUtils.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                progress.speed = 0;
-                progress.status = Progress.NONE;
                 for (DownloadListener listener : listeners.values()) {
                     listener.onStart(progress);
                 }
@@ -313,12 +332,12 @@ public class DownloadTask implements Runnable {
     }
 
     private void postWaiting(final Progress progress) {
-        DownloadManager.getInstance().update(progress);
+        progress.speed = 0;
+        progress.status = Progress.WAITING;
+        updateDatabase(progress);
         HttpUtils.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                progress.speed = 0;
-                progress.status = Progress.WAITING;
                 for (DownloadListener listener : listeners.values()) {
                     listener.onProgress(progress);
                 }
@@ -327,12 +346,12 @@ public class DownloadTask implements Runnable {
     }
 
     private void postPause(final Progress progress) {
-        DownloadManager.getInstance().update(progress);
+        progress.speed = 0;
+        progress.status = Progress.PAUSE;
+        updateDatabase(progress);
         HttpUtils.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                progress.speed = 0;
-                progress.status = Progress.PAUSE;
                 for (DownloadListener listener : listeners.values()) {
                     listener.onProgress(progress);
                 }
@@ -341,7 +360,7 @@ public class DownloadTask implements Runnable {
     }
 
     private void postLoading(final Progress progress) {
-        DownloadManager.getInstance().update(progress);
+        updateDatabase(progress);
         HttpUtils.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -353,13 +372,13 @@ public class DownloadTask implements Runnable {
     }
 
     private void postOnError(final Progress progress, final Throwable throwable) {
-        DownloadManager.getInstance().update(progress);
+        progress.speed = 0;
+        progress.status = Progress.ERROR;
+        progress.exception = throwable;
+        updateDatabase(progress);
         HttpUtils.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                progress.speed = 0;
-                progress.status = Progress.ERROR;
-                progress.exception = throwable;
                 for (DownloadListener listener : listeners.values()) {
                     listener.onProgress(progress);
                     listener.onError(progress);
@@ -369,18 +388,23 @@ public class DownloadTask implements Runnable {
     }
 
     private void postOnFinish(final Progress progress, final File file) {
-        DownloadManager.getInstance().update(progress);
+        progress.speed = 0;
+        progress.fraction = 1.0f;
+        progress.status = Progress.FINISH;
+        updateDatabase(progress);
         HttpUtils.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                progress.speed = 0;
-                progress.fraction = 1.0f;
-                progress.status = Progress.FINISH;
                 for (DownloadListener listener : listeners.values()) {
                     listener.onProgress(progress);
                     listener.onFinish(file, progress);
                 }
             }
         });
+    }
+
+    private void updateDatabase(Progress progress) {
+        ContentValues contentValues = Progress.buildUpdateContentValues(progress);
+        DownloadManager.getInstance().update(contentValues, progress.tag);
     }
 }

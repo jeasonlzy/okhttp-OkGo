@@ -292,8 +292,8 @@ OkGo.get(Urls.URL_IMAGE)//
 ### 3.请求 文件下载
 `FileCallback`具有三个重载的构造方法,分别是
 > `FileCallback()`:空参构造<br>
-> `FileCallback(String destFileName)`:可以额外指定文件下载完成后的文件名<br>
-> `FileCallback(String destFileDir, String destFileName)`:可以额外指定文件的下载目录和下载完成后的文件名
+> `FileCallback(String fileName)`:可以额外指定文件下载完成后的文件名<br>
+> `FileCallback(String folder, String fileName)`:可以额外指定文件的下载目录和下载完成后的文件名
 
 文件目录如果不指定,默认下载的目录为 `sdcard/download/`,文件名如果不指定,则按照以下规则命名:
 

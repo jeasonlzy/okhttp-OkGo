@@ -15,6 +15,8 @@
  */
 package com.lzy.okserver.task;
 
+import com.lzy.okgo.model.Priority;
+
 import java.util.AbstractQueue;
 import java.util.Collection;
 import java.util.Iterator;
@@ -124,7 +126,7 @@ public class PriorityBlockingQueue<E> extends AbstractQueue<E> implements Blocki
 
         while (curr.next != null) {
             temp = curr.next;
-            if (temp.getPriority().ordinal() > node.getPriority().ordinal()) {
+            if (temp.getPriority() < node.getPriority()) {
                 curr.next = node;
                 node.next = temp;
                 added = true;
@@ -404,8 +406,7 @@ public class PriorityBlockingQueue<E> extends AbstractQueue<E> implements Blocki
         fullyLock();
         try {
             int size = count.get();
-            if (a.length < size)
-                a = (T[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), size);
+            if (a.length < size) a = (T[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), size);
 
             int k = 0;
             for (Node<T> p = (Node<T>) head.next; p != null; p = p.next)
@@ -585,7 +586,7 @@ public class PriorityBlockingQueue<E> extends AbstractQueue<E> implements Blocki
             setValue(value);
         }
 
-        public Priority getPriority() {
+        public int getPriority() {
             return value.priority;
         }
 

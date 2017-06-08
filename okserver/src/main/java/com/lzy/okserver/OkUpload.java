@@ -16,6 +16,7 @@
 package com.lzy.okserver;
 
 import com.lzy.okgo.request.Request;
+import com.lzy.okserver.task.ExecutorWithListener;
 import com.lzy.okserver.upload.UploadTask;
 import com.lzy.okserver.upload.UploadThreadPool;
 
@@ -50,7 +51,14 @@ public class OkUpload {
     }
 
     public static <T> UploadTask<T> request(String tag, Request<T, ? extends Request> request) {
-        return new UploadTask<>(tag, request);
+        Map<String, UploadTask<?>> taskMap = OkUpload.getInstance().getTaskMap();
+        //noinspection unchecked
+        UploadTask<T> task = (UploadTask<T>) taskMap.get(tag);
+        if (task == null) {
+            task = new UploadTask<>(tag, request);
+            taskMap.put(tag, task);
+        }
+        return task;
     }
 
     public UploadThreadPool getThreadPool() {
@@ -59,5 +67,25 @@ public class OkUpload {
 
     public Map<String, UploadTask<?>> getTaskMap() {
         return taskMap;
+    }
+
+    public UploadTask<?> getTask(String tag) {
+        return taskMap.get(tag);
+    }
+
+    public boolean hasTask(String tag) {
+        return taskMap.containsKey(tag);
+    }
+
+    public UploadTask<?> removeTask(String tag) {
+        return taskMap.remove(tag);
+    }
+
+    public void addOnAllTaskEndListener(ExecutorWithListener.OnAllTaskEndListener listener) {
+        threadPool.getExecutor().addOnAllTaskEndListener(listener);
+    }
+
+    public void removeOnAllTaskEndListener(ExecutorWithListener.OnAllTaskEndListener listener) {
+        threadPool.getExecutor().removeOnAllTaskEndListener(listener);
     }
 }

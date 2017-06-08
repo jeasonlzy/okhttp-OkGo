@@ -50,17 +50,19 @@ public class OkGo {
     public static final long DEFAULT_MILLISECONDS = 60000;      //默认的超时时间
     public static long REFRESH_TIME = 300;                      //回调刷新时间（单位ms）
 
-    private Handler mDelivery;                                  //用于在主线程执行的调度器
-    private OkHttpClient okHttpClient;                          //ok请求的客户端
-    private HttpParams mCommonParams;                           //全局公共请求参数
-    private HttpHeaders mCommonHeaders;                         //全局公共请求头
-    private CacheMode mCacheMode;                               //全局缓存模式
-    private int mRetryCount = 3;                                //全局超时重试次数
-    private long mCacheTime = CacheEntity.CACHE_NEVER_EXPIRE;   //全局缓存过期时间,默认永不过期
-    private Application context;                                //全局上下文
+    private Handler mDelivery;              //用于在主线程执行的调度器
+    private OkHttpClient okHttpClient;      //ok请求的客户端
+    private HttpParams mCommonParams;       //全局公共请求参数
+    private HttpHeaders mCommonHeaders;     //全局公共请求头
+    private CacheMode mCacheMode;           //全局缓存模式
+    private int mRetryCount;                //全局超时重试次数
+    private long mCacheTime;                //全局缓存过期时间,默认永不过期
+    private Application context;            //全局上下文
 
     private OkGo() {
         mDelivery = new Handler(Looper.getMainLooper());
+        mRetryCount = 3;
+        mCacheTime = CacheEntity.CACHE_NEVER_EXPIRE;
     }
 
     public static OkGo getInstance() {
@@ -202,6 +204,7 @@ public class OkGo {
 
     /** 根据Tag取消请求 */
     public void cancelTag(Object tag) {
+        if (tag == null) return;
         for (Call call : getOkHttpClient().dispatcher().queuedCalls()) {
             if (tag.equals(call.request().tag())) {
                 call.cancel();
@@ -214,12 +217,38 @@ public class OkGo {
         }
     }
 
+    /** 根据Tag取消请求 */
+    public static void cancelTag(OkHttpClient client, Object tag) {
+        if (client == null || tag == null) return;
+        for (Call call : client.dispatcher().queuedCalls()) {
+            if (tag.equals(call.request().tag())) {
+                call.cancel();
+            }
+        }
+        for (Call call : client.dispatcher().runningCalls()) {
+            if (tag.equals(call.request().tag())) {
+                call.cancel();
+            }
+        }
+    }
+
     /** 取消所有请求请求 */
     public void cancelAll() {
         for (Call call : getOkHttpClient().dispatcher().queuedCalls()) {
             call.cancel();
         }
         for (Call call : getOkHttpClient().dispatcher().runningCalls()) {
+            call.cancel();
+        }
+    }
+
+    /** 取消所有请求请求 */
+    public static void cancelAll(OkHttpClient client) {
+        if (client == null) return;
+        for (Call call : client.dispatcher().queuedCalls()) {
+            call.cancel();
+        }
+        for (Call call : client.dispatcher().runningCalls()) {
             call.cancel();
         }
     }

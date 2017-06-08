@@ -16,10 +16,11 @@
 package com.lzy.demo.okserver;
 
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.text.format.Formatter;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,6 +31,7 @@ import com.lzy.demo.R;
 import com.lzy.demo.model.ApkModel;
 import com.lzy.demo.ui.NumberProgressBar;
 import com.lzy.demo.utils.ApkUtils;
+import com.lzy.okgo.db.DownloadManager;
 import com.lzy.okgo.model.Progress;
 import com.lzy.okserver.OkDownload;
 import com.lzy.okserver.download.DownloadListener;
@@ -37,7 +39,6 @@ import com.lzy.okserver.download.DownloadTask;
 
 import java.io.File;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -53,89 +54,85 @@ import butterknife.OnClick;
  * 修订历史：
  * ================================================
  */
-public class DownloadAdapter extends BaseAdapter {
+public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHolder> {
 
-    private Context context;
     private List<DownloadTask> values;
     private NumberFormat numberFormat;
+    private LayoutInflater inflater;
+    private Context context;
 
-    public DownloadAdapter(Context context, List<DownloadTask> values) {
+    public DownloadAdapter(Context context) {
+        this.context = context;
         numberFormat = NumberFormat.getPercentInstance();
         numberFormat.setMinimumFractionDigits(2);
-        this.context = context;
-        this.values = values;
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    }
+
+    public void updateData(List<Progress> progressList) {
+        //这里是将数据库的数据恢复
+        values = OkDownload.restore(progressList);
+        notifyDataSetChanged();
     }
 
     @Override
-    public int getCount() {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = inflater.inflate(R.layout.item_download_manager, parent, false);
+        return new ViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        DownloadTask task = values.get(position)//
+                .register(new ListDownloadListener(holder))//
+                .register(new LogListener("DownloadAdapter"));
+        holder.setTask(task);
+        holder.bind();
+        holder.refresh(task.progress);
+    }
+
+    @Override
+    public int getItemCount() {
         return values.size();
     }
 
-    @Override
-    public DownloadTask getItem(int position) {
-        return values.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
-        if (convertView == null) {
-            convertView = View.inflate(context, R.layout.item_download_manager, null);
-            holder = new ViewHolder(convertView);
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
-        DownloadTask task = getItem(position);
-        holder.refresh(task);
-
-        //对于非进度更新的ui放在这里，对于实时更新的进度ui，放在holder中
-        ApkModel apk = (ApkModel) task.progress.extra1;
-        if (apk != null) {
-            Glide.with(context).load(apk.getIconUrl()).error(R.mipmap.ic_launcher).into(holder.icon);
-            holder.name.setText(apk.getName());
-        } else {
-            holder.name.setText(task.progress.fileName);
-        }
-
-        DownloadListener downloadListener = new ListDownloadListener(holder);
-        task.register(downloadListener);
-        return convertView;
-    }
-
-    public class ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         @Bind(R.id.icon) ImageView icon;
         @Bind(R.id.name) TextView name;
+        @Bind(R.id.priority) TextView priority;
         @Bind(R.id.downloadSize) TextView downloadSize;
         @Bind(R.id.tvProgress) TextView tvProgress;
         @Bind(R.id.netSpeed) TextView netSpeed;
         @Bind(R.id.pbProgress) NumberProgressBar pbProgress;
         @Bind(R.id.start) Button download;
-
         private DownloadTask task;
 
-        public ViewHolder(View convertView) {
-            ButterKnife.bind(this, convertView);
+        public ViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
         }
 
-        public void refresh(DownloadTask task) {
+        public void setTask(DownloadTask task) {
             this.task = task;
-            refresh();
         }
 
-        //对于实时更新的进度ui，放在这里，例如进度的显示，而图片加载等，不要放在这，会不停的重复回调
-        //也会导致内存泄漏
-        public void refresh() {
+        public void bind() {
             Progress progress = task.progress;
+            ApkModel apk = (ApkModel) progress.extra1;
+            if (apk != null) {
+                Glide.with(context).load(apk.iconUrl).error(R.mipmap.ic_launcher).into(icon);
+                name.setText(apk.name);
+                priority.setText(String.format("优先级：%s", progress.priority));
+            } else {
+                name.setText(progress.fileName);
+            }
+        }
+
+        public void refresh(Progress progress) {
             String currentSize = Formatter.formatFileSize(context, progress.currentSize);
             String totalSize = Formatter.formatFileSize(context, progress.totalSize);
             downloadSize.setText(currentSize + "/" + totalSize);
+            priority.setText(String.format("优先级：%s", progress.priority));
             switch (progress.status) {
                 case Progress.NONE:
                     netSpeed.setText("停止");
@@ -174,7 +171,8 @@ public class DownloadAdapter extends BaseAdapter {
 
         @OnClick(R.id.start)
         public void start() {
-            switch (task.progress.status) {
+            Progress progress = task.progress;
+            switch (progress.status) {
                 case Progress.PAUSE:
                 case Progress.NONE:
                 case Progress.ERROR:
@@ -184,21 +182,20 @@ public class DownloadAdapter extends BaseAdapter {
                     task.pause();
                     break;
                 case Progress.FINISH:
-                    if (ApkUtils.isAvailable(context, new File(task.progress.filePath))) {
-                        ApkUtils.uninstall(context, ApkUtils.getPackageName(context, task.progress.filePath));
+                    if (ApkUtils.isAvailable(context, new File(progress.filePath))) {
+                        ApkUtils.uninstall(context, ApkUtils.getPackageName(context, progress.filePath));
                     } else {
-                        ApkUtils.install(context, new File(task.progress.filePath));
+                        ApkUtils.install(context, new File(progress.filePath));
                     }
                     break;
             }
-            refresh();
+            refresh(progress);
         }
 
         @OnClick(R.id.remove)
         public void remove() {
             task.remove(true);
-            values = new ArrayList<>(OkDownload.getInstance().getTaskMap().values());
-            notifyDataSetChanged();
+            updateData(DownloadManager.getInstance().getAll());
         }
 
         @OnClick(R.id.restart)
@@ -209,13 +206,19 @@ public class DownloadAdapter extends BaseAdapter {
 
     private class ListDownloadListener extends DownloadListener {
 
-        public ListDownloadListener(Object tag) {
+        ListDownloadListener(Object tag) {
             super(tag);
         }
 
         @Override
-        public void onFinish(File file, Progress progress) {
-            Toast.makeText(context, "下载完成:" + progress.filePath, Toast.LENGTH_SHORT).show();
+        public void onStart(Progress progress) {
+        }
+
+        @Override
+        public void onProgress(Progress progress) {
+            if (tag == null) return;
+            DownloadAdapter.ViewHolder holder = (DownloadAdapter.ViewHolder) tag;
+            holder.refresh(progress);
         }
 
         @Override
@@ -225,15 +228,8 @@ public class DownloadAdapter extends BaseAdapter {
         }
 
         @Override
-        public void onStart(Progress progress) {
-            System.out.println("onStart");
-        }
-
-        @Override
-        public void onProgress(Progress progress) {
-            if (tag == null) return;
-            DownloadAdapter.ViewHolder holder = (DownloadAdapter.ViewHolder) tag;
-            holder.refresh();  //这里不能使用传递进来的 Progress，否者会出现条目错乱的问题
+        public void onFinish(File file, Progress progress) {
+            Toast.makeText(context, "下载完成:" + progress.filePath, Toast.LENGTH_SHORT).show();
         }
     }
 }

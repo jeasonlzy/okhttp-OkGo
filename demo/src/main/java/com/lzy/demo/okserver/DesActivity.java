@@ -76,14 +76,23 @@ public class DesActivity extends BaseActivity {
         numberFormat = NumberFormat.getPercentInstance();
         numberFormat.setMinimumFractionDigits(2);
 
-        task = OkDownload.getInstance().getTask(apk.getUrl());
-        if (task != null) {
-            task.register(new DesListener("DesActivity1"))//
+        // 写法一：从内存中获取
+        if (OkDownload.getInstance().hasTask(apk.url)) {
+            task = OkDownload.getInstance().getTask(apk.url)//
+                    .register(new DesListener("DesActivity1"))//
                     .register(new LogListener("DesActivity2"));
         }
 
-        displayImage(apk.getIconUrl(), icon);
-        name.setText(apk.getName());
+        //写法二：从数据库中恢复
+//        Progress progress = DownloadManager.getInstance().get(apk.getUrl());
+//        if (progress != null) {
+//            task = OkDownload.restore(progress)//
+//                    .register(new DesListener("DesActivity1"))//
+//                    .register(new LogListener("DesActivity2"));
+//        }
+
+        displayImage(apk.iconUrl, icon);
+        name.setText(apk.name);
         if (task != null) refreshUi(task.progress);
     }
 
@@ -134,13 +143,13 @@ public class DesActivity extends BaseActivity {
     @OnClick(R.id.start)
     public void start() {
         if (task == null) {
-            GetRequest<File> request = OkGo.get(apk.getUrl());
-            task = OkDownload.request(apk.getUrl(), request)//
+            GetRequest<File> request = OkGo.get(apk.url);
+            task = OkDownload.request(apk.url, request)//
+                    .priority(apk.priority)//
                     .extra1(apk)//
                     .register(new DesListener("DesActivity1"))//
                     .register(new LogListener("DesActivity2"));
         }
-
         switch (task.progress.status) {
             case Progress.PAUSE:
             case Progress.NONE:

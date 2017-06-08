@@ -21,6 +21,7 @@ import android.text.TextUtils;
 import com.lzy.okgo.callback.Callback;
 import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.utils.HttpUtils;
+import com.lzy.okgo.utils.IOUtils;
 import com.lzy.okgo.utils.OkLogger;
 
 import java.io.File;
@@ -44,21 +45,21 @@ public class FileConvert implements Converter<File> {
 
     public static final String DM_TARGET_FOLDER = File.separator + "download" + File.separator; //下载目标文件夹
 
-    private String destFileDir;                 //目标文件存储的文件夹路径
-    private String destFileName;                //目标文件存储的文件名
+    private String folder;                 //目标文件存储的文件夹路径
+    private String fileName;                //目标文件存储的文件名
     private Callback<File> callback;            //下载回调
 
     public FileConvert() {
         this(null);
     }
 
-    public FileConvert(String destFileName) {
-        this(Environment.getExternalStorageDirectory() + DM_TARGET_FOLDER, destFileName);
+    public FileConvert(String fileName) {
+        this(Environment.getExternalStorageDirectory() + DM_TARGET_FOLDER, fileName);
     }
 
-    public FileConvert(String destFileDir, String destFileName) {
-        this.destFileDir = destFileDir;
-        this.destFileName = destFileName;
+    public FileConvert(String folder, String fileName) {
+        this.folder = folder;
+        this.fileName = fileName;
     }
 
     public void setCallback(Callback<File> callback) {
@@ -67,13 +68,14 @@ public class FileConvert implements Converter<File> {
 
     @Override
     public File convertResponse(Response response) throws Throwable {
-        if (TextUtils.isEmpty(destFileDir)) destFileDir = Environment.getExternalStorageDirectory() + DM_TARGET_FOLDER;
-        if (TextUtils.isEmpty(destFileName)) destFileName = HttpUtils.getNetFileName(response, response.request().url().toString());
+        String url = response.request().url().toString();
+        if (TextUtils.isEmpty(folder)) folder = Environment.getExternalStorageDirectory() + DM_TARGET_FOLDER;
+        if (TextUtils.isEmpty(fileName)) fileName = HttpUtils.getNetFileName(response, url);
 
-        File dir = new File(destFileDir);
-        if (!dir.exists()) dir.mkdirs();
-        File file = new File(dir, destFileName);
-        if (file.exists()) file.delete();
+        File dir = new File(folder);
+        IOUtils.createFolder(dir);
+        File file = new File(dir, fileName);
+        IOUtils.delFileOrFolder(file);
 
         InputStream bodyStream = null;
         byte[] buffer = new byte[8192];
@@ -85,6 +87,11 @@ public class FileConvert implements Converter<File> {
             bodyStream = body.byteStream();
             Progress progress = new Progress();
             progress.totalSize = body.contentLength();
+            progress.fileName = fileName;
+            progress.filePath = file.getAbsolutePath();
+            progress.status = Progress.LOADING;
+            progress.url = url;
+            progress.tag = url;
 
             int len;
             fileOutputStream = new FileOutputStream(file);

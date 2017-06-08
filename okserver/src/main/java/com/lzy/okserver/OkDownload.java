@@ -24,9 +24,12 @@ import com.lzy.okgo.utils.IOUtils;
 import com.lzy.okgo.utils.OkLogger;
 import com.lzy.okserver.download.DownloadTask;
 import com.lzy.okserver.download.DownloadThreadPool;
+import com.lzy.okserver.task.ExecutorWithListener;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,7 +60,7 @@ public class OkDownload {
         folder = Environment.getExternalStorageDirectory() + File.separator + "download" + File.separator;
         IOUtils.createFolder(folder);
         threadPool = new DownloadThreadPool();
-        taskMap = new HashMap<>();
+        taskMap = new LinkedHashMap<>();
 
         //校验数据的有效性，防止下载过程中退出，第二次进入的时候，由于状态没有更新导致的状态错误
         List<Progress> taskList = DownloadManager.getInstance().getDownloading();
@@ -79,6 +82,30 @@ public class OkDownload {
         return task;
     }
 
+    /** 从数据库中恢复任务 */
+    public static DownloadTask restore(Progress progress) {
+        Map<String, DownloadTask> taskMap = OkDownload.getInstance().getTaskMap();
+        DownloadTask task = taskMap.get(progress.tag);
+        if (task == null) {
+            task = new DownloadTask(progress);
+            taskMap.put(progress.tag, task);
+        }
+        return task;
+    }
+
+    /** 从数据库中恢复任务 */
+    public static List<DownloadTask> restore(List<Progress> progressList) {
+        Map<String, DownloadTask> taskMap = OkDownload.getInstance().getTaskMap();
+        for (Progress progress : progressList) {
+            DownloadTask task = taskMap.get(progress.tag);
+            if (task == null) {
+                task = new DownloadTask(progress);
+                taskMap.put(progress.tag, task);
+            }
+        }
+        return new ArrayList<>(taskMap.values());
+    }
+
     /** 开始所有任务 */
     public void startAll() {
         for (Map.Entry<String, DownloadTask> entry : taskMap.entrySet()) {
@@ -93,13 +120,27 @@ public class OkDownload {
 
     /** 暂停全部任务 */
     public void pauseAll() {
+        //先停止未开始的任务
         for (Map.Entry<String, DownloadTask> entry : taskMap.entrySet()) {
             DownloadTask task = entry.getValue();
             if (task == null) {
                 OkLogger.w("can't find task with tag = " + entry.getKey());
                 continue;
             }
-            task.pause();
+            if (task.progress.status != Progress.LOADING) {
+                task.pause();
+            }
+        }
+        //再停止进行中的任务
+        for (Map.Entry<String, DownloadTask> entry : taskMap.entrySet()) {
+            DownloadTask task = entry.getValue();
+            if (task == null) {
+                OkLogger.w("can't find task with tag = " + entry.getKey());
+                continue;
+            }
+            if (task.progress.status == Progress.LOADING) {
+                task.pause();
+            }
         }
     }
 
@@ -115,13 +156,27 @@ public class OkDownload {
      */
     public void removeAll(boolean isDeleteFile) {
         Map<String, DownloadTask> map = new HashMap<>(taskMap);
+        //先删除未开始的任务
         for (Map.Entry<String, DownloadTask> entry : map.entrySet()) {
             DownloadTask task = entry.getValue();
             if (task == null) {
                 OkLogger.w("can't find task with tag = " + entry.getKey());
                 continue;
             }
-            task.remove(isDeleteFile);
+            if (task.progress.status != Progress.LOADING) {
+                task.remove(isDeleteFile);
+            }
+        }
+        //再删除进行中的任务
+        for (Map.Entry<String, DownloadTask> entry : map.entrySet()) {
+            DownloadTask task = entry.getValue();
+            if (task == null) {
+                OkLogger.w("can't find task with tag = " + entry.getKey());
+                continue;
+            }
+            if (task.progress.status == Progress.LOADING) {
+                task.remove(isDeleteFile);
+            }
         }
     }
 
@@ -147,15 +202,19 @@ public class OkDownload {
         return taskMap.get(tag);
     }
 
-    public void addTask(DownloadTask task) {
-        taskMap.put(task.progress.tag, task);
+    public boolean hasTask(String tag) {
+        return taskMap.containsKey(tag);
     }
 
     public DownloadTask removeTask(String tag) {
         return taskMap.remove(tag);
     }
 
-    public Progress getProgress(String tag) {
-        return DownloadManager.getInstance().get(tag);
+    public void addOnAllTaskEndListener(ExecutorWithListener.OnAllTaskEndListener listener) {
+        threadPool.getExecutor().addOnAllTaskEndListener(listener);
+    }
+
+    public void removeOnAllTaskEndListener(ExecutorWithListener.OnAllTaskEndListener listener) {
+        threadPool.getExecutor().removeOnAllTaskEndListener(listener);
     }
 }

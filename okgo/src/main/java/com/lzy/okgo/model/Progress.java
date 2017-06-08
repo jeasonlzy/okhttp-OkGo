@@ -20,6 +20,7 @@ import android.database.Cursor;
 import android.os.SystemClock;
 
 import com.lzy.okgo.OkGo;
+import com.lzy.okgo.request.Request;
 import com.lzy.okgo.utils.IOUtils;
 
 import java.io.Serializable;
@@ -54,34 +55,39 @@ public class Progress implements Serializable {
     public static final String TOTAL_SIZE = "totalSize";
     public static final String CURRENT_SIZE = "currentSize";
     public static final String STATUS = "status";
+    public static final String PRIORITY = "priority";
     public static final String DATE = "date";
+    public static final String REQUEST = "request";
     public static final String EXTRA1 = "extra1";
     public static final String EXTRA2 = "extra2";
     public static final String EXTRA3 = "extra3";
 
-    public String tag;                  //下载的标识键
-    public String url;                  //网址
-    public String folder;               //保存文件夹
-    public String filePath;             //保存文件地址
-    public String fileName;             //保存的文件名
-    public float fraction;              //下载的进度，0-1
-    public long totalSize;              //总字节长度, byte
-    public long currentSize;            //本次下载的大小, byte
-    public transient long speed;        //网速，byte/s
-    public int status;                  //当前状态
-    public long date;                   //创建时间
-    public Serializable extra1;         //额外的数据
-    public Serializable extra2;         //额外的数据
-    public Serializable extra3;         //额外的数据
-    public Throwable exception;         //当前进度出现的异常
+    public String tag;                              //下载的标识键
+    public String url;                              //网址
+    public String folder;                           //保存文件夹
+    public String filePath;                         //保存文件地址
+    public String fileName;                         //保存的文件名
+    public float fraction;                          //下载的进度，0-1
+    public long totalSize;                          //总字节长度, byte
+    public long currentSize;                        //本次下载的大小, byte
+    public transient long speed;                    //网速，byte/s
+    public int status;                              //当前状态
+    public int priority;                            //任务优先级
+    public long date;                               //创建时间
+    public Request<?, ? extends Request> request;   //网络请求
+    public Serializable extra1;                     //额外的数据
+    public Serializable extra2;                     //额外的数据
+    public Serializable extra3;                     //额外的数据
+    public Throwable exception;                     //当前进度出现的异常
 
-    private transient long tempSize;              //每一小段时间间隔的网络流量
-    private transient long lastRefreshTime;       //最后一次刷新的时间
-    private transient List<Long> speedBuffer;     //网速做平滑的缓存，避免抖动过快
+    private transient long tempSize;                //每一小段时间间隔的网络流量
+    private transient long lastRefreshTime;         //最后一次刷新的时间
+    private transient List<Long> speedBuffer;       //网速做平滑的缓存，避免抖动过快
 
     public Progress() {
         lastRefreshTime = SystemClock.elapsedRealtime();
         totalSize = -1;
+        priority = Priority.DEFAULT;
         date = System.currentTimeMillis();
         speedBuffer = new ArrayList<>();
     }
@@ -139,10 +145,23 @@ public class Progress implements Serializable {
         values.put(TOTAL_SIZE, progress.totalSize);
         values.put(CURRENT_SIZE, progress.currentSize);
         values.put(STATUS, progress.status);
+        values.put(PRIORITY, progress.priority);
         values.put(DATE, progress.date);
+        values.put(REQUEST, IOUtils.toByteArray(progress.request));
         values.put(EXTRA1, IOUtils.toByteArray(progress.extra1));
         values.put(EXTRA2, IOUtils.toByteArray(progress.extra2));
         values.put(EXTRA3, IOUtils.toByteArray(progress.extra3));
+        return values;
+    }
+
+    public static ContentValues buildUpdateContentValues(Progress progress) {
+        ContentValues values = new ContentValues();
+        values.put(FRACTION, progress.fraction);
+        values.put(TOTAL_SIZE, progress.totalSize);
+        values.put(CURRENT_SIZE, progress.currentSize);
+        values.put(STATUS, progress.status);
+        values.put(PRIORITY, progress.priority);
+        values.put(DATE, progress.date);
         return values;
     }
 
@@ -157,7 +176,9 @@ public class Progress implements Serializable {
         progress.totalSize = cursor.getLong(cursor.getColumnIndex(Progress.TOTAL_SIZE));
         progress.currentSize = cursor.getLong(cursor.getColumnIndex(Progress.CURRENT_SIZE));
         progress.status = cursor.getInt(cursor.getColumnIndex(Progress.STATUS));
+        progress.priority = cursor.getInt(cursor.getColumnIndex(Progress.PRIORITY));
         progress.date = cursor.getLong(cursor.getColumnIndex(Progress.DATE));
+        progress.request = (Request<?, ? extends Request>) IOUtils.toObject(cursor.getBlob(cursor.getColumnIndex(Progress.REQUEST)));
         progress.extra1 = (Serializable) IOUtils.toObject(cursor.getBlob(cursor.getColumnIndex(Progress.EXTRA1)));
         progress.extra2 = (Serializable) IOUtils.toObject(cursor.getBlob(cursor.getColumnIndex(Progress.EXTRA2)));
         progress.extra3 = (Serializable) IOUtils.toObject(cursor.getBlob(cursor.getColumnIndex(Progress.EXTRA3)));
@@ -187,6 +208,7 @@ public class Progress implements Serializable {
                ", currentSize=" + currentSize +//
                ", speed=" + speed +//
                ", status=" + status +//
+               ", priority=" + priority +//
                ", folder=" + folder +//
                ", filePath=" + filePath +//
                ", fileName=" + fileName +//

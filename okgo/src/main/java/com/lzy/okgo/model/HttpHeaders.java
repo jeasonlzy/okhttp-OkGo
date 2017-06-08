@@ -45,7 +45,6 @@ import java.util.TimeZone;
  * ================================================
  */
 public class HttpHeaders implements Serializable {
-
     private static final long serialVersionUID = 8458647755751403873L;
 
     public static final String FORMAT_HTTP_DATA = "EEE, dd MMM y HH:mm:ss 'GMT'";

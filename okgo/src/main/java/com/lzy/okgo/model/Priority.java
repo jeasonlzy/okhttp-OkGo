@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzy.okserver.task;
+package com.lzy.okgo.model;
 
 /**
  * ================================================
@@ -24,12 +24,12 @@ package com.lzy.okserver.task;
  * 修订历史：
  * ================================================
  */
-public enum Priority {
-    UI_TOP,
-    UI_NORMAL,
-    UI_LOW,
-    DEFAULT,
-    BG_TOP,
-    BG_NORMAL,
-    BG_LOW;
+public interface Priority {
+    int UI_TOP = Integer.MAX_VALUE;
+    int UI_NORMAL = 1000;
+    int UI_LOW = 100;
+    int DEFAULT = 0;
+    int BG_TOP = -100;
+    int BG_NORMAL = -1000;
+    int BG_LOW = Integer.MIN_VALUE;
 }

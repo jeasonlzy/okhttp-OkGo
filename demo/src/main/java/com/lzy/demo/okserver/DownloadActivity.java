@@ -16,16 +16,16 @@
 package com.lzy.demo.okserver;
 
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.ListView;
 
 import com.lzy.demo.R;
 import com.lzy.demo.base.BaseActivity;
+import com.lzy.okgo.db.DownloadManager;
 import com.lzy.okserver.OkDownload;
 import com.lzy.okserver.task.ExecutorWithListener;
-
-import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -45,7 +45,7 @@ public class DownloadActivity extends BaseActivity implements ExecutorWithListen
     private OkDownload okDownload;
 
     @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.listView) ListView listView;
+    @Bind(R.id.recyclerView) RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +54,12 @@ public class DownloadActivity extends BaseActivity implements ExecutorWithListen
         initToolBar(toolbar, true, "下载管理");
 
         okDownload = OkDownload.getInstance();
-        adapter = new DownloadAdapter(this, new ArrayList<>(okDownload.getTaskMap().values()));
-        listView.setAdapter(adapter);
+        adapter = new DownloadAdapter(this);
+        adapter.updateData(DownloadManager.getInstance().getAll());
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
 
-        okDownload.getThreadPool().getExecutor().addOnAllTaskEndListener(this);
+        okDownload.addOnAllTaskEndListener(this);
     }
 
     @Override
@@ -68,7 +70,7 @@ public class DownloadActivity extends BaseActivity implements ExecutorWithListen
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        okDownload.getThreadPool().getExecutor().removeOnAllTaskEndListener(this);
+        okDownload.removeOnAllTaskEndListener(this);
     }
 
     @Override
@@ -80,6 +82,7 @@ public class DownloadActivity extends BaseActivity implements ExecutorWithListen
     @OnClick(R.id.removeAll)
     public void removeAll(View view) {
         okDownload.removeAll();
+        adapter.updateData(DownloadManager.getInstance().getAll());
         adapter.notifyDataSetChanged();
     }
 

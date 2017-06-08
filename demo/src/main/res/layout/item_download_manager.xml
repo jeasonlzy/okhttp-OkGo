@@ -42,10 +42,17 @@
             android:id="@+id/name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:singleLine="true"
+            android:maxLines="1"
             android:text="应用名字"
             android:textColor="#000"
-            android:textSize="16sp"/>
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/priority"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="priority"/>
 
         <RelativeLayout
             android:layout_width="match_parent"

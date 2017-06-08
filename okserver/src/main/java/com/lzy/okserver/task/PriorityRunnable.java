@@ -26,7 +26,7 @@ package com.lzy.okserver.task;
  */
 public class PriorityRunnable extends PriorityObject<Runnable> implements Runnable {
 
-    public PriorityRunnable(Priority priority, Runnable obj) {
+    public PriorityRunnable(int priority, Runnable obj) {
         super(priority, obj);
     }
 
