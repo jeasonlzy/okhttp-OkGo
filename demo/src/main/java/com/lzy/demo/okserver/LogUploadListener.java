@@ -38,4 +38,9 @@ public class LogUploadListener<T> extends UploadListener<T> {
     public void onFinish(T t, Progress progress) {
         System.out.println("onFinish: " + progress);
     }
+
+    @Override
+    public void onRemove(Progress progress) {
+        System.out.println("onRemove: " + progress);
+    }
 }

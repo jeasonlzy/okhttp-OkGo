@@ -205,6 +205,10 @@ public class DesActivity extends BaseActivity {
         }
 
         @Override
+        public void onRemove(Progress progress) {
+        }
+
+        @Override
         public void onError(Progress progress) {
             Throwable throwable = progress.exception;
             if (throwable != null) throwable.printStackTrace();

@@ -185,10 +185,11 @@ public class DownloadTask implements Runnable {
     /** 删除一个任务,会删除下载文件 */
     public DownloadTask remove(boolean isDeleteFile) {
         pause();
-        listeners.clear();
         if (isDeleteFile) IOUtils.delFileOrFolder(progress.filePath);
         DownloadManager.getInstance().delete(progress.tag);
-        return OkDownload.getInstance().removeTask(progress.tag);
+        DownloadTask task = OkDownload.getInstance().removeTask(progress.tag);
+        postOnRemove(progress);
+        return task;
     }
 
     @Override
@@ -398,6 +399,19 @@ public class DownloadTask implements Runnable {
                     listener.onProgress(progress);
                     listener.onFinish(file, progress);
                 }
+            }
+        });
+    }
+
+    private void postOnRemove(final Progress progress) {
+        updateDatabase(progress);
+        HttpUtils.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for (DownloadListener listener : listeners.values()) {
+                    listener.onRemove(progress);
+                }
+                listeners.clear();
             }
         });
     }

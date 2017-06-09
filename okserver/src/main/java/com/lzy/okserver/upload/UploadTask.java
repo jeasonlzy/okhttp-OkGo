@@ -131,10 +131,11 @@ public class UploadTask<T> implements Runnable {
     /** 删除一个任务,会删除下载文件 */
     public UploadTask<T> remove() {
         pause();
-        listeners.clear();
         DownloadManager.getInstance().delete(progress.tag);
         //noinspection unchecked
-        return (UploadTask<T>) OkUpload.getInstance().removeTask(progress.tag);
+        UploadTask<T> task = (UploadTask<T>) OkUpload.getInstance().removeTask(progress.tag);
+        postOnRemove(progress);
+        return task;
     }
 
     @Override
@@ -253,6 +254,19 @@ public class UploadTask<T> implements Runnable {
                     listener.onProgress(progress);
                     listener.onFinish(t, progress);
                 }
+            }
+        });
+    }
+
+    private void postOnRemove(final Progress progress) {
+        updateDatabase(progress);
+        HttpUtils.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for (UploadListener<T> listener : listeners.values()) {
+                    listener.onRemove(progress);
+                }
+                listeners.clear();
             }
         });
     }

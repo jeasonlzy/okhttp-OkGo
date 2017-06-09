@@ -40,4 +40,9 @@ public class LogDownloadListener extends DownloadListener {
     public void onFinish(File file, Progress progress) {
         System.out.println("onFinish: " + progress);
     }
+
+    @Override
+    public void onRemove(Progress progress) {
+        System.out.println("onRemove: " + progress);
+    }
 }

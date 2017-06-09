@@ -231,5 +231,9 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
         public void onFinish(File file, Progress progress) {
             Toast.makeText(context, "下载完成:" + progress.filePath, Toast.LENGTH_SHORT).show();
         }
+
+        @Override
+        public void onRemove(Progress progress) {
+        }
     }
 }

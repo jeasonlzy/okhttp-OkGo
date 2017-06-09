@@ -38,4 +38,7 @@ public interface ProgressListener<T> {
 
     /** 下载完成时回调 */
     void onFinish(T t, Progress progress);
+
+    /** 被移除时回调 */
+    void onRemove(Progress progress);
 }
