@@ -60,7 +60,13 @@
             android:name=".okgo.CommonActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".okdownload.DownloadActivity"
+            android:name=".okdownload.DownloadAllActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".okdownload.DownloadingActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".okdownload.DownloadFinishActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".okdownload.DesActivity"

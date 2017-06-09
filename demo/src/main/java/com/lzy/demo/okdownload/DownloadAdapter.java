@@ -40,6 +40,7 @@ import com.lzy.okserver.download.DownloadTask;
 import java.io.File;
 import java.text.NumberFormat;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -56,10 +57,15 @@ import butterknife.OnClick;
  */
 public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHolder> {
 
+    public static final int TYPE_ALL = 0;
+    public static final int TYPE_FINISH = 1;
+    public static final int TYPE_ING = 2;
+
     private List<DownloadTask> values;
     private NumberFormat numberFormat;
     private LayoutInflater inflater;
     private Context context;
+    private int type;
 
     public DownloadAdapter(Context context) {
         this.context = context;
@@ -68,9 +74,12 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    public void updateData(List<Progress> progressList) {
+    public void updateData(int type) {
         //这里是将数据库的数据恢复
-        values = OkDownload.restore(progressList);
+        this.type = type;
+        if (type == TYPE_ALL) values = OkDownload.restore(DownloadManager.getInstance().getAll());
+        if (type == TYPE_FINISH) values = OkDownload.restore(DownloadManager.getInstance().getFinished());
+        if (type == TYPE_ING) values = OkDownload.restore(DownloadManager.getInstance().getDownloading());
         notifyDataSetChanged();
     }
 
@@ -83,11 +92,18 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         DownloadTask task = values.get(position)//
-                .register(new ListDownloadListener(holder))//
-                .register(new LogDownloadListener("DownloadAdapter"));
+                .register(new ListDownloadListener("ListDownloadListener_" + type, holder))//
+                .register(new LogDownloadListener());
         holder.setTask(task);
         holder.bind();
         holder.refresh(task.progress);
+    }
+
+    public void unRegister() {
+        Map<String, DownloadTask> taskMap = OkDownload.getInstance().getTaskMap();
+        for (DownloadTask task : taskMap.values()) {
+            task.unRegister("ListDownloadListener_" + type);
+        }
     }
 
     @Override
@@ -156,6 +172,7 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
                     } else {
                         download.setText("安装");
                     }
+                    download.setText("完成");
                     netSpeed.setText("下载完成");
                     break;
                 case Progress.LOADING:
@@ -195,7 +212,7 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
         @OnClick(R.id.remove)
         public void remove() {
             task.remove(true);
-            updateData(DownloadManager.getInstance().getAll());
+            updateData(type);
         }
 
         @OnClick(R.id.restart)
@@ -206,8 +223,11 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
 
     private class ListDownloadListener extends DownloadListener {
 
-        ListDownloadListener(Object tag) {
+        private ViewHolder holder;
+
+        ListDownloadListener(Object tag, DownloadAdapter.ViewHolder holder) {
             super(tag);
+            this.holder = holder;
         }
 
         @Override
@@ -216,8 +236,6 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
 
         @Override
         public void onProgress(Progress progress) {
-            if (tag == null) return;
-            DownloadAdapter.ViewHolder holder = (DownloadAdapter.ViewHolder) tag;
             holder.refresh(progress);
         }
 
@@ -230,6 +248,7 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
         @Override
         public void onFinish(File file, Progress progress) {
             Toast.makeText(context, "下载完成:" + progress.filePath, Toast.LENGTH_SHORT).show();
+            updateData(type);
         }
 
         @Override

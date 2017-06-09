@@ -29,8 +29,8 @@ import com.lzy.okserver.upload.UploadListener;
  */
 public class LogUploadListener<T> extends UploadListener<T> {
 
-    public LogUploadListener(Object tag) {
-        super(tag);
+    public LogUploadListener() {
+        super("LogUploadListener");
     }
 
     @Override

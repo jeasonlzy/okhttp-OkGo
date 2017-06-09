@@ -31,8 +31,8 @@ import java.io.File;
  */
 public class LogDownloadListener extends DownloadListener {
 
-    public LogDownloadListener(Object tag) {
-        super(tag);
+    public LogDownloadListener() {
+        super("LogDownloadListener");
     }
 
     @Override

@@ -20,10 +20,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 
 import com.lzy.demo.R;
 import com.lzy.demo.base.BaseActivity;
-import com.lzy.okgo.db.DownloadManager;
 import com.lzy.okserver.OkDownload;
 import com.lzy.okserver.task.XExecutor;
 
@@ -39,23 +39,28 @@ import butterknife.OnClick;
  * 修订历史：
  * ================================================
  */
-public class DownloadActivity extends BaseActivity implements XExecutor.OnAllTaskEndListener {
+public class DownloadFinishActivity extends BaseActivity implements XExecutor.OnAllTaskEndListener {
 
     private DownloadAdapter adapter;
     private OkDownload okDownload;
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.recyclerView) RecyclerView recyclerView;
+    @Bind(R.id.pauseAll) Button pauseAll;
+    @Bind(R.id.startAll) Button startAll;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_download_manager);
-        initToolBar(toolbar, true, "下载管理");
+        setContentView(R.layout.activity_download_all);
+        initToolBar(toolbar, true, "已完成任务");
+
+        pauseAll.setVisibility(View.GONE);
+        startAll.setVisibility(View.GONE);
 
         okDownload = OkDownload.getInstance();
         adapter = new DownloadAdapter(this);
-        adapter.updateData(DownloadManager.getInstance().getAll());
+        adapter.updateData(DownloadAdapter.TYPE_FINISH);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
@@ -71,6 +76,7 @@ public class DownloadActivity extends BaseActivity implements XExecutor.OnAllTas
     protected void onDestroy() {
         super.onDestroy();
         okDownload.removeOnAllTaskEndListener(this);
+        adapter.unRegister();
     }
 
     @Override
@@ -81,18 +87,8 @@ public class DownloadActivity extends BaseActivity implements XExecutor.OnAllTas
 
     @OnClick(R.id.removeAll)
     public void removeAll(View view) {
-        okDownload.removeAll();
-        adapter.updateData(DownloadManager.getInstance().getAll());
+        OkDownload.getInstance().removeAll();
+        adapter.updateData(DownloadAdapter.TYPE_FINISH);
         adapter.notifyDataSetChanged();
-    }
-
-    @OnClick(R.id.pauseAll)
-    public void pauseAll(View view) {
-        okDownload.pauseAll();
-    }
-
-    @OnClick(R.id.startAll)
-    public void startAll(View view) {
-        okDownload.startAll();
     }
 }

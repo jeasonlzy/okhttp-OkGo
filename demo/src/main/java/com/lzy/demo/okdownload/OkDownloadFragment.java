@@ -20,7 +20,7 @@ public class OkDownloadFragment extends MainFragment {
 
     @Override
     public void fillData(List<ItemModel> items) {
-        items.add(new ItemModel("下载列表",//
+        items.add(new ItemModel("开始下载",//
                                 "1. 这个属于OkServer依赖中的功能,并不属于OkGo\n" +//
                                 "2. 支持断点下载和状态管理\n" +//
                                 "3. 支持自定义下载任务优先级\n" +//
@@ -28,7 +28,21 @@ public class OkDownloadFragment extends MainFragment {
                                 "5. 最多支持扩展3个额外数据\n" +//
                                 "6. 支持同时指定多个下载目录"));
 
-        items.add(new ItemModel("任务管理",//
+        items.add(new ItemModel("所有任务",//
+                                "1. 每个任务支持暂停，继续，重新下载，删除等操作\n" +//
+                                "2. 支持全部暂停，全部开始，全部删除\n" +//
+                                "3. 支持全局下载任务监听\n" +//
+                                "4. 支持一个任务多个监听\n" +//
+                                "5. 支持按下载中列表和下载完成列表筛选\n"));
+
+        items.add(new ItemModel("下载中任务",//
+                                "1. 每个任务支持暂停，继续，重新下载，删除等操作\n" +//
+                                "2. 支持全部暂停，全部开始，全部删除\n" +//
+                                "3. 支持全局下载任务监听\n" +//
+                                "4. 支持一个任务多个监听\n" +//
+                                "5. 支持按下载中列表和下载完成列表筛选\n"));
+
+        items.add(new ItemModel("已完成任务",//
                                 "1. 每个任务支持暂停，继续，重新下载，删除等操作\n" +//
                                 "2. 支持全部暂停，全部开始，全部删除\n" +//
                                 "3. 支持全局下载任务监听\n" +//
@@ -40,6 +54,8 @@ public class OkDownloadFragment extends MainFragment {
     @Override
     public void onItemClick(int position) {
         if (position == 0) startActivity(new Intent(context, DownloadListActivity.class));
-        if (position == 1) startActivity(new Intent(context, DownloadActivity.class));
+        if (position == 1) startActivity(new Intent(context, DownloadAllActivity.class));
+        if (position == 2) startActivity(new Intent(context, DownloadingActivity.class));
+        if (position == 3) startActivity(new Intent(context, DownloadFinishActivity.class));
     }
 }

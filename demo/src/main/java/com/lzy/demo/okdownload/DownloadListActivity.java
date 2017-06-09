@@ -70,7 +70,7 @@ public class DownloadListActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download);
-        initToolBar(toolbar, true, "下载管理");
+        initToolBar(toolbar, true, "开始下载");
 
         initData();
         OkDownload.getInstance().setFolder(Environment.getExternalStorageDirectory().getAbsolutePath() + "/aaa/");
@@ -96,7 +96,7 @@ public class DownloadListActivity extends BaseActivity {
             OkDownload.request(apk.url, request)//
                     .priority(apk.priority)//
                     .extra1(apk)//
-                    .register(new LogDownloadListener("DownloadListActivity"))//
+                    .register(new LogDownloadListener())//
                     .start();
             adapter.notifyDataSetChanged();
         }
@@ -163,7 +163,7 @@ public class DownloadListActivity extends BaseActivity {
             OkDownload.request(apk.url, request)//
                     .priority(apk.priority)//
                     .extra1(apk)//
-                    .register(new LogDownloadListener("DownloadListActivity"))//
+                    .register(new LogDownloadListener())//
                     .start();
             adapter.notifyDataSetChanged();
         }

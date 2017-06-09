@@ -99,9 +99,10 @@ public class UploadActivity extends BaseActivity implements XExecutor.OnAllTaskE
                 PostRequest<String> postRequest = OkGo.<String>post(Urls.URL_FORM_UPLOAD)//
                         .params("fileKey" + i, new File(images.get(i).path))//
                         .converter(new StringConvert());
+                UploadAdapter.ViewHolder holder = (UploadAdapter.ViewHolder) gridView.getChildAt(i).getTag();
                 OkUpload.request(images.get(i).path, postRequest)//
-                        .register(new ListUploadListener(gridView.getChildAt(i)))//
-                        .register(new LogUploadListener<String>("UploadActivity"))//
+                        .register(new ListUploadListener("ListUploadListener", holder))//
+                        .register(new LogUploadListener<String>())//
                         .start();
             }
         }
@@ -126,9 +127,9 @@ public class UploadActivity extends BaseActivity implements XExecutor.OnAllTaskE
 
         private UploadAdapter.ViewHolder holder;
 
-        ListUploadListener(View tag) {
+        ListUploadListener(Object tag, UploadAdapter.ViewHolder holder) {
             super(tag);
-            holder = (UploadAdapter.ViewHolder) tag.getTag();
+            this.holder = holder;
         }
 
         @Override

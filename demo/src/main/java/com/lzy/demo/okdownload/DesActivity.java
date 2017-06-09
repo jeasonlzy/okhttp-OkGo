@@ -79,8 +79,8 @@ public class DesActivity extends BaseActivity {
         // 写法一：从内存中获取
         if (OkDownload.getInstance().hasTask(apk.url)) {
             task = OkDownload.getInstance().getTask(apk.url)//
-                    .register(new DesListener("DesActivity1"))//
-                    .register(new LogDownloadListener("DesActivity2"));
+                    .register(new DesListener("DesListener"))//
+                    .register(new LogDownloadListener());
         }
 
         //写法二：从数据库中恢复
@@ -88,7 +88,7 @@ public class DesActivity extends BaseActivity {
 //        if (progress != null) {
 //            task = OkDownload.restore(progress)//
 //                    .register(new DesListener("DesActivity1"))//
-//                    .register(new LogDownloadListener("DesActivity2"));
+//                    .register(new LogDownloadListener());
 //        }
 
         displayImage(apk.iconUrl, icon);
@@ -135,8 +135,7 @@ public class DesActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         if (task != null) {
-            task.unRegister("DesActivity1");
-            task.unRegister("DesActivity2");
+            task.unRegister("DesListener");
         }
     }
 
@@ -147,8 +146,8 @@ public class DesActivity extends BaseActivity {
             task = OkDownload.request(apk.url, request)//
                     .priority(apk.priority)//
                     .extra1(apk)//
-                    .register(new DesListener("DesActivity1"))//
-                    .register(new LogDownloadListener("DesActivity2"));
+                    .register(new DesListener("DesListener"))//
+                    .register(new LogDownloadListener());
         }
         switch (task.progress.status) {
             case Progress.PAUSE:

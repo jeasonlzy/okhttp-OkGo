@@ -96,14 +96,16 @@ public class OkDownload {
     /** 从数据库中恢复任务 */
     public static List<DownloadTask> restore(List<Progress> progressList) {
         Map<String, DownloadTask> taskMap = OkDownload.getInstance().getTaskMap();
+        List<DownloadTask> tasks = new ArrayList<>();
         for (Progress progress : progressList) {
             DownloadTask task = taskMap.get(progress.tag);
             if (task == null) {
                 task = new DownloadTask(progress);
                 taskMap.put(progress.tag, task);
             }
+            tasks.add(task);
         }
-        return new ArrayList<>(taskMap.values());
+        return tasks;
     }
 
     /** 开始所有任务 */
