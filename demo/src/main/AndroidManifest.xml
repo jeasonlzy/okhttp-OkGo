@@ -51,7 +51,7 @@
         <activity android:name=".okgo.RedirectActivity"/>
         <activity android:name=".okgo.TestActivity"/>
         <activity
-            android:name=".supercache.CacheDemoActivity"
+            android:name=".supercache.SuperCacheActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".WebActivity"

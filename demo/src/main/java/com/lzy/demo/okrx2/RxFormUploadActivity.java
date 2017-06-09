@@ -149,7 +149,7 @@ public class RxFormUploadActivity extends BaseRxDetailActivity {
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
-                        btnFormUpload1.setText("正在上传中...\n使用Rx方式做进度监听稍显麻烦,推荐使用回调方式");
+                        btnFormUpload1.setText("正在上传中...\n使用Rx方式做进度监听稍显麻烦,推荐使用方式2");
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())//

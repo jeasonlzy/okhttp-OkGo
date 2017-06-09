@@ -16,11 +16,9 @@
 package com.lzy.demo.supercache;
 
 import com.google.gson.stream.JsonReader;
-import com.lzy.demo.model.NewsResponse;
+import com.lzy.demo.model.GankResponse;
 import com.lzy.demo.utils.Convert;
-import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.callback.AbsCallback;
-import com.lzy.okgo.request.Request;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -38,14 +36,8 @@ import okhttp3.Response;
  */
 public abstract class NewsCallback<T> extends AbsCallback<T> {
 
-    @Override
-    public void onStart(Request<T, ? extends Request> request) {
-        //缓存演示代码所有请求需要添加 apikey
-        request.headers("apikey", Urls.APIKEY);
-    }
-
     /**
-     * 这里的数据解析是根据 http://apistore.baidu.com/apiworks/servicedetail/688.html 返回的数据来写的
+     * 这里的数据解析是根据 http://gank.io/api/data/Android/10/1 返回的数据来写的
      * 实际使用中,自己服务器返回的数据格式和上面网站肯定不一样,所以以下是参考代码,根据实际情况自己改写
      */
     @Override
@@ -58,15 +50,15 @@ public abstract class NewsCallback<T> extends AbsCallback<T> {
 
         JsonReader jsonReader = new JsonReader(response.body().charStream());
         Type rawType = ((ParameterizedType) type).getRawType();
-        if (rawType == NewsResponse.class) {
-            NewsResponse newsResponse = Convert.fromJson(jsonReader, type);
-            if (newsResponse.showapi_res_code == 0) {
+        if (rawType == GankResponse.class) {
+            GankResponse gankResponse = Convert.fromJson(jsonReader, type);
+            if (!gankResponse.error) {
                 response.close();
                 //noinspection unchecked
-                return (T) newsResponse;
+                return (T) gankResponse;
             } else {
                 response.close();
-                throw new IllegalStateException(newsResponse.showapi_res_error);
+                throw new IllegalStateException("服务端接口错误");
             }
         } else {
             response.close();

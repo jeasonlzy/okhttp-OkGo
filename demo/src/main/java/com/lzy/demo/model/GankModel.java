@@ -16,21 +16,29 @@
 package com.lzy.demo.model;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 /**
  * ================================================
  * 作    者：jeasonlzy（廖子尧）Github地址：https://github.com/jeasonlzy
  * 版    本：1.0
- * 创建日期：16/9/29
+ * 创建日期：16/9/1
  * 描    述：
  * 修订历史：
  * ================================================
  */
-public class NewsResponse<T> implements Serializable{
+public class GankModel implements Serializable {
+    private static final long serialVersionUID = 6753210234564872868L;
 
-    private static final long serialVersionUID = -686453405647539973L;
-
-    public String showapi_res_error;
-    public int showapi_res_code;
-    public T showapi_res_body;
+    public String _id;
+    public Date createdAt;
+    public String desc;
+    public List<String> images;
+    public Date publishedAt;
+    public String source;
+    public String type;
+    public String url;
+    public boolean used;
+    public String who;
 }

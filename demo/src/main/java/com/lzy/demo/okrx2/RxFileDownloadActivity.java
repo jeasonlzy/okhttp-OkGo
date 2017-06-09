@@ -96,7 +96,7 @@ public class RxFileDownloadActivity extends BaseRxDetailActivity {
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
-                        btnFileDownload1.setText("正在下载中...");
+                        btnFileDownload1.setText("正在下载中...\n使用Rx方式做进度监听稍显麻烦,推荐使用方式2");
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())//
