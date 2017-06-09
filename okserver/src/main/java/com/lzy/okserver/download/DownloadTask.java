@@ -146,7 +146,12 @@ public class DownloadTask implements Runnable {
             priorityRunnable = new PriorityRunnable(progress.priority, this);
             executor.execute(priorityRunnable);
         } else if (progress.status == Progress.FINISH) {
-            postOnFinish(progress, new File(progress.filePath));
+            File file = new File(progress.filePath);
+            if (file.exists() && file.length() == progress.totalSize) {
+                postOnFinish(progress, new File(progress.filePath));
+            } else {
+                postOnError(progress, new StorageException("the file " + progress.filePath + " may be invalid or damaged, please call the method restart() to download again！"));
+            }
         } else {
             OkLogger.w("the task with tag " + progress.tag + " is already in the download queue, current task status is " + progress.status);
         }
