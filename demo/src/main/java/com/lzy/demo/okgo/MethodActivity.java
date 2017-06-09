@@ -38,8 +38,6 @@ import com.lzy.okgo.model.Response;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 
 /**
  * ================================================
@@ -54,8 +52,7 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
 
     @Bind(R.id.gridView) GridView gridView;
 
-    private String[] methods = {"GET", "HEAD\n只有请求头", "OPTIONS\n获取服务器支持的HTTP请求方式",//
-                                "POST", "PUT\n用法同POST主要用于创建资源", "DELETE\n与PUT对应主要用于删除资源"};
+    private String[] methods = {"GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "PATCH", "TRACE"};
 
     @Override
     protected void onActivityCreate(Bundle savedInstanceState) {
@@ -169,8 +166,41 @@ public class MethodActivity extends BaseDetailActivity implements AdapterView.On
                 OkGo.<LzyResponse<ServerModel>>delete(Urls.URL_METHOD)//
                         .tag(this)//
                         .headers("header1", "headerValue1")//
+                        .upString("这是要上传的数据")//
+                        .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
+                            @Override
+                            public void onSuccess(Response<LzyResponse<ServerModel>> response) {
+                                handleResponse(response);
+                            }
+
+                            @Override
+                            public void onError(Response<LzyResponse<ServerModel>> response) {
+                                handleError(response);
+                            }
+                        });
+                break;
+            case 6:
+                OkGo.<LzyResponse<ServerModel>>patch(Urls.URL_METHOD)//
+                        .tag(this)//
+                        .headers("header1", "headerValue1")//
+                        .upString("这是要上传的数据")//
+                        .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
+                            @Override
+                            public void onSuccess(Response<LzyResponse<ServerModel>> response) {
+                                handleResponse(response);
+                            }
+
+                            @Override
+                            public void onError(Response<LzyResponse<ServerModel>> response) {
+                                handleError(response);
+                            }
+                        });
+                break;
+            case 7:
+                OkGo.<LzyResponse<ServerModel>>trace(Urls.URL_METHOD)//
+                        .tag(this)//
+                        .headers("header1", "headerValue1")//
                         .params("param1", "paramValue1")//
-                        .requestBody(RequestBody.create(MediaType.parse("text/plain;charset=utf-8"), "这是要上传的数据"))//
                         .execute(new DialogCallback<LzyResponse<ServerModel>>(this) {
                             @Override
                             public void onSuccess(Response<LzyResponse<ServerModel>> response) {

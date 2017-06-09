@@ -25,12 +25,12 @@ import com.lzy.demo.R;
 import com.lzy.demo.base.BaseDetailActivity;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
-
-import java.io.IOException;
+import com.lzy.okgo.adapter.Call;
+import com.lzy.okgo.convert.StringConvert;
+import com.lzy.okgo.model.Response;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import okhttp3.Response;
 
 /**
  * ================================================
@@ -48,15 +48,9 @@ public class SyncActivity extends BaseDetailActivity {
     private class InnerHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-            try {
-                Response response = (Response) msg.obj;
-                //对response需要自己做解析
-                String data = response.body().string();
-                System.out.println("同步请求的数据：" + data);
-                Toast.makeText(getApplicationContext(), "同步请求成功" + data, Toast.LENGTH_SHORT).show();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            String data = (String) msg.obj;
+            System.out.println("同步请求的数据：" + data);
+            Toast.makeText(getApplicationContext(), "同步请求成功" + data, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -80,17 +74,25 @@ public class SyncActivity extends BaseDetailActivity {
             @Override
             public void run() {
                 try {
-                    //同步会阻塞主线程，必须开线程
-                    Response response = OkGo.get(Urls.URL_JSONOBJECT)//
+//                    //同步会阻塞主线程，必须开线程
+//                    Response response = OkGo.get(Urls.URL_JSONOBJECT)//
+//                            .tag(this)//
+//                            .headers("header1", "headerValue1")//
+//                            .params("param1", "paramValue1")//
+//                            .execute();  //不传callback即为同步请求
+
+                    Call<String> call = OkGo.<String>get(Urls.URL_JSONOBJECT)//
                             .tag(this)//
                             .headers("header1", "headerValue1")//
                             .params("param1", "paramValue1")//
-                            .execute();  //不传callback即为同步请求
+                            .converter(new StringConvert())//
+                            .adapt();
+                    Response<String> response = call.execute();
 
                     Message message = Message.obtain();
-                    message.obj = response;
+                    message.obj = response.body();
                     handler.sendMessage(message);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

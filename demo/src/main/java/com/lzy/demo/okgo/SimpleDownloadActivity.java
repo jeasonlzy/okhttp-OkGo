@@ -47,7 +47,7 @@ import butterknife.OnClick;
  * 修订历史：
  * ================================================
  */
-public class FileDownloadActivity extends BaseDetailActivity {
+public class SimpleDownloadActivity extends BaseDetailActivity {
 
     @Bind(R.id.fileDownload) Button btnFileDownload;
     @Bind(R.id.downloadSize) TextView tvDownloadSize;
@@ -60,7 +60,7 @@ public class FileDownloadActivity extends BaseDetailActivity {
     protected void onActivityCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_file_download);
         ButterKnife.bind(this);
-        setTitle("文件下载");
+        setTitle("简单文件下载");
 
         numberFormat = NumberFormat.getPercentInstance();
         numberFormat.setMinimumFractionDigits(2);

@@ -41,7 +41,7 @@ import butterknife.OnClick;
  * 修订历史：
  * ================================================
  */
-public class JsonRequestActivity extends BaseDetailActivity {
+public class JsonActivity extends BaseDetailActivity {
 
     @Override
     protected void onActivityCreate(Bundle savedInstanceState) {

@@ -41,7 +41,7 @@ public class TraceRequest<T> extends Request<T, TraceRequest<T>> {
     }
 
     @Override
-    public RequestBody generateRequestBody() {
+    protected RequestBody generateRequestBody() {
         return null;
     }
 

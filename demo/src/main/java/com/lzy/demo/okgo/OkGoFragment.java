@@ -22,15 +22,15 @@ public class OkGoFragment extends MainFragment {
     @Override
     public void fillData(List<ItemModel> items) {
         items.add(new ItemModel("基本功能(OkGo)",//
-                                "1.GET，HEAD，OPTIONS，POST，PUT，DELETE 请求方法演示\n" +//
+                                "1.GET，HEAD，OPTIONS，POST，PUT，DELETE, PATCH, TRACE 请求方法演示\n" +//
                                 "2.请求服务器返回bitmap对象\n" +//
                                 "3.支持https请求\n" +//
                                 "4.支持同步请求\n" +//
                                 "5.支持301重定向"));
 
         items.add(new ItemModel("自动解析Json对象",//
-                                "1.自动解析JavaBean对象\n" + //
-                                "2.自动解析List<JavaBean>集合对象"));
+                                "1.自动解析JSONObject对象\n" + //
+                                "2.自动解析JSONArray对象"));
 
         items.add(new ItemModel("文件下载",//
                                 "1.支持大文件或小文件下载，无论多大文件都不会发生OOM\n" +//
@@ -52,9 +52,9 @@ public class OkGoFragment extends MainFragment {
 
     @Override
     public void onItemClick(int position) {
-        if (position == 0) startActivity(new Intent(context, OkHttpActivity.class));
-        if (position == 1) startActivity(new Intent(context, JsonRequestActivity.class));
-        if (position == 2) startActivity(new Intent(context, FileDownloadActivity.class));
+        if (position == 0) startActivity(new Intent(context, CommonActivity.class));
+        if (position == 1) startActivity(new Intent(context, JsonActivity.class));
+        if (position == 2) startActivity(new Intent(context, SimpleDownloadActivity.class));
         if (position == 3) startActivity(new Intent(context, FormUploadActivity.class));
         if (position == 4) startActivity(new Intent(context, CacheDemoActivity.class));
     }

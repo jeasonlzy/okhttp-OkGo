@@ -39,12 +39,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".okgo.MethodActivity"/>
-        <activity android:name=".okgo.JsonRequestActivity"/>
+        <activity android:name=".okgo.JsonActivity"/>
         <activity android:name=".okgo.BitmapRequestActivity"/>
-        <activity android:name=".okgo.PostTextActivity"/>
+        <activity android:name=".okgo.UpActivity"/>
         <activity android:name=".okgo.CookieActivity"/>
         <activity android:name=".okgo.FormUploadActivity"/>
-        <activity android:name=".okgo.FileDownloadActivity"/>
+        <activity android:name=".okgo.SimpleDownloadActivity"/>
         <activity android:name=".okgo.CacheActivity"/>
         <activity android:name=".okgo.HttpsActivity"/>
         <activity android:name=".okgo.SyncActivity"/>
@@ -57,7 +57,7 @@
             android:name=".WebActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".okgo.OkHttpActivity"
+            android:name=".okgo.CommonActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".okdownload.DownloadActivity"

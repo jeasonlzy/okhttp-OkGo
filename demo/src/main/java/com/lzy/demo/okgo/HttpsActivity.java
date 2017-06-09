@@ -69,6 +69,7 @@ public class HttpsActivity extends BaseDetailActivity {
 
     @OnClick(R.id.btn_none_https_request)
     public void btn_none_https_request(View view) {
+        //CA 认证的证书不需要任何设置，和http请求一样
         OkGo.<String>get("https://github.com/jeasonlzy")//
                 .tag(this)//
                 .headers("header1", "headerValue1")//
@@ -89,26 +90,22 @@ public class HttpsActivity extends BaseDetailActivity {
 
     @OnClick(R.id.btn_https_request)
     public void btn_https_request(View view) {
-        try {
-            //自签名的证书需要在全局初始化的时候设置，详细看初始化的代码
-            OkGo.<String>get("https://kyfw.12306.cn/otn")//
-                    .tag(this)//
-                    .headers("Connection", "close")           //如果对于部分自签名的https访问不成功，需要加上该控制头
-                    .headers("header1", "headerValue1")//
-                    .params("param1", "paramValue1")//
-                    .execute(new StringDialogCallback(this) {
-                        @Override
-                        public void onError(Response<String> response) {
-                            handleError(response);
-                        }
+        //自签名的证书需要在全局初始化的时候设置，详细看初始化的代码
+        OkGo.<String>get("https://kyfw.12306.cn/otn")//
+                .tag(this)//
+                .headers("Connection", "close")           //如果对于部分自签名的https访问不成功，需要加上该控制头
+                .headers("header1", "headerValue1")//
+                .params("param1", "paramValue1")//
+                .execute(new StringDialogCallback(this) {
+                    @Override
+                    public void onError(Response<String> response) {
+                        handleError(response);
+                    }
 
-                        @Override
-                        public void onSuccess(Response<String> response) {
-                            handleResponse(response);
-                        }
-                    });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        handleResponse(response);
+                    }
+                });
     }
 }

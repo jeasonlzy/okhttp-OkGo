@@ -24,14 +24,14 @@
         android:id="@+id/requestJson"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="解析JavaBean数据"
+        android:text="解析JSONObject数据"
         android:textAllCaps="false"/>
 
     <Button
         android:id="@+id/requestJsonArray"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="解析List&lt;JavaBean&gt;数据"
+        android:text="解析JSONArray数据"
         android:textAllCaps="false"/>
 
 </LinearLayout>
