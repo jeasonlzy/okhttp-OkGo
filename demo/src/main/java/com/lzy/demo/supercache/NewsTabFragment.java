@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzy.demo.cache;
+package com.lzy.demo.supercache;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -71,7 +71,7 @@ public class NewsTabFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @Override
     protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_tab, container, false);
+        View view = inflater.inflate(R.layout.item_refresh, container, false);
         ButterKnife.bind(this, view);
         return view;
     }

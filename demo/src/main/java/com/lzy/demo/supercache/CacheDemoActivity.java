@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzy.demo.cache;
+package com.lzy.demo.supercache;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;

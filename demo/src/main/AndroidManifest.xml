@@ -51,7 +51,7 @@
         <activity android:name=".okgo.RedirectActivity"/>
         <activity android:name=".okgo.TestActivity"/>
         <activity
-            android:name=".cache.CacheDemoActivity"
+            android:name=".supercache.CacheDemoActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".WebActivity"
@@ -60,25 +60,25 @@
             android:name=".okgo.OkHttpActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".okserver.DownloadActivity"
+            android:name=".okdownload.DownloadActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".okserver.DesActivity"
+            android:name=".okdownload.DesActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".okserver.DownloadListActivity"
+            android:name=".okdownload.DownloadListActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".okserver.UploadActivity"
+            android:name=".okupload.UploadActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <!-- Rx相关 -->
         <activity
-            android:name=".okrx.RxActivity"
+            android:name=".okrx2.RxActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".okrx.RxCommonActivity"/>
-        <activity android:name=".okrx.RxBitmapActivity"/>
-        <activity android:name=".okrx.RxFileDownloadActivity"/>
-        <activity android:name=".okrx.RxFormUploadActivity"/>
+        <activity android:name=".okrx2.RxCommonActivity"/>
+        <activity android:name=".okrx2.RxBitmapActivity"/>
+        <activity android:name=".okrx2.RxFileDownloadActivity"/>
+        <activity android:name=".okrx2.RxFormUploadActivity"/>
     </application>
 
 </manifest>

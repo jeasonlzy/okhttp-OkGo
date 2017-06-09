@@ -17,7 +17,6 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
@@ -55,14 +54,21 @@
                 app:popupTheme="@style/AppTheme.PopupOverlay"
                 app:title=""/>
         </android.support.design.widget.CollapsingToolbarLayout>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            app:tabMode="scrollable"
+            app:tabTextAppearance="@style/TabLayoutTextStyle"/>
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:listitem="@layout/item_main_list"/>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     <TextView
         android:id="@+id/toolbar_title"
@@ -87,8 +93,11 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="right|bottom"
         android:layout_margin="16dp"
+        android:layout_marginBottom="32dp"
+        android:layout_marginRight="16dp"
         android:src="@mipmap/ic_start"
-        app:layout_anchor="@id/appbar"
-        app:layout_anchorGravity="bottom|right"/>
+        app:layout_behavior="@string/translate_up_down_behavior"
+        app:layout_scrollFlags="scroll|enterAlways|snap"/>
 </android.support.design.widget.CoordinatorLayout>
