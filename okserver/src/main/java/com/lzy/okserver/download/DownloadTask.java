@@ -135,13 +135,12 @@ public class DownloadTask implements Runnable {
     }
 
     public void unRegister(String tag) {
-        HttpUtils.checkNotNull(tag, "listener == null");
+        HttpUtils.checkNotNull(tag, "tag == null");
         listeners.remove(tag);
     }
 
     public DownloadTask start() {
         if (progress.status == Progress.NONE || progress.status == Progress.PAUSE || progress.status == Progress.ERROR) {
-//            DownloadManager.getInstance().replace(progress);
             postOnStart(progress);
             postWaiting(progress);
             priorityRunnable = new PriorityRunnable(progress.priority, this);

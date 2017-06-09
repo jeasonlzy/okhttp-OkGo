@@ -29,10 +29,11 @@ import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.okgo.OkGo;
+import com.lzy.okgo.convert.StringConvert;
 import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.request.PostRequest;
 import com.lzy.okserver.OkUpload;
-import com.lzy.okserver.task.ExecutorWithListener;
+import com.lzy.okserver.task.XExecutor;
 import com.lzy.okserver.upload.UploadListener;
 
 import java.io.File;
@@ -50,7 +51,7 @@ import butterknife.OnClick;
  * 修订历史：
  * ================================================
  */
-public class UploadActivity extends BaseActivity implements ExecutorWithListener.OnAllTaskEndListener {
+public class UploadActivity extends BaseActivity implements XExecutor.OnAllTaskEndListener {
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.gridView) GridView gridView;
@@ -96,9 +97,11 @@ public class UploadActivity extends BaseActivity implements ExecutorWithListener
         if (images != null) {
             for (int i = 0; i < images.size(); i++) {
                 PostRequest<String> postRequest = OkGo.<String>post(Urls.URL_FORM_UPLOAD)//
-                        .params("fileKey" + i, new File(images.get(i).path));
+                        .params("fileKey" + i, new File(images.get(i).path))//
+                        .converter(new StringConvert());
                 OkUpload.request(images.get(i).path, postRequest)//
                         .register(new ListUploadListener(gridView.getChildAt(i)))//
+                        .register(new LogUploadListener<String>("UploadActivity"))//
                         .start();
             }
         }
@@ -130,19 +133,15 @@ public class UploadActivity extends BaseActivity implements ExecutorWithListener
 
         @Override
         public void onStart(Progress progress) {
-            System.out.println("onStart");
         }
 
         @Override
         public void onProgress(Progress progress) {
-            System.out.println("onProgress:" + progress.totalSize + " " + progress.currentSize + " " + progress.fraction);
-            holder = (UploadAdapter.ViewHolder) ((View) tag).getTag();
             holder.refresh(progress);
         }
 
         @Override
         public void onFinish(String s, Progress progress) {
-            System.out.println("onFinish：" + s);
             holder.finish();
         }
 

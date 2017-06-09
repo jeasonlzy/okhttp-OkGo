@@ -130,6 +130,16 @@ public class Progress implements Serializable {
         return sum / speedBuffer.size();
     }
 
+    /** 转换进度信息 */
+    public void from(Progress progress) {
+        totalSize = progress.totalSize;
+        currentSize = progress.currentSize;
+        fraction = progress.fraction;
+        speed = progress.speed;
+        lastRefreshTime = progress.lastRefreshTime;
+        tempSize = progress.tempSize;
+    }
+
     public interface Action {
         void call(Progress progress);
     }

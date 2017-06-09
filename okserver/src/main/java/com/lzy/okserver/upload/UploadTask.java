@@ -15,19 +15,24 @@
  */
 package com.lzy.okserver.upload;
 
+import android.content.ContentValues;
+
+import com.lzy.okgo.db.DownloadManager;
+import com.lzy.okgo.db.UploadManager;
 import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.ProgressRequestBody;
 import com.lzy.okgo.request.Request;
 import com.lzy.okgo.utils.HttpUtils;
 import com.lzy.okgo.utils.OkLogger;
-import com.lzy.okserver.OkDownload;
 import com.lzy.okserver.OkUpload;
 import com.lzy.okserver.task.PriorityRunnable;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
+
+import okhttp3.Call;
 
 /**
  * ================================================
@@ -49,7 +54,6 @@ public class UploadTask<T> implements Runnable {
         HttpUtils.checkNotNull(tag, "tag == null");
         progress = new Progress();
         progress.tag = tag;
-        progress.folder = OkDownload.getInstance().getFolder();
         progress.url = request.getBaseUrl();
         progress.status = Progress.NONE;
         progress.totalSize = -1;
@@ -72,6 +76,7 @@ public class UploadTask<T> implements Runnable {
     }
 
     public UploadTask<T> register(UploadListener<T> listener) {
+        UploadManager.getInstance().replace(progress);
         if (listener != null) {
             listeners.put(listener.tag, listener);
         }
@@ -89,7 +94,7 @@ public class UploadTask<T> implements Runnable {
     }
 
     public UploadTask<T> start() {
-        if (progress.status == Progress.NONE || progress.status == Progress.PAUSE || progress.status == Progress.ERROR) {
+        if (progress.status != Progress.WAITING && progress.status != Progress.LOADING) {
             postOnStart(progress);
             postWaiting(progress);
             priorityRunnable = new PriorityRunnable(progress.priority, this);
@@ -106,6 +111,7 @@ public class UploadTask<T> implements Runnable {
         progress.currentSize = 0;
         progress.fraction = 0;
         progress.speed = 0;
+        UploadManager.getInstance().replace(progress);
         start();
     }
 
@@ -126,6 +132,7 @@ public class UploadTask<T> implements Runnable {
     public UploadTask<T> remove() {
         pause();
         listeners.clear();
+        DownloadManager.getInstance().delete(progress.tag);
         //noinspection unchecked
         return (UploadTask<T>) OkUpload.getInstance().removeTask(progress.tag);
     }
@@ -133,13 +140,21 @@ public class UploadTask<T> implements Runnable {
     @Override
     public void run() {
         postLoading(progress);
-        Response<T> response;
+        final Response<T> response;
         try {
             //noinspection unchecked
-            Request<T, ? extends Request> request = (Request<T, ? extends Request>) progress.request;
+            final Request<T, ? extends Request> request = (Request<T, ? extends Request>) progress.request;
             request.uploadInterceptor(new ProgressRequestBody.UploadInterceptor() {
                 @Override
-                public void uploadProgress(Progress progress) {
+                public void uploadProgress(Progress innerProgress) {
+                    Call rawCall = request.getRawCall();
+                    if (rawCall.isCanceled()) return;
+
+                    if (progress.status != Progress.LOADING) {
+                        rawCall.cancel();
+                        return;
+                    }
+                    progress.from(innerProgress);
                     postLoading(progress);
                 }
             });
@@ -157,11 +172,12 @@ public class UploadTask<T> implements Runnable {
     }
 
     private void postOnStart(final Progress progress) {
+        progress.speed = 0;
+        progress.status = Progress.NONE;
+        updateDatabase(progress);
         HttpUtils.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                progress.speed = 0;
-                progress.status = Progress.NONE;
                 for (UploadListener<T> listener : listeners.values()) {
                     listener.onStart(progress);
                 }
@@ -170,11 +186,12 @@ public class UploadTask<T> implements Runnable {
     }
 
     private void postWaiting(final Progress progress) {
+        progress.speed = 0;
+        progress.status = Progress.WAITING;
+        updateDatabase(progress);
         HttpUtils.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                progress.speed = 0;
-                progress.status = Progress.WAITING;
                 for (UploadListener<T> listener : listeners.values()) {
                     listener.onProgress(progress);
                 }
@@ -183,11 +200,12 @@ public class UploadTask<T> implements Runnable {
     }
 
     private void postPause(final Progress progress) {
+        progress.speed = 0;
+        progress.status = Progress.PAUSE;
+        updateDatabase(progress);
         HttpUtils.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                progress.speed = 0;
-                progress.status = Progress.PAUSE;
                 for (UploadListener<T> listener : listeners.values()) {
                     listener.onProgress(progress);
                 }
@@ -196,6 +214,7 @@ public class UploadTask<T> implements Runnable {
     }
 
     private void postLoading(final Progress progress) {
+        updateDatabase(progress);
         HttpUtils.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -207,12 +226,13 @@ public class UploadTask<T> implements Runnable {
     }
 
     private void postOnError(final Progress progress, final Throwable throwable) {
+        progress.speed = 0;
+        progress.status = Progress.ERROR;
+        progress.exception = throwable;
+        updateDatabase(progress);
         HttpUtils.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                progress.speed = 0;
-                progress.status = Progress.ERROR;
-                progress.exception = throwable;
                 for (UploadListener<T> listener : listeners.values()) {
                     listener.onProgress(progress);
                     listener.onError(progress);
@@ -222,17 +242,23 @@ public class UploadTask<T> implements Runnable {
     }
 
     private void postOnFinish(final Progress progress, final T t) {
+        progress.speed = 0;
+        progress.fraction = 1.0f;
+        progress.status = Progress.FINISH;
+        updateDatabase(progress);
         HttpUtils.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                progress.speed = 0;
-                progress.fraction = 1.0f;
-                progress.status = Progress.FINISH;
                 for (UploadListener<T> listener : listeners.values()) {
                     listener.onProgress(progress);
                     listener.onFinish(t, progress);
                 }
             }
         });
+    }
+
+    private void updateDatabase(Progress progress) {
+        ContentValues contentValues = Progress.buildUpdateContentValues(progress);
+        UploadManager.getInstance().update(contentValues, progress.tag);
     }
 }

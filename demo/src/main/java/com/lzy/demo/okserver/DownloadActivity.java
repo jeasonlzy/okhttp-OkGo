@@ -25,7 +25,7 @@ import com.lzy.demo.R;
 import com.lzy.demo.base.BaseActivity;
 import com.lzy.okgo.db.DownloadManager;
 import com.lzy.okserver.OkDownload;
-import com.lzy.okserver.task.ExecutorWithListener;
+import com.lzy.okserver.task.XExecutor;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -39,7 +39,7 @@ import butterknife.OnClick;
  * 修订历史：
  * ================================================
  */
-public class DownloadActivity extends BaseActivity implements ExecutorWithListener.OnAllTaskEndListener {
+public class DownloadActivity extends BaseActivity implements XExecutor.OnAllTaskEndListener {
 
     private DownloadAdapter adapter;
     private OkDownload okDownload;

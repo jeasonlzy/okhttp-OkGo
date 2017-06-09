@@ -84,7 +84,7 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         DownloadTask task = values.get(position)//
                 .register(new ListDownloadListener(holder))//
-                .register(new LogListener("DownloadAdapter"));
+                .register(new LogDownloadListener("DownloadAdapter"));
         holder.setTask(task);
         holder.bind();
         holder.refresh(task.progress);

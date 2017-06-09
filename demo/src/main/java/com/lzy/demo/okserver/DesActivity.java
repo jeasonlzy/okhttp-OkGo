@@ -80,7 +80,7 @@ public class DesActivity extends BaseActivity {
         if (OkDownload.getInstance().hasTask(apk.url)) {
             task = OkDownload.getInstance().getTask(apk.url)//
                     .register(new DesListener("DesActivity1"))//
-                    .register(new LogListener("DesActivity2"));
+                    .register(new LogDownloadListener("DesActivity2"));
         }
 
         //写法二：从数据库中恢复
@@ -88,7 +88,7 @@ public class DesActivity extends BaseActivity {
 //        if (progress != null) {
 //            task = OkDownload.restore(progress)//
 //                    .register(new DesListener("DesActivity1"))//
-//                    .register(new LogListener("DesActivity2"));
+//                    .register(new LogDownloadListener("DesActivity2"));
 //        }
 
         displayImage(apk.iconUrl, icon);
@@ -148,7 +148,7 @@ public class DesActivity extends BaseActivity {
                     .priority(apk.priority)//
                     .extra1(apk)//
                     .register(new DesListener("DesActivity1"))//
-                    .register(new LogListener("DesActivity2"));
+                    .register(new LogDownloadListener("DesActivity2"));
         }
         switch (task.progress.status) {
             case Progress.PAUSE:

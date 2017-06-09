@@ -15,12 +15,18 @@
  */
 package com.lzy.okserver;
 
+import com.lzy.okgo.db.UploadManager;
+import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.request.Request;
-import com.lzy.okserver.task.ExecutorWithListener;
+import com.lzy.okgo.utils.OkLogger;
+import com.lzy.okserver.task.XExecutor;
 import com.lzy.okserver.upload.UploadTask;
 import com.lzy.okserver.upload.UploadThreadPool;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,7 +53,16 @@ public class OkUpload {
 
     private OkUpload() {
         threadPool = new UploadThreadPool();
-        taskMap = new HashMap<>();
+        taskMap = new LinkedHashMap<>();
+
+        //校验数据的有效性，防止下载过程中退出，第二次进入的时候，由于状态没有更新导致的状态错误
+        List<Progress> taskList = UploadManager.getInstance().getUploading();
+        for (Progress info : taskList) {
+            if (info.status == Progress.WAITING || info.status == Progress.LOADING || info.status == Progress.PAUSE) {
+                info.status = Progress.NONE;
+            }
+        }
+        UploadManager.getInstance().replace(taskList);
     }
 
     public static <T> UploadTask<T> request(String tag, Request<T, ? extends Request> request) {
@@ -59,6 +74,96 @@ public class OkUpload {
             taskMap.put(tag, task);
         }
         return task;
+    }
+
+    /** 从数据库中恢复任务 */
+    public static <T> UploadTask<T> restore(Progress progress) {
+        Map<String, UploadTask<?>> taskMap = OkUpload.getInstance().getTaskMap();
+        //noinspection unchecked
+        UploadTask<T> task = (UploadTask<T>) taskMap.get(progress.tag);
+        if (task == null) {
+            task = new UploadTask<>(progress);
+            taskMap.put(progress.tag, task);
+        }
+        return task;
+    }
+
+    /** 从数据库中恢复任务 */
+    public static List<UploadTask<?>> restore(List<Progress> progressList) {
+        Map<String, UploadTask<?>> taskMap = OkUpload.getInstance().getTaskMap();
+        for (Progress progress : progressList) {
+            UploadTask<?> task = taskMap.get(progress.tag);
+            if (task == null) {
+                task = new UploadTask<>(progress);
+                taskMap.put(progress.tag, task);
+            }
+        }
+        return new ArrayList<>(taskMap.values());
+    }
+
+    /** 开始所有任务 */
+    public void startAll() {
+        for (Map.Entry<String, UploadTask<?>> entry : taskMap.entrySet()) {
+            UploadTask<?> task = entry.getValue();
+            if (task == null) {
+                OkLogger.w("can't find task with tag = " + entry.getKey());
+                continue;
+            }
+            task.start();
+        }
+    }
+
+    /** 暂停全部任务 */
+    public void pauseAll() {
+        //先停止未开始的任务
+        for (Map.Entry<String, UploadTask<?>> entry : taskMap.entrySet()) {
+            UploadTask<?> task = entry.getValue();
+            if (task == null) {
+                OkLogger.w("can't find task with tag = " + entry.getKey());
+                continue;
+            }
+            if (task.progress.status != Progress.LOADING) {
+                task.pause();
+            }
+        }
+        //再停止进行中的任务
+        for (Map.Entry<String, UploadTask<?>> entry : taskMap.entrySet()) {
+            UploadTask<?> task = entry.getValue();
+            if (task == null) {
+                OkLogger.w("can't find task with tag = " + entry.getKey());
+                continue;
+            }
+            if (task.progress.status == Progress.LOADING) {
+                task.pause();
+            }
+        }
+    }
+
+    /** 删除所有任务 */
+    public void removeAll() {
+        Map<String, UploadTask<?>> map = new HashMap<>(taskMap);
+        //先删除未开始的任务
+        for (Map.Entry<String, UploadTask<?>> entry : map.entrySet()) {
+            UploadTask<?> task = entry.getValue();
+            if (task == null) {
+                OkLogger.w("can't find task with tag = " + entry.getKey());
+                continue;
+            }
+            if (task.progress.status != Progress.LOADING) {
+                task.remove();
+            }
+        }
+        //再删除进行中的任务
+        for (Map.Entry<String, UploadTask<?>> entry : map.entrySet()) {
+            UploadTask<?> task = entry.getValue();
+            if (task == null) {
+                OkLogger.w("can't find task with tag = " + entry.getKey());
+                continue;
+            }
+            if (task.progress.status == Progress.LOADING) {
+                task.remove();
+            }
+        }
     }
 
     public UploadThreadPool getThreadPool() {
@@ -81,11 +186,11 @@ public class OkUpload {
         return taskMap.remove(tag);
     }
 
-    public void addOnAllTaskEndListener(ExecutorWithListener.OnAllTaskEndListener listener) {
+    public void addOnAllTaskEndListener(XExecutor.OnAllTaskEndListener listener) {
         threadPool.getExecutor().addOnAllTaskEndListener(listener);
     }
 
-    public void removeOnAllTaskEndListener(ExecutorWithListener.OnAllTaskEndListener listener) {
+    public void removeOnAllTaskEndListener(XExecutor.OnAllTaskEndListener listener) {
         threadPool.getExecutor().removeOnAllTaskEndListener(listener);
     }
 }

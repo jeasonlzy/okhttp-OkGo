@@ -50,7 +50,7 @@ import okhttp3.Response;
  * 修订历史：
  * ================================================
  */
-public abstract class Request<T, R extends Request> implements Serializable{
+public abstract class Request<T, R extends Request> implements Serializable {
     private static final long serialVersionUID = -7174118653689916252L;
 
     protected String url;
@@ -341,6 +341,7 @@ public abstract class Request<T, R extends Request> implements Serializable{
         //构建请求体，返回call对象
         RequestBody requestBody = generateRequestBody();
         ProgressRequestBody<T> progressRequestBody = new ProgressRequestBody<>(requestBody, callback);
+        progressRequestBody.setInterceptor(uploadInterceptor);
         mRequest = generateRequest(progressRequestBody);
         if (client == null) client = OkGo.getInstance().getOkHttpClient();
         return client.newCall(mRequest);

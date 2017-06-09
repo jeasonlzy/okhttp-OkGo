@@ -102,7 +102,7 @@ public class DownloadListActivity extends BaseActivity {
             OkDownload.request(apk.url, request)//
                     .priority(apk.priority)//
                     .extra1(apk)//
-                    .register(new LogListener("DownloadListActivity"))//
+                    .register(new LogDownloadListener("DownloadListActivity"))//
                     .start();
             adapter.notifyDataSetChanged();
         }
@@ -169,7 +169,7 @@ public class DownloadListActivity extends BaseActivity {
             OkDownload.request(apk.url, request)//
                     .priority(apk.priority)//
                     .extra1(apk)//
-                    .register(new LogListener("DownloadListActivity"))//
+                    .register(new LogDownloadListener("DownloadListActivity"))//
                     .start();
             adapter.notifyDataSetChanged();
         }

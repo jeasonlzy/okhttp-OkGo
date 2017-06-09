@@ -154,7 +154,7 @@ public class FormUploadActivity extends BaseDetailActivity {
 
                     @Override
                     public void uploadProgress(Progress progress) {
-                        System.out.println("uploadProgress -- " + progress.totalSize + "  " + progress.currentSize + "  " + progress.fraction + "  " + progress.speed);
+                        System.out.println("uploadProgress: " + progress);
 
                         String downloadLength = Formatter.formatFileSize(getApplicationContext(), progress.currentSize);
                         String totalLength = Formatter.formatFileSize(getApplicationContext(), progress.totalSize);

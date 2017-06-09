@@ -15,7 +15,7 @@
  */
 package com.lzy.okserver.upload;
 
-import com.lzy.okserver.task.ExecutorWithListener;
+import com.lzy.okserver.task.XExecutor;
 import com.lzy.okserver.task.PriorityBlockingQueue;
 
 import java.util.concurrent.Executors;
@@ -36,16 +36,16 @@ public class UploadThreadPool {
     private static final int KEEP_ALIVE_TIME = 1;        //存活的时间
     private static final TimeUnit UNIT = TimeUnit.HOURS; //时间单位
     private int corePoolSize = 1;                        //核心线程池的数量，同时能执行的线程数量，默认1个
-    private ExecutorWithListener executor;               //线程池执行器
+    private XExecutor executor;               //线程池执行器
 
-    public ExecutorWithListener getExecutor() {
+    public XExecutor getExecutor() {
         if (executor == null) {
             synchronized (UploadThreadPool.class) {
                 if (executor == null) {
-                    executor = new ExecutorWithListener(corePoolSize, MAX_IMUM_POOL_SIZE, KEEP_ALIVE_TIME, UNIT, //
-                            new PriorityBlockingQueue<Runnable>(),   //无限容量的缓冲队列
-                            Executors.defaultThreadFactory(),        //线程创建工厂
-                            new ThreadPoolExecutor.AbortPolicy());   //继续超出上限的策略，阻止
+                    executor = new XExecutor(corePoolSize, MAX_IMUM_POOL_SIZE, KEEP_ALIVE_TIME, UNIT, //
+                                             new PriorityBlockingQueue<Runnable>(),   //无限容量的缓冲队列
+                                             Executors.defaultThreadFactory(),        //线程创建工厂
+                                             new ThreadPoolExecutor.AbortPolicy());   //继续超出上限的策略，阻止
                 }
             }
         }

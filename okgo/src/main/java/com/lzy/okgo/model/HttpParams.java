@@ -18,6 +18,9 @@ package com.lzy.okgo.model;
 import com.lzy.okgo.utils.HttpUtils;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -220,10 +223,12 @@ public class HttpParams implements Serializable {
     }
 
     /** 文件类型的包装类 */
-    public static class FileWrapper {
+    public static class FileWrapper implements Serializable {
+        private static final long serialVersionUID = -2356139899636767776L;
+
         public File file;
         public String fileName;
-        public MediaType contentType;
+        public transient MediaType contentType;
         public long fileSize;
 
         public FileWrapper(File file, String fileName, MediaType contentType) {
@@ -231,6 +236,16 @@ public class HttpParams implements Serializable {
             this.fileName = fileName;
             this.contentType = contentType;
             this.fileSize = file.length();
+        }
+
+        private void writeObject(ObjectOutputStream out) throws IOException {
+            out.defaultWriteObject();
+            out.writeObject(contentType.toString());
+        }
+
+        private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+            in.defaultReadObject();
+            contentType = MediaType.parse((String) in.readObject());
         }
 
         @Override

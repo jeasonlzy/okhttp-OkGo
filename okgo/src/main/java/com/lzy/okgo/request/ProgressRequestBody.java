@@ -41,26 +41,26 @@ import okio.Sink;
  */
 public class ProgressRequestBody<T> extends RequestBody {
 
-    private RequestBody delegate;         //实际的待包装请求体
+    private RequestBody requestBody;         //实际的待包装请求体
     private Callback<T> callback;
     private UploadInterceptor interceptor;
 
-    ProgressRequestBody(RequestBody delegate, Callback<T> callback) {
-        this.delegate = delegate;
+    ProgressRequestBody(RequestBody requestBody, Callback<T> callback) {
+        this.requestBody = requestBody;
         this.callback = callback;
     }
 
     /** 重写调用实际的响应体的contentType */
     @Override
     public MediaType contentType() {
-        return delegate.contentType();
+        return requestBody.contentType();
     }
 
     /** 重写调用实际的响应体的contentLength */
     @Override
     public long contentLength() {
         try {
-            return delegate.contentLength();
+            return requestBody.contentLength();
         } catch (IOException e) {
             OkLogger.printStackTrace(e);
             return -1;
@@ -72,8 +72,8 @@ public class ProgressRequestBody<T> extends RequestBody {
     public void writeTo(BufferedSink sink) throws IOException {
         CountingSink countingSink = new CountingSink(sink);
         BufferedSink bufferedSink = Okio.buffer(countingSink);
-        delegate.writeTo(bufferedSink);
-        bufferedSink.flush();  //必须调用flush，否则最后一部分数据可能不会被写入
+        requestBody.writeTo(bufferedSink);
+        bufferedSink.flush();
     }
 
     /** 包装 */
@@ -113,10 +113,6 @@ public class ProgressRequestBody<T> extends RequestBody {
                 }
             }
         });
-    }
-
-    public UploadInterceptor getInterceptor() {
-        return interceptor;
     }
 
     public void setInterceptor(UploadInterceptor interceptor) {

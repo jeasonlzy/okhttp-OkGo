@@ -1,9 +1,7 @@
 package com.lzy.demo.okserver;
 
 import com.lzy.okgo.model.Progress;
-import com.lzy.okserver.download.DownloadListener;
-
-import java.io.File;
+import com.lzy.okserver.upload.UploadListener;
 
 /**
  * ================================================
@@ -14,9 +12,9 @@ import java.io.File;
  * 修订历史：
  * ================================================
  */
-public class LogListener extends DownloadListener {
+public class LogUploadListener<T> extends UploadListener<T> {
 
-    public LogListener(Object tag) {
+    public LogUploadListener(Object tag) {
         super(tag);
     }
 
@@ -37,7 +35,7 @@ public class LogListener extends DownloadListener {
     }
 
     @Override
-    public void onFinish(File file, Progress progress) {
+    public void onFinish(T t, Progress progress) {
         System.out.println("onFinish: " + progress);
     }
 }

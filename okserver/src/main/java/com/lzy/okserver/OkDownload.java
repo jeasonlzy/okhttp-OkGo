@@ -24,7 +24,7 @@ import com.lzy.okgo.utils.IOUtils;
 import com.lzy.okgo.utils.OkLogger;
 import com.lzy.okserver.download.DownloadTask;
 import com.lzy.okserver.download.DownloadThreadPool;
-import com.lzy.okserver.task.ExecutorWithListener;
+import com.lzy.okserver.task.XExecutor;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -210,11 +210,11 @@ public class OkDownload {
         return taskMap.remove(tag);
     }
 
-    public void addOnAllTaskEndListener(ExecutorWithListener.OnAllTaskEndListener listener) {
+    public void addOnAllTaskEndListener(XExecutor.OnAllTaskEndListener listener) {
         threadPool.getExecutor().addOnAllTaskEndListener(listener);
     }
 
-    public void removeOnAllTaskEndListener(ExecutorWithListener.OnAllTaskEndListener listener) {
+    public void removeOnAllTaskEndListener(XExecutor.OnAllTaskEndListener listener) {
         threadPool.getExecutor().removeOnAllTaskEndListener(listener);
     }
 }

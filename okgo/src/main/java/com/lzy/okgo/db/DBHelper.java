@@ -80,6 +80,22 @@ class DBHelper extends SQLiteOpenHelper {
                 .addColumn(new ColumnEntity(Progress.EXTRA1, "BLOB"))//
                 .addColumn(new ColumnEntity(Progress.EXTRA2, "BLOB"))//
                 .addColumn(new ColumnEntity(Progress.EXTRA3, "BLOB"));
+
+        uploadTableEntity.addColumn(new ColumnEntity(Progress.TAG, "VARCHAR", true, true))//
+                .addColumn(new ColumnEntity(Progress.URL, "VARCHAR"))//
+                .addColumn(new ColumnEntity(Progress.FOLDER, "VARCHAR"))//
+                .addColumn(new ColumnEntity(Progress.FILE_PATH, "VARCHAR"))//
+                .addColumn(new ColumnEntity(Progress.FILE_NAME, "VARCHAR"))//
+                .addColumn(new ColumnEntity(Progress.FRACTION, "VARCHAR"))//
+                .addColumn(new ColumnEntity(Progress.TOTAL_SIZE, "INTEGER"))//
+                .addColumn(new ColumnEntity(Progress.CURRENT_SIZE, "INTEGER"))//
+                .addColumn(new ColumnEntity(Progress.STATUS, "INTEGER"))//
+                .addColumn(new ColumnEntity(Progress.PRIORITY, "INTEGER"))//
+                .addColumn(new ColumnEntity(Progress.DATE, "INTEGER"))//
+                .addColumn(new ColumnEntity(Progress.REQUEST, "BLOB"))//
+                .addColumn(new ColumnEntity(Progress.EXTRA1, "BLOB"))//
+                .addColumn(new ColumnEntity(Progress.EXTRA2, "BLOB"))//
+                .addColumn(new ColumnEntity(Progress.EXTRA3, "BLOB"));
     }
 
     @Override
@@ -87,6 +103,7 @@ class DBHelper extends SQLiteOpenHelper {
         db.execSQL(cacheTableEntity.buildTableString());
         db.execSQL(cookieTableEntity.buildTableString());
         db.execSQL(downloadTableEntity.buildTableString());
+        db.execSQL(uploadTableEntity.buildTableString());
     }
 
     @Override
@@ -94,6 +111,7 @@ class DBHelper extends SQLiteOpenHelper {
         if (DBUtils.isNeedUpgradeTable(db, cacheTableEntity)) db.execSQL("DROP TABLE IF EXISTS " + TABLE_CACHE);
         if (DBUtils.isNeedUpgradeTable(db, cookieTableEntity)) db.execSQL("DROP TABLE IF EXISTS " + TABLE_COOKIE);
         if (DBUtils.isNeedUpgradeTable(db, downloadTableEntity)) db.execSQL("DROP TABLE IF EXISTS " + TABLE_DOWNLOAD);
+        if (DBUtils.isNeedUpgradeTable(db, uploadTableEntity)) db.execSQL("DROP TABLE IF EXISTS " + TABLE_UPLOAD);
         onCreate(db);
     }
 
