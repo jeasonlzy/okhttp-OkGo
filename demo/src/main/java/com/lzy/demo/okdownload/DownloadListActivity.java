@@ -62,7 +62,6 @@ public class DownloadListActivity extends BaseActivity {
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.targetFolder) TextView folder;
     @Bind(R.id.recyclerView) RecyclerView recyclerView;
-    @Bind(R.id.openManager) Button openManager;
 
     private List<ApkModel> apks;
     private DownloadListAdapter adapter;
@@ -87,11 +86,6 @@ public class DownloadListActivity extends BaseActivity {
         OkDownload.restore(progressList);
         adapter = new DownloadListAdapter(this);
         recyclerView.setAdapter(adapter);
-    }
-
-    @OnClick(R.id.openManager)
-    public void openManager(View view) {
-        startActivity(new Intent(this, DownloadActivity.class));
     }
 
     @OnClick(R.id.startAll)
