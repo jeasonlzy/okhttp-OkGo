@@ -17,26 +17,21 @@ package com.lzy.demo.okupload;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.GridView;
 
 import com.lzy.demo.R;
 import com.lzy.demo.base.BaseActivity;
 import com.lzy.demo.utils.GlideImageLoader;
-import com.lzy.demo.utils.Urls;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
-import com.lzy.okgo.OkGo;
-import com.lzy.okgo.convert.StringConvert;
-import com.lzy.okgo.model.Progress;
-import com.lzy.okgo.request.PostRequest;
 import com.lzy.okserver.OkUpload;
 import com.lzy.okserver.task.XExecutor;
-import com.lzy.okserver.upload.UploadListener;
+import com.lzy.okserver.upload.UploadTask;
 
-import java.io.File;
 import java.util.List;
 
 import butterknife.Bind;
@@ -51,34 +46,41 @@ import butterknife.OnClick;
  * 修订历史：
  * ================================================
  */
-public class UploadActivity extends BaseActivity implements XExecutor.OnAllTaskEndListener {
+public class UploadListActivity extends BaseActivity implements XExecutor.OnAllTaskEndListener {
 
     @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.gridView) GridView gridView;
+    @Bind(R.id.recyclerView) RecyclerView recyclerView;
 
-    private List<ImageItem> images;
+    private UploadAdapter adapter;
     private OkUpload okUpload;
+    private List<UploadTask<?>> tasks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_upload);
-        initToolBar(toolbar, true, "上传管理");
+        setContentView(R.layout.activity_upload_list);
+        initToolBar(toolbar, true, "开始上传");
 
         okUpload = OkUpload.getInstance();
         okUpload.getThreadPool().setCorePoolSize(1);
-        okUpload.getThreadPool().getExecutor().addOnAllTaskEndListener(this);
+
+        adapter = new UploadAdapter(this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
+
+        okUpload.addOnAllTaskEndListener(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        okUpload.getThreadPool().getExecutor().removeOnAllTaskEndListener(this);
+        okUpload.removeOnAllTaskEndListener(this);
+        adapter.unRegister();
     }
 
     @Override
     public void onAllTaskEnd() {
-        showToast("所有上传任务完成");
+        showToast("所有上传任务已结束");
     }
 
     @OnClick(R.id.select)
@@ -94,17 +96,12 @@ public class UploadActivity extends BaseActivity implements XExecutor.OnAllTaskE
 
     @OnClick(R.id.upload)
     public void upload(View view) {
-        if (images != null) {
-            for (int i = 0; i < images.size(); i++) {
-                PostRequest<String> postRequest = OkGo.<String>post(Urls.URL_FORM_UPLOAD)//
-                        .params("fileKey" + i, new File(images.get(i).path))//
-                        .converter(new StringConvert());
-                UploadAdapter.ViewHolder holder = (UploadAdapter.ViewHolder) gridView.getChildAt(i).getTag();
-                OkUpload.request(images.get(i).path, postRequest)//
-                        .register(new ListUploadListener("ListUploadListener", holder))//
-                        .register(new LogUploadListener<String>())//
-                        .start();
-            }
+        if (tasks == null) {
+            showToast("请先选择图片");
+            return;
+        }
+        for (UploadTask<?> task : tasks) {
+            task.start();
         }
     }
 
@@ -114,46 +111,11 @@ public class UploadActivity extends BaseActivity implements XExecutor.OnAllTaskE
         if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
             if (data != null && requestCode == 100) {
                 //noinspection unchecked
-                images = (List<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
-                UploadAdapter adapter = new UploadAdapter(this, images, gridView.getWidth() / 3);
-                gridView.setAdapter(adapter);
+                List<ImageItem> images = (List<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
+                tasks = adapter.updateData(images);
             } else {
                 showToast("没有数据");
             }
-        }
-    }
-
-    private class ListUploadListener extends UploadListener<String> {
-
-        private UploadAdapter.ViewHolder holder;
-
-        ListUploadListener(Object tag, UploadAdapter.ViewHolder holder) {
-            super(tag);
-            this.holder = holder;
-        }
-
-        @Override
-        public void onStart(Progress progress) {
-        }
-
-        @Override
-        public void onProgress(Progress progress) {
-            holder.refresh(progress);
-        }
-
-        @Override
-        public void onFinish(String s, Progress progress) {
-            holder.finish();
-        }
-
-        @Override
-        public void onRemove(Progress progress) {
-        }
-
-        @Override
-        public void onError(Progress progress) {
-            Throwable throwable = progress.exception;
-            if (throwable != null) throwable.printStackTrace();
         }
     }
 }

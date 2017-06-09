@@ -91,14 +91,16 @@ public class OkUpload {
     /** 从数据库中恢复任务 */
     public static List<UploadTask<?>> restore(List<Progress> progressList) {
         Map<String, UploadTask<?>> taskMap = OkUpload.getInstance().getTaskMap();
+        List<UploadTask<?>> tasks = new ArrayList<>();
         for (Progress progress : progressList) {
             UploadTask<?> task = taskMap.get(progress.tag);
             if (task == null) {
                 task = new UploadTask<>(progress);
                 taskMap.put(progress.tag, task);
             }
+            tasks.add(task);
         }
-        return new ArrayList<>(taskMap.values());
+        return tasks;
     }
 
     /** 开始所有任务 */

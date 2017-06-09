@@ -47,7 +47,7 @@ public class JsonActivity extends BaseDetailActivity {
     protected void onActivityCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_custom_request);
         ButterKnife.bind(this);
-        actionBar.setTitle("自动解析Json对象");
+        actionBar.setTitle("自动解析JSON对象");
     }
 
     @Override

@@ -35,7 +35,7 @@ public class OkGoFragment extends MainFragment {
                                 "4.支持同步请求\n" +//
                                 "5.支持301重定向"));
 
-        items.add(new ItemModel("自动解析Json对象",//
+        items.add(new ItemModel("自动解析JSON对象",//
                                 "1.自动解析JSONObject对象\n" + //
                                 "2.自动解析JSONArray对象"));
 

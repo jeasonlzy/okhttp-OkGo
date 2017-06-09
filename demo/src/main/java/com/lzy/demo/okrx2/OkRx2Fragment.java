@@ -21,9 +21,9 @@ public class OkRx2Fragment extends MainFragment {
     @Override
     public void fillData(List<ItemModel> items) {
         items.add(new ItemModel("基本请求", //
-                                "1.支持get，post等8种请求方式\n" +//
-                                "2.自动解析JsonObject对象\n" +//
-                                "3.自动解析JsonArray对象\n" +//
+                                "1.支持GET，HEAD，OPTIONS，POST，PUT，DELETE, PATCH, TRACE 8种请求方式\n" +//
+                                "2.自动解析JSONObject对象\n" +//
+                                "3.自动解析JSONArray对象\n" +//
                                 "4.上传string文本\n" +//
                                 "5.上传json数据"));
         items.add(new ItemModel("统一管理请求", "如果你熟悉Retrofit，那么和Retrofit一样，可以使用一个Api类管理所有的请求"));

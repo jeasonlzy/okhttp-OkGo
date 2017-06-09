@@ -17,7 +17,6 @@ package com.lzy.okserver.upload;
 
 import android.content.ContentValues;
 
-import com.lzy.okgo.db.DownloadManager;
 import com.lzy.okgo.db.UploadManager;
 import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.model.Response;
@@ -28,6 +27,7 @@ import com.lzy.okgo.utils.OkLogger;
 import com.lzy.okserver.OkUpload;
 import com.lzy.okserver.task.PriorityRunnable;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -72,6 +72,21 @@ public class UploadTask<T> implements Runnable {
 
     public UploadTask<T> priority(int priority) {
         progress.priority = priority;
+        return this;
+    }
+
+    public UploadTask<T> extra1(Serializable extra1) {
+        progress.extra1 = extra1;
+        return this;
+    }
+
+    public UploadTask<T> extra2(Serializable extra2) {
+        progress.extra2 = extra2;
+        return this;
+    }
+
+    public UploadTask<T> extra3(Serializable extra3) {
+        progress.extra3 = extra3;
         return this;
     }
 
@@ -131,7 +146,7 @@ public class UploadTask<T> implements Runnable {
     /** 删除一个任务,会删除下载文件 */
     public UploadTask<T> remove() {
         pause();
-        DownloadManager.getInstance().delete(progress.tag);
+        UploadManager.getInstance().delete(progress.tag);
         //noinspection unchecked
         UploadTask<T> task = (UploadTask<T>) OkUpload.getInstance().removeTask(progress.tag);
         postOnRemove(progress);

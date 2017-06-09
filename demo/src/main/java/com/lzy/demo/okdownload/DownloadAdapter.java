@@ -108,7 +108,7 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
 
     @Override
     public int getItemCount() {
-        return values.size();
+        return values == null ? 0 : values.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -225,7 +225,7 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
 
         private ViewHolder holder;
 
-        ListDownloadListener(Object tag, DownloadAdapter.ViewHolder holder) {
+        ListDownloadListener(Object tag, ViewHolder holder) {
             super(tag);
             this.holder = holder;
         }

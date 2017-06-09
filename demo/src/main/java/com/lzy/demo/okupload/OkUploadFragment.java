@@ -20,14 +20,41 @@ public class OkUploadFragment extends MainFragment {
 
     @Override
     public void fillData(List<ItemModel> items) {
-        items.add(new ItemModel("上传管理(OkServer)",//
-                                "1.这个同上,也属于OkServer依赖中的功能\n" +//
-                                "2.同样该包的功能OkGo完全可以胜任\n" +//
-                                "3.上传只是简单上传管理,不支持断点上传或者分片上传"));
+
+        items.add(new ItemModel("开始上传",//
+                                "1. 这个属于OkServer依赖中的功能,并不属于OkGo\n" +//
+                                "2. 只是简单上传管理,不支持断点上传或者分片上传\n" +//
+                                "3. 支持自定义上传任务优先级\n" +//
+                                "4. 支持链试调用\n" +//
+                                "5. 最多支持扩展3个额外数据"));
+
+        items.add(new ItemModel("所有任务",//
+                                "1. 每个任务支持停止，重新上传，删除等操作\n" +//
+                                "2. 支持全部停止，全部开始，全部删除\n" +//
+                                "3. 支持全局上传任务监听\n" +//
+                                "4. 支持一个任务多个监听\n" +//
+                                "5. 支持按上传中列表和上传完成列表筛选\n"));
+
+        items.add(new ItemModel("上传中任务",//
+                                "1. 每个任务支持停止，重新上传，删除等操作\n" +//
+                                "2. 支持全部停止，全部开始，全部删除\n" +//
+                                "3. 支持全局上传任务监听\n" +//
+                                "4. 支持一个任务多个监听\n" +//
+                                "5. 支持按上传中列表和上传完成列表筛选\n"));
+
+        items.add(new ItemModel("已完成任务",//
+                                "1. 每个任务支持停止，重新上传，删除等操作\n" +//
+                                "2. 支持全部停止，全部开始，全部删除\n" +//
+                                "3. 支持全局上传任务监听\n" +//
+                                "4. 支持一个任务多个监听\n" +//
+                                "5. 支持按上传中列表和上传完成列表筛选\n"));
     }
 
     @Override
     public void onItemClick(int position) {
-        if (position == 0) startActivity(new Intent(context, UploadActivity.class));
+        if (position == 0) startActivity(new Intent(context, UploadListActivity.class));
+        if (position == 1) startActivity(new Intent(context, UploadAllActivity.class));
+        if (position == 2) startActivity(new Intent(context, UploadingActivity.class));
+        if (position == 3) startActivity(new Intent(context, UploadFinishActivity.class));
     }
 }

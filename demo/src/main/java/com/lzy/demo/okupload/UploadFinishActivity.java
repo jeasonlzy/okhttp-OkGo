@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzy.demo.okdownload;
+package com.lzy.demo.okupload;
 
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 
 import com.lzy.demo.R;
 import com.lzy.demo.base.BaseActivity;
-import com.lzy.okserver.OkDownload;
+import com.lzy.okserver.OkUpload;
 import com.lzy.okserver.task.XExecutor;
 
 import butterknife.Bind;
-import butterknife.OnClick;
 
 /**
  * ================================================
@@ -38,61 +38,45 @@ import butterknife.OnClick;
  * 修订历史：
  * ================================================
  */
-public class DownloadAllActivity extends BaseActivity implements XExecutor.OnAllTaskEndListener {
+public class UploadFinishActivity extends BaseActivity implements XExecutor.OnAllTaskEndListener {
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.recyclerView) RecyclerView recyclerView;
+    @Bind(R.id.select) Button select;
+    @Bind(R.id.upload) Button upload;
 
-    private DownloadAdapter adapter;
-    private OkDownload okDownload;
+    private OkUpload okUpload;
+    private UploadAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_download_all);
-        initToolBar(toolbar, true, "所有任务");
+        setContentView(R.layout.activity_upload_list);
+        initToolBar(toolbar, true, "已完成任务");
 
-        okDownload = OkDownload.getInstance();
-        adapter = new DownloadAdapter(this);
-        adapter.updateData(DownloadAdapter.TYPE_ALL);
+        select.setVisibility(View.GONE);
+        upload.setVisibility(View.GONE);
+
+        okUpload = OkUpload.getInstance();
+        okUpload.getThreadPool().setCorePoolSize(1);
+
+        adapter = new UploadAdapter(this);
+        adapter.updateData(UploadAdapter.TYPE_FINISH);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        okDownload.addOnAllTaskEndListener(this);
-    }
-
-    @Override
-    public void onAllTaskEnd() {
-        showToast("所有下载任务已结束");
+        okUpload.addOnAllTaskEndListener(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        okDownload.removeOnAllTaskEndListener(this);
+        okUpload.removeOnAllTaskEndListener(this);
         adapter.unRegister();
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        adapter.notifyDataSetChanged();
-    }
-
-    @OnClick(R.id.removeAll)
-    public void removeAll(View view) {
-        okDownload.removeAll();
-        adapter.updateData(DownloadAdapter.TYPE_ALL);
-        adapter.notifyDataSetChanged();
-    }
-
-    @OnClick(R.id.pauseAll)
-    public void pauseAll(View view) {
-        okDownload.pauseAll();
-    }
-
-    @OnClick(R.id.startAll)
-    public void startAll(View view) {
-        okDownload.startAll();
+    public void onAllTaskEnd() {
+        showToast("所有上传任务已结束");
     }
 }

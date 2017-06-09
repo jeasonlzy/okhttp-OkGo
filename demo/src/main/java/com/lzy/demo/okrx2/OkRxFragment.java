@@ -24,7 +24,7 @@ public class OkRxFragment extends MainFragment {
                                 "1.完美结合RxJava\n" +//
                                 "2.比Retrofit更简单方便\n" +//
                                 "3.网络请求和RxJava调用,一条链点到底\n" +//
-                                "4.支持Json数据的自动解析转换"));
+                                "4.支持JSON数据的自动解析转换"));
     }
 
     @Override

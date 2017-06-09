@@ -69,7 +69,7 @@ public class DownloadListActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_download);
+        setContentView(R.layout.activity_download_list);
         initToolBar(toolbar, true, "开始下载");
 
         initData();
@@ -116,7 +116,7 @@ public class DownloadListActivity extends BaseActivity {
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = inflater.inflate(R.layout.item_download_details, parent, false);
+            View view = inflater.inflate(R.layout.item_download_list, parent, false);
             return new ViewHolder(view);
         }
 

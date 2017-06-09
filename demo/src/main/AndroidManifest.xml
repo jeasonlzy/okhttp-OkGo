@@ -75,7 +75,16 @@
             android:name=".okdownload.DownloadListActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".okupload.UploadActivity"
+            android:name=".okupload.UploadListActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".okupload.UploadAllActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".okupload.UploadFinishActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".okupload.UploadingActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <!-- Rx相关 -->
         <activity android:name=".okrx2.RxCommonActivity"/>
