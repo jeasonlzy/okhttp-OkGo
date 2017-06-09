@@ -17,6 +17,7 @@ package com.lzy.demo.okrx2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.format.Formatter;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -31,16 +32,21 @@ import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.lzy.okgo.OkGo;
-import com.lzy.okgo.convert.FileConvert;
+import com.lzy.okgo.callback.StringCallback;
+import com.lzy.okgo.convert.StringConvert;
+import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.model.Response;
 import com.lzy.okrx.adapter.ObservableResponse;
 
 import java.io.File;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
@@ -56,20 +62,25 @@ import rx.functions.Action0;
  */
 public class RxFormUploadActivity extends BaseRxDetailActivity {
 
-    @Bind(R.id.formUpload) Button btnFormUpload;
+    @Bind(R.id.formUpload1) Button btnFormUpload1;
+    @Bind(R.id.formUpload2) Button btnFormUpload2;
     @Bind(R.id.downloadSize) TextView tvDownloadSize;
     @Bind(R.id.tvProgress) TextView tvProgress;
     @Bind(R.id.netSpeed) TextView tvNetSpeed;
     @Bind(R.id.pbProgress) NumberProgressBar pbProgress;
     @Bind(R.id.images) TextView tvImages;
 
-    private ArrayList<ImageItem> imageItems;
+    private List<ImageItem> imageItems;
+    private NumberFormat numberFormat;
 
     @Override
     protected void onActivityCreate(Bundle savedInstanceState) {
-        setContentView(R.layout.activity_form_upload);
+        setContentView(R.layout.activity_rx_form_upload);
         ButterKnife.bind(this);
         setTitle("文件上传");
+
+        numberFormat = NumberFormat.getPercentInstance();
+        numberFormat.setMinimumFractionDigits(2);
     }
 
     @Override
@@ -114,8 +125,8 @@ public class RxFormUploadActivity extends BaseRxDetailActivity {
         }
     }
 
-    @OnClick(R.id.formUpload)
-    public void formUpload(View view) {
+    @OnClick(R.id.formUpload1)
+    public void formUpload1(View view) {
         ArrayList<File> files = new ArrayList<>();
         if (imageItems != null && imageItems.size() > 0) {
             for (int i = 0; i < imageItems.size(); i++) {
@@ -123,7 +134,7 @@ public class RxFormUploadActivity extends BaseRxDetailActivity {
             }
         }
         //拼接参数
-        OkGo.<File>post(Urls.URL_FORM_UPLOAD)//
+        OkGo.<String>post(Urls.URL_FORM_UPLOAD)//
                 .tag(this)//
                 .headers("header1", "headerValue1")//
                 .headers("header2", "headerValue2")//
@@ -133,33 +144,109 @@ public class RxFormUploadActivity extends BaseRxDetailActivity {
 //                .params("file2",new File("文件路径"))
 //                .params("file3",new File("文件路径"))
                 .addFileParams("file", files)//
-                .converter(new FileConvert())//
-                .adapt(new ObservableResponse<File>())//
+                .converter(new StringConvert())//
+                .adapt(new ObservableResponse<String>())//
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
-                        btnFormUpload.setText("正在上传中...\n使用Rx方式做进度监听稍显麻烦,推荐使用回调方式");
+                        btnFormUpload1.setText("正在上传中...\n使用Rx方式做进度监听稍显麻烦,推荐使用回调方式");
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Subscriber<Response<File>>() {
+                .subscribe(new Subscriber<Response<String>>() {
                     @Override
                     public void onCompleted() {
-
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        btnFormUpload.setText("上传出错");
-                        showToast("请求失败");
+                        btnFormUpload1.setText("上传出错");
+                        showToast(e.getMessage());
                         handleError(null);
                     }
 
                     @Override
-                    public void onNext(Response<File> response) {
-                        btnFormUpload.setText("上传完成");
+                    public void onNext(Response<String> response) {
+                        btnFormUpload1.setText("上传完成");
                         handleResponse(response);
+                    }
+                });
+    }
+
+    @OnClick(R.id.formUpload2)
+    public void formUpload2(View view) {
+        final ArrayList<File> files = new ArrayList<>();
+        if (imageItems != null && imageItems.size() > 0) {
+            for (int i = 0; i < imageItems.size(); i++) {
+                files.add(new File(imageItems.get(i).path));
+            }
+        }
+
+        Observable.create(new Observable.OnSubscribe<Progress>() {
+            @Override
+            public void call(final Subscriber<? super Progress> subscriber) {
+                OkGo.<String>post(Urls.URL_FORM_UPLOAD)//
+                        .tag(this)//
+                        .headers("header1", "headerValue1")//
+                        .headers("header2", "headerValue2")//
+                        .params("param1", "paramValue1")//
+                        .params("param2", "paramValue2")//
+                        //.params("file1",new File("文件路径"))
+                        //.params("file2",new File("文件路径"))
+                        //.params("file3",new File("文件路径"))
+                        .addFileParams("file", files)//
+                        .execute(new StringCallback() {
+                            @Override
+                            public void onSuccess(Response<String> response) {
+                                subscriber.onCompleted();
+                            }
+
+                            @Override
+                            public void onError(Response<String> response) {
+                                subscriber.onError(response.getException());
+                            }
+
+                            @Override
+                            public void uploadProgress(Progress progress) {
+                                subscriber.onNext(progress);
+                            }
+                        });
+            }
+        })//
+
+                .doOnSubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        btnFormUpload2.setText("正在上传中...");
+                    }
+                })//
+                .observeOn(AndroidSchedulers.mainThread())//
+                .subscribe(new Subscriber<Progress>() {
+                    @Override
+                    public void onCompleted() {
+                        btnFormUpload2.setText("上传完成");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        btnFormUpload2.setText("上传出错");
+                        showToast(e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(Progress progress) {
+                        System.out.println("uploadProgress: " + progress);
+
+                        String downloadLength = Formatter.formatFileSize(getApplicationContext(), progress.currentSize);
+                        String totalLength = Formatter.formatFileSize(getApplicationContext(), progress.totalSize);
+                        tvDownloadSize.setText(downloadLength + "/" + totalLength);
+                        String speed = Formatter.formatFileSize(getApplicationContext(), progress.speed);
+                        tvNetSpeed.setText(String.format("%s/s", speed));
+                        tvProgress.setText(numberFormat.format(progress.fraction));
+                        pbProgress.setMax(10000);
+                        pbProgress.setProgress((int) (progress.fraction * 10000));
                     }
                 });
     }

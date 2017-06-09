@@ -68,7 +68,7 @@ public class ServerApi {
     }
 
     public static Observable<Response<File>> getFile(String header, String param) {
-        return OkGo.<File>post(Urls.URL_DOWNLOAD)//
+        return OkGo.<File>get(Urls.URL_DOWNLOAD)//
                 .headers("aaa", header)//
                 .params("bbb", param)//
                 .converter(new FileConvert())//

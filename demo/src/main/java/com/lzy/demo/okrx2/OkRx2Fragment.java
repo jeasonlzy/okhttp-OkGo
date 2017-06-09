@@ -21,11 +21,12 @@ public class OkRx2Fragment extends MainFragment {
     @Override
     public void fillData(List<ItemModel> items) {
         items.add(new ItemModel("基本请求", //
-                                "基本的使用方法,包括JsonCallback解析,上传Json文本等\n" +//
-                                "1.完美结合RxJava\n" +//
-                                "2.比Retrofit更简单方便\n" +//
-                                "3.网络请求和RxJava调用,一条链点到底\n" +//
-                                "4.支持Json数据的自动解析转换"));
+                                "1.支持get，post等8种请求方式\n" +//
+                                "2.自动解析JsonObject对象\n" +//
+                                "3.自动解析JsonArray对象\n" +//
+                                "4.上传string文本\n" +//
+                                "5.上传json数据"));
+        items.add(new ItemModel("统一管理请求", "如果你熟悉Retrofit，那么和Retrofit一样，可以使用一个Api类管理所有的请求"));
         items.add(new ItemModel("请求图片", "请求服务器返回bitmap对象"));
         items.add(new ItemModel("文件上传", "支持参数和文件一起上传,并回调上传进度"));
         items.add(new ItemModel("文件下载", "支持下载进度回调"));
@@ -34,8 +35,9 @@ public class OkRx2Fragment extends MainFragment {
     @Override
     public void onItemClick(int position) {
         if (position == 0) startActivity(new Intent(context, RxCommonActivity.class));
-        if (position == 1) startActivity(new Intent(context, RxBitmapActivity.class));
-        if (position == 2) startActivity(new Intent(context, RxFormUploadActivity.class));
-        if (position == 3) startActivity(new Intent(context, RxFileDownloadActivity.class));
+        if (position == 1) startActivity(new Intent(context, RxRetrofitActivity.class));
+        if (position == 2) startActivity(new Intent(context, RxBitmapActivity.class));
+        if (position == 3) startActivity(new Intent(context, RxFormUploadActivity.class));
+        if (position == 4) startActivity(new Intent(context, RxFileDownloadActivity.class));
     }
 }

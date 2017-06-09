@@ -20,7 +20,11 @@ public class OkRxFragment extends MainFragment {
     public void fillData(List<ItemModel> items) {
         items.add(new ItemModel("OkRx是OkGo结合RxJava的扩展项目\n" +//
                                 "OkRx2是OkGo结合RxJava2的扩展项目\n" +//
-                                "他们的使用方法完全一样，在此不做演示，详细请看OkRx2的使用介绍", ""));
+                                "他们的使用方法完全一样，在此不做演示，详细请看OkRx2的使用介绍",  //
+                                "1.完美结合RxJava\n" +//
+                                "2.比Retrofit更简单方便\n" +//
+                                "3.网络请求和RxJava调用,一条链点到底\n" +//
+                                "4.支持Json数据的自动解析转换"));
     }
 
     @Override

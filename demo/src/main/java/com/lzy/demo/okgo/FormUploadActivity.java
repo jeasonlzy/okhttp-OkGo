@@ -40,6 +40,7 @@ import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.Request;
 
 import java.io.File;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import butterknife.Bind;
@@ -65,12 +66,16 @@ public class FormUploadActivity extends BaseDetailActivity {
     @Bind(R.id.images) TextView tvImages;
 
     private ArrayList<ImageItem> imageItems;
+    private NumberFormat numberFormat;
 
     @Override
     protected void onActivityCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_form_upload);
         ButterKnife.bind(this);
         setTitle("文件上传");
+
+        numberFormat = NumberFormat.getPercentInstance();
+        numberFormat.setMinimumFractionDigits(2);
     }
 
     @Override
@@ -159,11 +164,11 @@ public class FormUploadActivity extends BaseDetailActivity {
                         String downloadLength = Formatter.formatFileSize(getApplicationContext(), progress.currentSize);
                         String totalLength = Formatter.formatFileSize(getApplicationContext(), progress.totalSize);
                         tvDownloadSize.setText(downloadLength + "/" + totalLength);
-                        String netSpeed = Formatter.formatFileSize(getApplicationContext(), progress.speed);
-                        tvNetSpeed.setText(netSpeed + "/S");
-                        tvProgress.setText((Math.round(progress.fraction * 10000) * 1.0f / 100) + "%");
-                        pbProgress.setMax(100);
-                        pbProgress.setProgress((int) (progress.fraction * 100));
+                        String speed = Formatter.formatFileSize(getApplicationContext(), progress.speed);
+                        tvNetSpeed.setText(String.format("%s/s", speed));
+                        tvProgress.setText(numberFormat.format(progress.fraction));
+                        pbProgress.setMax(10000);
+                        pbProgress.setProgress((int) (progress.fraction * 10000));
                     }
                 });
     }

@@ -32,6 +32,7 @@ import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.Request;
 
 import java.io.File;
+import java.text.NumberFormat;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -53,12 +54,16 @@ public class FileDownloadActivity extends BaseDetailActivity {
     @Bind(R.id.tvProgress) TextView tvProgress;
     @Bind(R.id.netSpeed) TextView tvNetSpeed;
     @Bind(R.id.pbProgress) NumberProgressBar pbProgress;
+    private NumberFormat numberFormat;
 
     @Override
     protected void onActivityCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_file_download);
         ButterKnife.bind(this);
         setTitle("文件下载");
+
+        numberFormat = NumberFormat.getPercentInstance();
+        numberFormat.setMinimumFractionDigits(2);
     }
 
     @Override
@@ -95,16 +100,16 @@ public class FileDownloadActivity extends BaseDetailActivity {
 
                     @Override
                     public void downloadProgress(Progress progress) {
-                        System.out.println("downloadProgress -- " + progress.totalSize + "  " + progress.currentSize + "  " + progress.fraction + "  " + progress.speed);
+                        System.out.println(progress);
 
                         String downloadLength = Formatter.formatFileSize(getApplicationContext(), progress.currentSize);
                         String totalLength = Formatter.formatFileSize(getApplicationContext(), progress.totalSize);
                         tvDownloadSize.setText(downloadLength + "/" + totalLength);
-                        String netSpeed = Formatter.formatFileSize(getApplicationContext(), progress.speed);
-                        tvNetSpeed.setText(netSpeed + "/S");
-                        tvProgress.setText((Math.round(progress.fraction * 10000) * 1.0f / 100) + "%");
-                        pbProgress.setMax(100);
-                        pbProgress.setProgress((int) (progress.fraction * 100));
+                        String speed = Formatter.formatFileSize(getApplicationContext(), progress.speed);
+                        tvNetSpeed.setText(String.format("%s/s", speed));
+                        tvProgress.setText(numberFormat.format(progress.fraction));
+                        pbProgress.setMax(10000);
+                        pbProgress.setProgress((int) (progress.fraction * 10000));
                     }
                 });
     }

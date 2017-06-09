@@ -22,11 +22,11 @@
     android:orientation="vertical">
 
     <Button
-        android:id="@+id/commonRequest"
+        android:id="@+id/retrofitRequest"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="start|center_vertical"
-        android:text="1. 基本请求方式"
+        android:text="1. 请求普通String数据"
         android:textAllCaps="false"/>
 
     <Button
@@ -43,22 +43,6 @@
         android:layout_height="wrap_content"
         android:gravity="start|center_vertical"
         android:text="3. 请求JsonArray对象"
-        android:textAllCaps="false"/>
-
-    <Button
-        android:id="@+id/upString"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="start|center_vertical"
-        android:text="4. 上传string文本"
-        android:textAllCaps="false"/>
-
-    <Button
-        android:id="@+id/upJson"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="start|center_vertical"
-        android:text="5. 上传json数据"
         android:textAllCaps="false"/>
 
 </LinearLayout>

@@ -18,20 +18,20 @@ package com.lzy.demo.okrx2;
 import android.os.Bundle;
 import android.view.View;
 
+import com.google.gson.reflect.TypeToken;
 import com.lzy.demo.R;
 import com.lzy.demo.base.BaseRxDetailActivity;
-import com.lzy.demo.callback.JsonConvert;
 import com.lzy.demo.model.LzyResponse;
 import com.lzy.demo.model.ServerModel;
 import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.convert.StringConvert;
 import com.lzy.okgo.model.Response;
-import com.lzy.okrx.adapter.ObservableBody;
 import com.lzy.okrx.adapter.ObservableResponse;
 
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 
@@ -53,13 +53,13 @@ import rx.schedulers.Schedulers;
  * 修订历史：
  * ================================================
  */
-public class RxCommonActivity extends BaseRxDetailActivity {
+public class RxRetrofitActivity extends BaseRxDetailActivity {
 
     @Override
     protected void onActivityCreate(Bundle savedInstanceState) {
-        setContentView(R.layout.activity_rx_common);
+        setContentView(R.layout.activity_rx_retrofit);
         ButterKnife.bind(this);
-        setTitle("OkRx基本请求");
+        setTitle("统一管理请求");
     }
 
     @Override
@@ -69,13 +69,9 @@ public class RxCommonActivity extends BaseRxDetailActivity {
         unSubscribe();
     }
 
-    @OnClick(R.id.commonRequest)
-    public void commonRequest(View view) {
-        Subscription subscription = OkGo.<String>post(Urls.URL_METHOD)//
-                .headers("aaa", "111")//
-                .params("bbb", "222")//
-                .converter(new StringConvert())//
-                .adapt(new ObservableResponse<String>())//
+    @OnClick(R.id.retrofitRequest)
+    public void retrofitRequest(View view) {
+        Subscription subscription = ServerApi.getString("aaa", "bbb")//
                 .subscribeOn(Schedulers.io())//
                 .doOnSubscribe(new Action0() {
                     @Override
@@ -83,8 +79,8 @@ public class RxCommonActivity extends BaseRxDetailActivity {
                         showLoading();
                     }
                 })//
-                .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Subscriber<Response<String>>() {
+                .observeOn(AndroidSchedulers.mainThread())  //
+                .subscribe(new Subscriber<String>() {
                     @Override
                     public void onCompleted() {
                         dismissLoading();
@@ -92,13 +88,13 @@ public class RxCommonActivity extends BaseRxDetailActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        e.printStackTrace();
+                        e.printStackTrace();            //请求失败
                         showToast("请求失败");
                         handleError(null);
                     }
 
                     @Override
-                    public void onNext(Response<String> response) {
+                    public void onNext(String response) {
                         handleResponse(response);
                     }
                 });
@@ -107,11 +103,8 @@ public class RxCommonActivity extends BaseRxDetailActivity {
 
     @OnClick(R.id.jsonRequest)
     public void jsonRequest(View view) {
-        Subscription subscription = OkGo.<LzyResponse<ServerModel>>get(Urls.URL_JSONOBJECT)//
-                .headers("aaa", "111")//
-                .params("bbb", "222")//
-                .converter(new JsonConvert<LzyResponse<ServerModel>>(){})//
-                .adapt(new ObservableBody<LzyResponse<ServerModel>>())//
+        Type type = new TypeToken<LzyResponse<ServerModel>>() {}.getType();
+        Subscription subscription = ServerApi.<LzyResponse<ServerModel>>getData(type, Urls.URL_JSONOBJECT, "aaa", "bbb")//
                 .subscribeOn(Schedulers.io())//
                 .doOnSubscribe(new Action0() {
                     @Override
@@ -149,11 +142,8 @@ public class RxCommonActivity extends BaseRxDetailActivity {
 
     @OnClick(R.id.jsonArrayRequest)
     public void jsonArrayRequest(View view) {
-        Subscription subscription = OkGo.<LzyResponse<List<ServerModel>>>get(Urls.URL_JSONARRAY)//
-                .headers("aaa", "111")//
-                .params("bbb", "222")//
-                .converter(new JsonConvert<LzyResponse<List<ServerModel>>>(){})//
-                .adapt(new ObservableBody<LzyResponse<List<ServerModel>>>())//
+        Type type = new TypeToken<LzyResponse<List<ServerModel>>>() {}.getType();
+        Subscription subscription = ServerApi.<LzyResponse<List<ServerModel>>>getData(type, Urls.URL_JSONARRAY, "aaa", "bbb")//
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
@@ -182,85 +172,6 @@ public class RxCommonActivity extends BaseRxDetailActivity {
 
                     @Override
                     public void onNext(List<ServerModel> response) {
-                        handleResponse(response);
-                    }
-                });
-        addSubscribe(subscription);
-    }
-
-    @OnClick(R.id.upString)
-    public void upString(View view) {
-        Subscription subscription = OkGo.<String>post(Urls.URL_TEXT_UPLOAD)//
-                .headers("aaa", "111")//
-                .upString("上传的文本。。。")//
-                .converter(new StringConvert())//
-                .adapt(new ObservableResponse<String>())//
-                .subscribeOn(Schedulers.io())//
-                .doOnSubscribe(new Action0() {
-                    @Override
-                    public void call() {
-                        showLoading();
-                    }
-                })//
-                .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Subscriber<Response<String>>() {
-                    @Override
-                    public void onCompleted() {
-                        dismissLoading();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        showToast("请求失败");
-                        handleError(null);
-                    }
-
-                    @Override
-                    public void onNext(Response<String> response) {
-                        handleResponse(response);
-                    }
-                });
-        addSubscribe(subscription);
-    }
-
-    @OnClick(R.id.upJson)
-    public void upJson(View view) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("key1", "value1");
-        params.put("key2", "这里是需要提交的json格式数据");
-        params.put("key3", "也可以使用三方工具将对象转成json字符串");
-        params.put("key4", "其实你怎么高兴怎么写都行");
-        JSONObject jsonObject = new JSONObject(params);
-
-        Subscription subscription = OkGo.<String>post(Urls.URL_TEXT_UPLOAD)//
-                .headers("aaa", "111")//
-                .upJson(jsonObject)//
-                .converter(new StringConvert())//
-                .adapt(new ObservableResponse<String>())//
-                .subscribeOn(Schedulers.io())//
-                .doOnSubscribe(new Action0() {
-                    @Override
-                    public void call() {
-                        showLoading();
-                    }
-                })//
-                .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Subscriber<Response<String>>() {
-                    @Override
-                    public void onCompleted() {
-                        dismissLoading();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        showToast("请求失败");
-                        handleError(null);
-                    }
-
-                    @Override
-                    public void onNext(Response<String> response) {
                         handleResponse(response);
                     }
                 });
