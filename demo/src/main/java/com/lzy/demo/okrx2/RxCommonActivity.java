@@ -27,8 +27,8 @@ import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.convert.StringConvert;
 import com.lzy.okgo.model.Response;
-import com.lzy.okrx.adapter.ObservableBody;
-import com.lzy.okrx.adapter.ObservableResponse;
+import com.lzy.okrx2.adapter.ObservableBody;
+import com.lzy.okrx2.adapter.ObservableResponse;
 
 import org.json.JSONObject;
 
@@ -37,12 +37,13 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * ================================================
@@ -66,162 +67,178 @@ public class RxCommonActivity extends BaseRxDetailActivity {
     protected void onDestroy() {
         super.onDestroy();
         //Activity销毁时，取消网络请求
-        unSubscribe();
+        dispose();
     }
 
     @OnClick(R.id.commonRequest)
     public void commonRequest(View view) {
-        Subscription subscription = OkGo.<String>post(Urls.URL_METHOD)//
+        OkGo.<String>post(Urls.URL_METHOD)//
                 .headers("aaa", "111")//
                 .params("bbb", "222")//
                 .converter(new StringConvert())//
                 .adapt(new ObservableResponse<String>())//
                 .subscribeOn(Schedulers.io())//
-                .doOnSubscribe(new Action0() {
+                .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
-                    public void call() {
+                    public void accept(@NonNull Disposable disposable) throws Exception {
                         showLoading();
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Subscriber<Response<String>>() {
+                .subscribe(new Observer<Response<String>>() {
                     @Override
-                    public void onCompleted() {
-                        dismissLoading();
+                    public void onSubscribe(@NonNull Disposable d) {
+                        addDisposable(d);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onNext(@NonNull Response<String> response) {
+                        handleResponse(response);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
                         e.printStackTrace();
                         showToast("请求失败");
                         handleError(null);
                     }
 
                     @Override
-                    public void onNext(Response<String> response) {
-                        handleResponse(response);
+                    public void onComplete() {
+                        dismissLoading();
                     }
                 });
-        addSubscribe(subscription);
     }
 
     @OnClick(R.id.jsonRequest)
     public void jsonRequest(View view) {
-        Subscription subscription = OkGo.<LzyResponse<ServerModel>>get(Urls.URL_JSONOBJECT)//
+        OkGo.<LzyResponse<ServerModel>>get(Urls.URL_JSONOBJECT)//
                 .headers("aaa", "111")//
                 .params("bbb", "222")//
-                .converter(new JsonConvert<LzyResponse<ServerModel>>(){})//
+                .converter(new JsonConvert<LzyResponse<ServerModel>>() {})//
                 .adapt(new ObservableBody<LzyResponse<ServerModel>>())//
                 .subscribeOn(Schedulers.io())//
-                .doOnSubscribe(new Action0() {
+                .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
-                    public void call() {
+                    public void accept(@NonNull Disposable disposable) throws Exception {
                         showLoading();
                     }
                 })//
-                .map(new Func1<LzyResponse<ServerModel>, ServerModel>() {
+                .map(new Function<LzyResponse<ServerModel>, ServerModel>() {
                     @Override
-                    public ServerModel call(LzyResponse<ServerModel> response) {
-                        return response.data;
-                    }
-                })//
-                .observeOn(AndroidSchedulers.mainThread())  //
-                .subscribe(new Subscriber<ServerModel>() {
-                    @Override
-                    public void onCompleted() {
-                        dismissLoading();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();            //请求失败
-                        showToast("请求失败");
-                        handleError(null);
-                    }
-
-                    @Override
-                    public void onNext(ServerModel response) {
-                        handleResponse(response);
-                    }
-                });
-        addSubscribe(subscription);
-    }
-
-    @OnClick(R.id.jsonArrayRequest)
-    public void jsonArrayRequest(View view) {
-        Subscription subscription = OkGo.<LzyResponse<List<ServerModel>>>get(Urls.URL_JSONARRAY)//
-                .headers("aaa", "111")//
-                .params("bbb", "222")//
-                .converter(new JsonConvert<LzyResponse<List<ServerModel>>>(){})//
-                .adapt(new ObservableBody<LzyResponse<List<ServerModel>>>())//
-                .doOnSubscribe(new Action0() {
-                    @Override
-                    public void call() {
-                        showLoading();
-                    }
-                })//
-                .map(new Func1<LzyResponse<List<ServerModel>>, List<ServerModel>>() {
-                    @Override
-                    public List<ServerModel> call(LzyResponse<List<ServerModel>> response) {
+                    public ServerModel apply(@NonNull LzyResponse<ServerModel> response) throws Exception {
                         return response.data;
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Subscriber<List<ServerModel>>() {
+                .subscribe(new Observer<ServerModel>() {
                     @Override
-                    public void onCompleted() {
-                        dismissLoading();
+                    public void onSubscribe(@NonNull Disposable d) {
+                        addDisposable(d);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onNext(@NonNull ServerModel serverModel) {
+                        handleResponse(serverModel);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
                         e.printStackTrace();            //请求失败
                         showToast("请求失败");
                         handleError(null);
                     }
 
                     @Override
-                    public void onNext(List<ServerModel> response) {
-                        handleResponse(response);
+                    public void onComplete() {
+                        dismissLoading();
                     }
                 });
-        addSubscribe(subscription);
+    }
+
+    @OnClick(R.id.jsonArrayRequest)
+    public void jsonArrayRequest(View view) {
+        OkGo.<LzyResponse<List<ServerModel>>>get(Urls.URL_JSONARRAY)//
+                .headers("aaa", "111")//
+                .params("bbb", "222")//
+                .converter(new JsonConvert<LzyResponse<List<ServerModel>>>() {})//
+                .adapt(new ObservableBody<LzyResponse<List<ServerModel>>>())//
+                .doOnSubscribe(new Consumer<Disposable>() {
+                    @Override
+                    public void accept(@NonNull Disposable disposable) throws Exception {
+                        showLoading();
+                    }
+                })//
+                .map(new Function<LzyResponse<List<ServerModel>>, List<ServerModel>>() {
+                    @Override
+                    public List<ServerModel> apply(@NonNull LzyResponse<List<ServerModel>> response) throws Exception {
+                        return response.data;
+                    }
+                })//
+                .observeOn(AndroidSchedulers.mainThread())//
+                .subscribe(new Observer<List<ServerModel>>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        addDisposable(d);
+                    }
+
+                    @Override
+                    public void onNext(@NonNull List<ServerModel> response) {
+                        handleResponse(response);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        e.printStackTrace();            //请求失败
+                        showToast("请求失败");
+                        handleError(null);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        dismissLoading();
+                    }
+                });
     }
 
     @OnClick(R.id.upString)
     public void upString(View view) {
-        Subscription subscription = OkGo.<String>post(Urls.URL_TEXT_UPLOAD)//
+        OkGo.<String>post(Urls.URL_TEXT_UPLOAD)//
                 .headers("aaa", "111")//
                 .upString("上传的文本。。。")//
                 .converter(new StringConvert())//
                 .adapt(new ObservableResponse<String>())//
                 .subscribeOn(Schedulers.io())//
-                .doOnSubscribe(new Action0() {
+                .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
-                    public void call() {
+                    public void accept(@NonNull Disposable disposable) throws Exception {
                         showLoading();
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Subscriber<Response<String>>() {
+                .subscribe(new Observer<Response<String>>() {
                     @Override
-                    public void onCompleted() {
-                        dismissLoading();
+                    public void onSubscribe(@NonNull Disposable d) {
+                        addDisposable(d);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onNext(@NonNull Response<String> response) {
+                        handleResponse(response);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
                         e.printStackTrace();
                         showToast("请求失败");
                         handleError(null);
                     }
 
                     @Override
-                    public void onNext(Response<String> response) {
-                        handleResponse(response);
+                    public void onComplete() {
+                        dismissLoading();
                     }
                 });
-        addSubscribe(subscription);
     }
 
     @OnClick(R.id.upJson)
@@ -233,37 +250,41 @@ public class RxCommonActivity extends BaseRxDetailActivity {
         params.put("key4", "其实你怎么高兴怎么写都行");
         JSONObject jsonObject = new JSONObject(params);
 
-        Subscription subscription = OkGo.<String>post(Urls.URL_TEXT_UPLOAD)//
+        OkGo.<String>post(Urls.URL_TEXT_UPLOAD)//
                 .headers("aaa", "111")//
                 .upJson(jsonObject)//
                 .converter(new StringConvert())//
                 .adapt(new ObservableResponse<String>())//
                 .subscribeOn(Schedulers.io())//
-                .doOnSubscribe(new Action0() {
+                .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
-                    public void call() {
+                    public void accept(@NonNull Disposable disposable) throws Exception {
                         showLoading();
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Subscriber<Response<String>>() {
+                .subscribe(new Observer<Response<String>>() {
                     @Override
-                    public void onCompleted() {
-                        dismissLoading();
+                    public void onSubscribe(@NonNull Disposable d) {
+                        addDisposable(d);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onNext(@NonNull Response<String> response) {
+                        handleResponse(response);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
                         e.printStackTrace();
                         showToast("请求失败");
                         handleError(null);
                     }
 
                     @Override
-                    public void onNext(Response<String> response) {
-                        handleResponse(response);
+                    public void onComplete() {
+                        dismissLoading();
                     }
                 });
-        addSubscribe(subscription);
     }
 }

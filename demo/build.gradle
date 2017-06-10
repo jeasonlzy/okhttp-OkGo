@@ -80,8 +80,8 @@ dependencies {
     releaseCompile 'com.readystatesoftware.chuck:library-no-op:1.0.4'
 
     compile project(':okgo')
-    compile project(':okrx')
-//  compile project(':okrx2')
+//  compile project(':okrx')
+    compile project(':okrx2')
     compile project(':okserver')
 //  compile 'com.lzy.net:okgo:+'
 //  compile 'com.lzy.net:okrx:+'

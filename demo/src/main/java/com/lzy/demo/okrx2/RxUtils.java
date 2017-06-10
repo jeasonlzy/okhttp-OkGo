@@ -21,11 +21,11 @@ import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.HttpMethod;
 import com.lzy.okgo.model.HttpParams;
 import com.lzy.okgo.request.Request;
-import com.lzy.okrx.adapter.ObservableBody;
+import com.lzy.okrx2.adapter.ObservableBody;
 
 import java.lang.reflect.Type;
 
-import rx.Observable;
+import io.reactivex.Observable;
 
 /**
  * ================================================

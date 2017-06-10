@@ -24,25 +24,19 @@ import com.lzy.demo.base.BaseRxDetailActivity;
 import com.lzy.demo.model.LzyResponse;
 import com.lzy.demo.model.ServerModel;
 import com.lzy.demo.utils.Urls;
-import com.lzy.okgo.OkGo;
-import com.lzy.okgo.convert.StringConvert;
-import com.lzy.okgo.model.Response;
-import com.lzy.okrx.adapter.ObservableResponse;
-
-import org.json.JSONObject;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * ================================================
@@ -66,115 +60,127 @@ public class RxRetrofitActivity extends BaseRxDetailActivity {
     protected void onDestroy() {
         super.onDestroy();
         //Activity销毁时，取消网络请求
-        unSubscribe();
+        dispose();
     }
 
     @OnClick(R.id.retrofitRequest)
     public void retrofitRequest(View view) {
-        Subscription subscription = ServerApi.getString("aaa", "bbb")//
+        ServerApi.getString("aaa", "bbb")//
                 .subscribeOn(Schedulers.io())//
-                .doOnSubscribe(new Action0() {
+                .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
-                    public void call() {
+                    public void accept(@NonNull Disposable disposable) throws Exception {
                         showLoading();
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())  //
-                .subscribe(new Subscriber<String>() {
+                .subscribe(new Observer<String>() {
                     @Override
-                    public void onCompleted() {
-                        dismissLoading();
+                    public void onSubscribe(@NonNull Disposable d) {
+                        addDisposable(d);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onNext(@NonNull String s) {
+                        handleResponse(s);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
                         e.printStackTrace();            //请求失败
                         showToast("请求失败");
                         handleError(null);
                     }
 
                     @Override
-                    public void onNext(String response) {
-                        handleResponse(response);
+                    public void onComplete() {
+                        dismissLoading();
                     }
                 });
-        addSubscribe(subscription);
     }
 
     @OnClick(R.id.jsonRequest)
     public void jsonRequest(View view) {
         Type type = new TypeToken<LzyResponse<ServerModel>>() {}.getType();
-        Subscription subscription = ServerApi.<LzyResponse<ServerModel>>getData(type, Urls.URL_JSONOBJECT, "aaa", "bbb")//
+        ServerApi.<LzyResponse<ServerModel>>getData(type, Urls.URL_JSONOBJECT, "aaa", "bbb")//
                 .subscribeOn(Schedulers.io())//
-                .doOnSubscribe(new Action0() {
+                .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
-                    public void call() {
+                    public void accept(@NonNull Disposable disposable) throws Exception {
                         showLoading();
                     }
                 })//
-                .map(new Func1<LzyResponse<ServerModel>, ServerModel>() {
+                .map(new Function<LzyResponse<ServerModel>, ServerModel>() {
                     @Override
-                    public ServerModel call(LzyResponse<ServerModel> response) {
+                    public ServerModel apply(@NonNull LzyResponse<ServerModel> response) throws Exception {
                         return response.data;
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())  //
-                .subscribe(new Subscriber<ServerModel>() {
+                .subscribe(new Observer<ServerModel>() {
                     @Override
-                    public void onCompleted() {
-                        dismissLoading();
+                    public void onSubscribe(@NonNull Disposable d) {
+                        addDisposable(d);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onNext(@NonNull ServerModel response) {
+                        handleResponse(response);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
                         e.printStackTrace();            //请求失败
                         showToast("请求失败");
                         handleError(null);
                     }
 
                     @Override
-                    public void onNext(ServerModel response) {
-                        handleResponse(response);
+                    public void onComplete() {
+                        dismissLoading();
                     }
                 });
-        addSubscribe(subscription);
     }
 
     @OnClick(R.id.jsonArrayRequest)
     public void jsonArrayRequest(View view) {
         Type type = new TypeToken<LzyResponse<List<ServerModel>>>() {}.getType();
-        Subscription subscription = ServerApi.<LzyResponse<List<ServerModel>>>getData(type, Urls.URL_JSONARRAY, "aaa", "bbb")//
-                .doOnSubscribe(new Action0() {
+        ServerApi.<LzyResponse<List<ServerModel>>>getData(type, Urls.URL_JSONARRAY, "aaa", "bbb")//
+                .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
-                    public void call() {
+                    public void accept(@NonNull Disposable disposable) throws Exception {
                         showLoading();
                     }
                 })//
-                .map(new Func1<LzyResponse<List<ServerModel>>, List<ServerModel>>() {
+                .map(new Function<LzyResponse<List<ServerModel>>, List<ServerModel>>() {
                     @Override
-                    public List<ServerModel> call(LzyResponse<List<ServerModel>> response) {
+                    public List<ServerModel> apply(@NonNull LzyResponse<List<ServerModel>> response) throws Exception {
                         return response.data;
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Subscriber<List<ServerModel>>() {
+                .subscribe(new Observer<List<ServerModel>>() {
                     @Override
-                    public void onCompleted() {
-                        dismissLoading();
+                    public void onSubscribe(@NonNull Disposable d) {
+                        addDisposable(d);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onNext(@NonNull List<ServerModel> response) {
+                        handleResponse(response);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
                         e.printStackTrace();            //请求失败
                         showToast("请求失败");
                         handleError(null);
                     }
 
                     @Override
-                    public void onNext(List<ServerModel> response) {
-                        handleResponse(response);
+                    public void onComplete() {
+                        dismissLoading();
                     }
                 });
-        addSubscribe(subscription);
     }
 }

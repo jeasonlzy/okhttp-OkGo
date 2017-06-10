@@ -25,12 +25,12 @@ import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.HttpMethod;
 import com.lzy.okgo.model.HttpParams;
 import com.lzy.okgo.model.Response;
-import com.lzy.okrx.adapter.ObservableResponse;
+import com.lzy.okrx2.adapter.ObservableResponse;
 
 import java.io.File;
 import java.lang.reflect.Type;
 
-import rx.Observable;
+import io.reactivex.Observable;
 
 /**
  * ================================================

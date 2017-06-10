@@ -27,11 +27,12 @@ import com.lzy.okgo.model.Response;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * ================================================
@@ -57,39 +58,43 @@ public class RxBitmapActivity extends BaseRxDetailActivity {
     protected void onDestroy() {
         super.onDestroy();
         //Activity销毁时，取消网络请求
-        unSubscribe();
+        dispose();
     }
 
     @OnClick(R.id.requestImage)
     public void requestImage(View view) {
-        Subscription subscription = ServerApi.getBitmap("aaa", "bbb")//
+        ServerApi.getBitmap("aaa", "bbb")//
                 .subscribeOn(Schedulers.io())//
-                .doOnSubscribe(new Action0() {
+                .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
-                    public void call() {
+                    public void accept(@NonNull Disposable disposable) throws Exception {
                         showLoading();
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Subscriber<Response<Bitmap>>() {
+                .subscribe(new Observer<Response<Bitmap>>() {
                     @Override
-                    public void onCompleted() {
-                        dismissLoading();
+                    public void onSubscribe(@NonNull Disposable d) {
+                        addDisposable(d);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onNext(@NonNull Response<Bitmap> response) {
+                        handleResponse(response);
+                        imageView.setImageBitmap(response.body());
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
                         e.printStackTrace();            //请求失败
                         handleError(null);
                         showToast("请求失败");
                     }
 
                     @Override
-                    public void onNext(Response<Bitmap> response) {
-                        handleResponse(response);
-                        imageView.setImageBitmap(response.body());
+                    public void onComplete() {
+                        dismissLoading();
                     }
                 });
-        addSubscribe(subscription);
     }
 }

@@ -32,7 +32,7 @@ import com.lzy.okgo.callback.FileCallback;
 import com.lzy.okgo.convert.FileConvert;
 import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.model.Response;
-import com.lzy.okrx.adapter.ObservableResponse;
+import com.lzy.okrx2.adapter.ObservableResponse;
 
 import java.io.File;
 import java.text.NumberFormat;
@@ -40,11 +40,15 @@ import java.text.NumberFormat;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * ================================================
@@ -80,7 +84,7 @@ public class RxFileDownloadActivity extends BaseRxDetailActivity {
     protected void onDestroy() {
         super.onDestroy();
         //Activity销毁时，取消网络请求
-        unSubscribe();
+        dispose();
     }
 
     @OnClick(R.id.fileDownload1)
@@ -93,20 +97,27 @@ public class RxFileDownloadActivity extends BaseRxDetailActivity {
                 .params("bbb", "222")//
                 .converter(new FileConvert())//
                 .adapt(new ObservableResponse<File>()).subscribeOn(Schedulers.io())//
-                .doOnSubscribe(new Action0() {
+                .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
-                    public void call() {
+                    public void accept(@NonNull Disposable disposable) throws Exception {
                         btnFileDownload1.setText("正在下载中...\n使用Rx方式做进度监听稍显麻烦,推荐使用方式2");
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Subscriber<Response<File>>() {
+                .subscribe(new Observer<Response<File>>() {
                     @Override
-                    public void onCompleted() {
+                    public void onSubscribe(@NonNull Disposable d) {
+                        addDisposable(d);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onNext(@NonNull Response<File> response) {
+                        btnFileDownload1.setText("下载完成");
+                        handleResponse(response);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
                         e.printStackTrace();
                         btnFileDownload1.setText("下载出错");
                         showToast(e.getMessage());
@@ -114,18 +125,17 @@ public class RxFileDownloadActivity extends BaseRxDetailActivity {
                     }
 
                     @Override
-                    public void onNext(Response<File> response) {
-                        btnFileDownload1.setText("下载完成");
-                        handleResponse(response);
+                    public void onComplete() {
+
                     }
                 });
     }
 
     @OnClick(R.id.fileDownload2)
     public void fileDownload2(View view) {
-        Observable.create(new Observable.OnSubscribe<Progress>() {
+        Observable.create(new ObservableOnSubscribe<Progress>() {
             @Override
-            public void call(final Subscriber<? super Progress> subscriber) {
+            public void subscribe(@NonNull final ObservableEmitter<Progress> e) throws Exception {
                 String etString = etUrl.getText().toString();
                 String url = TextUtils.isEmpty(etString) ? Urls.URL_DOWNLOAD : etString;
                 OkGo.<File>get(url)//
@@ -134,43 +144,36 @@ public class RxFileDownloadActivity extends BaseRxDetailActivity {
                         .execute(new FileCallback() {
                             @Override
                             public void onSuccess(Response<File> response) {
-                                subscriber.onCompleted();
+                                e.onComplete();
                             }
 
                             @Override
                             public void onError(Response<File> response) {
-                                subscriber.onError(response.getException());
+                                e.onError(response.getException());
                             }
 
                             @Override
                             public void downloadProgress(Progress progress) {
-                                subscriber.onNext(progress);
+                                e.onNext(progress);
                             }
                         });
             }
         })//
-                .doOnSubscribe(new Action0() {
+                .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
-                    public void call() {
+                    public void accept(@NonNull Disposable disposable) throws Exception {
                         btnFileDownload2.setText("正在下载中...");
                     }
                 })//
                 .observeOn(AndroidSchedulers.mainThread())//
-                .subscribe(new Subscriber<Progress>() {
+                .subscribe(new Observer<Progress>() {
                     @Override
-                    public void onCompleted() {
-                        btnFileDownload2.setText("下载完成");
+                    public void onSubscribe(@NonNull Disposable d) {
+                        addDisposable(d);
                     }
 
                     @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        btnFileDownload2.setText("下载出错");
-                        showToast(e.getMessage());
-                    }
-
-                    @Override
-                    public void onNext(Progress progress) {
+                    public void onNext(@NonNull Progress progress) {
                         String downloadLength = Formatter.formatFileSize(getApplicationContext(), progress.currentSize);
                         String totalLength = Formatter.formatFileSize(getApplicationContext(), progress.totalSize);
                         tvDownloadSize.setText(downloadLength + "/" + totalLength);
@@ -179,6 +182,18 @@ public class RxFileDownloadActivity extends BaseRxDetailActivity {
                         tvProgress.setText(numberFormat.format(progress.fraction));
                         pbProgress.setMax(10000);
                         pbProgress.setProgress((int) (progress.fraction * 10000));
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        e.printStackTrace();
+                        btnFileDownload2.setText("下载出错");
+                        showToast(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        btnFileDownload2.setText("下载完成");
                     }
                 });
     }

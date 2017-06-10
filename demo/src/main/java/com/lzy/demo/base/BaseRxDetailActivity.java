@@ -15,8 +15,8 @@
  */
 package com.lzy.demo.base;
 
-import rx.Subscription;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 /**
  * ================================================
@@ -29,16 +29,16 @@ import rx.subscriptions.CompositeSubscription;
  */
 public abstract class BaseRxDetailActivity extends BaseDetailActivity {
 
-    private CompositeSubscription compositeSubscription;
+    private CompositeDisposable compositeDisposable;
 
-    public void addSubscribe(Subscription subscription) {
-        if (compositeSubscription == null) {
-            compositeSubscription = new CompositeSubscription();
+    public void addDisposable(Disposable disposable) {
+        if (compositeDisposable == null) {
+            compositeDisposable = new CompositeDisposable();
         }
-        compositeSubscription.add(subscription);
+        compositeDisposable.add(disposable);
     }
 
-    public void unSubscribe() {
-        if (compositeSubscription != null) compositeSubscription.unsubscribe();
+    public void dispose() {
+        if (compositeDisposable != null) compositeDisposable.dispose();
     }
 }
