@@ -68,20 +68,19 @@ okserver-2.0.0.jar
 ```
 
 ## 文档
-如果你不想编译项目，提供了apk供直接运行[点击下载okgo_v3.0.0.apk]()
+如果你不想编译项目，提供了apk供直接运行，[点击下载okgo_v3.0.0.apk]()
 
 本项目Demo使用的是我自己的服务器，有时候可能不稳定，网速比较慢时请耐心等待，尴尬呀。。
 
-如果你想查看历史版本信息，请[点击历史版本](https://github.com/jeasonlzy/okhttp-OkGo/releases)。
+如果你想查看历史版本信息，[请点击历史版本](https://github.com/jeasonlzy/okhttp-OkGo/releases)。
 
-该项目的文档全部以Wiki的形式展示，Wiki首页[猛戳这里]()
+该项目的文档全部以Wiki的形式展示，[Wiki首页猛戳这里]()
 
-如果你使用遇到了问题，首先请看控制log，如果log无法看出问题，无法确定是该库的bug还是服务端的问题，建议抓包查看网络数据，详细的抓包方法[猛戳这里]()
+如果你使用遇到了问题，首先请看控制log，如果log无法看出问题，无法确定是该库的bug还是服务端的问题，建议抓包查看网络数据，[详细的抓包方法猛戳这里]()
 
-如果你觉得好，对你有过帮助，请给我一点鼓励吧，一分也是爱呀！
-![](http://7xss53.com1.z0.glb.clouddn.com/markdown/sy6ug.jpg)
-
+### 如果你觉得好，对你有过帮助，请给我一点打赏鼓励吧，一分也是爱呀！
 ![](http://7xss53.com1.z0.glb.clouddn.com/markdown/vittx.jpg)
+
 ## 混淆
 okgo, okrx, okrx2, okserver 所有代码均可以混淆,但是由于底层使用的是 okhttp,它不能混淆,所以只需要添加以下混淆代码就可以了
 ```java
