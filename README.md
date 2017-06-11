@@ -2,11 +2,11 @@
 
 ## OkGo - 3.0 震撼来袭, 一个基于okhttp的标准RESTful风格的网络框架
 
-> 工程结构全新优化
-支持RxJava
-支持RxJava2
-支持自定义缓存策略
-支持下载管理
+> 工程结构全新优化</br>
+支持RxJava</br>
+支持RxJava2</br>
+支持自定义缓存策略</br>
+支持下载管理</br>
 支持上传管理
 
 该库部分思想借鉴了以下项目：
@@ -18,17 +18,17 @@
 
 ## 友情链接
 本项目中使用的图片选择是我的另一个开源项目
-> 完全仿微信的图片选择库，自带 矩形图片裁剪 和 圆形图片裁剪 功能，有需要的可以去下载使用。
+> 完全仿微信的图片选择库，自带矩形图片裁剪和圆形图片裁剪功能，有需要的可以去下载使用。</br>
 附上地址：[https://github.com/jeasonlzy/ImagePicker](https://github.com/jeasonlzy/ImagePicker)
 
 本项目中的九宫格控件也是我的开源项目
-> 类似QQ空间，微信朋友圈，微博主页等，展示图片的九宫格控件，自动根据图片的数量确定图片大小和控件大小，使用Adapter模式设置图片，对外提供接口回调，使用接口加载图片,支持任意的图片加载框架,如 Glide,ImageLoader,Fresco,xUtils3,Picasso 等，支持点击图片全屏预览大图。
+> 类似QQ空间，微信朋友圈，微博主页等，展示图片的九宫格控件，自动根据图片的数量确定图片大小和控件大小，使用Adapter模式设置图片，对外提供接口回调，使用接口加载图片，支持任意的图片加载框架如：Glide、ImageLoader、xUtils3、Picasso 等，支持点击图片全屏预览大图。</br>
 附上地址：[https://github.com/jeasonlzy/NineGridView](https://github.com/jeasonlzy/NineGridView)
 
 ## 联系方式
  * email： liaojeason@126.com
  * QQ群： 489873144 （建议使用QQ群，邮箱使用较少，可能看的不及时）
- * 本群旨在为使用我的github项目的人提供方便，如果遇到问题欢迎在群里提问。个人能力也有限，希望一起学习一起进步。
+ * 如果遇到问题欢迎在群里提问，个人能力也有限，希望一起学习一起进步。
 
 ## 演示
 ![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo13.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo8.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo11.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo9.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo10.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo12.gif)
@@ -79,7 +79,9 @@ okserver-2.0.0.jar
 如果你使用遇到了问题，首先请看控制log，如果log无法看出问题，无法确定是该库的bug还是服务端的问题，建议抓包查看网络数据，详细的抓包方法[猛戳这里]()
 
 如果你觉得好，对你有过帮助，请给我一点鼓励吧，一分也是爱呀！
+![](http://7xss53.com1.z0.glb.clouddn.com/markdown/sy6ug.jpg)
 
+![](http://7xss53.com1.z0.glb.clouddn.com/markdown/vittx.jpg)
 ## 混淆
 okgo, okrx, okrx2, okserver 所有代码均可以混淆,但是由于底层使用的是 okhttp,它不能混淆,所以只需要添加以下混淆代码就可以了
 ```java
