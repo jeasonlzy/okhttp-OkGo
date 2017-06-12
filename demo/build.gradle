@@ -54,7 +54,7 @@ task makeApk {
         def versionName = rootProject.ext.versionName_okgo
         def appName = "okgo_v${versionName}.apk"
         copy {
-            from "./build/outputs/apk/app-miui-debug.apk"
+            from "./build/outputs/apk/demo-miui-debug.apk"
             into "../"
             rename {
                 appName
