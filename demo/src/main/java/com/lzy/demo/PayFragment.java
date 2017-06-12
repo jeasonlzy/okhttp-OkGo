@@ -13,26 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzy.okserver.download;
+package com.lzy.demo;
 
-import com.lzy.okserver.ProgressListener;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-import java.io.File;
+import com.lzy.demo.base.BaseFragment;
 
 /**
  * ================================================
  * 作    者：jeasonlzy（廖子尧）Github地址：https://github.com/jeasonlzy
  * 版    本：1.0
- * 创建日期：2016/1/19
- * 描    述：全局的下载监听
+ * 创建日期：2017/6/9
+ * 描    述：
  * 修订历史：
  * ================================================
  */
-public abstract class DownloadListener implements ProgressListener<File> {
+public class PayFragment extends BaseFragment {
 
-    public final Object tag;
+    @Override
+    protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_pay, container, false);
+    }
 
-    public DownloadListener(Object tag) {
-        this.tag = tag;
+    @Override
+    protected void initData() {
+
     }
 }

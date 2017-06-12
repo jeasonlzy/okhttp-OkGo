@@ -63,6 +63,7 @@ public class MainActivity extends BaseActivity {
 
         items = new ArrayList<>();
         items.add(new Pair<String, Fragment>("OkGo", new OkGoFragment()));
+        items.add(new Pair<String, Fragment>("打赏", new PayFragment()));
         items.add(new Pair<String, Fragment>("OkRx2", new OkRx2Fragment()));
         items.add(new Pair<String, Fragment>("OkRx", new OkRxFragment()));
         items.add(new Pair<String, Fragment>("OkDownload", new OkDownloadFragment()));
