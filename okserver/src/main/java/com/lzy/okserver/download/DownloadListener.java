@@ -15,7 +15,6 @@
  */
 package com.lzy.okserver.download;
 
-import com.lzy.okgo.model.Progress;
 import com.lzy.okserver.ProgressListener;
 
 import java.io.File;

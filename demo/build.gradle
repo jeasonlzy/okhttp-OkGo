@@ -76,8 +76,8 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.google.code.gson:gson:2.8.0'
-    debugCompile 'com.readystatesoftware.chuck:library:1.0.4'
-    releaseCompile 'com.readystatesoftware.chuck:library-no-op:1.0.4'
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    compile 'com.readystatesoftware.chuck:library:1.0.4'
 
     compile project(':okgo')
 //  compile project(':okrx')

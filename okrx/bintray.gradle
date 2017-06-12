@@ -70,7 +70,7 @@ artifacts {
 
 // 生成jar包
 task releaseJar(type: Copy) {
-    from( 'build/intermediates/bundles/release')
+    from( 'build/intermediates/bundles/default')
     into( '../jar')
     include('classes.jar')
     rename('classes.jar', 'okrx-' + version + '.jar')

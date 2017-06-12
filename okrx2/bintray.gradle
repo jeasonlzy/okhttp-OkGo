@@ -70,10 +70,10 @@ artifacts {
 
 // 生成jar包
 task releaseJar(type: Copy) {
-    from( 'build/intermediates/bundles/release')
+    from( 'build/intermediates/bundles/default')
     into( '../jar')
     include('classes.jar')
-    rename('classes.jar', 'okserver-' + version + '.jar')
+    rename('classes.jar', 'okrx2-' + version + '.jar')
 }
 
 Properties properties = new Properties()
