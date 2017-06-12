@@ -68,13 +68,16 @@ okserver-2.0.0.jar
 ```
 
 ## 文档
+### 该项目的文档全部以Wiki的形式展示，重要的事情说三遍
+- [Wiki文档首页请猛戳这里](https://github.com/jeasonlzy/okhttp-OkGo/wiki)
+- [Wiki文档首页请猛戳这里](https://github.com/jeasonlzy/okhttp-OkGo/wiki)
+- [Wiki文档首页请猛戳这里](https://github.com/jeasonlzy/okhttp-OkGo/wiki)
+
 如果你不想编译项目，提供了apk供直接运行，方便查看效果，[点击下载okgo_v3.0.0.apk](http://7xss53.com1.z0.glb.clouddn.com/file/okgo_v3.0.0.apk)
 
 本项目Demo使用的是我自己的服务器，有时候可能不稳定，网速比较慢时请耐心等待，尴尬呀。。
 
 如果你想查看历史版本信息，[请点击历史版本](https://github.com/jeasonlzy/okhttp-OkGo/releases)。
-
-该项目的文档全部以Wiki的形式展示，[Wiki首页猛戳这里](https://github.com/jeasonlzy/okhttp-OkGo/wiki)
 
 如果你使用遇到了问题，首先请看控制台log，如果log无法看出问题，无法确定是该库的bug还是服务端的问题，建议抓包查看网络数据，[详细的抓包方法猛戳这里](https://github.com/jeasonlzy/okhttp-OkGo/wiki#网络抓包)
 
