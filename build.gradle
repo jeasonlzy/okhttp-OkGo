@@ -31,7 +31,8 @@ ext {
     versionName_okrx = '1.0.0'
     versionName_okrx2 = '2.0.0'
 
-    minSdkVersion = 16
+    libMinSdkVersion = 14
+    appMinSdkVersion = 16
     targetSdkVersion = 25
     compileSdkVersion = 25
     buildToolsVersion = '25.0.2'

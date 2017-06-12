@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.lzy.demo"
-        minSdkVersion rootProject.ext.minSdkVersion
+        minSdkVersion rootProject.ext.appMinSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode rootProject.ext.versionCode
         versionName rootProject.ext.versionName_okgo
