@@ -289,9 +289,13 @@ public class DownloadTask implements Runnable {
         //check finish status
         if (progress.status == Progress.PAUSE) {
             postPause(progress);
-        } else if (file.length() == progress.totalSize && progress.status == Progress.LOADING) {
-            postOnFinish(progress, file);
-        } else if (file.length() != progress.currentSize) {
+        } else if (progress.status == Progress.LOADING) {
+            if (file.length() == progress.totalSize) {
+                postOnFinish(progress, file);
+            } else {
+                postOnError(progress, new OkGoException("Breakpoint file has expired"));
+            }
+        } else {
             postOnError(progress, OkGoException.UNKNOWN());
         }
     }

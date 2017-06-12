@@ -60,9 +60,9 @@ public abstract class Request<T, R extends Request> implements Serializable {
     protected int retryCount;
     protected CacheMode cacheMode;
     protected String cacheKey;
-    protected long cacheTime = CacheEntity.CACHE_NEVER_EXPIRE;      //默认缓存的超时时间
-    protected HttpParams params = new HttpParams();                 //添加的param
-    protected HttpHeaders headers = new HttpHeaders();              //添加的header
+    protected long cacheTime;                           //默认缓存的超时时间
+    protected HttpParams params = new HttpParams();     //添加的param
+    protected HttpHeaders headers = new HttpHeaders();  //添加的header
 
     protected transient okhttp3.Request mRequest;
     protected transient Call<T> call;

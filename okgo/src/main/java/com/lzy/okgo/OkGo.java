@@ -50,19 +50,20 @@ public class OkGo {
     public static final long DEFAULT_MILLISECONDS = 60000;      //默认的超时时间
     public static long REFRESH_TIME = 300;                      //回调刷新时间（单位ms）
 
+    private Application context;            //全局上下文
     private Handler mDelivery;              //用于在主线程执行的调度器
     private OkHttpClient okHttpClient;      //ok请求的客户端
     private HttpParams mCommonParams;       //全局公共请求参数
     private HttpHeaders mCommonHeaders;     //全局公共请求头
-    private CacheMode mCacheMode;           //全局缓存模式
     private int mRetryCount;                //全局超时重试次数
+    private CacheMode mCacheMode;           //全局缓存模式
     private long mCacheTime;                //全局缓存过期时间,默认永不过期
-    private Application context;            //全局上下文
 
     private OkGo() {
         mDelivery = new Handler(Looper.getMainLooper());
         mRetryCount = 3;
         mCacheTime = CacheEntity.CACHE_NEVER_EXPIRE;
+        mCacheMode = CacheMode.NO_CACHE;
     }
 
     public static OkGo getInstance() {

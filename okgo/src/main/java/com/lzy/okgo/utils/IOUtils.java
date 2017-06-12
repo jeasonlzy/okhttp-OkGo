@@ -531,6 +531,7 @@ public class IOUtils {
      * @see #delFileOrFolder(File)
      */
     public static boolean delFileOrFolder(String path) {
+        if (TextUtils.isEmpty(path)) return false;
         return delFileOrFolder(new File(path));
     }
 
