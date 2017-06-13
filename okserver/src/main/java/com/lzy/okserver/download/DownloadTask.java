@@ -202,8 +202,17 @@ public class DownloadTask implements Runnable {
         //check breakpoint
         long startPosition = progress.currentSize;
         if (startPosition < 0) {
-            postOnError(progress, new OkGoException("Breakpoint file has expired"));
+            postOnError(progress, OkGoException.BREAKPOINT_EXPIRED());
             return;
+        }
+        if (startPosition > 0) {
+            if (!TextUtils.isEmpty(progress.filePath)) {
+                File file = new File(progress.filePath);
+                if (!file.exists()) {
+                    postOnError(progress, OkGoException.BREAKPOINT_NOT_EXIST());
+                    return;
+                }
+            }
         }
 
         //request network from startPosition
@@ -252,11 +261,11 @@ public class DownloadTask implements Runnable {
             file = new File(progress.filePath);
         }
         if (startPosition > 0 && !file.exists()) {
-            postOnError(progress, new OkGoException("Breakpoint file has expired"));
+            postOnError(progress, OkGoException.BREAKPOINT_EXPIRED());
             return;
         }
         if (startPosition > progress.totalSize) {
-            postOnError(progress, new OkGoException("Breakpoint file has expired"));
+            postOnError(progress, OkGoException.BREAKPOINT_EXPIRED());
             return;
         }
         if (startPosition == progress.totalSize && startPosition >= 0) {
@@ -264,7 +273,7 @@ public class DownloadTask implements Runnable {
                 postOnFinish(progress, file);
                 return;
             } else {
-                postOnError(progress, new OkGoException("Breakpoint file has expired"));
+                postOnError(progress, OkGoException.BREAKPOINT_EXPIRED());
                 return;
             }
         }
@@ -276,7 +285,7 @@ public class DownloadTask implements Runnable {
             randomAccessFile.seek(startPosition);
             progress.currentSize = startPosition;
         } catch (Exception e) {
-            postOnError(progress, new OkGoException("Breakpoint file does not exist"));
+            postOnError(progress, OkGoException.BREAKPOINT_NOT_EXIST());
             return;
         }
         try {
@@ -293,7 +302,7 @@ public class DownloadTask implements Runnable {
             if (file.length() == progress.totalSize) {
                 postOnFinish(progress, file);
             } else {
-                postOnError(progress, new OkGoException("Breakpoint file has expired"));
+                postOnError(progress, OkGoException.BREAKPOINT_EXPIRED());
             }
         } else {
             postOnError(progress, OkGoException.UNKNOWN());
