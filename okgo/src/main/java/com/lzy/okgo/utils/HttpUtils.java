@@ -132,34 +132,53 @@ public class HttpUtils {
         return fileName;
     }
 
-    /** 解析文件头 Content-Disposition:attachment;filename=FileName.txt */
+    /**
+     * 解析文件头
+     * Content-Disposition:attachment;filename=FileName.txt
+     * Content-Disposition: attachment; filename*="UTF-8''%E6%9B%BF%E6%8D%A2%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A.pdf"
+     */
     private static String getHeaderFileName(Response response) {
         String dispositionHeader = response.header(HttpHeaders.HEAD_KEY_CONTENT_DISPOSITION);
         if (dispositionHeader != null) {
+            //文件名可能包含双引号，需要去除
+            dispositionHeader = dispositionHeader.replaceAll("\"", "");
             String split = "filename=";
             int indexOf = dispositionHeader.indexOf(split);
             if (indexOf != -1) {
+                return dispositionHeader.substring(indexOf + split.length(), dispositionHeader.length());
+            }
+            split = "filename*=";
+            indexOf = dispositionHeader.indexOf(split);
+            if (indexOf != -1) {
                 String fileName = dispositionHeader.substring(indexOf + split.length(), dispositionHeader.length());
-                fileName = fileName.replaceAll("\"", "");   //文件名可能包含双引号,需要去除
+                String encode = "UTF-8''";
+                if (fileName.startsWith(encode)) {
+                    fileName = fileName.substring(encode.length(), fileName.length());
+                }
                 return fileName;
             }
         }
         return null;
     }
 
-    /** 通过 ‘？’ 和 ‘/’ 判断文件名 */
+    /**
+     * 通过 ‘？’ 和 ‘/’ 判断文件名
+     * http://mavin-manzhan.oss-cn-hangzhou.aliyuncs.com/1486631099150286149.jpg?x-oss-process=image/watermark,image_d2F0ZXJtYXJrXzIwMF81MC5wbmc
+     */
     private static String getUrlFileName(String url) {
-        int endIndex = url.lastIndexOf('?');
-        int beginIndex = url.lastIndexOf('/') + 1;
         String filename = null;
-        if (beginIndex != -1) {
-            if (endIndex != -1) {
-                if (endIndex > beginIndex) {
-                    filename = url.substring(beginIndex, endIndex);
+        String[] strings = url.split("/");
+        for (String string : strings) {
+            if (string.contains("?")) {
+                int endIndex = string.indexOf("?");
+                if (endIndex != -1) {
+                    filename = string.substring(0, endIndex);
+                    return filename;
                 }
-            } else {
-                filename = url.substring(beginIndex);
             }
+        }
+        if (strings.length > 0) {
+            filename = strings[strings.length - 1];
         }
         return filename;
     }

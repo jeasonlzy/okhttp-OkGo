@@ -83,10 +83,10 @@ dependencies {
 //  compile project(':okrx')
     compile project(':okrx2')
     compile project(':okserver')
-//  compile 'com.lzy.net:okgo:+'
-//  compile 'com.lzy.net:okrx:+'
-//  compile 'com.lzy.net:okrx2:+'
-//  compile 'com.lzy.net:okserver:+'
+//  compile 'com.lzy.net:okgo:3.0.0'
+//  compile 'com.lzy.net:okrx:1.0.0'
+//  compile 'com.lzy.net:okrx2:2.0.0'
+//  compile 'com.lzy.net:okserver:2.0.0'
     compile 'com.lzy.widget:ninegridview:0.2.1'
     compile 'com.lzy.widget:imagepicker:0.3.2'
     compile 'com.lzy.widget:view-core:0.2.1'

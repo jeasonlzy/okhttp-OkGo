@@ -37,20 +37,13 @@
 
 Android Studio用户
 
-> 一般来说，只需要添加第一个okgo的核心包即可，其余的三个库根据自己的需要选择添加，当然也可以把版本号写+，可自动使用最新版
+> 一般来说，只需要添加第一个okgo的核心包即可，其余的三个库根据自己的需要选择添加！！！
 
 ```java
 compile 'com.lzy.net:okgo:3.0.0'
 compile 'com.lzy.net:okrx:1.0.0'
 compile 'com.lzy.net:okrx2:2.0.0'  
 compile 'com.lzy.net:okserver:2.0.0'
-
-或者
-
-compile 'com.lzy.net:okgo:+'
-compile 'com.lzy.net:okrx:+'
-compile 'com.lzy.net:okrx2:+'
-compile 'com.lzy.net:okserver:+'
 ```
 
 Eclipse的用户(赶紧换AS吧)，可以选择添加 `/jar` 目录下的包:

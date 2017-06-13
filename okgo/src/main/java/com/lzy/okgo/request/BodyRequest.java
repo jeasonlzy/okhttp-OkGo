@@ -67,13 +67,6 @@ public abstract class BodyRequest<T, R extends BodyRequest> extends Request<T, R
 
     @SuppressWarnings("unchecked")
     @Override
-    public R requestBody(RequestBody requestBody) {
-        this.requestBody = requestBody;
-        return (R) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
     public R params(String key, File file) {
         params.put(key, file);
         return (R) this;
@@ -104,6 +97,13 @@ public abstract class BodyRequest<T, R extends BodyRequest> extends Request<T, R
     @Override
     public R params(String key, File file, String fileName, MediaType contentType) {
         params.put(key, file, fileName, contentType);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public R upRequestBody(RequestBody requestBody) {
+        this.requestBody = requestBody;
         return (R) this;
     }
 

@@ -250,7 +250,12 @@ public class HttpParams implements Serializable {
 
         @Override
         public String toString() {
-            return "FileWrapper{" + "file=" + file + ", fileName='" + fileName + ", contentType=" + contentType + ", fileSize=" + fileSize + '}';
+            return "FileWrapper{" + //
+                   "file=" + file + //
+                   ", fileName=" + fileName + //
+                   ", contentType=" + contentType + //
+                   ", fileSize=" + fileSize +//
+                   "}";
         }
     }
 

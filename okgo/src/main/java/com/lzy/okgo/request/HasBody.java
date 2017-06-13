@@ -41,7 +41,7 @@ public interface HasBody<R> {
 
     R isSpliceUrl(boolean isSpliceUrl);
 
-    R requestBody(RequestBody requestBody);
+    R upRequestBody(RequestBody requestBody);
 
     R params(String key, File file);
 
