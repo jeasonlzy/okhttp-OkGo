@@ -87,7 +87,7 @@ public class DefaultCachePolicy<T> extends BaseCachePolicy<T> {
     }
 
     @Override
-    public Response<T> requestSync(CacheEntity<T> cacheEntity, okhttp3.Call rawCall) {
+    public Response<T> requestSync(CacheEntity<T> cacheEntity) {
         Response<T> response = requestNetworkSync();
         //HTTP cache protocol
         if (response.isSuccessful() && response.code() == 304) {
@@ -101,14 +101,15 @@ public class DefaultCachePolicy<T> extends BaseCachePolicy<T> {
     }
 
     @Override
-    public void requestAsync(CacheEntity<T> cacheEntity, Call rawCall, Callback<T> callback) {
+    public void requestAsync(CacheEntity<T> cacheEntity, Callback<T> callback) {
         mCallback = callback;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mCallback.onStart(request);
+
+                requestNetworkAsync();
             }
         });
-        requestNetworkAsync();
     }
 }

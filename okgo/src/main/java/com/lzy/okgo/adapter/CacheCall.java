@@ -49,8 +49,7 @@ public class CacheCall<T> implements Call<T> {
     @Override
     public Response<T> execute() {
         CacheEntity<T> cacheEntity = policy.prepareCache();
-        okhttp3.Call rawCall = policy.prepareRawCall();
-        return policy.requestSync(cacheEntity, rawCall);
+        return policy.requestSync(cacheEntity);
     }
 
     @Override
@@ -58,8 +57,7 @@ public class CacheCall<T> implements Call<T> {
         HttpUtils.checkNotNull(callback, "callback == null");
 
         CacheEntity<T> cacheEntity = policy.prepareCache();
-        okhttp3.Call rawCall = policy.prepareRawCall();
-        policy.requestAsync(cacheEntity, rawCall, callback);
+        policy.requestAsync(cacheEntity, callback);
     }
 
     private CachePolicy<T> preparePolicy() {

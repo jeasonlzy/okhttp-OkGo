@@ -20,8 +20,6 @@ import com.lzy.okgo.callback.Callback;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.Request;
 
-import okhttp3.Call;
-
 /**
  * ================================================
  * 作    者：jeasonlzy（廖子尧）Github地址：https://github.com/jeasonlzy
@@ -59,7 +57,7 @@ public class FirstCacheRequestPolicy<T> extends BaseCachePolicy<T> {
     }
 
     @Override
-    public Response<T> requestSync(CacheEntity<T> cacheEntity, Call rawCall) {
+    public Response<T> requestSync(CacheEntity<T> cacheEntity) {
         //同步请求，不能返回两次，只返回正确的数据
         Response<T> response;
         if (cacheEntity != null) {
@@ -73,23 +71,19 @@ public class FirstCacheRequestPolicy<T> extends BaseCachePolicy<T> {
     }
 
     @Override
-    public void requestAsync(CacheEntity<T> cacheEntity, Call rawCall, Callback<T> callback) {
+    public void requestAsync(final CacheEntity<T> cacheEntity, Callback<T> callback) {
         mCallback = callback;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mCallback.onStart(request);
-            }
-        });
-        if (cacheEntity != null) {
-            final Response<T> success = Response.success(true, cacheEntity.getData(), rawCall, null);
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+
+                if (cacheEntity != null) {
+                    Response<T> success = Response.success(true, cacheEntity.getData(), rawCall, null);
                     mCallback.onCacheSuccess(success);
                 }
-            });
-        }
-        requestNetworkAsync();
+                requestNetworkAsync();
+            }
+        });
     }
 }

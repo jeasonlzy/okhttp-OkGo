@@ -19,8 +19,6 @@ import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.callback.Callback;
 import com.lzy.okgo.model.Response;
 
-import okhttp3.Call;
-
 /**
  * ================================================
  * 作    者：jeasonlzy（廖子尧）Github地址：https://github.com/jeasonlzy
@@ -73,19 +71,17 @@ public interface CachePolicy<T> {
      * 同步请求获取数据
      *
      * @param cacheEntity 本地的缓存
-     * @param rawCall     请求的对象
      * @return 从缓存或本地获取的数据
      */
-    Response<T> requestSync(CacheEntity<T> cacheEntity, okhttp3.Call rawCall);
+    Response<T> requestSync(CacheEntity<T> cacheEntity);
 
     /**
      * 异步请求获取数据
      *
      * @param cacheEntity 本地的缓存
-     * @param rawCall     请求的对象
      * @param callback    异步回调
      */
-    void requestAsync(CacheEntity<T> cacheEntity, Call rawCall, Callback<T> callback);
+    void requestAsync(CacheEntity<T> cacheEntity, Callback<T> callback);
 
     /**
      * 当前请求是否已经执行

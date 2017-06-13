@@ -99,6 +99,7 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
 
     protected Response<T> requestNetworkSync() {
         try {
+            prepareRawCall();
             okhttp3.Response response = rawCall.execute();
             int responseCode = response.code();
 
@@ -126,6 +127,7 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
     }
 
     protected void requestNetworkAsync() {
+        prepareRawCall();
         rawCall.enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(okhttp3.Call call, IOException e) {
