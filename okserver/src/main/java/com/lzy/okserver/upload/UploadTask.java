@@ -155,17 +155,17 @@ public class UploadTask<T> implements Runnable {
 
     @Override
     public void run() {
+        progress.status = Progress.LOADING;
         postLoading(progress);
         final Response<T> response;
         try {
             //noinspection unchecked
-            final Request<T, ? extends Request> request = (Request<T, ? extends Request>) progress.request;
+            Request<T, ? extends Request> request = (Request<T, ? extends Request>) progress.request;
+            final Call rawCall = request.getRawCall();
             request.uploadInterceptor(new ProgressRequestBody.UploadInterceptor() {
                 @Override
                 public void uploadProgress(Progress innerProgress) {
-                    Call rawCall = request.getRawCall();
                     if (rawCall.isCanceled()) return;
-
                     if (progress.status != Progress.LOADING) {
                         rawCall.cancel();
                         return;
