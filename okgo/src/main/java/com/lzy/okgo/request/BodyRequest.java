@@ -15,6 +15,8 @@
  */
 package com.lzy.okgo.request;
 
+import android.text.TextUtils;
+
 import com.lzy.okgo.model.HttpParams;
 import com.lzy.okgo.utils.HttpUtils;
 
@@ -22,6 +24,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.List;
 
 import okhttp3.MediaType;
@@ -37,11 +42,12 @@ import okhttp3.RequestBody;
  * ================================================
  */
 public abstract class BodyRequest<T, R extends BodyRequest> extends Request<T, R> implements HasBody<R> {
+    private static final long serialVersionUID = -6459175248476927501L;
 
-    protected MediaType mediaType;      //上传的MIME类型
-    protected String content;           //上传的文本内容
-    protected byte[] bs;                //上传的字节数据
-    protected File file;                //单纯的上传一个文件
+    protected transient MediaType mediaType;        //上传的MIME类型
+    protected String content;                       //上传的文本内容
+    protected byte[] bs;                            //上传的字节数据
+    protected transient File file;                  //单纯的上传一个文件
 
     protected boolean isMultipart = false;  //是否强制使用 multipart/form-data 表单上传
     protected boolean isSpliceUrl = false;  //是否拼接url参数
@@ -198,5 +204,18 @@ public abstract class BodyRequest<T, R extends BodyRequest> extends Request<T, R
         if (bs != null && mediaType != null) return RequestBody.create(mediaType, bs);              //上传字节数组
         if (file != null && mediaType != null) return RequestBody.create(mediaType, file);          //上传一个文件
         return HttpUtils.generateMultipartRequestBody(params, isMultipart);
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+        out.writeObject(mediaType == null ? "" : mediaType.toString());
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        String mediaTypeString = (String) in.readObject();
+        if (!TextUtils.isEmpty(mediaTypeString)) {
+            mediaType = MediaType.parse(mediaTypeString);
+        }
     }
 }

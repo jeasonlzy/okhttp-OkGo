@@ -36,6 +36,7 @@ import com.lzy.okgo.convert.StringConvert;
 import com.lzy.okgo.db.UploadManager;
 import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.request.PostRequest;
+import com.lzy.okgo.request.Request;
 import com.lzy.okserver.OkUpload;
 import com.lzy.okserver.upload.UploadListener;
 import com.lzy.okserver.upload.UploadTask;
@@ -86,6 +87,15 @@ public class UploadAdapter extends RecyclerView.Adapter<UploadAdapter.ViewHolder
         if (type == TYPE_ALL) values = OkUpload.restore(UploadManager.getInstance().getAll());
         if (type == TYPE_FINISH) values = OkUpload.restore(UploadManager.getInstance().getFinished());
         if (type == TYPE_ING) values = OkUpload.restore(UploadManager.getInstance().getUploading());
+
+        //由于Converter是无法保存下来的，所以这里恢复任务的时候，需要额外传入Converter，否则就没法解析数据
+        //至于数据类型，统一就行，不一定非要是String
+        for (UploadTask<?> task : values) {
+            //noinspection unchecked
+            Request<String, ? extends Request> request = (Request<String, ? extends Request>) task.progress.request;
+            request.converter(new StringConvert());
+        }
+
         notifyDataSetChanged();
     }
 
@@ -97,9 +107,13 @@ public class UploadAdapter extends RecyclerView.Adapter<UploadAdapter.ViewHolder
             Random random = new Random();
             for (int i = 0; i < images.size(); i++) {
                 ImageItem imageItem = images.get(i);
+                //这里是演示可以传递任何数据
                 PostRequest<String> postRequest = OkGo.<String>post(Urls.URL_FORM_UPLOAD)//
+                        .headers("aaa", "111")//
+                        .params("bbb", "222")//
                         .params("fileKey" + i, new File(imageItem.path))//
                         .converter(new StringConvert());
+
                 UploadTask<String> task = OkUpload.request(imageItem.path, postRequest)//
                         .priority(random.nextInt(100))//
                         .extra1(imageItem)//

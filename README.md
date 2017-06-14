@@ -40,25 +40,28 @@ Android Studio用户
 > 一般来说，只需要添加第一个okgo的核心包即可，其余的三个库根据自己的需要选择添加！！！
 
 ```java
+//必须使用
 compile 'com.lzy.net:okgo:3.0.0'
+
+//以下三个选择添加，okrx和okrx2不能同时使用
 compile 'com.lzy.net:okrx:1.0.0'
 compile 'com.lzy.net:okrx2:2.0.0'  
 compile 'com.lzy.net:okserver:2.0.0'
 ```
 
-Eclipse的用户(赶紧换AS吧)，可以选择添加 `/jar` 目录下的包:
+Eclipse的用户(赶紧换AS吧)，可以选择添加本项目根目录中 `/jar` 目录下的jar包:
 
 > 一般来说，至少需要okhttp、okio、okgo三个jar包，其余的三个扩展jar包根据自己的需要选择添加！！！
 
-```java
-okhttp-3.4.1.jar 
-okio-1.9.0.jar   
-okgo-3.0.0.jar   
+必须使用
+> [okhttp-3.8.0.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okhttp-3.8.0.jar)  
+[okio-1.13.0.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okio-1.13.0.jar)   
+[okgo-3.0.0.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okgo-3.0.0.jar)   
 
-okrx-1.0.0.jar
-okrx2-2.0.0.jar   
-okserver-2.0.0.jar
-```
+以下三个选择添加，okrx和okrx2不能同时使用
+> [okrx-1.0.0.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okrx-1.0.0.jar)  
+[okrx2-2.0.0.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okrx2-2.0.0.jar)   
+[okserver-2.0.0.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okserver-2.0.0.jar)  
 
 ## 文档
 ### 该项目的文档全部以Wiki的形式展示，重要的事情说三遍
