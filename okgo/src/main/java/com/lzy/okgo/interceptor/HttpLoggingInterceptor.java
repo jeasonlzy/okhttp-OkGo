@@ -15,6 +15,7 @@
  */
 package com.lzy.okgo.interceptor;
 
+import com.lzy.okgo.utils.IOUtils;
 import com.lzy.okgo.utils.OkLogger;
 
 import java.io.IOException;
@@ -31,6 +32,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import okhttp3.internal.Util;
 import okhttp3.internal.http.HttpHeaders;
 import okio.Buffer;
 
@@ -149,9 +151,12 @@ public class HttpLoggingInterceptor implements Interceptor {
                 log(" ");
                 if (logBody && HttpHeaders.hasBody(clone)) {
                     if (isPlaintext(responseBody.contentType())) {
-                        String body = responseBody.string();
+                        byte[] bytes = IOUtils.toByteArray(responseBody.byteStream());
+                        MediaType contentType = responseBody.contentType();
+                        Charset charset = contentType != null ? contentType.charset(Util.UTF_8) : Util.UTF_8;
+                        String body = new String(bytes, charset);
                         log("\tbody:" + body);
-                        responseBody = ResponseBody.create(responseBody.contentType(), body);
+                        responseBody = ResponseBody.create(responseBody.contentType(), bytes);
                         return response.newBuilder().body(responseBody).build();
                     } else {
                         log("\tbody: maybe [file part] , too large too print , ignored!");

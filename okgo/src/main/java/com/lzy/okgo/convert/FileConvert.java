@@ -22,11 +22,9 @@ import com.lzy.okgo.callback.Callback;
 import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.utils.HttpUtils;
 import com.lzy.okgo.utils.IOUtils;
-import com.lzy.okgo.utils.OkLogger;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 import okhttp3.Response;
@@ -109,16 +107,8 @@ public class FileConvert implements Converter<File> {
             fileOutputStream.flush();
             return file;
         } finally {
-            try {
-                if (bodyStream != null) bodyStream.close();
-            } catch (IOException e) {
-                OkLogger.printStackTrace(e);
-            }
-            try {
-                if (fileOutputStream != null) fileOutputStream.close();
-            } catch (IOException e) {
-                OkLogger.printStackTrace(e);
-            }
+            IOUtils.closeQuietly(bodyStream);
+            IOUtils.closeQuietly(fileOutputStream);
         }
     }
 
