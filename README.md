@@ -41,12 +41,12 @@ Android Studio用户
 
 ```java
 //必须使用
-compile 'com.lzy.net:okgo:3.0.0'
+compile 'com.lzy.net:okgo:3.0.1'
 
 //以下三个选择添加，okrx和okrx2不能同时使用
-compile 'com.lzy.net:okrx:1.0.0'
-compile 'com.lzy.net:okrx2:2.0.0'  
-compile 'com.lzy.net:okserver:2.0.0'
+compile 'com.lzy.net:okrx:1.0.1'
+compile 'com.lzy.net:okrx2:2.0.1'  
+compile 'com.lzy.net:okserver:2.0.1'
 ```
 
 Eclipse的用户(赶紧换AS吧)，可以选择添加本项目根目录中 `/jar` 目录下的jar包:
@@ -56,12 +56,12 @@ Eclipse的用户(赶紧换AS吧)，可以选择添加本项目根目录中 `/jar
 必须使用
 > [okhttp-3.8.0.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okhttp-3.8.0.jar)  
 [okio-1.13.0.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okio-1.13.0.jar)   
-[okgo-3.0.0.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okgo-3.0.0.jar)   
+[okgo-3.0.1.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okgo-3.0.1.jar)   
 
 以下三个选择添加，okrx和okrx2不能同时使用
-> [okrx-1.0.0.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okrx-1.0.0.jar)  
-[okrx2-2.0.0.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okrx2-2.0.0.jar)   
-[okserver-2.0.0.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okserver-2.0.0.jar)  
+> [okrx-1.0.1.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okrx-1.0.1.jar)  
+[okrx2-2.0.1.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okrx2-2.0.1.jar)   
+[okserver-2.0.1.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okserver-2.0.1.jar)  
 
 ## 文档
 ### 该项目的文档全部以Wiki的形式展示，重要的事情说三遍
@@ -69,7 +69,7 @@ Eclipse的用户(赶紧换AS吧)，可以选择添加本项目根目录中 `/jar
 - [Wiki文档首页请猛戳这里](https://github.com/jeasonlzy/okhttp-OkGo/wiki)
 - [Wiki文档首页请猛戳这里](https://github.com/jeasonlzy/okhttp-OkGo/wiki)
 
-如果你不想编译项目，提供了apk供直接运行，方便查看效果，[点击下载okgo_v3.0.0.apk](http://7xss53.com1.z0.glb.clouddn.com/file/okgo_v3.0.0.apk)
+如果你不想编译项目，提供了apk供直接运行，方便查看效果，[点击下载okgo_v3.0.1.apk](http://7xss53.com1.z0.glb.clouddn.com/file/okgo_v3.0.1.apk)
 
 本项目Demo使用的是我自己的服务器，有时候可能不稳定，网速比较慢时请耐心等待，尴尬呀。。
 
