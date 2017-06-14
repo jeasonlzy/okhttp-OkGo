@@ -88,6 +88,7 @@
             android:theme="@style/AppTheme.NoActionBar"/>
         <!-- Rx相关 -->
         <activity android:name=".okrx2.RxCommonActivity"/>
+        <activity android:name=".okrx2.RxCacheActivity"/>
         <activity android:name=".okrx2.RxRetrofitActivity"/>
         <activity android:name=".okrx2.RxBitmapActivity"/>
         <activity android:name=".okrx2.RxFileDownloadActivity"/>

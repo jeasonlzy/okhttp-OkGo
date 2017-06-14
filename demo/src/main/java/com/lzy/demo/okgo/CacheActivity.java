@@ -136,7 +136,7 @@ public class CacheActivity extends BaseDetailActivity {
         OkGo.<LzyResponse<ServerModel>>get(Urls.URL_CACHE)//
                 .tag(this)//
                 .cacheMode(CacheMode.FIRST_CACHE_THEN_REQUEST)//
-                .cacheKey("only_read_cache")//
+                .cacheKey("first_cache_then_request")//
                 .cacheTime(5000)            // 单位毫秒.5秒后过期
                 .headers("header1", "headerValue1")//
                 .params("param1", "paramValue1")//

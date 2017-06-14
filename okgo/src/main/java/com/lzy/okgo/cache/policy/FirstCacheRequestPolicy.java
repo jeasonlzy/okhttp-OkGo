@@ -58,6 +58,11 @@ public class FirstCacheRequestPolicy<T> extends BaseCachePolicy<T> {
 
     @Override
     public Response<T> requestSync(CacheEntity<T> cacheEntity) {
+        try {
+            prepareRawCall();
+        } catch (Throwable throwable) {
+            return Response.error(false, rawCall, null, throwable);
+        }
         //同步请求，不能返回两次，只返回正确的数据
         Response<T> response;
         if (cacheEntity != null) {
@@ -78,6 +83,12 @@ public class FirstCacheRequestPolicy<T> extends BaseCachePolicy<T> {
             public void run() {
                 mCallback.onStart(request);
 
+                try {
+                    prepareRawCall();
+                } catch (Throwable throwable) {
+                    Response.error(false, rawCall, null, throwable);
+                    return;
+                }
                 if (cacheEntity != null) {
                     Response<T> success = Response.success(true, cacheEntity.getData(), rawCall, null);
                     mCallback.onCacheSuccess(success);

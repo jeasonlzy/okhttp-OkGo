@@ -59,6 +59,11 @@ public class NoneCacheRequestPolicy<T> extends BaseCachePolicy<T> {
 
     @Override
     public Response<T> requestSync(CacheEntity<T> cacheEntity) {
+        try {
+            prepareRawCall();
+        } catch (Throwable throwable) {
+            return Response.error(false, rawCall, null, throwable);
+        }
         Response<T> response = null;
         if (cacheEntity != null) {
             response = Response.success(true, cacheEntity.getData(), rawCall, null);
@@ -77,6 +82,12 @@ public class NoneCacheRequestPolicy<T> extends BaseCachePolicy<T> {
             public void run() {
                 mCallback.onStart(request);
 
+                try {
+                    prepareRawCall();
+                } catch (Throwable throwable) {
+                    Response.error(false, rawCall, null, throwable);
+                    return;
+                }
                 if (cacheEntity != null) {
                     Response<T> success = Response.success(true, cacheEntity.getData(), rawCall, null);
                     mCallback.onCacheSuccess(success);

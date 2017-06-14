@@ -65,7 +65,7 @@ public interface CachePolicy<T> {
      *
      * @return 准备请求的对象
      */
-    okhttp3.Call prepareRawCall();
+    okhttp3.Call prepareRawCall() throws Throwable;
 
     /**
      * 同步请求获取数据
