@@ -74,8 +74,9 @@ public class GApp extends Application {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor("OkGo");
         loggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.BODY);        //log打印级别，决定了log显示的详细程度
         loggingInterceptor.setColorLevel(Level.INFO);                               //log颜色级别，决定了log在控制台显示的颜色
-        builder.addInterceptor(loggingInterceptor);
-        //builder.addInterceptor(new ChuckInterceptor(this));                       //第三方的开源库，使用通知显示当前请求的log
+        builder.addInterceptor(loggingInterceptor);                                 //添加OkGo默认debug日志
+        //第三方的开源库，使用通知显示当前请求的log，不过在做文件下载的时候，这个库好像有问题，对文件判断不准确
+        //builder.addInterceptor(new ChuckInterceptor(this));
 
         //超时时间设置，默认60秒
         builder.readTimeout(OkGo.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);      //全局的读取超时时间
@@ -102,8 +103,7 @@ public class GApp extends Application {
 
         // 其他统一的配置
         // 详细说明看GitHub文档：https://github.com/jeasonlzy/
-        OkGo.getInstance()
-                .init(this)                                     //必须调用初始化
+        OkGo.getInstance().init(this)                           //必须调用初始化
                 .setOkHttpClient(builder.build())               //必须设置OkHttpClient
                 .setCacheMode(CacheMode.NO_CACHE)               //全局统一缓存模式，默认不使用缓存，可以不传
                 .setCacheTime(CacheEntity.CACHE_NEVER_EXPIRE)   //全局统一缓存时间，默认永不过期，可以不传
