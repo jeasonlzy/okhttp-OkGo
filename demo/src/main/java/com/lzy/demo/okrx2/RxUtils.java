@@ -62,6 +62,11 @@ public class RxUtils {
         return request(method, url, null, clazz, params, headers);
     }
 
+    /**
+     * 这个封装其实没有必要，只是有些人喜欢这么干，我就多此一举写出来了。。
+     * 这个封装其实没有必要，只是有些人喜欢这么干，我就多此一举写出来了。。
+     * 这个封装其实没有必要，只是有些人喜欢这么干，我就多此一举写出来了。。
+     */
     public static <T> Observable<T> request(HttpMethod method, String url, Type type, Class<T> clazz, HttpParams params, HttpHeaders headers) {
         Request<T, ? extends Request> request;
         if (method == HttpMethod.GET) request = OkGo.get(url);

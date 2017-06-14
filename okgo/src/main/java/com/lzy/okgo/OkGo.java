@@ -33,6 +33,7 @@ import com.lzy.okgo.request.PatchRequest;
 import com.lzy.okgo.request.PostRequest;
 import com.lzy.okgo.request.PutRequest;
 import com.lzy.okgo.request.TraceRequest;
+import com.lzy.okgo.utils.HttpUtils;
 
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
@@ -122,7 +123,7 @@ public class OkGo {
 
     /** 获取全局上下文 */
     public Context getContext() {
-        if (context == null) throw new IllegalStateException("please call OkGo.getInstance().init() first in application!");
+        HttpUtils.checkNotNull(context, "please call OkGo.getInstance().init() first in application!");
         return context;
     }
 
@@ -131,10 +132,13 @@ public class OkGo {
     }
 
     public OkHttpClient getOkHttpClient() {
+        HttpUtils.checkNotNull(okHttpClient, "please call OkGo.getInstance().setOkHttpClient() first in application!");
         return okHttpClient;
     }
 
+    /** 必须设置 */
     public OkGo setOkHttpClient(OkHttpClient okHttpClient) {
+        HttpUtils.checkNotNull(okHttpClient, "okHttpClient == null");
         this.okHttpClient = okHttpClient;
         return this;
     }

@@ -57,14 +57,17 @@ public final class Response<T> {
     }
 
     public int code() {
+        if (rawResponse == null) return -1;
         return rawResponse.code();
     }
 
     public String message() {
+        if (rawResponse == null) return null;
         return rawResponse.message();
     }
 
     public Headers headers() {
+        if (rawResponse == null) return null;
         return rawResponse.headers();
     }
 

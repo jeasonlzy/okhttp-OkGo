@@ -73,6 +73,8 @@ public abstract class JsonCallback<T> extends AbsCallback<T> {
         // 重要的事情说三遍，不同的业务，这里的代码逻辑都不一样，如果你不修改，那么基本不可用
         // 重要的事情说三遍，不同的业务，这里的代码逻辑都不一样，如果你不修改，那么基本不可用
 
+        //详细自定义的原理和文档，看这里： https://github.com/jeasonlzy/okhttp-OkGo/wiki/JsonCallback
+
         if (type == null) {
             if (clazz == null) {
                 Type genType = getClass().getGenericSuperclass();

@@ -48,6 +48,9 @@ public class ServerApi {
         headers.put("aaa", header);
         HttpParams params = new HttpParams();
         params.put("bbb", param);
+        //这个RxUtils的封装其实没有必要，只是有些人喜欢这么干，我就多此一举写出来了。。
+        //这个RxUtils的封装其实没有必要，只是有些人喜欢这么干，我就多此一举写出来了。。
+        //这个RxUtils的封装其实没有必要，只是有些人喜欢这么干，我就多此一举写出来了。。
         return RxUtils.request(HttpMethod.GET, Urls.URL_METHOD, String.class, params, headers);
     }
 
@@ -56,6 +59,9 @@ public class ServerApi {
         headers.put("aaa", header);
         HttpParams params = new HttpParams();
         params.put("bbb", param);
+        //这个RxUtils的封装其实没有必要，只是有些人喜欢这么干，我就多此一举写出来了。。
+        //这个RxUtils的封装其实没有必要，只是有些人喜欢这么干，我就多此一举写出来了。。
+        //这个RxUtils的封装其实没有必要，只是有些人喜欢这么干，我就多此一举写出来了。。
         return RxUtils.request(HttpMethod.POST, url, type, params, headers);
     }
 

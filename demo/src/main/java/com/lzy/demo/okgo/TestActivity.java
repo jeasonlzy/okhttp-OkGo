@@ -27,7 +27,6 @@ import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.adapter.Call;
 import com.lzy.okgo.callback.FileCallback;
-import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.Request;
@@ -103,44 +102,28 @@ public class TestActivity extends BaseActivity {
 
     @OnClick(R.id.btn3)
     public void btn3(View view) {
-
-        OkGo.<String>get(Urls.URL_METHOD)
-                .tag(this)
-                .execute(new StringCallback() {
-
+        OkGo.<File>get("http://jj-test.oss-cn-shanghai.aliyuncs.com/b2c%E5%95%86%E5%9F%8E%E8%A7%84%E5%88%92.docx")//
+                .tag(this)//
+                .execute(new FileCallback() {
                     @Override
-                    public void onStart(Request<String, ? extends Request> request) {
-                        request.headers("abc","aaa");
+                    public void onSuccess(Response<File> response) {
+                        System.out.println("onSuccess");
                     }
 
                     @Override
-                    public void onSuccess(Response<String> response) {
+                    public void onStart(Request<File, ? extends Request> request) {
+                        System.out.println("onStart");
+                    }
 
+                    @Override
+                    public void onError(Response<File> response) {
+                        response.getException().printStackTrace();
+                    }
+
+                    @Override
+                    public void downloadProgress(Progress progress) {
+                        System.out.println(progress.currentSize + " " + progress.totalSize + " " + progress.fraction + " " + progress.speed);
                     }
                 });
-
-//        OkGo.<File>get("http://www.apk3.com/uploads/soft/20160511/wshdyq.hit_1.15_25.apk")//
-//                .tag(this)//
-//                .execute(new FileCallback() {
-//                    @Override
-//                    public void onSuccess(Response<File> response) {
-//                        System.out.println("onSuccess");
-//                    }
-//
-//                    @Override
-//                    public void onStart(Request<File, ? extends Request> request) {
-//                        System.out.println("onStart");
-//                    }
-//
-//                    @Override
-//                    public void onError(Response<File> response) {
-//                        response.getException().printStackTrace();
-//                    }
-//
-//                    @Override
-//                    public void downloadProgress(Progress progress) {
-//                        System.out.println(progress.currentSize + " " + progress.totalSize + " " + progress.fraction + " " + progress.speed);
-//                    }
-//                });
     }
 }

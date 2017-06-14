@@ -61,6 +61,7 @@ public class DownloadTask implements Runnable {
     public Map<Object, DownloadListener> listeners;
     private ThreadPoolExecutor executor;
     private PriorityRunnable priorityRunnable;
+    private boolean registed;
 
     public DownloadTask(String tag, Request<File, ? extends Request> request) {
         HttpUtils.checkNotNull(tag, "tag == null");
@@ -122,6 +123,7 @@ public class DownloadTask implements Runnable {
     }
 
     public DownloadTask register(DownloadListener listener) {
+        registed = true;
         DownloadManager.getInstance().replace(progress);
         if (listener != null) {
             listeners.put(listener.tag, listener);
@@ -140,6 +142,7 @@ public class DownloadTask implements Runnable {
     }
 
     public DownloadTask start() {
+        if (!registed) throw new IllegalStateException("you must call DownloadTask#register() first！");
         if (progress.status == Progress.NONE || progress.status == Progress.PAUSE || progress.status == Progress.ERROR) {
             postOnStart(progress);
             postWaiting(progress);
