@@ -135,8 +135,10 @@ public class UploadAdapter extends RecyclerView.Adapter<UploadAdapter.ViewHolder
     public void onBindViewHolder(ViewHolder holder, int position) {
         //noinspection unchecked
         UploadTask<String> task = (UploadTask<String>) values.get(position);
-        task.register(new ListUploadListener("ListUploadListener_" + type, holder))//
+        String holderTag = type + "_" + task.progress.tag;
+        task.register(new ListUploadListener(holderTag, holder))//
                 .register(new LogUploadListener<String>());
+        holder.setTag(holderTag);
         holder.setTask(task);
         holder.bind();
         holder.refresh(task.progress);
@@ -165,6 +167,7 @@ public class UploadAdapter extends RecyclerView.Adapter<UploadAdapter.ViewHolder
         @Bind(R.id.pbProgress) NumberProgressBar pbProgress;
         @Bind(R.id.upload) Button upload;
         private UploadTask<?> task;
+        private String tag;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -262,6 +265,14 @@ public class UploadAdapter extends RecyclerView.Adapter<UploadAdapter.ViewHolder
         public void restart() {
             task.restart();
         }
+
+        public void setTag(String tag) {
+            this.tag = tag;
+        }
+
+        public String getTag() {
+            return tag;
+        }
     }
 
     private class ListUploadListener extends UploadListener<String> {
@@ -279,7 +290,9 @@ public class UploadAdapter extends RecyclerView.Adapter<UploadAdapter.ViewHolder
 
         @Override
         public void onProgress(Progress progress) {
-            holder.refresh(progress);
+            if (tag == holder.getTag()) {
+                holder.refresh(progress);
+            }
         }
 
         @Override

@@ -80,6 +80,11 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
         if (type == TYPE_ALL) values = OkDownload.restore(DownloadManager.getInstance().getAll());
         if (type == TYPE_FINISH) values = OkDownload.restore(DownloadManager.getInstance().getFinished());
         if (type == TYPE_ING) values = OkDownload.restore(DownloadManager.getInstance().getDownloading());
+
+        for (DownloadTask value : values) {
+            value.register(null);
+        }
+
         notifyDataSetChanged();
     }
 
@@ -91,9 +96,11 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        DownloadTask task = values.get(position)//
-                .register(new ListDownloadListener("ListDownloadListener_" + type, holder))//
+        DownloadTask task = values.get(position);
+        String holderTag = type + "_" + task.progress.tag;
+        task.register(new ListDownloadListener(holderTag, holder))//
                 .register(new LogDownloadListener());
+        holder.setTag(holderTag);
         holder.setTask(task);
         holder.bind();
         holder.refresh(task.progress);
@@ -122,6 +129,7 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
         @Bind(R.id.pbProgress) NumberProgressBar pbProgress;
         @Bind(R.id.start) Button download;
         private DownloadTask task;
+        private String tag;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -219,6 +227,14 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
         public void restart() {
             task.restart();
         }
+
+        public void setTag(String tag) {
+            this.tag = tag;
+        }
+
+        public String getTag() {
+            return tag;
+        }
     }
 
     private class ListDownloadListener extends DownloadListener {
@@ -236,7 +252,9 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
 
         @Override
         public void onProgress(Progress progress) {
-            holder.refresh(progress);
+            if (tag == holder.getTag()) {
+                holder.refresh(progress);
+            }
         }
 
         @Override

@@ -15,7 +15,11 @@
  */
 package com.lzy.demo.okgo;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.text.format.Formatter;
 import android.view.View;
 import android.widget.Button;
@@ -49,6 +53,8 @@ import butterknife.OnClick;
  */
 public class SimpleDownloadActivity extends BaseDetailActivity {
 
+    private static final int REQUEST_PERMISSION_STORAGE = 0x01;
+
     @Bind(R.id.fileDownload) Button btnFileDownload;
     @Bind(R.id.downloadSize) TextView tvDownloadSize;
     @Bind(R.id.tvProgress) TextView tvProgress;
@@ -64,6 +70,27 @@ public class SimpleDownloadActivity extends BaseDetailActivity {
 
         numberFormat = NumberFormat.getPercentInstance();
         numberFormat.setMinimumFractionDigits(2);
+
+        checkSDCardPermission();
+    }
+
+    /** 检查SD卡权限 */
+    protected void checkSDCardPermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_STORAGE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_PERMISSION_STORAGE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                //获取权限
+            } else {
+                showToast("权限被禁止，无法下载文件！");
+            }
+        }
     }
 
     @Override

@@ -288,7 +288,7 @@ public class DownloadTask implements Runnable {
             randomAccessFile.seek(startPosition);
             progress.currentSize = startPosition;
         } catch (Exception e) {
-            postOnError(progress, OkGoException.BREAKPOINT_NOT_EXIST());
+            postOnError(progress, e);
             return;
         }
         try {

@@ -15,10 +15,14 @@
  */
 package com.lzy.demo.okdownload;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -63,6 +67,8 @@ import butterknife.OnClick;
  */
 public class DownloadListActivity extends BaseActivity {
 
+    private static final int REQUEST_PERMISSION_STORAGE = 0x01;
+
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.targetFolder) TextView folder;
     @Bind(R.id.recyclerView) RecyclerView recyclerView;
@@ -78,7 +84,7 @@ public class DownloadListActivity extends BaseActivity {
 
         initData();
         OkDownload.getInstance().setFolder(Environment.getExternalStorageDirectory().getAbsolutePath() + "/aaa/");
-        OkDownload.getInstance().getThreadPool().setCorePoolSize(3);
+        OkDownload.getInstance().getThreadPool().setCorePoolSize(1);
 
         folder.setText(String.format("下载路径: %s", OkDownload.getInstance().getFolder()));
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -90,6 +96,27 @@ public class DownloadListActivity extends BaseActivity {
         OkDownload.restore(progressList);
         adapter = new DownloadListAdapter(this);
         recyclerView.setAdapter(adapter);
+
+        checkSDCardPermission();
+    }
+
+    /** 检查SD卡权限 */
+    protected void checkSDCardPermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_STORAGE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_PERMISSION_STORAGE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                //获取权限
+            } else {
+                showToast("权限被禁止，无法下载文件！");
+            }
+        }
     }
 
     @OnClick(R.id.startAll)
@@ -254,5 +281,30 @@ public class DownloadListActivity extends BaseActivity {
         apk10.iconUrl = "http://file.market.xiaomi.com/thumbnail/PNG/l114/AppStore/0863a058a811148a5174d9784b7be2f1114191f83";
         apk10.url = "http://60.28.125.1/f4.market.xiaomi.com/download/AppStore/00cdeb4865c5a4a7d350fe30b9f812908a569cc8a/com.mobike.mobikeapp.apk";
         apks.add(apk10);
+        ApkModel apk11 = new ApkModel();
+        apk11.name = "贪吃蛇大作战";
+        apk11.iconUrl = "http://file.market.xiaomi.com/thumbnail/PNG/l114/AppStore/09f7f5756d9d63bb149b7149b8bdde0769941f09b";
+        apk11.url = "http://60.22.46.1/f3.market.xiaomi.com/download/AppStore/0b02f24ffa8334bd21b16bd70ecacdb42374eb9cb/com.wepie.snake.new.mi.apk";
+        apks.add(apk11);
+        ApkModel apk12 = new ApkModel();
+        apk12.name = "蘑菇街";
+        apk12.iconUrl = "http://file.market.xiaomi.com/thumbnail/PNG/l114/AppStore/0ab53044735e842c421a57954d86a77aea30cc1da";
+        apk12.url = "http://121.29.10.1/f5.market.xiaomi.com/download/AppStore/07a6ee4955e364c3f013b14055c37b8e4f6668161/com.mogujie.apk";
+        apks.add(apk12);
+        ApkModel apk13 = new ApkModel();
+        apk13.name = "聚美优品";
+        apk13.iconUrl = "http://file.market.xiaomi.com/thumbnail/PNG/l114/AppStore/080ed520b76d943e5533017a19bc76d9f554342d0";
+        apk13.url = "http://121.29.10.1/f5.market.mi-img.com/download/AppStore/0e70a572cd5fd6a3718941328238d78d71942aee0/com.jm.android.jumei.apk";
+        apks.add(apk13);
+        ApkModel apk14 = new ApkModel();
+        apk14.name = "全民K歌";
+        apk14.iconUrl = "http://file.market.xiaomi.com/thumbnail/PNG/l114/AppStore/0f1f653261ff8b3a64324097224e40eface432b99";
+        apk14.url = "http://60.28.123.129/f4.market.xiaomi.com/download/AppStore/04f515e21146022934085454a1121e11ae34396ae/com.tencent.karaoke.apk";
+        apks.add(apk14);
+        ApkModel apk15 = new ApkModel();
+        apk15.name = "书旗小说";
+        apk15.iconUrl = "http://file.market.xiaomi.com/thumbnail/PNG/l114/AppStore/0c9ce345aa2734b1202ddf32b6545d9407b18ba0b";
+        apk15.url = "http://60.28.125.129/f5.market.mi-img.com/download/AppStore/02d9c4035b248753314f46600cf7347a306426dc1/com.shuqi.controller.apk";
+        apks.add(apk15);
     }
 }
