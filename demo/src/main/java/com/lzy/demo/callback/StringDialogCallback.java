@@ -20,7 +20,7 @@ import android.app.ProgressDialog;
 import android.view.Window;
 
 import com.lzy.okgo.callback.StringCallback;
-import com.lzy.okgo.request.Request;
+import com.lzy.okgo.request.base.Request;
 
 /**
  * ================================================

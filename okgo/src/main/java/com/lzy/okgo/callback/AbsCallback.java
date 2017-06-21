@@ -17,7 +17,7 @@ package com.lzy.okgo.callback;
 
 import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.model.Response;
-import com.lzy.okgo.request.Request;
+import com.lzy.okgo.request.base.Request;
 import com.lzy.okgo.utils.OkLogger;
 
 /**

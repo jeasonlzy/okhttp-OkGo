@@ -15,12 +15,8 @@
  */
 package com.lzy.okgo.request;
 
-import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.HttpMethod;
-import com.lzy.okgo.utils.HttpUtils;
-import com.lzy.okgo.utils.OkLogger;
-
-import java.io.IOException;
+import com.lzy.okgo.request.base.BodyRequest;
 
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -47,13 +43,7 @@ public class OptionsRequest<T> extends BodyRequest<T, OptionsRequest<T>> {
 
     @Override
     public Request generateRequest(RequestBody requestBody) {
-        try {
-            headers.put(HttpHeaders.HEAD_KEY_CONTENT_LENGTH, String.valueOf(requestBody.contentLength()));
-        } catch (IOException e) {
-            OkLogger.printStackTrace(e);
-        }
-        Request.Builder requestBuilder = HttpUtils.appendHeaders(headers);
-        if (isSpliceUrl) url = HttpUtils.createUrlFromParams(baseUrl, params.urlParamsMap);
+        Request.Builder requestBuilder = generateRequestBuilder(requestBody);
         return requestBuilder.method("OPTIONS", requestBody).url(url).tag(tag).build();
     }
 }

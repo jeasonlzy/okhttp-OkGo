@@ -17,7 +17,7 @@ package com.lzy.okgo.adapter;
 
 import com.lzy.okgo.callback.Callback;
 import com.lzy.okgo.model.Response;
-import com.lzy.okgo.request.Request;
+import com.lzy.okgo.request.base.Request;
 
 /**
  * ================================================

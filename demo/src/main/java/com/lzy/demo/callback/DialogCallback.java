@@ -19,7 +19,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.view.Window;
 
-import com.lzy.okgo.request.Request;
+import com.lzy.okgo.request.base.Request;
 
 /**
  * ================================================

@@ -16,7 +16,7 @@
 package com.lzy.demo.callback;
 
 import com.lzy.okgo.callback.AbsCallback;
-import com.lzy.okgo.request.Request;
+import com.lzy.okgo.request.base.Request;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

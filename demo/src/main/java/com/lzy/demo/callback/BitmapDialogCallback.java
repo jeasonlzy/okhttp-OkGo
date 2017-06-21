@@ -21,7 +21,7 @@ import android.graphics.Bitmap;
 import android.view.Window;
 
 import com.lzy.okgo.callback.BitmapCallback;
-import com.lzy.okgo.request.Request;
+import com.lzy.okgo.request.base.Request;
 
 /**
  * ================================================

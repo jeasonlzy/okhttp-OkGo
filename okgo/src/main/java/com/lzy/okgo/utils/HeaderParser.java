@@ -20,7 +20,7 @@ import android.text.TextUtils;
 import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.model.HttpHeaders;
-import com.lzy.okgo.request.Request;
+import com.lzy.okgo.request.base.Request;
 
 import java.util.Locale;
 import java.util.StringTokenizer;

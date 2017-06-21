@@ -24,7 +24,7 @@ import com.lzy.okgo.callback.Callback;
 import com.lzy.okgo.db.CacheManager;
 import com.lzy.okgo.exception.HttpException;
 import com.lzy.okgo.model.Response;
-import com.lzy.okgo.request.Request;
+import com.lzy.okgo.request.base.Request;
 import com.lzy.okgo.utils.HeaderParser;
 import com.lzy.okgo.utils.HttpUtils;
 

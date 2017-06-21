@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzy.okgo.request;
+package com.lzy.okgo.request.base;
 
 import android.text.TextUtils;
 
+import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.HttpParams;
 import com.lzy.okgo.utils.HttpUtils;
+import com.lzy.okgo.utils.OkLogger;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -199,11 +201,23 @@ public abstract class BodyRequest<T, R extends BodyRequest> extends Request<T, R
 
     @Override
     public RequestBody generateRequestBody() {
+        if (isSpliceUrl) url = HttpUtils.createUrlFromParams(baseUrl, params.urlParamsMap);
+
         if (requestBody != null) return requestBody;                                                //自定义的请求体
         if (content != null && mediaType != null) return RequestBody.create(mediaType, content);    //上传字符串数据
         if (bs != null && mediaType != null) return RequestBody.create(mediaType, bs);              //上传字节数组
         if (file != null && mediaType != null) return RequestBody.create(mediaType, file);          //上传一个文件
         return HttpUtils.generateMultipartRequestBody(params, isMultipart);
+    }
+
+    protected okhttp3.Request.Builder generateRequestBuilder(RequestBody requestBody) {
+        try {
+            headers(HttpHeaders.HEAD_KEY_CONTENT_LENGTH, String.valueOf(requestBody.contentLength()));
+        } catch (IOException e) {
+            OkLogger.printStackTrace(e);
+        }
+        okhttp3.Request.Builder requestBuilder = new okhttp3.Request.Builder();
+        return HttpUtils.appendHeaders(requestBuilder, headers);
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {

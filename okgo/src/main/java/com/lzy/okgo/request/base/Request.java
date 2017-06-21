@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzy.okgo.request;
+package com.lzy.okgo.request.base;
 
 import android.text.TextUtils;
 
@@ -82,8 +82,8 @@ public abstract class Request<T, R extends Request> implements Serializable {
         String userAgent = HttpHeaders.getUserAgent();
         if (!TextUtils.isEmpty(userAgent)) headers(HttpHeaders.HEAD_KEY_USER_AGENT, userAgent);
         //添加公共请求参数
-        if (go.getCommonParams() != null) params.put(go.getCommonParams());
-        if (go.getCommonHeaders() != null) headers.put(go.getCommonHeaders());
+        if (go.getCommonParams() != null) params(go.getCommonParams());
+        if (go.getCommonHeaders() != null) headers(go.getCommonHeaders());
         //添加缓存模式
         retryCount = go.getRetryCount();
         cacheMode = go.getCacheMode();

@@ -19,7 +19,7 @@ import android.os.Environment;
 
 import com.lzy.okgo.db.DownloadManager;
 import com.lzy.okgo.model.Progress;
-import com.lzy.okgo.request.Request;
+import com.lzy.okgo.request.base.Request;
 import com.lzy.okgo.utils.IOUtils;
 import com.lzy.okgo.utils.OkLogger;
 import com.lzy.okserver.download.DownloadTask;

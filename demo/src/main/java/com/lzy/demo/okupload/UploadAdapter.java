@@ -36,7 +36,7 @@ import com.lzy.okgo.convert.StringConvert;
 import com.lzy.okgo.db.UploadManager;
 import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.request.PostRequest;
-import com.lzy.okgo.request.Request;
+import com.lzy.okgo.request.base.Request;
 import com.lzy.okserver.OkUpload;
 import com.lzy.okserver.upload.UploadListener;
 import com.lzy.okserver.upload.UploadTask;

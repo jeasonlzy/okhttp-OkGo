@@ -20,7 +20,7 @@ import android.database.Cursor;
 import android.os.SystemClock;
 
 import com.lzy.okgo.OkGo;
-import com.lzy.okgo.request.Request;
+import com.lzy.okgo.request.base.Request;
 import com.lzy.okgo.utils.IOUtils;
 
 import java.io.Serializable;

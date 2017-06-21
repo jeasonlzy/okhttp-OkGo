@@ -24,7 +24,7 @@ import com.lzy.okgo.exception.OkGoException;
 import com.lzy.okgo.exception.StorageException;
 import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.Progress;
-import com.lzy.okgo.request.Request;
+import com.lzy.okgo.request.base.Request;
 import com.lzy.okgo.utils.HttpUtils;
 import com.lzy.okgo.utils.IOUtils;
 import com.lzy.okgo.utils.OkLogger;

@@ -71,9 +71,8 @@ public class HttpUtils {
     }
 
     /** 通用的拼接请求头 */
-    public static Request.Builder appendHeaders(HttpHeaders headers) {
-        Request.Builder requestBuilder = new Request.Builder();
-        if (headers.headersMap.isEmpty()) return requestBuilder;
+    public static Request.Builder appendHeaders(Request.Builder builder, HttpHeaders headers) {
+        if (headers.headersMap.isEmpty()) return builder;
         Headers.Builder headerBuilder = new Headers.Builder();
         try {
             for (Map.Entry<String, String> entry : headers.headersMap.entrySet()) {
@@ -84,8 +83,8 @@ public class HttpUtils {
         } catch (Exception e) {
             OkLogger.printStackTrace(e);
         }
-        requestBuilder.headers(headerBuilder.build());
-        return requestBuilder;
+        builder.headers(headerBuilder.build());
+        return builder;
     }
 
     /** 生成类似表单的请求体 */
@@ -202,7 +201,7 @@ public class HttpUtils {
         fileName = fileName.replace("#", "");   //解决文件名中含有#号异常的问题
         String contentType = fileNameMap.getContentTypeFor(fileName);
         if (contentType == null) {
-            contentType = "application/octet-stream";
+            return HttpParams.MEDIA_TYPE_STREAM;
         }
         return MediaType.parse(contentType);
     }

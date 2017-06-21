@@ -19,7 +19,7 @@ import com.lzy.okgo.adapter.Call;
 import com.lzy.okgo.callback.Callback;
 import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.model.Response;
-import com.lzy.okgo.request.Request;
+import com.lzy.okgo.request.base.Request;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;

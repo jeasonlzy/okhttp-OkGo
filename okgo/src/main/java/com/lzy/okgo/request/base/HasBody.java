@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lzy.okgo.request;
+package com.lzy.okgo.request.base;
 
 import com.lzy.okgo.model.HttpParams;
 
