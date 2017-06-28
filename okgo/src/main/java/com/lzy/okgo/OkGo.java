@@ -23,6 +23,8 @@ import android.os.Looper;
 import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.cookie.CookieJarImpl;
+import com.lzy.okgo.https.HttpsUtils;
+import com.lzy.okgo.interceptor.HttpLoggingInterceptor;
 import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.HttpParams;
 import com.lzy.okgo.request.DeleteRequest;
@@ -34,6 +36,9 @@ import com.lzy.okgo.request.PostRequest;
 import com.lzy.okgo.request.PutRequest;
 import com.lzy.okgo.request.TraceRequest;
 import com.lzy.okgo.utils.HttpUtils;
+
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
@@ -65,6 +70,21 @@ public class OkGo {
         mRetryCount = 3;
         mCacheTime = CacheEntity.CACHE_NEVER_EXPIRE;
         mCacheMode = CacheMode.NO_CACHE;
+
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor("OkGo");
+        loggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.BODY);
+        loggingInterceptor.setColorLevel(Level.INFO);
+        builder.addInterceptor(loggingInterceptor);
+
+        builder.readTimeout(OkGo.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
+        builder.writeTimeout(OkGo.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
+        builder.connectTimeout(OkGo.DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
+
+        HttpsUtils.SSLParams sslParams = HttpsUtils.getSslSocketFactory();
+        builder.sslSocketFactory(sslParams.sSLSocketFactory, sslParams.trustManager);
+        builder.hostnameVerifier(HttpsUtils.UnSafeHostnameVerifier);
+        okHttpClient = builder.build();
     }
 
     public static OkGo getInstance() {
