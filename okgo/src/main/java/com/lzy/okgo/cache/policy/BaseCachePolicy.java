@@ -179,7 +179,6 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
      * @param headers 响应头
      * @param data    响应数据
      */
-    @SuppressWarnings("unchecked")
     private void saveCache(Headers headers, T data) {
         if (request.getCacheMode() == CacheMode.NO_CACHE) return;    //不需要缓存,直接返回
         if (data instanceof Bitmap) return;             //Bitmap没有实现Serializable,不能缓存
@@ -190,7 +189,7 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
             CacheManager.getInstance().remove(request.getCacheKey());
         } else {
             //缓存命中，更新缓存
-            CacheManager.getInstance().replace(request.getCacheKey(), (CacheEntity<Object>) cache);
+            CacheManager.getInstance().replace(request.getCacheKey(), cache);
         }
     }
 

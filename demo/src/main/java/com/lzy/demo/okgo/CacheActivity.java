@@ -63,13 +63,15 @@ public class CacheActivity extends BaseDetailActivity {
         OkGo.getInstance().cancelTag(this);
     }
 
+    @SuppressWarnings("unchecked")
     @OnClick(R.id.getAll)
     public void getAll(View view) {
-        List<CacheEntity<Object>> all = CacheManager.getInstance().getAll();
+        // 获取所有的缓存，但是一般每个缓存的泛型都不一样，所以缓存的泛型使用 ？
+        List<CacheEntity<?>> all = CacheManager.getInstance().getAll();
         StringBuilder sb = new StringBuilder();
         sb.append("共" + all.size() + "条缓存：").append("\n\n");
         for (int i = 0; i < all.size(); i++) {
-            CacheEntity<Object> cacheEntity = all.get(i);
+            CacheEntity<?> cacheEntity = all.get(i);
             sb.append("第" + (i + 1) + "条缓存：").append("\n").append(cacheEntity).append("\n\n");
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

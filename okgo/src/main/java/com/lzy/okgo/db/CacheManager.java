@@ -31,7 +31,7 @@ import java.util.List;
  * 修订历史：
  * ================================================
  */
-public class CacheManager extends BaseDao<CacheEntity<Object>> {
+public class CacheManager extends BaseDao<CacheEntity<?>> {
 
     public static CacheManager getInstance() {
         return CacheManagerHolder.instance;
@@ -46,12 +46,12 @@ public class CacheManager extends BaseDao<CacheEntity<Object>> {
     }
 
     @Override
-    public CacheEntity<Object> parseCursorToBean(Cursor cursor) {
+    public CacheEntity<?> parseCursorToBean(Cursor cursor) {
         return CacheEntity.parseCursorToBean(cursor);
     }
 
     @Override
-    public ContentValues getContentValues(CacheEntity<Object> cacheEntity) {
+    public ContentValues getContentValues(CacheEntity<?> cacheEntity) {
         return CacheEntity.getContentValues(cacheEntity);
     }
 
@@ -65,9 +65,9 @@ public class CacheManager extends BaseDao<CacheEntity<Object>> {
     }
 
     /** 根据key获取缓存 */
-    public CacheEntity<Object> get(String key) {
+    public CacheEntity<?> get(String key) {
         if (key == null) return null;
-        List<CacheEntity<Object>> cacheEntities = query(CacheEntity.KEY + "=?", new String[]{key});
+        List<CacheEntity<?>> cacheEntities = query(CacheEntity.KEY + "=?", new String[]{key});
         return cacheEntities.size() > 0 ? cacheEntities.get(0) : null;
     }
 
@@ -84,7 +84,7 @@ public class CacheManager extends BaseDao<CacheEntity<Object>> {
     }
 
     /** 获取所有缓存 */
-    public List<CacheEntity<Object>> getAll() {
+    public List<CacheEntity<?>> getAll() {
         return queryAll();
     }
 
@@ -95,10 +95,9 @@ public class CacheManager extends BaseDao<CacheEntity<Object>> {
      * @param entity 需要替换的的缓存
      * @return 被替换的缓存
      */
-    @SuppressWarnings("unchecked")
     public <T> CacheEntity<T> replace(String key, CacheEntity<T> entity) {
         entity.setKey(key);
-        replace((CacheEntity<Object>) entity);
+        replace(entity);
         return entity;
     }
 

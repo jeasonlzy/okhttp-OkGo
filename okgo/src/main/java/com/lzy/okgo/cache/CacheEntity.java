@@ -35,21 +35,19 @@ import java.io.Serializable;
 public class CacheEntity<T> implements Serializable {
     private static final long serialVersionUID = -4337711009801627866L;
 
-    //表中的五个字段
+    public static final long CACHE_NEVER_EXPIRE = -1;        //缓存永不过期
+
+    //表中的字段
     public static final String KEY = "key";
     public static final String LOCAL_EXPIRE = "localExpire";
     public static final String HEAD = "head";
     public static final String DATA = "data";
 
-    public static final long CACHE_NEVER_EXPIRE = -1;        //缓存永不过期
-
-    private String key;
-    private long localExpire;
-    private HttpHeaders responseHeaders;
-    private T data;
-
-    //该变量不必保存到数据库,程序运行起来后会动态计算
-    private boolean isExpire;
+    private String key;                    // 缓存key
+    private long localExpire;              // 缓存过期时间
+    private HttpHeaders responseHeaders;   // 缓存的响应头
+    private T data;                        // 缓存的实体数据
+    private boolean isExpire;   //缓存是否过期该变量不必保存到数据库，程序运行起来后会动态计算
 
     public String getKey() {
         return key;
