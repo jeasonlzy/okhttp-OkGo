@@ -84,7 +84,7 @@ public class DownloadListActivity extends BaseActivity {
 
         initData();
         OkDownload.getInstance().setFolder(Environment.getExternalStorageDirectory().getAbsolutePath() + "/aaa/");
-        OkDownload.getInstance().getThreadPool().setCorePoolSize(1);
+        OkDownload.getInstance().getThreadPool().setCorePoolSize(3);
 
         folder.setText(String.format("下载路径: %s", OkDownload.getInstance().getFolder()));
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

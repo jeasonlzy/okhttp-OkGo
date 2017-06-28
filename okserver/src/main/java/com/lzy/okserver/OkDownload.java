@@ -29,9 +29,9 @@ import com.lzy.okserver.task.XExecutor;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * ================================================
@@ -44,9 +44,9 @@ import java.util.Map;
  */
 public class OkDownload {
 
-    private String folder;                      //下载的默认文件夹
-    private DownloadThreadPool threadPool;      //下载的线程池
-    private Map<String, DownloadTask> taskMap;  //所有任务
+    private String folder;                                      //下载的默认文件夹
+    private DownloadThreadPool threadPool;                      //下载的线程池
+    private ConcurrentHashMap<String, DownloadTask> taskMap;    //所有任务
 
     public static OkDownload getInstance() {
         return OkDownloadHolder.instance;
@@ -60,7 +60,7 @@ public class OkDownload {
         folder = Environment.getExternalStorageDirectory() + File.separator + "download" + File.separator;
         IOUtils.createFolder(folder);
         threadPool = new DownloadThreadPool();
-        taskMap = new LinkedHashMap<>();
+        taskMap = new ConcurrentHashMap<>();
 
         //校验数据的有效性，防止下载过程中退出，第二次进入的时候，由于状态没有更新导致的状态错误
         List<Progress> taskList = DownloadManager.getInstance().getDownloading();
