@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.FileNameMap;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
@@ -128,6 +129,11 @@ public class HttpUtils {
         String fileName = getHeaderFileName(response);
         if (TextUtils.isEmpty(fileName)) fileName = getUrlFileName(url);
         if (TextUtils.isEmpty(fileName)) fileName = "unknownfile_" + System.currentTimeMillis();
+        try {
+            fileName = URLDecoder.decode(fileName, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            OkLogger.printStackTrace(e);
+        }
         return fileName;
     }
 
