@@ -47,6 +47,15 @@ android {
     lintOptions {
         abortOnError false
     }
+    packagingOptions {
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/notice'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/rxjava.properties'
+    }
 }
 
 task makeApk {
@@ -62,7 +71,6 @@ task makeApk {
         }
     }
 }
-
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -80,13 +88,13 @@ dependencies {
     compile 'com.readystatesoftware.chuck:library:1.0.4'
 
     compile project(':okgo')
-//  compile project(':okrx')
+    compile project(':okrx')
     compile project(':okrx2')
     compile project(':okserver')
-//  compile 'com.lzy.net:okgo:3.0.0'
-//  compile 'com.lzy.net:okrx:1.0.0'
-//  compile 'com.lzy.net:okrx2:2.0.0'
-//  compile 'com.lzy.net:okserver:2.0.0'
+//  compile 'com.lzy.net:okgo:3.0.2'
+//  compile 'com.lzy.net:okrx:1.0.2'
+//  compile 'com.lzy.net:okrx2:2.0.2'
+//  compile 'com.lzy.net:okserver:2.0.2'
     compile 'com.lzy.widget:ninegridview:0.2.1'
     compile 'com.lzy.widget:imagepicker:0.3.2'
     compile 'com.lzy.widget:view-core:0.2.1'
