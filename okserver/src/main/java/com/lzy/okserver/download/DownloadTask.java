@@ -271,7 +271,10 @@ public class DownloadTask implements Runnable {
             postOnError(progress, OkGoException.BREAKPOINT_EXPIRED());
             return;
         }
-        if (startPosition == progress.totalSize && startPosition >= 0) {
+        if (startPosition == 0 && file.exists()) {
+            IOUtils.delFileOrFolder(file);
+        }
+        if (startPosition == progress.totalSize && startPosition > 0) {
             if (file.exists() && startPosition == file.length()) {
                 postOnFinish(progress, file);
                 return;

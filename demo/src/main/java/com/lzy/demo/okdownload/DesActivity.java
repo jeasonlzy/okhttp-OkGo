@@ -29,17 +29,13 @@ import com.lzy.demo.model.ApkModel;
 import com.lzy.demo.utils.ApkUtils;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.Progress;
-import com.lzy.okgo.request.PostRequest;
+import com.lzy.okgo.request.GetRequest;
 import com.lzy.okserver.OkDownload;
 import com.lzy.okserver.download.DownloadListener;
 import com.lzy.okserver.download.DownloadTask;
 
-import org.json.JSONObject;
-
 import java.io.File;
 import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -148,15 +144,9 @@ public class DesActivity extends BaseActivity {
         if (task == null) {
 
             //这里只是演示，表示请求可以传参，怎么传都行，和okgo使用方法一样
-            Map<String, String> map = new HashMap<>();
-            map.put("a", "1");
-            map.put("b", "2");
-            map.put("c", "3");
-            JSONObject jsonObject = new JSONObject(map);
-            PostRequest<File> request = OkGo.<File>post(apk.url)//
+            GetRequest<File> request = OkGo.<File>get(apk.url)//
                     .headers("aaa", "111")//
-                    .params("bbb", "222")//
-                    .upJson(jsonObject);
+                    .params("bbb", "222");
 
             task = OkDownload.request(apk.url, request)//
                     .priority(apk.priority)//
