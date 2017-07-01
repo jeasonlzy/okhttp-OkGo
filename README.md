@@ -73,6 +73,8 @@ Eclipse的用户(赶紧换AS吧)，可以选择添加本项目根目录中 `/jar
 - [Wiki文档首页请猛戳这里](https://github.com/jeasonlzy/okhttp-OkGo/wiki)
 - [Wiki文档首页请猛戳这里](https://github.com/jeasonlzy/okhttp-OkGo/wiki)
 
+![](http://7xss53.com1.z0.glb.clouddn.com/markdown/w0ujl.jpg)
+
 如果你不想编译项目，提供了apk供直接运行，方便查看效果，点击图标下载：[![](https://img.shields.io/badge/downloads-okgo__v3.0.2.apk-blue.svg)](http://7xss53.com1.z0.glb.clouddn.com/file/okgo_v3.0.2.apk)
 
 本项目Demo使用的是我自己的服务器，有时候可能不稳定，网速比较慢时请耐心等待，尴尬呀。。
