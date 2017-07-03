@@ -24,6 +24,9 @@ import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.cookie.SerializableCookie;
 import com.lzy.okgo.model.Progress;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * ================================================
  * 作    者：jeasonlzy（廖子尧）Github地址：https://github.com/jeasonlzy
@@ -41,6 +44,8 @@ class DBHelper extends SQLiteOpenHelper {
     static final String TABLE_COOKIE = "cookie";
     static final String TABLE_DOWNLOAD = "download";
     static final String TABLE_UPLOAD = "upload";
+
+    static final Lock lock = new ReentrantLock();
 
     private TableEntity cacheTableEntity = new TableEntity(TABLE_CACHE);
     private TableEntity cookieTableEntity = new TableEntity(TABLE_COOKIE);

@@ -196,6 +196,7 @@ public abstract class BaseDetailActivity extends BaseActivity {
 
     protected <T> void handleError(Response<T> response) {
         if (response == null) return;
+        if (response.getException() != null) response.getException().printStackTrace();
         StringBuilder sb;
         Call call = response.getRawCall();
         if (call != null) {

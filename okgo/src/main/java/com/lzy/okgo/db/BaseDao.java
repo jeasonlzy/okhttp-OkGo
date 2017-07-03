@@ -25,7 +25,7 @@ import com.lzy.okgo.utils.OkLogger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.Lock;
 
 /**
  * ================================================
@@ -39,13 +39,13 @@ import java.util.concurrent.locks.ReentrantLock;
 public abstract class BaseDao<T> {
 
     protected static String TAG;
-    protected ReentrantLock lock;
+    protected Lock lock;
     protected SQLiteOpenHelper helper;
     protected SQLiteDatabase database;
 
     public BaseDao(SQLiteOpenHelper helper) {
         TAG = getClass().getSimpleName();
-        lock = new ReentrantLock();
+        lock = DBHelper.lock;
         this.helper = helper;
         this.database = openWriter();
     }
