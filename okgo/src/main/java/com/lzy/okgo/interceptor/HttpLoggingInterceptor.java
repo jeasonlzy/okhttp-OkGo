@@ -32,7 +32,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-import okhttp3.internal.Util;
 import okhttp3.internal.http.HttpHeaders;
 import okio.Buffer;
 
@@ -65,6 +64,7 @@ public class HttpLoggingInterceptor implements Interceptor {
     }
 
     public void setPrintLevel(Level level) {
+        if (printLevel == null) throw new NullPointerException("printLevel == null. Use Level.NONE instead.");
         printLevel = level;
     }
 
@@ -72,7 +72,7 @@ public class HttpLoggingInterceptor implements Interceptor {
         colorLevel = level;
     }
 
-    public void log(String message) {
+    private void log(String message) {
         logger.log(colorLevel, message);
     }
 
@@ -113,9 +113,23 @@ public class HttpLoggingInterceptor implements Interceptor {
             log(requestStartMessage);
 
             if (logHeaders) {
+                if (hasRequestBody) {
+                    // Request body headers are only present when installed as a network interceptor. Force
+                    // them to be included (when available) so there values are known.
+                    if (requestBody.contentType() != null) {
+                        log("\tContent-Type: " + requestBody.contentType());
+                    }
+                    if (requestBody.contentLength() != -1) {
+                        log("\tContent-Length: " + requestBody.contentLength());
+                    }
+                }
                 Headers headers = request.headers();
                 for (int i = 0, count = headers.size(); i < count; i++) {
-                    log("\t" + headers.name(i) + ": " + headers.value(i));
+                    String name = headers.name(i);
+                    // Skip headers from the request body as they are explicitly logged above.
+                    if (!"Content-Type".equalsIgnoreCase(name) && !"Content-Length".equalsIgnoreCase(name)) {
+                        log("\t" + name + ": " + headers.value(i));
+                    }
                 }
 
                 log(" ");
@@ -123,7 +137,7 @@ public class HttpLoggingInterceptor implements Interceptor {
                     if (isPlaintext(requestBody.contentType())) {
                         bodyToString(request);
                     } else {
-                        log("\tbody: maybe [file part] , too large too print , ignored!");
+                        log("\tbody: maybe [binary body], omitted!");
                     }
                 }
             }
@@ -150,16 +164,17 @@ public class HttpLoggingInterceptor implements Interceptor {
                 }
                 log(" ");
                 if (logBody && HttpHeaders.hasBody(clone)) {
+                    if (responseBody == null) return response;
+
                     if (isPlaintext(responseBody.contentType())) {
                         byte[] bytes = IOUtils.toByteArray(responseBody.byteStream());
                         MediaType contentType = responseBody.contentType();
-                        Charset charset = contentType != null ? contentType.charset(Util.UTF_8) : Util.UTF_8;
-                        String body = new String(bytes, charset);
+                        String body = new String(bytes, getCharset(contentType));
                         log("\tbody:" + body);
                         responseBody = ResponseBody.create(responseBody.contentType(), bytes);
                         return response.newBuilder().body(responseBody).build();
                     } else {
-                        log("\tbody: maybe [file part] , too large too print , ignored!");
+                        log("\tbody: maybe [binary body], omitted!");
                     }
                 }
             }
@@ -169,6 +184,12 @@ public class HttpLoggingInterceptor implements Interceptor {
             log("<-- END HTTP");
         }
         return response;
+    }
+
+    private static Charset getCharset(MediaType contentType) {
+        Charset charset = contentType != null ? contentType.charset(UTF8) : UTF8;
+        if (charset == null) charset = UTF8;
+        return charset;
     }
 
     /**
@@ -191,14 +212,12 @@ public class HttpLoggingInterceptor implements Interceptor {
 
     private void bodyToString(Request request) {
         try {
-            final Request copy = request.newBuilder().build();
-            final Buffer buffer = new Buffer();
-            copy.body().writeTo(buffer);
-            Charset charset = UTF8;
-            MediaType contentType = copy.body().contentType();
-            if (contentType != null) {
-                charset = contentType.charset(UTF8);
-            }
+            Request copy = request.newBuilder().build();
+            RequestBody body = copy.body();
+            if (body == null) return;
+            Buffer buffer = new Buffer();
+            body.writeTo(buffer);
+            Charset charset = getCharset(body.contentType());
             log("\tbody:" + buffer.readString(charset));
         } catch (Exception e) {
             OkLogger.printStackTrace(e);
