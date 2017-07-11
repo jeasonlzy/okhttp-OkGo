@@ -37,7 +37,7 @@
 
 [![](https://img.shields.io/badge/API-14%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=14) [![](https://img.shields.io/badge/platform-android-brightgreen.svg)](https://developer.android.com/index.html) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/5b244560c35c445cbb00b9500b0c5d2a)](https://www.codacy.com/app/jeasonlzy/okhttp-OkGo?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jeasonlzy/okhttp-OkGo&amp;utm_campaign=Badge_Grade)  [![](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/jeasonlzy/okhttp-OkGo/blob/master/LICENSE)  [![](https://img.shields.io/badge/%E4%BD%9C%E8%80%85-jeasonlzy-orange.svg)](https://github.com/jeasonlzy)
 
-[![](https://img.shields.io/badge/OkGo-v3.0.2-brightgreen.svg)](https://github.com/jeasonlzy/okhttp-OkGo) [![](https://img.shields.io/badge/OkRx-v1.0.2-brightgreen.svg)](https://github.com/jeasonlzy/okhttp-OkGo) [![](https://img.shields.io/badge/OkRx2-v2.0.2-brightgreen.svg)](https://github.com/jeasonlzy/okhttp-OkGo) [![](https://img.shields.io/badge/OkServer-v2.0.2-brightgreen.svg)](https://github.com/jeasonlzy/okhttp-OkGo)
+[![](https://img.shields.io/badge/OkGo-v3.0.3-brightgreen.svg)](https://github.com/jeasonlzy/okhttp-OkGo) [![](https://img.shields.io/badge/OkRx-v1.0.2-brightgreen.svg)](https://github.com/jeasonlzy/okhttp-OkGo) [![](https://img.shields.io/badge/OkRx2-v2.0.2-brightgreen.svg)](https://github.com/jeasonlzy/okhttp-OkGo) [![](https://img.shields.io/badge/OkServer-v2.0.3-brightgreen.svg)](https://github.com/jeasonlzy/okhttp-OkGo)
 
 Android Studio用户
 
@@ -45,12 +45,12 @@ Android Studio用户
 
 ```java
 //必须使用
-compile 'com.lzy.net:okgo:3.0.2'
+compile 'com.lzy.net:okgo:3.0.3'
 
 //以下三个选择添加，okrx和okrx2不能同时使用
 compile 'com.lzy.net:okrx:1.0.2'
 compile 'com.lzy.net:okrx2:2.0.2'  
-compile 'com.lzy.net:okserver:2.0.2'
+compile 'com.lzy.net:okserver:2.0.3'
 ```
 
 Eclipse的用户(赶紧换AS吧)，可以选择添加本项目根目录中 `/jar` 目录下的jar包:
@@ -60,20 +60,20 @@ Eclipse的用户(赶紧换AS吧)，可以选择添加本项目根目录中 `/jar
 必须使用
 > [okhttp-3.8.1.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okhttp-3.8.1.jar)  
 [okio-1.13.0.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okio-1.13.0.jar)   
-[okgo-3.0.2.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okgo-3.0.2.jar)   
+[okgo-3.0.3.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okgo-3.0.3.jar)   
 
 以下三个选择添加，okrx和okrx2不能同时使用
 > [okrx-1.0.2.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okrx-1.0.2.jar)  
 [okrx2-2.0.2.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okrx2-2.0.2.jar)   
-[okserver-2.0.2.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okserver-2.0.2.jar)  
+[okserver-2.0.3.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okserver-2.0.3.jar)  
 
 ## 文档
 ### 该项目的文档全部以Wiki的形式展示，重要的事情说三遍
-- [Wiki文档首页请猛戳这里](https://github.com/jeasonlzy/okhttp-OkGo/wiki)
-- [Wiki文档首页请猛戳这里](https://github.com/jeasonlzy/okhttp-OkGo/wiki)
-- [Wiki文档首页请猛戳这里](https://github.com/jeasonlzy/okhttp-OkGo/wiki)
+- [点我，点我，我是文档，Wiki文档首页请猛戳这里](https://github.com/jeasonlzy/okhttp-OkGo/wiki)
+- [点我，点我，我是文档，Wiki文档首页请猛戳这里](https://github.com/jeasonlzy/okhttp-OkGo/wiki)
+- [点我，点我，我是文档，Wiki文档首页请猛戳这里](https://github.com/jeasonlzy/okhttp-OkGo/wiki)
 
-![](http://7xss53.com1.z0.glb.clouddn.com/markdown/w0ujl.jpg)
+[![](http://7xss53.com1.z0.glb.clouddn.com/markdown/w0ujl.jpg)](https://github.com/jeasonlzy/okhttp-OkGo/wiki)
 
 如果遇到使用问题，解决办法如下：
 1. 看上述文档中是否有相关描述
@@ -81,7 +81,7 @@ Eclipse的用户(赶紧换AS吧)，可以选择添加本项目根目录中 `/jar
 3. 如果你感觉是bug，或者有疑问，也欢迎在issues里面提问，我每天都会认真解答，[点击这里提问](https://github.com/jeasonlzy/okhttp-OkGo/issues)。
 4. 还有疑问，加入联系方式中的QQ群，大家一起讨论。
 
-如果你不想编译项目，提供了apk供直接运行，方便查看效果，点击图标下载：[![](https://img.shields.io/badge/downloads-okgo__v3.0.2.apk-blue.svg)](http://7xss53.com1.z0.glb.clouddn.com/file/okgo_v3.0.2.apk)
+如果你不想编译项目，提供了apk供直接运行，方便查看效果，点击图标下载：[![](https://img.shields.io/badge/downloads-okgo__v3.0.3.apk-blue.svg)](http://7xss53.com1.z0.glb.clouddn.com/file/okgo_v3.0.3.apk)
 
 本项目Demo使用的是我自己的服务器，有时候可能不稳定，网速比较慢时请耐心等待，尴尬呀。。
 
@@ -139,4 +139,5 @@ okgo, okrx, okrx2, okserver 所有代码均可以混淆,但是由于底层使用
  See the License for the specific language governing permissions and
  limitations under the License.
 ```
+
 

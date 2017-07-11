@@ -25,9 +25,9 @@ task clean(type: Delete) {
 }
 
 ext {
-    versionCode = 26
-    versionName_okgo = '3.0.2'
-    versionName_okserver = '2.0.2'
+    versionCode = 27
+    versionName_okgo = '3.0.3'
+    versionName_okserver = '2.0.3'
     versionName_okrx = '1.0.2'
     versionName_okrx2 = '2.0.2'
 
