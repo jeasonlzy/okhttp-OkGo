@@ -80,11 +80,6 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
         if (type == TYPE_ALL) values = OkDownload.restore(DownloadManager.getInstance().getAll());
         if (type == TYPE_FINISH) values = OkDownload.restore(DownloadManager.getInstance().getFinished());
         if (type == TYPE_ING) values = OkDownload.restore(DownloadManager.getInstance().getDownloading());
-
-        for (DownloadTask value : values) {
-            value.register(null);
-        }
-
         notifyDataSetChanged();
     }
 
@@ -175,13 +170,8 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
                     download.setText("等待");
                     break;
                 case Progress.FINISH:
-                    if (ApkUtils.isAvailable(context, new File(progress.filePath))) {
-                        download.setText("卸载");
-                    } else {
-                        download.setText("安装");
-                    }
-                    download.setText("完成");
                     netSpeed.setText("下载完成");
+                    download.setText("完成");
                     break;
                 case Progress.LOADING:
                     String speed = Formatter.formatFileSize(context, progress.speed);

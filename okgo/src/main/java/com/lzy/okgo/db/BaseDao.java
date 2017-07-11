@@ -78,8 +78,8 @@ public abstract class BaseDao<T> {
         } finally {
             database.endTransaction();
             lock.unlock();
+            OkLogger.v(TAG, System.currentTimeMillis() - start + " insertT");
         }
-        OkLogger.v(TAG, System.currentTimeMillis() - start + " insertT");
         return false;
     }
 
@@ -105,8 +105,8 @@ public abstract class BaseDao<T> {
         } finally {
             database.endTransaction();
             lock.unlock();
+            OkLogger.v(TAG, System.currentTimeMillis() - start + " insertList");
         }
-        OkLogger.v(TAG, System.currentTimeMillis() - start + " insertList");
         return false;
     }
 
@@ -146,8 +146,8 @@ public abstract class BaseDao<T> {
         } finally {
             database.endTransaction();
             lock.unlock();
+            OkLogger.v(TAG, System.currentTimeMillis() - start + " delete");
         }
-        OkLogger.v(TAG, System.currentTimeMillis() - start + " delete");
         return false;
     }
 
@@ -171,8 +171,8 @@ public abstract class BaseDao<T> {
         } finally {
             database.endTransaction();
             lock.unlock();
+            OkLogger.v(TAG, System.currentTimeMillis() - start + " deleteList");
         }
-        OkLogger.v(TAG, System.currentTimeMillis() - start + " deleteList");
         return false;
     }
 
@@ -199,8 +199,8 @@ public abstract class BaseDao<T> {
         } finally {
             database.endTransaction();
             lock.unlock();
+            OkLogger.v(TAG, System.currentTimeMillis() - start + " replaceT");
         }
-        OkLogger.v(TAG, System.currentTimeMillis() - start + " replaceT");
         return false;
     }
 
@@ -221,8 +221,8 @@ public abstract class BaseDao<T> {
         } finally {
             database.endTransaction();
             lock.unlock();
+            OkLogger.v(TAG, System.currentTimeMillis() - start + " replaceContentValues");
         }
-        OkLogger.v(TAG, System.currentTimeMillis() - start + " replaceContentValues");
         return false;
     }
 
@@ -246,8 +246,8 @@ public abstract class BaseDao<T> {
         } finally {
             database.endTransaction();
             lock.unlock();
+            OkLogger.v(TAG, System.currentTimeMillis() - start + " replaceList");
         }
-        OkLogger.v(TAG, System.currentTimeMillis() - start + " replaceList");
         return false;
     }
 
@@ -278,8 +278,8 @@ public abstract class BaseDao<T> {
         } finally {
             database.endTransaction();
             lock.unlock();
+            OkLogger.v(TAG, System.currentTimeMillis() - start + " updateT");
         }
-        OkLogger.v(TAG, System.currentTimeMillis() - start + " updateT");
         return false;
     }
 
@@ -302,8 +302,8 @@ public abstract class BaseDao<T> {
         } finally {
             database.endTransaction();
             lock.unlock();
+            OkLogger.v(TAG, System.currentTimeMillis() - start + " updateContentValues");
         }
-        OkLogger.v(TAG, System.currentTimeMillis() - start + " updateContentValues");
         return false;
     }
 
@@ -383,8 +383,8 @@ public abstract class BaseDao<T> {
             closeDatabase(null, cursor);
             database.endTransaction();
             lock.unlock();
+            OkLogger.v(TAG, System.currentTimeMillis() - start + " query");
         }
-        OkLogger.v(TAG, System.currentTimeMillis() - start + " query");
         return list;
     }
 

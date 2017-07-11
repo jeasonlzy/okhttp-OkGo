@@ -117,7 +117,7 @@ public class UploadAdapter extends RecyclerView.Adapter<UploadAdapter.ViewHolder
                 UploadTask<String> task = OkUpload.request(imageItem.path, postRequest)//
                         .priority(random.nextInt(100))//
                         .extra1(imageItem)//
-                        .register(null);
+                        .save();
                 values.add(task);
             }
         }

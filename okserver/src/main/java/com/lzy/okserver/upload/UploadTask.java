@@ -49,7 +49,6 @@ public class UploadTask<T> implements Runnable {
     public Map<Object, UploadListener<T>> listeners;
     private ThreadPoolExecutor executor;
     private PriorityRunnable priorityRunnable;
-    private boolean registed;
 
     public UploadTask(String tag, Request<T, ? extends Request> request) {
         HttpUtils.checkNotNull(tag, "tag == null");
@@ -91,9 +90,12 @@ public class UploadTask<T> implements Runnable {
         return this;
     }
 
-    public UploadTask<T> register(UploadListener<T> listener) {
-        registed = true;
+    public UploadTask<T> save() {
         UploadManager.getInstance().replace(progress);
+        return this;
+    }
+
+    public UploadTask<T> register(UploadListener<T> listener) {
         if (listener != null) {
             listeners.put(listener.tag, listener);
         }
@@ -111,7 +113,9 @@ public class UploadTask<T> implements Runnable {
     }
 
     public UploadTask<T> start() {
-        if (!registed) throw new IllegalStateException("you must call UploadTask#register() first！");
+        if (OkUpload.getInstance().getTask(progress.tag) == null || UploadManager.getInstance().get(progress.tag) == null) {
+            throw new IllegalStateException("you must call UploadTask#save() before UploadTask#start()！");
+        }
         if (progress.status != Progress.WAITING && progress.status != Progress.LOADING) {
             postOnStart(progress);
             postWaiting(progress);

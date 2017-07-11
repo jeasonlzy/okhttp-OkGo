@@ -151,6 +151,7 @@ public class DesActivity extends BaseActivity {
             task = OkDownload.request(apk.url, request)//
                     .priority(apk.priority)//
                     .extra1(apk)//
+                    .save()//
                     .register(new DesListener("DesListener"))//
                     .register(new LogDownloadListener());
         }
