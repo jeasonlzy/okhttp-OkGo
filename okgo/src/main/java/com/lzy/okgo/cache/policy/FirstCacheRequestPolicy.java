@@ -86,7 +86,8 @@ public class FirstCacheRequestPolicy<T> extends BaseCachePolicy<T> {
                 try {
                     prepareRawCall();
                 } catch (Throwable throwable) {
-                    Response.error(false, rawCall, null, throwable);
+                    Response<T> error = Response.error(false, rawCall, null, throwable);
+                    mCallback.onError(error);
                     return;
                 }
                 if (cacheEntity != null) {

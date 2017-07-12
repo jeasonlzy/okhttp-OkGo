@@ -324,7 +324,7 @@ public abstract class Request<T, R extends Request> implements Serializable {
     public Converter<T> getConverter() {
         // converter 优先级高于 callback
         if (converter == null) converter = callback;
-        HttpUtils.checkNotNull(converter, "converter == null, do you forget call Request#converter(Converter<T>) ?");
+        HttpUtils.checkNotNull(converter, "converter == null, do you forget to call Request#converter(Converter<T>) ?");
         return converter;
     }
 

@@ -99,7 +99,7 @@ public class TestActivity extends BaseActivity {
 
     @OnClick(R.id.btn3)
     public void btn3(View view) {
-        OkGo.<String>get(Urls.URL_METHOD)//
+        OkGo.<String>get("asdfasf")//
                 .tag(this)//
                 .headers(HttpHeaders.HEAD_KEY_USER_AGENT, "abcd")//
                 .execute(new StringCallback() {
