@@ -122,6 +122,9 @@ public class DownloadTask implements Runnable {
     }
 
     public DownloadTask save() {
+        if (!TextUtils.isEmpty(progress.folder) && !TextUtils.isEmpty(progress.fileName)) {
+            progress.filePath = new File(progress.folder, progress.fileName).getAbsolutePath();
+        }
         DownloadManager.getInstance().replace(progress);
         return this;
     }
@@ -302,6 +305,7 @@ public class DownloadTask implements Runnable {
             return;
         }
         try {
+            DownloadManager.getInstance().replace(progress);
             download(body.byteStream(), randomAccessFile, progress);
         } catch (IOException e) {
             postOnError(progress, e);
