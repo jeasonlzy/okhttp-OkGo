@@ -92,10 +92,10 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         DownloadTask task = values.get(position);
-        String holderTag = type + "_" + task.progress.tag;
-        task.register(new ListDownloadListener(holderTag, holder))//
+        String tag = createTag(task);
+        task.register(new ListDownloadListener(tag, holder))//
                 .register(new LogDownloadListener());
-        holder.setTag(holderTag);
+        holder.setTag(tag);
         holder.setTask(task);
         holder.bind();
         holder.refresh(task.progress);
@@ -104,8 +104,12 @@ public class DownloadAdapter extends RecyclerView.Adapter<DownloadAdapter.ViewHo
     public void unRegister() {
         Map<String, DownloadTask> taskMap = OkDownload.getInstance().getTaskMap();
         for (DownloadTask task : taskMap.values()) {
-            task.unRegister("ListDownloadListener_" + type);
+            task.unRegister(createTag(task));
         }
+    }
+
+    private String createTag(DownloadTask task) {
+        return type + "_" + task.progress.tag;
     }
 
     @Override

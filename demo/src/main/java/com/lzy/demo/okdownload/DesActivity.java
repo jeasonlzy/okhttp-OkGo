@@ -87,7 +87,7 @@ public class DesActivity extends BaseActivity {
 //        Progress progress = DownloadManager.getInstance().get(apk.getUrl());
 //        if (progress != null) {
 //            task = OkDownload.restore(progress)//
-//                    .register(new DesListener("DesActivity1"))//
+//                    .register(new DesListener("DesListener"))//
 //                    .register(new LogDownloadListener());
 //        }
 

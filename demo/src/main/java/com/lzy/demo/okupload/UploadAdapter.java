@@ -135,10 +135,10 @@ public class UploadAdapter extends RecyclerView.Adapter<UploadAdapter.ViewHolder
     public void onBindViewHolder(ViewHolder holder, int position) {
         //noinspection unchecked
         UploadTask<String> task = (UploadTask<String>) values.get(position);
-        String holderTag = type + "_" + task.progress.tag;
-        task.register(new ListUploadListener(holderTag, holder))//
+        String tag = createTag(task);
+        task.register(new ListUploadListener(tag, holder))//
                 .register(new LogUploadListener<String>());
-        holder.setTag(holderTag);
+        holder.setTag(tag);
         holder.setTask(task);
         holder.bind();
         holder.refresh(task.progress);
@@ -147,8 +147,12 @@ public class UploadAdapter extends RecyclerView.Adapter<UploadAdapter.ViewHolder
     public void unRegister() {
         Map<String, UploadTask<?>> taskMap = OkUpload.getInstance().getTaskMap();
         for (UploadTask<?> task : taskMap.values()) {
-            task.unRegister("ListUploadListener_" + type);
+            task.unRegister(createTag(task));
         }
+    }
+
+    private String createTag(UploadTask task) {
+        return type + "_" + task.progress.tag;
     }
 
     @Override
