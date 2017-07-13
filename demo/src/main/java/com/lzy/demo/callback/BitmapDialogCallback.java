@@ -40,7 +40,8 @@ public abstract class BitmapDialogCallback extends BitmapCallback {
         super(1000, 1000);
         dialog = new ProgressDialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(true);
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         dialog.setMessage("请求网络中...");
     }
