@@ -177,7 +177,10 @@ public class DesActivity extends BaseActivity {
 
     @OnClick(R.id.remove)
     public void remove() {
-        if (task != null) task.remove();
+        if (task != null) {
+            task.remove();
+            task = null;
+        }
         downloadSize.setText("--M/--M");
         netSpeed.setText("---/s");
         tvProgress.setText("--.--%");
