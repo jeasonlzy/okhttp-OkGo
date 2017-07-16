@@ -22,6 +22,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -41,17 +42,17 @@ public interface HasBody<R> {
 
     R isSpliceUrl(boolean isSpliceUrl);
 
-    R upRequestBody(RequestBody requestBody);
+    R params(String key, File file, boolean... isReplace);
 
-    R params(String key, File file);
+    R params(String key, File file, String fileName, boolean... isReplace);
 
-    R addFileParams(String key, List<File> files);
+    R params(String key, File file, String fileName, MediaType contentType, boolean... isReplace);
 
-    R addFileWrapperParams(String key, List<HttpParams.FileWrapper> fileWrappers);
+    R paramsFileMap(Map<String, File> params, boolean... isReplace);
 
-    R params(String key, File file, String fileName);
+    R paramsFileList(String key, List<File> files, boolean... isReplace);
 
-    R params(String key, File file, String fileName, MediaType contentType);
+    R paramsFileWrapperList(String key, List<HttpParams.FileWrapper> fileWrappers, boolean... isReplace);
 
     R upString(String string);
 
@@ -70,4 +71,6 @@ public interface HasBody<R> {
     R upFile(File file);
 
     R upFile(File file, MediaType mediaType);
+
+    R upRequestBody(RequestBody requestBody);
 }

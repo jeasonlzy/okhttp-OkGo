@@ -27,13 +27,21 @@ import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.adapter.Call;
 import com.lzy.okgo.callback.StringCallback;
+import com.lzy.okgo.convert.StringConvert;
 import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.Response;
+import com.lzy.okgo.request.PostRequest;
+import com.lzy.okrx.adapter.ObservableBody;
 
 import org.json.JSONObject;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
 import butterknife.Bind;
 import butterknife.OnClick;
+import rx.Observable;
 
 /**
  * ================================================
@@ -108,5 +116,15 @@ public class TestActivity extends BaseActivity {
 
                     }
                 });
+
+        Map<String, String> urlMaps = new HashMap<>();
+        Map<String, File> fileMaps = new HashMap<>();
+
+        Observable<String> observable = OkGo.<String>post("url")
+                .tag(this)
+                .paramsStringMap(urlMaps)
+                .paramsFileMap(fileMaps)
+                .converter(new StringConvert())
+                .adapt(new ObservableBody<String>());
     }
 }

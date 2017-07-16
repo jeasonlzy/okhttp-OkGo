@@ -132,7 +132,7 @@ public class RxFormUploadActivity extends BaseRxDetailActivity {
 
     @OnClick(R.id.formUpload1)
     public void formUpload1(View view) {
-        ArrayList<File> files = new ArrayList<>();
+        List<File> files = new ArrayList<>();
         if (imageItems != null && imageItems.size() > 0) {
             for (int i = 0; i < imageItems.size(); i++) {
                 files.add(new File(imageItems.get(i).path));
@@ -148,7 +148,7 @@ public class RxFormUploadActivity extends BaseRxDetailActivity {
 //                .params("file1",new File("文件路径"))
 //                .params("file2",new File("文件路径"))
 //                .params("file3",new File("文件路径"))
-                .addFileParams("file", files)//
+                .paramsFileList("file", files)//
                 .converter(new StringConvert())//
                 .adapt(new ObservableResponse<String>())//
                 .doOnSubscribe(new Consumer<Disposable>() {
@@ -206,7 +206,7 @@ public class RxFormUploadActivity extends BaseRxDetailActivity {
                         //.params("file1",new File("文件路径"))
                         //.params("file2",new File("文件路径"))
                         //.params("file3",new File("文件路径"))
-                        .addFileParams("file", files)//
+                        .paramsFileList("file", files)//
                         .execute(new StringCallback() {
                             @Override
                             public void onSuccess(Response<String> response) {

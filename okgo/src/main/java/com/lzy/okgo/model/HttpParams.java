@@ -48,11 +48,8 @@ public class HttpParams implements Serializable {
 
     public static final boolean IS_REPLACE = true;
 
-    /** 普通的键值对参数 */
-    public LinkedHashMap<String, List<String>> urlParamsMap;
-
-    /** 文件的键值对参数 */
-    public LinkedHashMap<String, List<FileWrapper>> fileParamsMap;
+    public LinkedHashMap<String, List<String>> stringParamsMap;         //普通的键值对参数
+    public LinkedHashMap<String, List<FileWrapper>> fileParamsMap;      //文件的键值对参数
 
     public HttpParams() {
         init();
@@ -65,147 +62,168 @@ public class HttpParams implements Serializable {
 
     public HttpParams(String key, File file) {
         init();
-        put(key, file);
+        put(key, file, IS_REPLACE);
     }
 
     private void init() {
-        urlParamsMap = new LinkedHashMap<>();
+        stringParamsMap = new LinkedHashMap<>();
         fileParamsMap = new LinkedHashMap<>();
     }
 
     public void put(HttpParams params) {
-        if (params != null) {
-            if (params.urlParamsMap != null && !params.urlParamsMap.isEmpty()) urlParamsMap.putAll(params.urlParamsMap);
-            if (params.fileParamsMap != null && !params.fileParamsMap.isEmpty()) fileParamsMap.putAll(params.fileParamsMap);
+        if (params == null) return;
+
+        if (params.stringParamsMap != null && !params.stringParamsMap.isEmpty()) {
+            stringParamsMap.putAll(params.stringParamsMap);
+        }
+        if (params.fileParamsMap != null && !params.fileParamsMap.isEmpty()) {
+            fileParamsMap.putAll(params.fileParamsMap);
         }
     }
 
-    public void put(Map<String, String> params, boolean... isReplace) {
+    public void put(String key, int value, boolean... isReplace) {
+        put(key, String.valueOf(value), isReplace);
+    }
+
+    public void put(String key, long value, boolean... isReplace) {
+        put(key, String.valueOf(value), isReplace);
+    }
+
+    public void put(String key, float value, boolean... isReplace) {
+        put(key, String.valueOf(value), isReplace);
+    }
+
+    public void put(String key, double value, boolean... isReplace) {
+        put(key, String.valueOf(value), isReplace);
+    }
+
+    public void put(String key, char value, boolean... isReplace) {
+        put(key, String.valueOf(value), isReplace);
+    }
+
+    public void put(String key, boolean value, boolean... isReplace) {
+        put(key, String.valueOf(value), isReplace);
+    }
+
+    public void put(String key, String value, boolean... isReplace) {
+        if (key == null || value == null) return;
+
+        boolean replace = IS_REPLACE;
+        if (isReplace != null && isReplace.length > 0) {
+            replace = isReplace[0];
+        }
+
+        List<String> stringParams = stringParamsMap.get(key);
+        if (stringParams == null) {
+            stringParams = new ArrayList<>();
+            stringParamsMap.put(key, stringParams);
+        }
+        if (replace) stringParams.clear();
+        stringParams.add(value);
+    }
+
+    public void putStringMap(Map<String, String> params, boolean... isReplace) {
         if (params == null || params.isEmpty()) return;
+
         for (Map.Entry<String, String> entry : params.entrySet()) {
             put(entry.getKey(), entry.getValue(), isReplace);
         }
     }
 
-    public void put(String key, String value, boolean... isReplace) {
+    public void putStringList(String key, List<String> values, boolean... isReplace) {
+        if (key == null || values == null || values.isEmpty()) return;
+
+        boolean replace = IS_REPLACE;
         if (isReplace != null && isReplace.length > 0) {
-            put(key, value, isReplace[0]);
-        } else {
-            put(key, value, IS_REPLACE);
+            replace = isReplace[0];
+        }
+        if (replace) {
+            List<String> params = stringParamsMap.get(key);
+            if (params != null) params.clear();
+        }
+
+        for (String value : values) {
+            put(key, value, false);
         }
     }
 
-    public void put(String key, int value, boolean... isReplace) {
+    public void put(String key, File file, boolean... isReplace) {
+        if (file == null) return;
+
+        put(key, file, file.getName(), isReplace);
+    }
+
+    public void put(String key, File file, String fileName, boolean... isReplace) {
+        put(key, file, fileName, HttpUtils.guessMimeType(fileName), isReplace);
+    }
+
+    public void put(String key, FileWrapper fileWrapper, boolean... isReplace) {
+        if (fileWrapper == null) return;
+
+        put(key, fileWrapper.file, fileWrapper.fileName, fileWrapper.contentType, isReplace);
+    }
+
+    public void put(String key, File file, String fileName, MediaType contentType, boolean... isReplace) {
+        if (key == null || file == null) return;
+
+        boolean replace = IS_REPLACE;
         if (isReplace != null && isReplace.length > 0) {
-            put(key, String.valueOf(value), isReplace[0]);
-        } else {
-            put(key, String.valueOf(value), IS_REPLACE);
+            replace = isReplace[0];
+        }
+
+        List<FileWrapper> fileParams = fileParamsMap.get(key);
+        if (fileParams == null) {
+            fileParams = new ArrayList<>();
+            fileParamsMap.put(key, fileParams);
+        }
+        if (replace) fileParams.clear();
+        fileParams.add(new FileWrapper(file, fileName, contentType));
+    }
+
+    public void putFileMap(Map<String, File> params, boolean... isReplace) {
+        if (params == null || params.isEmpty()) return;
+
+        for (Map.Entry<String, File> entry : params.entrySet()) {
+            put(entry.getKey(), entry.getValue(), isReplace);
         }
     }
 
-    public void put(String key, long value, boolean... isReplace) {
+    public void putFileList(String key, List<File> files, boolean... isReplace) {
+        if (key == null || files == null || files.isEmpty()) return;
+
+        boolean replace = IS_REPLACE;
         if (isReplace != null && isReplace.length > 0) {
-            put(key, String.valueOf(value), isReplace[0]);
-        } else {
-            put(key, String.valueOf(value), IS_REPLACE);
+            replace = isReplace[0];
+        }
+        if (replace) {
+            List<FileWrapper> params = fileParamsMap.get(key);
+            if (params != null) params.clear();
+        }
+
+        for (File file : files) {
+            put(key, file, false);
         }
     }
 
-    public void put(String key, float value, boolean... isReplace) {
+    public void putFileWrapperList(String key, List<FileWrapper> fileWrappers, boolean... isReplace) {
+        if (key == null || fileWrappers == null || fileWrappers.isEmpty()) return;
+
+        boolean replace = IS_REPLACE;
         if (isReplace != null && isReplace.length > 0) {
-            put(key, String.valueOf(value), isReplace[0]);
-        } else {
-            put(key, String.valueOf(value), IS_REPLACE);
+            replace = isReplace[0];
         }
-    }
-
-    public void put(String key, double value, boolean... isReplace) {
-        if (isReplace != null && isReplace.length > 0) {
-            put(key, String.valueOf(value), isReplace[0]);
-        } else {
-            put(key, String.valueOf(value), IS_REPLACE);
+        if (replace) {
+            List<FileWrapper> params = fileParamsMap.get(key);
+            if (params != null) params.clear();
         }
-    }
 
-    public void put(String key, char value, boolean... isReplace) {
-        if (isReplace != null && isReplace.length > 0) {
-            put(key, String.valueOf(value), isReplace[0]);
-        } else {
-            put(key, String.valueOf(value), IS_REPLACE);
-        }
-    }
-
-    public void put(String key, boolean value, boolean... isReplace) {
-        if (isReplace != null && isReplace.length > 0) {
-            put(key, String.valueOf(value), isReplace[0]);
-        } else {
-            put(key, String.valueOf(value), IS_REPLACE);
-        }
-    }
-
-    private void put(String key, String value, boolean isReplace) {
-        if (key != null && value != null) {
-            List<String> urlValues = urlParamsMap.get(key);
-            if (urlValues == null) {
-                urlValues = new ArrayList<>();
-                urlParamsMap.put(key, urlValues);
-            }
-            if (isReplace) urlValues.clear();
-            urlValues.add(value);
-        }
-    }
-
-    public void putUrlParams(String key, List<String> values) {
-        if (key != null && values != null && !values.isEmpty()) {
-            for (String value : values) {
-                put(key, value, false);
-            }
-        }
-    }
-
-    public void put(String key, File file) {
-        put(key, file, file.getName());
-    }
-
-    public void put(String key, File file, String fileName) {
-        put(key, file, fileName, HttpUtils.guessMimeType(fileName));
-    }
-
-    public void put(String key, FileWrapper fileWrapper) {
-        if (key != null && fileWrapper != null) {
-            put(key, fileWrapper.file, fileWrapper.fileName, fileWrapper.contentType);
-        }
-    }
-
-    public void put(String key, File file, String fileName, MediaType contentType) {
-        if (key != null) {
-            List<FileWrapper> fileWrappers = fileParamsMap.get(key);
-            if (fileWrappers == null) {
-                fileWrappers = new ArrayList<>();
-                fileParamsMap.put(key, fileWrappers);
-            }
-            fileWrappers.add(new FileWrapper(file, fileName, contentType));
-        }
-    }
-
-    public void putFileParams(String key, List<File> files) {
-        if (key != null && files != null && !files.isEmpty()) {
-            for (File file : files) {
-                put(key, file);
-            }
-        }
-    }
-
-    public void putFileWrapperParams(String key, List<FileWrapper> fileWrappers) {
-        if (key != null && fileWrappers != null && !fileWrappers.isEmpty()) {
-            for (FileWrapper fileWrapper : fileWrappers) {
-                put(key, fileWrapper);
-            }
+        for (FileWrapper fileWrapper : fileWrappers) {
+            put(key, fileWrapper, false);
         }
     }
 
     public void removeUrl(String key) {
-        urlParamsMap.remove(key);
+        stringParamsMap.remove(key);
     }
 
     public void removeFile(String key) {
@@ -218,7 +236,7 @@ public class HttpParams implements Serializable {
     }
 
     public void clear() {
-        urlParamsMap.clear();
+        stringParamsMap.clear();
         fileParamsMap.clear();
     }
 
@@ -262,7 +280,7 @@ public class HttpParams implements Serializable {
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
-        for (ConcurrentHashMap.Entry<String, List<String>> entry : urlParamsMap.entrySet()) {
+        for (ConcurrentHashMap.Entry<String, List<String>> entry : stringParamsMap.entrySet()) {
             if (result.length() > 0) result.append("&");
             result.append(entry.getKey()).append("=").append(entry.getValue());
         }

@@ -56,7 +56,7 @@ public abstract class EncryptCallback<T> extends JsonCallback<T> {
         params.put("timestamp", "" + (System.currentTimeMillis() / 1000L));
         StringBuilder sb = new StringBuilder();
         Map<String, String> map = new HashMap<>();
-        for (Map.Entry<String, List<String>> entry : params.urlParamsMap.entrySet()) {
+        for (Map.Entry<String, List<String>> entry : params.stringParamsMap.entrySet()) {
             map.put(entry.getKey(), entry.getValue().get(0));
         }
         for (Map.Entry<String, String> entry : getSortedMapByKey(map).entrySet()) {

@@ -93,8 +93,8 @@ public class HttpUtils {
         if (params.fileParamsMap.isEmpty() && !isMultipart) {
             //表单提交，没有文件
             FormBody.Builder bodyBuilder = new FormBody.Builder();
-            for (String key : params.urlParamsMap.keySet()) {
-                List<String> urlValues = params.urlParamsMap.get(key);
+            for (String key : params.stringParamsMap.keySet()) {
+                List<String> urlValues = params.stringParamsMap.get(key);
                 for (String value : urlValues) {
                     bodyBuilder.add(key, value);
                 }
@@ -104,8 +104,8 @@ public class HttpUtils {
             //表单提交，有文件
             MultipartBody.Builder multipartBodybuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
             //拼接键值对
-            if (!params.urlParamsMap.isEmpty()) {
-                for (Map.Entry<String, List<String>> entry : params.urlParamsMap.entrySet()) {
+            if (!params.stringParamsMap.isEmpty()) {
+                for (Map.Entry<String, List<String>> entry : params.stringParamsMap.entrySet()) {
                     List<String> urlValues = entry.getValue();
                     for (String value : urlValues) {
                         multipartBodybuilder.addFormDataPart(entry.getKey(), value);

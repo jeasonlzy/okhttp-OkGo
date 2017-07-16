@@ -66,7 +66,7 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
     public CacheEntity<T> prepareCache() {
         //check the config of cache
         if (request.getCacheKey() == null) {
-            request.cacheKey(HttpUtils.createUrlFromParams(request.getBaseUrl(), request.getParams().urlParamsMap));
+            request.cacheKey(HttpUtils.createUrlFromParams(request.getBaseUrl(), request.getParams().stringParamsMap));
         }
         if (request.getCacheMode() == null) {
             request.cacheMode(CacheMode.NO_CACHE);
