@@ -48,8 +48,10 @@ public class HttpParams implements Serializable {
 
     public static final boolean IS_REPLACE = true;
 
-    public LinkedHashMap<String, List<String>> stringParamsMap;         //普通的键值对参数
-    public LinkedHashMap<String, List<FileWrapper>> fileParamsMap;      //文件的键值对参数
+    public LinkedHashMap<String, String> pathParamsMap;             //url路径参数
+    public LinkedHashMap<String, List<String>> stringParamsMap;     //普通的键值对参数
+    public LinkedHashMap<String, List<String>> queryParamsMap;      //普通的键值对参数
+    public LinkedHashMap<String, List<FileWrapper>> fileParamsMap;  //文件的键值对参数
 
     public HttpParams() {
         init();
@@ -66,7 +68,9 @@ public class HttpParams implements Serializable {
     }
 
     private void init() {
+        pathParamsMap = new LinkedHashMap<>();
         stringParamsMap = new LinkedHashMap<>();
+        queryParamsMap = new LinkedHashMap<>();
         fileParamsMap = new LinkedHashMap<>();
     }
 
@@ -219,6 +223,78 @@ public class HttpParams implements Serializable {
 
         for (FileWrapper fileWrapper : fileWrappers) {
             put(key, fileWrapper, false);
+        }
+    }
+
+    public void putPath(String key, String value) {
+        if (key == null || value == null) return;
+
+        pathParamsMap.put(key, value);
+    }
+
+    public void putQuery(String key, int value, boolean... isReplace) {
+        putQuery(key, String.valueOf(value), isReplace);
+    }
+
+    public void putQuery(String key, long value, boolean... isReplace) {
+        putQuery(key, String.valueOf(value), isReplace);
+    }
+
+    public void putQuery(String key, float value, boolean... isReplace) {
+        putQuery(key, String.valueOf(value), isReplace);
+    }
+
+    public void putQuery(String key, double value, boolean... isReplace) {
+        putQuery(key, String.valueOf(value), isReplace);
+    }
+
+    public void putQuery(String key, char value, boolean... isReplace) {
+        putQuery(key, String.valueOf(value), isReplace);
+    }
+
+    public void putQuery(String key, boolean value, boolean... isReplace) {
+        putQuery(key, String.valueOf(value), isReplace);
+    }
+
+    public void putQuery(String key, String value, boolean... isReplace) {
+        if (key == null || value == null) return;
+
+        boolean replace = IS_REPLACE;
+        if (isReplace != null && isReplace.length > 0) {
+            replace = isReplace[0];
+        }
+
+        List<String> stringParams = queryParamsMap.get(key);
+        if (stringParams == null) {
+            stringParams = new ArrayList<>();
+            queryParamsMap.put(key, stringParams);
+        }
+        if (replace) stringParams.clear();
+        stringParams.add(value);
+    }
+
+    public void putQueryStringMap(Map<String, String> params, boolean... isReplace) {
+        if (params == null || params.isEmpty()) return;
+
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            putQuery(entry.getKey(), entry.getValue(), isReplace);
+        }
+    }
+
+    public void putQueryStringList(String key, List<String> values, boolean... isReplace) {
+        if (key == null || values == null || values.isEmpty()) return;
+
+        boolean replace = IS_REPLACE;
+        if (isReplace != null && isReplace.length > 0) {
+            replace = isReplace[0];
+        }
+        if (replace) {
+            List<String> params = stringParamsMap.get(key);
+            if (params != null) params.clear();
+        }
+
+        for (String value : values) {
+            putQuery(key, value, false);
         }
     }
 

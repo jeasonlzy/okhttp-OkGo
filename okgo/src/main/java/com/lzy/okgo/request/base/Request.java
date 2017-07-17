@@ -232,6 +232,12 @@ public abstract class Request<T, R extends Request> implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
+    public R paramsPath(String key, String value) {
+        params.putPath(key, value);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
     public R removeHeader(String key) {
         headers.remove(key);
         return (R) this;

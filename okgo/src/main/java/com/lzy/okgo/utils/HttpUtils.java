@@ -26,12 +26,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import okhttp3.FormBody;
 import okhttp3.Headers;
+import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.Request;
@@ -49,26 +50,32 @@ import okhttp3.Response;
  */
 public class HttpUtils {
     /** 将传递进来的参数拼接成 url */
-    public static String createUrlFromParams(String url, Map<String, List<String>> params) {
+    public static String createUrlFromParams(String url, boolean isSpliceUrl, HttpParams httpParams) {
         try {
-            StringBuilder sb = new StringBuilder();
-            sb.append(url);
-            if (url.indexOf('&') > 0 || url.indexOf('?') > 0) sb.append("&");
-            else sb.append("?");
-            for (Map.Entry<String, List<String>> urlParams : params.entrySet()) {
-                List<String> urlValues = urlParams.getValue();
-                for (String value : urlValues) {
-                    //对参数进行 utf-8 编码,防止头信息传中文
-                    String urlValue = URLEncoder.encode(value, "UTF-8");
-                    sb.append(urlParams.getKey()).append("=").append(urlValue).append("&");
+            String tempUrl = url;
+            for (Map.Entry<String, String> pathParams : httpParams.pathParamsMap.entrySet()) {
+                tempUrl = tempUrl.replace("{" + pathParams.getKey() + "}", String.valueOf(pathParams.getValue()));
+            }
+            HttpUrl httpUrl = HttpUrl.parse(tempUrl);
+            if (httpUrl == null) return tempUrl;
+
+            HttpUrl.Builder urlBuilder = httpUrl.newBuilder();
+            Map<String, List<String>> params = new LinkedHashMap<>();
+            if (isSpliceUrl) {
+                params.putAll(httpParams.stringParamsMap);
+            }
+            params.putAll(httpParams.queryParamsMap);
+            for (Map.Entry<String, List<String>> queryParams : params.entrySet()) {
+                List<String> queryValues = queryParams.getValue();
+                for (String value : queryValues) {
+                    urlBuilder.addQueryParameter(queryParams.getKey(), value);
                 }
             }
-            sb.deleteCharAt(sb.length() - 1);
-            return sb.toString();
-        } catch (UnsupportedEncodingException e) {
+            return urlBuilder.build().toString();
+        } catch (Exception e) {
             OkLogger.printStackTrace(e);
+            return url;
         }
-        return url;
     }
 
     /** 通用的拼接请求头 */

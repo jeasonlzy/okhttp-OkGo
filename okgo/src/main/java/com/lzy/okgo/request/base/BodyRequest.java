@@ -115,6 +115,69 @@ public abstract class BodyRequest<T, R extends BodyRequest> extends Request<T, R
         return (R) this;
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public R paramsQuery(String key, String value, boolean... isReplace) {
+        params.putQuery(key, value, isReplace);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public R paramsQuery(String key, int value, boolean... isReplace) {
+        params.putQuery(key, value, isReplace);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public R paramsQuery(String key, float value, boolean... isReplace) {
+        params.putQuery(key, value, isReplace);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public R paramsQuery(String key, double value, boolean... isReplace) {
+        params.putQuery(key, value, isReplace);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public R paramsQuery(String key, long value, boolean... isReplace) {
+        params.putQuery(key, value, isReplace);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public R paramsQuery(String key, char value, boolean... isReplace) {
+        params.putQuery(key, value, isReplace);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public R paramsQuery(String key, boolean value, boolean... isReplace) {
+        params.putQuery(key, value, isReplace);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public R paramsQueryStringMap(Map<String, String> params, boolean... isReplace) {
+        this.params.putQueryStringMap(params, isReplace);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public R paramsQueryStringList(String key, List<String> values, boolean... isReplace) {
+        params.putQueryStringList(key, values, isReplace);
+        return (R) this;
+    }
+
     /** 注意使用该方法上传字符串会清空实体中其他所有的参数，头信息不清除 */
     @SuppressWarnings("unchecked")
     @Override
@@ -208,7 +271,7 @@ public abstract class BodyRequest<T, R extends BodyRequest> extends Request<T, R
 
     @Override
     public RequestBody generateRequestBody() {
-        if (isSpliceUrl) url = HttpUtils.createUrlFromParams(baseUrl, params.stringParamsMap);
+        url = HttpUtils.createUrlFromParams(baseUrl, isSpliceUrl, params);
 
         if (requestBody != null) return requestBody;                                                //自定义的请求体
         if (content != null && mediaType != null) return RequestBody.create(mediaType, content);    //上传字符串数据

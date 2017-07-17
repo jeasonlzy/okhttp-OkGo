@@ -54,6 +54,24 @@ public interface HasBody<R> {
 
     R paramsFileWrapperList(String key, List<HttpParams.FileWrapper> fileWrappers, boolean... isReplace);
 
+    R paramsQuery(String key, String value, boolean... isReplace);
+
+    R paramsQuery(String key, int value, boolean... isReplace);
+
+    R paramsQuery(String key, float value, boolean... isReplace);
+
+    R paramsQuery(String key, double value, boolean... isReplace);
+
+    R paramsQuery(String key, long value, boolean... isReplace);
+
+    R paramsQuery(String key, char value, boolean... isReplace);
+
+    R paramsQuery(String key, boolean value, boolean... isReplace);
+
+    R paramsQueryStringMap(Map<String, String> params, boolean... isReplace);
+
+    R paramsQueryStringList(String key, List<String> values, boolean... isReplace);
+
     R upString(String string);
 
     R upString(String string, MediaType mediaType);
