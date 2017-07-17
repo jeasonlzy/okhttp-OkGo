@@ -48,7 +48,7 @@
 
 [![](https://img.shields.io/badge/API-14%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=14) [![](https://img.shields.io/badge/platform-android-brightgreen.svg)](https://developer.android.com/index.html) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/5b244560c35c445cbb00b9500b0c5d2a)](https://www.codacy.com/app/jeasonlzy/okhttp-OkGo?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jeasonlzy/okhttp-OkGo&amp;utm_campaign=Badge_Grade)  [![](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/jeasonlzy/okhttp-OkGo/blob/master/LICENSE)  [![](https://img.shields.io/badge/%E4%BD%9C%E8%80%85-jeasonlzy-orange.svg)](https://github.com/jeasonlzy)
 
-[![](https://img.shields.io/badge/OkGo-v3.0.4-brightgreen.svg)](https://github.com/jeasonlzy/okhttp-OkGo) [![](https://img.shields.io/badge/OkRx-v1.0.2-brightgreen.svg)](https://github.com/jeasonlzy/okhttp-OkGo) [![](https://img.shields.io/badge/OkRx2-v2.0.2-brightgreen.svg)](https://github.com/jeasonlzy/okhttp-OkGo) [![](https://img.shields.io/badge/OkServer-v2.0.4-brightgreen.svg)](https://github.com/jeasonlzy/okhttp-OkGo)
+[![](https://img.shields.io/badge/OkGo-v3.0.4-brightgreen.svg)](https://github.com/jeasonlzy/okhttp-OkGo) [![](https://img.shields.io/badge/OkRx-v1.0.2-brightgreen.svg)](https://github.com/jeasonlzy/okhttp-OkGo) [![](https://img.shields.io/badge/OkRx2-v2.0.2-brightgreen.svg)](https://github.com/jeasonlzy/okhttp-OkGo) [![](https://img.shields.io/badge/OkServer-v2.0.5-brightgreen.svg)](https://github.com/jeasonlzy/okhttp-OkGo)
 
 Android Studio用户
 
@@ -61,7 +61,7 @@ compile 'com.lzy.net:okgo:3.0.4'
 //以下三个选择添加，okrx和okrx2不能同时使用
 compile 'com.lzy.net:okrx:1.0.2'
 compile 'com.lzy.net:okrx2:2.0.2'  
-compile 'com.lzy.net:okserver:2.0.4'
+compile 'com.lzy.net:okserver:2.0.5'
 ```
 
 Eclipse的用户(赶紧换AS吧)，可以选择添加本项目根目录中 `/jar` 目录下的jar包:
@@ -76,7 +76,7 @@ Eclipse的用户(赶紧换AS吧)，可以选择添加本项目根目录中 `/jar
 以下三个选择添加，okrx和okrx2不能同时使用
 > [okrx-1.0.2.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okrx-1.0.2.jar)  
 [okrx2-2.0.2.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okrx2-2.0.2.jar)   
-[okserver-2.0.4.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okserver-2.0.4.jar)  
+[okserver-2.0.5.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okserver-2.0.5.jar)  
 
 ## 文档
 ### 该项目的文档全部以Wiki的形式展示，wiki文档永远与最新版本的库保持同步，如果你发现文档的说明与你的写法不一样，那么请升级到最新版本，重要的事情说三遍
