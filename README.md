@@ -33,11 +33,22 @@
 ## 演示
 ![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo13.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo8.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo11.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo9.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo10.gif)![image](https://github.com/jeasonlzy/Screenshots/blob/master/okgo/demo12.gif)
 
+## 未来版本
+### [v3.1.x]版本
+- 计划分离params参数的具体作用，分为paramsPath，paramsQuery和params，支持url路径动态替换
+- 计划支持请求优先级，方便有些重要请求优先进行
+- 计划支持自定义线程池，使用自己的线程池管理网络请求
+
+### [v3.2.x]版本
+- 计划增加扩展库OkAnno，作用是让okgo支持注解方式请求，具体写法与Retrofit相似，但是更简单方便，也更强大，方便Retrofit用户平滑过渡到OkGo
+
+### 其他功能暂时还没想出来，大家有想法的可以积极加群讨论，或者直接在issue里面提出你的想法，我会第一时间回复。
+
 ## 使用
 
 [![](https://img.shields.io/badge/API-14%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=14) [![](https://img.shields.io/badge/platform-android-brightgreen.svg)](https://developer.android.com/index.html) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/5b244560c35c445cbb00b9500b0c5d2a)](https://www.codacy.com/app/jeasonlzy/okhttp-OkGo?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jeasonlzy/okhttp-OkGo&amp;utm_campaign=Badge_Grade)  [![](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/jeasonlzy/okhttp-OkGo/blob/master/LICENSE)  [![](https://img.shields.io/badge/%E4%BD%9C%E8%80%85-jeasonlzy-orange.svg)](https://github.com/jeasonlzy)
 
-[![](https://img.shields.io/badge/OkGo-v3.0.3-brightgreen.svg)](https://github.com/jeasonlzy/okhttp-OkGo) [![](https://img.shields.io/badge/OkRx-v1.0.2-brightgreen.svg)](https://github.com/jeasonlzy/okhttp-OkGo) [![](https://img.shields.io/badge/OkRx2-v2.0.2-brightgreen.svg)](https://github.com/jeasonlzy/okhttp-OkGo) [![](https://img.shields.io/badge/OkServer-v2.0.3-brightgreen.svg)](https://github.com/jeasonlzy/okhttp-OkGo)
+[![](https://img.shields.io/badge/OkGo-v3.0.4-brightgreen.svg)](https://github.com/jeasonlzy/okhttp-OkGo) [![](https://img.shields.io/badge/OkRx-v1.0.2-brightgreen.svg)](https://github.com/jeasonlzy/okhttp-OkGo) [![](https://img.shields.io/badge/OkRx2-v2.0.2-brightgreen.svg)](https://github.com/jeasonlzy/okhttp-OkGo) [![](https://img.shields.io/badge/OkServer-v2.0.3-brightgreen.svg)](https://github.com/jeasonlzy/okhttp-OkGo)
 
 Android Studio用户
 
@@ -45,7 +56,7 @@ Android Studio用户
 
 ```java
 //必须使用
-compile 'com.lzy.net:okgo:3.0.3'
+compile 'com.lzy.net:okgo:3.0.4'
 
 //以下三个选择添加，okrx和okrx2不能同时使用
 compile 'com.lzy.net:okrx:1.0.2'
@@ -60,7 +71,7 @@ Eclipse的用户(赶紧换AS吧)，可以选择添加本项目根目录中 `/jar
 必须使用
 > [okhttp-3.8.1.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okhttp-3.8.1.jar)  
 [okio-1.13.0.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okio-1.13.0.jar)   
-[okgo-3.0.3.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okgo-3.0.3.jar)   
+[okgo-3.0.4.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okgo-3.0.4.jar)   
 
 以下三个选择添加，okrx和okrx2不能同时使用
 > [okrx-1.0.2.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okrx-1.0.2.jar)  
@@ -68,10 +79,12 @@ Eclipse的用户(赶紧换AS吧)，可以选择添加本项目根目录中 `/jar
 [okserver-2.0.3.jar](https://raw.githubusercontent.com/jeasonlzy/okhttp-OkGo/master/jar/okserver-2.0.3.jar)  
 
 ## 文档
-### 该项目的文档全部以Wiki的形式展示，重要的事情说三遍
-- [点我，点我，我是文档，Wiki文档首页请猛戳这里](https://github.com/jeasonlzy/okhttp-OkGo/wiki)
-- [点我，点我，我是文档，Wiki文档首页请猛戳这里](https://github.com/jeasonlzy/okhttp-OkGo/wiki)
-- [点我，点我，我是文档，Wiki文档首页请猛戳这里](https://github.com/jeasonlzy/okhttp-OkGo/wiki)
+### 该项目的文档全部以Wiki的形式展示，wiki文档永远与最新版本的库保持同步，如果你发现文档的说明与你的写法不一样，那么请升级到最新版本，重要的事情说三遍
+- [点我，点我，我是3.x文档，Wiki文档首页请猛戳这里](https://github.com/jeasonlzy/okhttp-OkGo/wiki)
+- [点我，点我，我是3.x文档，Wiki文档首页请猛戳这里](https://github.com/jeasonlzy/okhttp-OkGo/wiki)
+- [点我，点我，我是3.x文档，Wiki文档首页请猛戳这里](https://github.com/jeasonlzy/okhttp-OkGo/wiki)
+
+如果你实在不愿意升级到3.x版本，[这里有2.x版本的文档，点击查看](https://github.com/jeasonlzy/okhttp-OkGo/tree/v2.1.4)，注意：老版本库的问题将不在维护，所有bug会在最新版本修复，所以建议跟随最新版本的库。
 
 [![](http://7xss53.com1.z0.glb.clouddn.com/markdown/w0ujl.jpg)](https://github.com/jeasonlzy/okhttp-OkGo/wiki)
 
@@ -81,7 +94,7 @@ Eclipse的用户(赶紧换AS吧)，可以选择添加本项目根目录中 `/jar
 3. 如果你感觉是bug，或者有疑问，也欢迎在issues里面提问，我每天都会认真解答，[点击这里提问](https://github.com/jeasonlzy/okhttp-OkGo/issues)。
 4. 还有疑问，加入联系方式中的QQ群，大家一起讨论。
 
-如果你不想编译项目，提供了apk供直接运行，方便查看效果，点击图标下载：[![](https://img.shields.io/badge/downloads-okgo__v3.0.3.apk-blue.svg)](http://7xss53.com1.z0.glb.clouddn.com/file/okgo_v3.0.3.apk)
+如果你不想编译项目，提供了apk供直接运行，方便查看效果，点击图标下载：[![](https://img.shields.io/badge/downloads-okgo__v3.0.4.apk-blue.svg)](http://7xss53.com1.z0.glb.clouddn.com/file/okgo_v3.0.4.apk)
 
 本项目Demo使用的是我自己的服务器，有时候可能不稳定，网速比较慢时请耐心等待，尴尬呀。。
 
@@ -139,5 +152,6 @@ okgo, okrx, okrx2, okserver 所有代码均可以混淆,但是由于底层使用
  See the License for the specific language governing permissions and
  limitations under the License.
 ```
+
 
 
