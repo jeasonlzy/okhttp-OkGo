@@ -64,7 +64,7 @@ public class HttpLoggingInterceptor implements Interceptor {
     }
 
     public void setPrintLevel(Level level) {
-        if (printLevel == null) throw new NullPointerException("printLevel == null. Use Level.NONE instead.");
+        if (level == null) throw new NullPointerException("level == null. Use Level.NONE instead.");
         printLevel = level;
     }
 
