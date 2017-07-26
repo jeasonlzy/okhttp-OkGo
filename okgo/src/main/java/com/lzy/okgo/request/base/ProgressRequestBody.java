@@ -50,6 +50,11 @@ public class ProgressRequestBody<T> extends RequestBody {
         this.callback = callback;
     }
 
+    /** 获取原始的RequestBody */
+    public RequestBody getRawRequestBody() {
+        return requestBody;
+    }
+    
     /** 重写调用实际的响应体的contentType */
     @Override
     public MediaType contentType() {
