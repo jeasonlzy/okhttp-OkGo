@@ -31,6 +31,7 @@ import okhttp3.HttpUrl;
  * 创建日期：2016/1/14
  * 描    述：Cookie 的内存管理
  * 修订历史：
+ * 2017/10/7 为saveCookie系列方法添加判空
  * ================================================
  */
 public class MemoryCookieStore implements CookieStore {
@@ -40,28 +41,40 @@ public class MemoryCookieStore implements CookieStore {
     @Override
     public synchronized void saveCookie(HttpUrl url, List<Cookie> cookies) {
         List<Cookie> oldCookies = memoryCookies.get(url.host());
-        List<Cookie> needRemove = new ArrayList<>();
-        for (Cookie newCookie : cookies) {
-            for (Cookie oldCookie : oldCookies) {
-                if (newCookie.name().equals(oldCookie.name())) {
-                    needRemove.add(oldCookie);
+        if (oldCookies == null) {
+            oldCookies = new ArrayList<>();
+            memoryCookies.put(url.host(), oldCookies);
+        }else {
+            List<Cookie> needRemove = new ArrayList<>();
+            for (Cookie newCookie : cookies) {
+                for (Cookie oldCookie : oldCookies) {
+                    if (newCookie.name().equals(oldCookie.name())) {
+                        needRemove.add(oldCookie);
+                    }
                 }
             }
+            oldCookies.removeAll(needRemove);
         }
-        oldCookies.removeAll(needRemove);
         oldCookies.addAll(cookies);
     }
 
     @Override
     public synchronized void saveCookie(HttpUrl url, Cookie cookie) {
         List<Cookie> cookies = memoryCookies.get(url.host());
-        List<Cookie> needRemove = new ArrayList<>();
-        for (Cookie item : cookies) {
-            if (cookie.name().equals(item.name())) {
-                needRemove.add(item);
+
+        if (cookies == null) {
+            cookies = new ArrayList<>();
+            memoryCookies.put(url.host(), cookies);
+        }else {
+            List<Cookie> needRemove = new ArrayList<>();
+            for (Cookie item : cookies) {
+                if (cookie.name().equals(item.name())) {
+                    needRemove.add(item);
+                }
             }
+            cookies.removeAll(needRemove);
         }
-        cookies.removeAll(needRemove);
+
         cookies.add(cookie);
     }
 
@@ -87,10 +100,14 @@ public class MemoryCookieStore implements CookieStore {
 
     @Override
     public List<Cookie> getCookie(HttpUrl url) {
-        List<Cookie> cookies = new ArrayList<>();
-        List<Cookie> urlCookies = memoryCookies.get(url.host());
-        if (urlCookies != null) cookies.addAll(urlCookies);
-        return cookies;
+        List<Cookie> cookies = memoryCookies.get(url.host());
+
+        if (cookies == null) {
+            cookies = new ArrayList<>();
+            memoryCookies.put(url.host(), cookies);
+        }
+
+        return new ArrayList<>(cookies);
     }
 
     @Override
