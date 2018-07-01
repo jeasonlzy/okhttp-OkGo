@@ -27,7 +27,6 @@ import com.lzy.demo.utils.Urls;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.adapter.Call;
 import com.lzy.okgo.callback.StringCallback;
-import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.Response;
 
 import org.json.JSONObject;
@@ -99,9 +98,17 @@ public class TestActivity extends BaseActivity {
 
     @OnClick(R.id.btn3)
     public void btn3(View view) {
-        OkGo.<String>get("asdfasf")//
+
+        OkGo.<String>post("http://server.jeasonlzy.com/{server}/{path}")//
                 .tag(this)//
-                .headers(HttpHeaders.HEAD_KEY_USER_AGENT, "abcd")//
+                .paramsPath("server", "OkHttpUtils")//
+                .paramsPath("path", "method")//
+                .paramsQuery("aaa", "111")//
+                .paramsQuery("bbb", "222")//
+                .paramsQuery("ccc", "333")//
+                .params("xxx", "777")//
+                .params("yyy", "888")//
+                .params("zzz", "999")//
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(Response<String> response) {

@@ -138,7 +138,7 @@ public class FormUploadActivity extends BaseDetailActivity {
 //                .params("file1",new File("文件路径"))   //这种方式为一个key，对应一个文件
 //                .params("file2",new File("文件路径"))
 //                .params("file3",new File("文件路径"))
-                .addFileParams("file", files)           // 这种方式为同一个key，上传多个文件
+                .paramsFileList("file", files)           // 这种方式为同一个key，上传多个文件
                 .execute(new JsonCallback<LzyResponse<ServerModel>>() {
                     @Override
                     public void onStart(Request<LzyResponse<ServerModel>, ? extends Request> request) {

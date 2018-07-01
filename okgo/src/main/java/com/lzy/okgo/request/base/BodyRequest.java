@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -75,43 +76,105 @@ public abstract class BodyRequest<T, R extends BodyRequest> extends Request<T, R
 
     @SuppressWarnings("unchecked")
     @Override
-    public R params(String key, File file) {
-        params.put(key, file);
+    public R params(String key, File file, boolean... isReplace) {
+        params.put(key, file, isReplace);
         return (R) this;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public R addFileParams(String key, List<File> files) {
-        params.putFileParams(key, files);
+    public R params(String key, File file, String fileName, boolean... isReplace) {
+        params.put(key, file, fileName, isReplace);
         return (R) this;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public R addFileWrapperParams(String key, List<HttpParams.FileWrapper> fileWrappers) {
-        params.putFileWrapperParams(key, fileWrappers);
+    public R params(String key, File file, String fileName, MediaType contentType, boolean... isReplace) {
+        params.put(key, file, fileName, contentType, isReplace);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public R paramsFileMap(Map<String, File> params, boolean... isReplace) {
+        this.params.putFileMap(params, isReplace);
         return (R) this;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public R params(String key, File file, String fileName) {
-        params.put(key, file, fileName);
+    public R paramsFileList(String key, List<File> files, boolean... isReplace) {
+        params.putFileList(key, files, isReplace);
         return (R) this;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public R params(String key, File file, String fileName, MediaType contentType) {
-        params.put(key, file, fileName, contentType);
+    public R paramsFileWrapperList(String key, List<HttpParams.FileWrapper> fileWrappers, boolean... isReplace) {
+        params.putFileWrapperList(key, fileWrappers, isReplace);
         return (R) this;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public R upRequestBody(RequestBody requestBody) {
-        this.requestBody = requestBody;
+    public R paramsQuery(String key, String value, boolean... isReplace) {
+        params.putQuery(key, value, isReplace);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public R paramsQuery(String key, int value, boolean... isReplace) {
+        params.putQuery(key, value, isReplace);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public R paramsQuery(String key, float value, boolean... isReplace) {
+        params.putQuery(key, value, isReplace);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public R paramsQuery(String key, double value, boolean... isReplace) {
+        params.putQuery(key, value, isReplace);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public R paramsQuery(String key, long value, boolean... isReplace) {
+        params.putQuery(key, value, isReplace);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public R paramsQuery(String key, char value, boolean... isReplace) {
+        params.putQuery(key, value, isReplace);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public R paramsQuery(String key, boolean value, boolean... isReplace) {
+        params.putQuery(key, value, isReplace);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public R paramsQueryStringMap(Map<String, String> params, boolean... isReplace) {
+        this.params.putQueryStringMap(params, isReplace);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public R paramsQueryStringList(String key, List<String> values, boolean... isReplace) {
+        params.putQueryStringList(key, values, isReplace);
         return (R) this;
     }
 
@@ -199,9 +262,16 @@ public abstract class BodyRequest<T, R extends BodyRequest> extends Request<T, R
         return (R) this;
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public R upRequestBody(RequestBody requestBody) {
+        this.requestBody = requestBody;
+        return (R) this;
+    }
+
     @Override
     public RequestBody generateRequestBody() {
-        if (isSpliceUrl) url = HttpUtils.createUrlFromParams(baseUrl, params.urlParamsMap);
+        url = HttpUtils.createUrlFromParams(baseUrl, isSpliceUrl, params);
 
         if (requestBody != null) return requestBody;                                                //自定义的请求体
         if (content != null && mediaType != null) return RequestBody.create(mediaType, content);    //上传字符串数据

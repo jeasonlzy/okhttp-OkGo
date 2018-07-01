@@ -129,6 +129,8 @@ public abstract class Request<T, R extends Request> implements Serializable {
 
     @SuppressWarnings("unchecked")
     public R cacheMode(CacheMode cacheMode) {
+        HttpUtils.checkNotNull(cacheMode, "cacheMode == null");
+
         this.cacheMode = cacheMode;
         return (R) this;
     }
@@ -170,26 +172,8 @@ public abstract class Request<T, R extends Request> implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    public R removeHeader(String key) {
-        headers.remove(key);
-        return (R) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public R removeAllHeaders() {
-        headers.clear();
-        return (R) this;
-    }
-
-    @SuppressWarnings("unchecked")
     public R params(HttpParams params) {
         this.params.put(params);
-        return (R) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public R params(Map<String, String> params, boolean... isReplace) {
-        this.params.put(params, isReplace);
         return (R) this;
     }
 
@@ -236,8 +220,32 @@ public abstract class Request<T, R extends Request> implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    public R addUrlParams(String key, List<String> values) {
-        params.putUrlParams(key, values);
+    public R paramsStringMap(Map<String, String> params, boolean... isReplace) {
+        this.params.putStringMap(params, isReplace);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public R paramsStringList(String key, List<String> values, boolean... isReplace) {
+        params.putStringList(key, values, isReplace);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public R paramsPath(String key, String value) {
+        params.putPath(key, value);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public R removeHeader(String key) {
+        headers.remove(key);
+        return (R) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public R removeAllHeaders() {
+        headers.clear();
         return (R) this;
     }
 
@@ -261,7 +269,7 @@ public abstract class Request<T, R extends Request> implements Serializable {
 
     /** 默认返回第一个参数 */
     public String getUrlParam(String key) {
-        List<String> values = params.urlParamsMap.get(key);
+        List<String> values = params.stringParamsMap.get(key);
         if (values != null && values.size() > 0) return values.get(0);
         return null;
     }
