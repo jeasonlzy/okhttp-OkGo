@@ -151,11 +151,11 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
                 int responseCode = response.code();
 
                 //network error
-                if (responseCode == 404 || responseCode >= 500) {
+                /*if (responseCode == 404 || responseCode >= 500) {
                     Response<T> error = Response.error(false, call, response, HttpException.NET_ERROR());
                     onError(error);
                     return;
-                }
+                }*/
 
                 if (onAnalysisResponse(call, response)) return;
 
