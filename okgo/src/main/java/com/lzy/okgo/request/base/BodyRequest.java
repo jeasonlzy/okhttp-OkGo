@@ -53,6 +53,8 @@ public abstract class BodyRequest<T, R extends BodyRequest> extends Request<T, R
 
     protected boolean isMultipart = false;  //是否强制使用 multipart/form-data 表单上传
     protected boolean isSpliceUrl = false;  //是否拼接url参数
+    protected boolean isNeedProgress = false;  //是否监察进度
+
     protected RequestBody requestBody;
 
     public BodyRequest(String url) {
@@ -72,6 +74,14 @@ public abstract class BodyRequest<T, R extends BodyRequest> extends Request<T, R
         this.isSpliceUrl = isSpliceUrl;
         return (R) this;
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public R isNeedProgress(boolean isNeedProgress) {
+        this.isNeedProgress = isNeedProgress;
+        return (R) this;
+    }
+
 
     @SuppressWarnings("unchecked")
     @Override
@@ -208,6 +218,12 @@ public abstract class BodyRequest<T, R extends BodyRequest> extends Request<T, R
         if (bs != null && mediaType != null) return RequestBody.create(mediaType, bs);              //上传字节数组
         if (file != null && mediaType != null) return RequestBody.create(mediaType, file);          //上传一个文件
         return HttpUtils.generateMultipartRequestBody(params, isMultipart);
+    }
+
+
+    @Override
+    public boolean getNeedProgress() {
+        return isNeedProgress;
     }
 
     protected okhttp3.Request.Builder generateRequestBuilder(RequestBody requestBody) {
