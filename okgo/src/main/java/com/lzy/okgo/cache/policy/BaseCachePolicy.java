@@ -23,6 +23,7 @@ import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.callback.Callback;
 import com.lzy.okgo.db.CacheManager;
 import com.lzy.okgo.exception.HttpException;
+import com.lzy.okgo.exception.MyHttpException;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.base.Request;
 import com.lzy.okgo.utils.HeaderParser;
@@ -101,10 +102,11 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
         try {
             okhttp3.Response response = rawCall.execute();
             int responseCode = response.code();
-
             //network error
             if (responseCode == 404 || responseCode >= 500) {
-                return Response.error(false, rawCall, response, HttpException.NET_ERROR());
+                String message = response.message();
+                String string = response.body().string();
+                return Response.error(false, rawCall, response, new MyHttpException(responseCode, message, string));
             }
 
             T body = request.getConverter().convertResponse(response);
