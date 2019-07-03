@@ -16,6 +16,7 @@
 package com.lzy.okgo.cache.policy;
 
 import android.graphics.Bitmap;
+import android.text.TextUtils;
 
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheEntity;
@@ -101,10 +102,11 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
         try {
             okhttp3.Response response = rawCall.execute();
             int responseCode = response.code();
-
             //network error
             if (responseCode == 404 || responseCode >= 500) {
-                return Response.error(false, rawCall, response, HttpException.NET_ERROR());
+                String message = response.message();
+                String string = response.body().string();
+                return Response.error(false, rawCall, response, new HttpException(responseCode, message, string));
             }
 
             T body = request.getConverter().convertResponse(response);
@@ -152,7 +154,9 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
 
                 //network error
                 if (responseCode == 404 || responseCode >= 500) {
-                    Response<T> error = Response.error(false, call, response, HttpException.NET_ERROR());
+                    String message = response.message();
+                    String string = response.body().string();
+                    Response<T> error = Response.error(false, call, response, new HttpException(responseCode, message, string));
                     onError(error);
                     return;
                 }
