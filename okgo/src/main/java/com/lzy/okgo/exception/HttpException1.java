@@ -1,11 +1,11 @@
 package com.lzy.okgo.exception;
 
-public class MyHttpException extends RuntimeException {
+public class HttpException1 extends RuntimeException {
     private int code;
     private String message;
     private String body;
 
-    public MyHttpException(int code, String message, String body) {
+    public HttpException1(int code, String message, String body) {
         this.code = code;
         this.message = message;
         this.body = body;
