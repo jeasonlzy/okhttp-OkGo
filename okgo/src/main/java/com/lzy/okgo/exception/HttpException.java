@@ -34,8 +34,16 @@ public class HttpException extends RuntimeException {
     private String message;                         //HTTP status message
     private transient Response<?> response;         //The full HTTP response. This may be null if the exception was serialized
 
+    private String body;
     public HttpException(String message) {
         super(message);
+    }
+
+    public HttpException(int code,String message,String body) {
+        super(message);
+        this.code = code;
+        this.message = message;
+        this.body = body;
     }
 
     public HttpException(Response<?> response) {
@@ -44,6 +52,7 @@ public class HttpException extends RuntimeException {
         this.message = response.message();
         this.response = response;
     }
+
 
     private static String getMessage(Response<?> response) {
         HttpUtils.checkNotNull(response, "response == null");
@@ -64,6 +73,19 @@ public class HttpException extends RuntimeException {
 
     public static HttpException NET_ERROR() {
         return new HttpException("network error! http response code is 404 or 5xx!");
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    @Override
+    public String getMessage() {
+        return message;
+    }
+
+    public String getBody() {
+        return body;
     }
 
     public static HttpException COMMON(String message) {
