@@ -142,6 +142,12 @@ public abstract class BaseCachePolicy<T> implements CachePolicy<T> {
                     if (!call.isCanceled()) {
                         Response<T> error = Response.error(false, call, null, e);
                         onError(error);
+                    } else {
+                        // 这个 `else` 是为了解决 callTimeout 无法触发 onError 回调
+                        if (e instanceof InterruptedIOException) {
+                            Response<T> error = Response.error(false, call, null, e);
+                            onError(error);
+                        }
                     }
                 }
             }
